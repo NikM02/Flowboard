@@ -134,13 +134,13 @@ function ExpensesTab() {
   return (
     <div className="space-y-6">
       {/* Income/Expenses toggle */}
-      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800">
+      <div className="flex gap-2 overflow-x-auto border-b border-neutral-200 dark:border-neutral-800">
         {(["income", "expenses"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setSubTab(t)}
             className={cn(
-              "pb-2 text-sm font-medium transition-colors border-b-2 -mb-[1px] capitalize",
+              "pb-2 text-sm font-medium transition-colors border-b-2 -mb-[1px] capitalize whitespace-nowrap",
               subTab === t
                 ? "border-neutral-900 text-neutral-900 dark:border-neutral-50 dark:text-neutral-50"
                 : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
@@ -992,7 +992,7 @@ function ArchiveTab() {
             key={t}
             onClick={() => setSubTab(t)}
             className={cn(
-              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
+              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all shrink-0",
               subTab === t
                 ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                 : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
@@ -1204,7 +1204,7 @@ export function FinancePanel() {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap",
+                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap shrink-0",
                 tab === t.key
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"

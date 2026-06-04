@@ -40,11 +40,11 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       >
         <div className="mb-2 flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <button onClick={() => toggleSubtask(task.id, task.subtasks[0]?.id)}>
+            <button onClick={() => toggleSubtask(task.id, task.subtasks[0]?.id)} className="p-1">
               {task.completed ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+                <CheckCircle2 className="h-6 w-6 text-emerald-500" />
               ) : (
-                <Circle className="h-5 w-5 text-neutral-300 dark:text-neutral-600" />
+                <Circle className="h-6 w-6 text-neutral-300 dark:text-neutral-600" />
               )}
             </button>
             <div>
@@ -57,11 +57,11 @@ function ListRow({ task, index }: { task: Task; index: number }) {
             </div>
           </div>
           <div className="flex gap-1 shrink-0">
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}>
-              <Edit3 className="h-3 w-3" />
+            <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-7 sm:w-7" onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}>
+              <Edit3 className="h-4 w-4 sm:h-3 sm:w-3" />
             </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500" onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}>
-              <Trash2 className="h-3 w-3" />
+            <Button variant="ghost" size="icon" className="h-9 w-9 sm:h-7 sm:w-7 text-red-500" onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}>
+              <Trash2 className="h-4 w-4 sm:h-3 sm:w-3" />
             </Button>
           </div>
         </div>

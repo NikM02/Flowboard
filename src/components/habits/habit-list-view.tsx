@@ -69,7 +69,7 @@ function HabitCard({
           onClick={() => toggleDay(habit.id, today)}
           className={cn(
             "flex items-center justify-center rounded-xl border-2 transition-all shrink-0",
-            "h-10 w-10",
+            "h-11 w-11 sm:h-10 sm:w-10",
             doneToday
               ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
               : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
@@ -86,7 +86,7 @@ function HabitCard({
           {habit.description && (
             <p className="text-xs text-neutral-400 truncate">{habit.description}</p>
           )}
-              <div className="flex items-center gap-1.5 mt-1.5">
+              <div className="flex items-center gap-1 mt-1.5">
                 {weekDays.map((d) => {
                   const ds = format(d, "yyyy-MM-dd")
                   const done = habit.records.some((r) => r.date === ds && r.completed)
@@ -96,8 +96,9 @@ function HabitCard({
                       key={ds}
                       onClick={() => !isFuture && toggleDay(habit.id, ds)}
                       disabled={isFuture}
+                      aria-label={`Toggle ${format(d, "EEEE")}`}
                       className={cn(
-                        "rounded-sm transition-all sm:h-3 sm:w-3 h-4 w-4",
+                        "rounded-sm transition-all h-5 w-5 sm:h-3 sm:w-3",
                         done
                           ? "bg-neutral-900 dark:bg-neutral-50"
                           : isFuture
@@ -110,12 +111,12 @@ function HabitCard({
           </div>
         </div>
 
-        <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 max-sm:opacity-100 transition-opacity shrink-0">
-          <button onClick={() => onEdit?.(habit)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
-            <Edit3 className="h-3.5 w-3.5" />
+        <div className="flex gap-0.5 transition-opacity shrink-0">
+          <button onClick={() => onEdit?.(habit)} className="flex h-9 w-9 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+            <Edit3 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
-            <Trash2 className="h-3.5 w-3.5" />
+          <button onClick={() => deleteHabit(habit.id)} className="flex h-9 w-9 sm:h-7 sm:w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
+            <Trash2 className="h-4 w-4 sm:h-3.5 sm:w-3.5" />
           </button>
         </div>
       </div>

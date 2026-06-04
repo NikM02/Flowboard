@@ -132,8 +132,8 @@ export function ChallengeSliderPanel() {
           <Flame className="h-5 w-5 text-amber-500" />
           <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50">Challenges</h3>
         </div>
-        <Button size="sm" onClick={() => setIsCreateModalOpen(true)} className="gap-1.5 rounded-xl text-xs h-8">
-          <Plus className="h-3.5 w-3.5" />New Challenge
+        <Button onClick={() => setIsCreateModalOpen(true)} className="gap-1.5 rounded-xl text-xs h-9 sm:h-8 px-3 sm:px-2.5">
+          <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />New Challenge
         </Button>
       </div>
 

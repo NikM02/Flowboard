@@ -31,13 +31,13 @@ export function HabitArchiveView() {
           <BarChart3 className="h-4 w-4 text-neutral-500" />
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Archive</h3>
         </div>
-        <div className="flex gap-1.5 rounded-xl bg-neutral-100/80 p-1 dark:bg-neutral-800/40">
+        <div className="flex gap-1.5 overflow-x-auto rounded-xl bg-neutral-100/80 p-1 dark:bg-neutral-800/40">
           {subTabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setSubTab(t.key)}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all",
+                "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all shrink-0",
                 subTab === t.key
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
@@ -203,7 +203,7 @@ function DopamineArchive() {
       </div>
 
       {stats && (
-        <div className="grid grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
           <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
             <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{stats.total}</p>
             <p className="text-[10px] text-neutral-400">Check-ins</p>

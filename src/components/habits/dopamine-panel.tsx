@@ -121,19 +121,19 @@ export function DopaminePanel() {
                     <span className="text-[10px] text-neutral-400">{labels[val - 1]}</span>
                   </div>
                 </div>
-                <div className="flex gap-1">
+                <div className="flex gap-1 sm:gap-1.5">
                   {[1, 2, 3, 4, 5].map((dot) => (
                     <button
                       key={dot}
                       onClick={() => setMetric(m.key as keyof DopamineValues, dot)}
                       className={cn(
-                        "flex-1 h-8 rounded-lg transition-all",
+                        "flex-1 h-11 sm:h-8 rounded-lg transition-all text-sm sm:text-xs",
                         dot <= val
                           ? `${m.bg} ${m.color}`
                           : "bg-neutral-100 text-neutral-300 dark:bg-neutral-800 dark:text-neutral-600"
                       )}
                     >
-                      <span className="text-xs font-bold">{dot}</span>
+                      <span className="font-bold">{dot}</span>
                     </button>
                   ))}
                 </div>
