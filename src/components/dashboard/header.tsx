@@ -3,7 +3,6 @@
 import { motion } from "framer-motion"
 import { Search, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { NotificationBell } from "./notification-panel"
 
@@ -46,11 +45,6 @@ export function Header({
 
         <div className="ml-auto flex items-center gap-2">
           <NotificationBell />
-
-          <Avatar className="h-8 w-8 cursor-pointer ring-2 ring-neutral-200 transition-shadow hover:ring-neutral-300 dark:ring-neutral-700 dark:hover:ring-neutral-500">
-            <AvatarImage src="https://api.dicebear.com/9.x/notionists/svg?seed=Alex" />
-            <AvatarFallback>JD</AvatarFallback>
-          </Avatar>
         </div>
       </div>
 
