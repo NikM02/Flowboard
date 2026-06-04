@@ -1,65 +1,220 @@
-import Image from "next/image";
+"use client"
 
-export default function Home() {
+import { useState, useEffect, useCallback } from "react"
+import { motion } from "framer-motion"
+import { Moon, Sun, Download, Trash2 } from "lucide-react"
+import { Sidebar } from "@/components/dashboard/sidebar"
+import { Header } from "@/components/dashboard/header"
+import { GlobalSearch } from "@/components/dashboard/global-search"
+import { Confetti } from "@/components/dashboard/confetti"
+import { Toaster } from "@/components/ui/toaster"
+import { useToastWatcher } from "@/hooks/use-toast-watcher"
+import { useNotificationGenerator } from "@/hooks/use-notification-generator"
+import { useLocalPersistence } from "@/hooks/use-store-persistence"
+import { StatsCards } from "@/components/dashboard/stats-cards"
+import { Filters } from "@/components/dashboard/filters"
+import { TaskCardView } from "@/components/dashboard/task-card-view"
+import { TaskListView } from "@/components/dashboard/task-list-view"
+import { CreateTaskModal } from "@/components/dashboard/create-task-modal"
+import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
+import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
+import { BottomNav } from "@/components/dashboard/bottom-nav"
+import { LoginScreen } from "@/components/dashboard/login-screen"
+import { Button } from "@/components/ui/button"
+import { HabitTrackerSection } from "@/components/habits/habit-tracker-section"
+import { SkillPanel } from "@/components/skills/skill-panel"
+import { FinancePanel } from "@/components/finance/finance-panel"
+import { FuturePanel } from "@/components/future/future-panel"
+
+import { useTaskStore } from "@/store/use-task-store"
+import { useThemeStore } from "@/store/use-theme-store"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import type { DashboardSection } from "@/types"
+
+export default function DashboardPage() {
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState<DashboardSection>("habits")
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [confettiTrigger, setConfettiTrigger] = useState(0)
+  const [authenticated, setAuthenticated] = useState(false)
+  const { viewMode, filterStatus, clearCompleted } = useTaskStore()
+  const { darkMode, toggleDarkMode } = useThemeStore()
+  const isMobile = useMediaQuery("(max-width: 768px)")
+
+  const onAdd = useCallback(() => setConfettiTrigger((c) => c + 1), [])
+  useToastWatcher(onAdd)
+  useNotificationGenerator()
+  useLocalPersistence()
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault()
+        setSearchOpen((v) => !v)
+      }
+    }
+    document.addEventListener("keydown", handler)
+    return () => document.removeEventListener("keydown", handler)
+  }, [])
+
+  const handleAuth = useCallback(() => {
+    setAuthenticated(true)
+  }, [])
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("arise-auth")
+    setAuthenticated(false)
+  }, [])
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      {!authenticated && <LoginScreen onAuth={handleAuth} />}
+      {authenticated && (
+    <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        onLogout={handleLogout}
+      />
+
+      <div className="flex flex-1 flex-col pb-16 md:pb-0">
+        <Header onMenuClick={() => setSidebarOpen(true)} onSearchOpen={() => setSearchOpen(true)} />
+
+        <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
+          {activeSection === "tasks" && (
+            <>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                    {filterStatus === "all"
+                      ? "All Tasks"
+                      : filterStatus === "active"
+                      ? "Active Tasks"
+                      : "Completed Tasks"}
+                  </h1>
+                  <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                    Manage and track your tasks
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Filters />
+                </div>
+              </div>
+              <StatsCards />
+
+              {filterStatus === "completed" && (
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={async () => {
+                      const { useTaskStore } = await import("@/store/use-task-store")
+                      const completed = useTaskStore.getState().tasks.filter((t) => t.completed)
+                      const XLSX = await import("xlsx")
+                      const data = completed.map((t) => ({
+                        Title: t.title,
+                        Description: t.description,
+                        Priority: t.priority,
+                        "Due Date": t.dueDate,
+                        Progress: `${t.progress}%`,
+                        Subtasks: t.subtasks.filter((s) => s.completed).length + "/" + t.subtasks.length,
+                      }))
+                      const wb = XLSX.utils.book_new()
+                      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Completed Tasks")
+                      XLSX.writeFile(wb, "completed-tasks.xlsx")
+                    }}
+                    className="gap-2"
+                  >
+                    <Download className="h-3.5 w-3.5" />
+                    Export
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Clear All
+                  </Button>
+                </div>
+              )}
+
+              {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
+            </>
+          )}
+
+          {activeSection === "habits" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              <div className="mb-6">
+                <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                  Habits & Challenges
+                </h1>
+                <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                  Build habits and take on challenges
+                </p>
+              </div>
+              <HabitTrackerSection />
+            </motion.div>
+          )}
+
+          {activeSection === "skills" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+              <SkillPanel />
+            </motion.div>
+          )}
+
+          {activeSection === "finance" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FinancePanel />
+            </motion.div>
+          )}
+
+          {activeSection === "future" && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <FuturePanel />
+            </motion.div>
+          )}
+        </main>
+      </div>
+
+      {isMobile && <BottomNav onSectionChange={setActiveSection} />}
+
+      {/* Floating dark mode toggle */}
+      <button
+        onClick={toggleDarkMode}
+        className="fixed bottom-20 right-4 z-30 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300 md:bottom-6"
+      >
+        {darkMode ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+      </button>
+
+      <CreateTaskModal />
+      <EditTaskSheet />
+      <DeleteConfirmDialog />
+
+      <GlobalSearch
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+        onNavigate={setActiveSection}
+      />
+
+      <Toaster />
+      <Confetti trigger={confettiTrigger} />
     </div>
-  );
+      )}
+    </>
+  )
 }
