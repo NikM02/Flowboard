@@ -86,27 +86,27 @@ function HabitCard({
           {habit.description && (
             <p className="text-xs text-neutral-400 truncate">{habit.description}</p>
           )}
-          <div className="flex items-center gap-1 mt-1">
-            {weekDays.map((d) => {
-              const ds = format(d, "yyyy-MM-dd")
-              const done = habit.records.some((r) => r.date === ds && r.completed)
-              const isFuture = ds > today
-              return (
-                <button
-                  key={ds}
-                  onClick={() => !isFuture && toggleDay(habit.id, ds)}
-                  disabled={isFuture}
-                  className={cn(
-                    "h-3 w-3 rounded-sm transition-all",
-                    done
-                      ? "bg-neutral-900 dark:bg-neutral-50"
-                      : isFuture
-                      ? "bg-neutral-100 dark:bg-neutral-800"
-                      : "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-                  )}
-                />
-              )
-            })}
+              <div className="flex items-center gap-1.5 mt-1.5">
+                {weekDays.map((d) => {
+                  const ds = format(d, "yyyy-MM-dd")
+                  const done = habit.records.some((r) => r.date === ds && r.completed)
+                  const isFuture = ds > today
+                  return (
+                    <button
+                      key={ds}
+                      onClick={() => !isFuture && toggleDay(habit.id, ds)}
+                      disabled={isFuture}
+                      className={cn(
+                        "rounded-sm transition-all sm:h-3 sm:w-3 h-4 w-4",
+                        done
+                          ? "bg-neutral-900 dark:bg-neutral-50"
+                          : isFuture
+                          ? "bg-neutral-100 dark:bg-neutral-800"
+                          : "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                      )}
+                    />
+                  )
+                })}
           </div>
         </div>
 

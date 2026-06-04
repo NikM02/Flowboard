@@ -122,8 +122,8 @@ function HabitsArchive() {
         ))}
       </div>
 
-      <div className="max-h-96 overflow-y-auto">
-        <div className="grid grid-cols-4 gap-2 text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1.5 border-b border-neutral-100 dark:border-neutral-800">
+      <div className="max-h-96 overflow-y-auto overflow-x-auto">
+        <div className="hidden sm:grid sm:grid-cols-4 gap-2 text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1.5 border-b border-neutral-100 dark:border-neutral-800">
           <span>Date</span><span>Habit</span><span>Category</span><span className="text-center">Status</span>
         </div>
         {allRecords.length === 0 ? (
@@ -131,11 +131,11 @@ function HabitsArchive() {
         ) : (
           <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
             {allRecords.map((r, i) => (
-              <div key={i} className="grid grid-cols-4 gap-2 px-2 py-2 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50">
-                <span>{format(parseISO(r.date), "MMM d, yyyy")}</span>
-                <span className="font-medium text-neutral-800 dark:text-neutral-200">{r.habitName}</span>
-                <span className="capitalize">{r.habitCategory}</span>
-                <span className={`text-center font-medium ${r.completed === "Yes" ? "text-emerald-600" : "text-red-400"}`}>{r.completed === "Yes" ? "✓" : "✗"}</span>
+              <div key={i} className="grid grid-cols-2 sm:grid-cols-4 gap-2 px-2 py-2 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50">
+                <span className="font-medium text-neutral-800 dark:text-neutral-200">{format(parseISO(r.date), "MMM d, yyyy")}</span>
+                <span className="hidden sm:inline">{r.habitName}</span>
+                <span className="capitalize hidden sm:inline">{r.habitCategory}</span>
+                <span className={`text-right sm:text-center font-medium ${r.completed === "Yes" ? "text-emerald-600" : "text-red-400"}`}>{r.completed === "Yes" ? "✓" : "✗"}</span>
               </div>
             ))}
           </div>

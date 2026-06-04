@@ -85,9 +85,9 @@ export default function DashboardPage() {
         <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
           {activeSection === "tasks" && (
             <>
-              <div className="flex items-center justify-between">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
                     {filterStatus === "all"
                       ? "All Tasks"
                       : filterStatus === "active"
@@ -105,7 +105,7 @@ export default function DashboardPage() {
               <StatsCards />
 
               {filterStatus === "completed" && (
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   <Button
                     variant="outline"
                     size="sm"
@@ -148,7 +148,7 @@ export default function DashboardPage() {
               transition={{ duration: 0.3 }}
             >
               <div className="mb-6">
-                <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
                   Habits & Challenges
                 </h1>
                 <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">

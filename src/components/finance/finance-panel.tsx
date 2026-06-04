@@ -985,17 +985,17 @@ function ArchiveTab() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800">
+    <div className="space-y-6">
+      <div className="flex gap-1.5 overflow-x-auto rounded-2xl bg-neutral-100/80 p-1.5 dark:bg-neutral-800/40">
         {(["income", "expenses", "investments"] as const).map((t) => (
           <button
             key={t}
             onClick={() => setSubTab(t)}
             className={cn(
-              "pb-2 text-sm font-medium transition-colors border-b-2 -mb-[1px] capitalize",
+              "flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium whitespace-nowrap transition-all",
               subTab === t
-                ? "border-neutral-900 text-neutral-900 dark:border-neutral-50 dark:text-neutral-50"
-                : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
+                : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
             )}
           >
             {t}
