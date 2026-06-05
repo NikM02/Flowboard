@@ -9,6 +9,7 @@ import {
   Circle,
   ChevronDown,
   ChevronRight,
+  CheckSquare,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -30,10 +31,18 @@ function subtaskCount(subtasks: { completed: boolean }[]) {
 }
 
 export function TaskCard({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask } = useTaskStore()
   const [expanded, setExpanded] = useState(false)
 
   const priority = priorityConfig[task.priority]
+
+  const handleMarkComplete = () => {
+    updateTask(task.id, { completed: true, progress: 100 })
+  }
+
+  const handleMarkActive = () => {
+    updateTask(task.id, { completed: false })
+  }
 
   return (
     <motion.div
@@ -48,7 +57,18 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="mb-1 flex items-center gap-2">
-            <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50 truncate">
+            <button
+              onClick={task.completed ? handleMarkActive : handleMarkComplete}
+              className="shrink-0"
+              title={task.completed ? "Mark active" : "Mark complete"}
+            >
+              {task.completed ? (
+                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
+              ) : (
+                <Circle className="h-5 w-5 text-neutral-300 hover:text-emerald-400 dark:text-neutral-600 dark:hover:text-emerald-500 transition-colors" />
+              )}
+            </button>
+            <h3 className={`text-base font-semibold truncate ${task.completed ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-900 dark:text-neutral-50"}`}>
               {task.title}
             </h3>
             <Badge variant={priority.variant} className="shrink-0">

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Moon, Sun, Download, Trash2 } from "lucide-react"
+import { Moon, Sun, Download, Trash2, Plus } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { GlobalSearch } from "@/components/dashboard/global-search"
@@ -37,7 +37,7 @@ export default function DashboardPage() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [confettiTrigger, setConfettiTrigger] = useState(0)
   const [authenticated, setAuthenticated] = useState(false)
-  const { viewMode, filterStatus, clearCompleted } = useTaskStore()
+  const { viewMode, filterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
   const { darkMode, toggleDarkMode } = useThemeStore()
   const isMobile = useMediaQuery("(max-width: 768px)")
 
@@ -99,6 +99,12 @@ export default function DashboardPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
+                  {filterStatus !== "completed" && (
+                    <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Add Task
+                    </Button>
+                  )}
                   <Filters />
                 </div>
               </div>

@@ -24,9 +24,17 @@ const priorityConfig: Record<Priority, { label: string; variant: "low" | "medium
 }
 
 function ListRow({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask } = useTaskStore()
   const priority = priorityConfig[task.priority]
   const isMobile = useMediaQuery("(max-width: 640px)")
+
+  const handleToggleComplete = () => {
+    if (task.completed) {
+      updateTask(task.id, { completed: false })
+    } else {
+      updateTask(task.id, { completed: true, progress: 100 })
+    }
+  }
 
   if (isMobile) {
     return (
@@ -40,7 +48,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       >
         <div className="mb-2 flex items-start justify-between gap-2">
           <div className="flex items-center gap-2">
-            <button onClick={() => toggleSubtask(task.id, task.subtasks[0]?.id)} className="p-1">
+            <button onClick={handleToggleComplete} className="p-1">
               {task.completed ? (
                 <CheckCircle2 className="h-6 w-6 text-emerald-500" />
               ) : (
@@ -89,7 +97,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       className="grid grid-cols-[1fr_100px_120px_120px_100px_80px] items-center gap-4 rounded-xl border border-neutral-200/60 bg-white px-5 py-3.5 transition-all hover:border-neutral-300/60 hover:shadow-sm dark:border-neutral-800/60 dark:bg-neutral-950 dark:hover:border-neutral-700/60"
     >
       <div className="flex items-center gap-3 min-w-0">
-        <button onClick={() => toggleSubtask(task.id, task.subtasks[0]?.id)}>
+        <button onClick={handleToggleComplete}>
           {task.completed ? (
             <CheckCircle2 className="h-5 w-5 shrink-0 text-emerald-500" />
           ) : (
