@@ -176,7 +176,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[200px] shrink-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[80px] sm:max-w-[200px]">
           {challenge.days.filter((d) => d.day <= 14 || d.day > challenge.days.length - 7).map((d) => {
             const isToday = d.date === todayDate
             return (

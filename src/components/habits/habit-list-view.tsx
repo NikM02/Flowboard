@@ -90,11 +90,11 @@ function HabitCard({
             <p className="mt-0.5 text-xs text-neutral-400 truncate">{habit.description}</p>
           )}
         </div>
-        <div className="flex gap-0.5 shrink-0">
-          <button onClick={() => onEdit?.(habit)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
+          <button onClick={() => onEdit?.(habit)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => deleteHabit(habit.id)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -213,7 +213,7 @@ function HabitListItem({
           )}
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 overflow-x-auto">
           {weekDays.map((d, i) => {
             const ds = format(d, "yyyy-MM-dd")
             const done = habit.records.some((r) => r.date === ds && r.completed)
@@ -239,7 +239,7 @@ function HabitListItem({
           })}
         </div>
 
-        <div className="flex gap-0.5 shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
           <button onClick={() => onEdit?.(habit)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
