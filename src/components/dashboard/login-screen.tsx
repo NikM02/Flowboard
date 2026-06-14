@@ -4,23 +4,25 @@ import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
 import { Sparkles, Loader2 } from "lucide-react"
 import type { SupabaseClient } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/client"
 
 export function LoginScreen({ onAuth }: { onAuth: () => void }) {
   const supabaseRef = useRef<SupabaseClient | null>(null)
+  const [ready, setReady] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
 
   useEffect(() => {
-    if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
-      setError("Supabase not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.")
-      return
-    }
-    import("@/lib/supabase/client").then(({ createClient }) => {
-      supabaseRef.current = createClient()
-      supabaseRef.current.auth.getSession().then(({ data: { session } }) => {
+    try {
+      const client = createClient()
+      supabaseRef.current = client
+      setReady(true)
+      client.auth.getSession().then(({ data: { session } }) => {
         if (session) onAuth()
       })
-    })
+    } catch {
+      setError("Supabase configuration missing.")
+    }
   }, [onAuth])
 
   const handleGoogleLogin = async () => {
@@ -77,7 +79,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
         >
           <button
             onClick={handleGoogleLogin}
-            disabled={loading || !supabaseRef.current}
+            disabled={loading || !ready}
             className="group relative w-full overflow-hidden rounded-2xl border border-neutral-200 bg-white px-6 py-3.5 text-sm font-medium text-neutral-700 shadow-sm transition-all hover:border-neutral-300 hover:shadow-md hover:shadow-neutral-200/50 active:scale-[0.98] disabled:opacity-60 dark:border-neutral-800 dark:bg-neutral-900 dark:text-neutral-300 dark:hover:border-neutral-700 dark:hover:shadow-neutral-950/50"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-neutral-50 to-white opacity-0 transition-opacity group-hover:opacity-100 dark:from-neutral-800 dark:to-neutral-900" />

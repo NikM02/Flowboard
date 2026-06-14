@@ -81,8 +81,11 @@ export default function DashboardPage() {
   }, [])
 
   const handleLogout = useCallback(async () => {
-    const { createClient } = await import("@/lib/supabase/client")
-    await createClient().auth.signOut()
+    try {
+      const { createClient } = await import("@/lib/supabase/client")
+      const client = createClient()
+      await client.auth.signOut()
+    } catch {}
     setAuthenticated(false)
   }, [])
 
