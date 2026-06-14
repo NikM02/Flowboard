@@ -37,11 +37,13 @@ export type Habit = {
   category: HabitCategory
   icon: HabitIcon
   frequency: "daily" | "weekly"
+  startDate?: string
+  endDate?: string
   records: DailyRecord[]
   createdAt: number
 }
 
-export type ChallengeType = "21" | "60" | "90"
+export type ChallengeType = "21" | "30" | "90"
 
 export type Challenge = {
   id: string
@@ -62,7 +64,7 @@ export type ChallengeDay = {
   note: string
 }
 
-export type HViewMode = "kanban" | "list"
+export type HViewMode = "card" | "list"
 export type DashboardSection = "tasks" | "habits" | "skills" | "finance" | "future"
 
 export type DopamineEntry = {

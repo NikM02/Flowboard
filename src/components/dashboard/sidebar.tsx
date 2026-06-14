@@ -1,29 +1,18 @@
 "use client"
 
-import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ListTodo,
-  CheckCircle2,
-  Circle,
   X,
-  ChevronDown,
-  ChevronRight,
   Flame,
   GraduationCap,
   Wallet,
   Sparkles,
   LogOut,
 } from "lucide-react"
-import { useTaskStore } from "@/store/use-task-store"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 import type { DashboardSection } from "@/types"
-
-const subItems = [
-  { id: "active", label: "Active Tasks", icon: Circle },
-  { id: "completed", label: "Completed", icon: CheckCircle2 },
-] as const
 
 export function Sidebar({
   open,
@@ -38,12 +27,7 @@ export function Sidebar({
   onSectionChange: (s: DashboardSection) => void
   onLogout: () => void
 }) {
-  const { filterStatus, setFilterStatus } = useTaskStore()
   const isMobile = useMediaQuery("(max-width: 768px)")
-  const [tasksExpanded, setTasksExpanded] = useState(true)
-
-  const isTaskGroupActive =
-    activeSection === "tasks"
 
   const handleNav = (section: DashboardSection) => {
     onSectionChange(section)
@@ -60,63 +44,18 @@ export function Sidebar({
         </div>
 
       <div className="space-y-1">
-        <div className="space-y-0.5">
-          <button
-            onClick={() => {
-              if (activeSection !== "tasks") {
-                handleNav("tasks")
-              }
-              setTasksExpanded(!tasksExpanded)
-            }}
-            className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-              isTaskGroupActive
-                ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-            )}
-          >
-            <ListTodo className="h-4 w-4" />
-            <span className="flex-1 text-left">All Tasks</span>
-            {tasksExpanded ? (
-              <ChevronDown className="h-3.5 w-3.5 text-neutral-400" />
-            ) : (
-              <ChevronRight className="h-3.5 w-3.5 text-neutral-400" />
-            )}
-          </button>
-
-          <AnimatePresence>
-            {tasksExpanded && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                className="overflow-hidden"
-              >
-                <div className="ml-2 space-y-0.5 border-l-2 border-neutral-200 pl-2 dark:border-neutral-700">
-                  {subItems.map((item) => (
-                    <button
-                      key={item.id}
-                      onClick={() => {
-                        handleNav("tasks")
-                        setFilterStatus(item.id as typeof filterStatus)
-                      }}
-                      className={cn(
-                        "flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
-                        activeSection === "tasks" && filterStatus === item.id
-                          ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-                          : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-                      )}
-                    >
-                      <item.icon className="h-3.5 w-3.5" />
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
+        <button
+          onClick={() => handleNav("tasks")}
+          className={cn(
+            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+            activeSection === "tasks"
+              ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
+              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
+          )}
+        >
+          <ListTodo className="h-4 w-4" />
+          <span className="flex-1 text-left">Tasks</span>
+        </button>
 
         <button
           onClick={() => handleNav("habits")}

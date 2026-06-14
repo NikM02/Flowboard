@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { format, parseISO, differenceInDays, startOfDay } from "date-fns"
-import type { Habit, HabitCategory, HabitIcon } from "@/types"
+import type { Habit, HabitCategory, HabitIcon, ViewMode } from "@/types"
 import { generateId } from "@/lib/utils"
 
 function todayStr(): string {
@@ -13,6 +13,8 @@ type HabitStore = {
   habits: Habit[]
   selectedHabitId: string | null
   isCreateModalOpen: boolean
+  habitViewMode: ViewMode
+  setHabitViewMode: (mode: ViewMode) => void
   setSelectedHabitId: (id: string | null) => void
   setIsCreateModalOpen: (open: boolean) => void
   addHabit: (habit: Omit<Habit, "id" | "records" | "createdAt">) => void
@@ -55,6 +57,9 @@ export const useHabitStore = create<HabitStore>((set, get) => ({
   habits: [],
   selectedHabitId: null,
   isCreateModalOpen: false,
+  habitViewMode: "card",
+
+  setHabitViewMode: (mode) => set({ habitViewMode: mode }),
 
   setSelectedHabitId: (id) => set({ selectedHabitId: id }),
   setIsCreateModalOpen: (open) => set({ isCreateModalOpen: open }),

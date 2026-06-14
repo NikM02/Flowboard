@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Moon, Sun, Download, Trash2, Plus } from "lucide-react"
+import { Moon, Sun, Download, Trash2, Plus, Archive } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { GlobalSearch } from "@/components/dashboard/global-search"
@@ -37,9 +37,28 @@ export default function DashboardPage() {
   const [searchOpen, setSearchOpen] = useState(false)
   const [confettiTrigger, setConfettiTrigger] = useState(0)
   const [authenticated, setAuthenticated] = useState(false)
-  const { viewMode, filterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
+  const [showTaskArchive, setShowTaskArchive] = useState(false)
+  const { viewMode, setFilterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
   const { darkMode, toggleDarkMode } = useThemeStore()
   const isMobile = useMediaQuery("(max-width: 768px)")
+
+  const handleSectionChange = useCallback((section: DashboardSection) => {
+    setActiveSection(section)
+    if (section === "tasks") {
+      setFilterStatus("active")
+      setShowTaskArchive(false)
+    }
+  }, [setFilterStatus])
+
+  const handleShowArchive = useCallback(() => {
+    setFilterStatus("completed")
+    setShowTaskArchive(true)
+  }, [setFilterStatus])
+
+  const handleHideArchive = useCallback(() => {
+    setFilterStatus("active")
+    setShowTaskArchive(false)
+  }, [setFilterStatus])
 
   const onAdd = useCallback(() => setConfettiTrigger((c) => c + 1), [])
   useToastWatcher(onAdd)
@@ -71,13 +90,13 @@ export default function DashboardPage() {
       {!authenticated && <LoginScreen onAuth={handleAuth} />}
       {authenticated && (
     <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      <Sidebar
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-        activeSection={activeSection}
-        onSectionChange={setActiveSection}
-        onLogout={handleLogout}
-      />
+          <Sidebar
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+            activeSection={activeSection}
+            onSectionChange={handleSectionChange}
+            onLogout={handleLogout}
+          />
 
       <div className="flex flex-1 flex-col pb-16 md:pb-0">
         <Header onMenuClick={() => setSidebarOpen(true)} onSearchOpen={() => setSearchOpen(true)} />
@@ -85,65 +104,82 @@ export default function DashboardPage() {
         <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
           {activeSection === "tasks" && (
             <>
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-                    {filterStatus === "all"
-                      ? "All Tasks"
-                      : filterStatus === "active"
-                      ? "Active Tasks"
-                      : "Completed Tasks"}
-                  </h1>
-                  <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                    Manage and track your tasks
-                  </p>
-                </div>
-                <div className="flex items-center gap-2">
-                  {filterStatus !== "completed" && (
-                    <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add Task
+              {showTaskArchive ? (
+                <>
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                        Task Archive
+                      </h1>
+                      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                        Completed tasks archive
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button variant="outline" size="sm" onClick={handleHideArchive} className="gap-2">
+                        Back to Active
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={async () => {
+                        const { useTaskStore } = await import("@/store/use-task-store")
+                        const completed = useTaskStore.getState().tasks.filter((t) => t.completed)
+                        const XLSX = await import("xlsx")
+                        const data = completed.map((t) => ({
+                          Title: t.title,
+                          Description: t.description,
+                          Priority: t.priority,
+                          "Due Date": t.dueDate,
+                          Progress: `${t.progress}%`,
+                          Subtasks: t.subtasks.filter((s) => s.completed).length + "/" + t.subtasks.length,
+                        }))
+                        const wb = XLSX.utils.book_new()
+                        XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Completed Tasks")
+                        XLSX.writeFile(wb, "completed-tasks.xlsx")
+                      }}
+                      className="gap-2"
+                    >
+                      <Download className="h-3.5 w-3.5" />
+                      Export
                     </Button>
-                  )}
-                  <Filters />
-                </div>
-              </div>
-              <StatsCards />
-
-              {filterStatus === "completed" && (
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={async () => {
-                      const { useTaskStore } = await import("@/store/use-task-store")
-                      const completed = useTaskStore.getState().tasks.filter((t) => t.completed)
-                      const XLSX = await import("xlsx")
-                      const data = completed.map((t) => ({
-                        Title: t.title,
-                        Description: t.description,
-                        Priority: t.priority,
-                        "Due Date": t.dueDate,
-                        Progress: `${t.progress}%`,
-                        Subtasks: t.subtasks.filter((s) => s.completed).length + "/" + t.subtasks.length,
-                      }))
-                      const wb = XLSX.utils.book_new()
-                      XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Completed Tasks")
-                      XLSX.writeFile(wb, "completed-tasks.xlsx")
-                    }}
-                    className="gap-2"
-                  >
-                    <Download className="h-3.5 w-3.5" />
-                    Export
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
-                    <Trash2 className="h-3.5 w-3.5" />
-                    Clear All
-                  </Button>
-                </div>
+                    <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
+                      <Trash2 className="h-3.5 w-3.5" />
+                      Clear All
+                    </Button>
+                  </div>
+                  <TaskListView archive />
+                </>
+              ) : (
+                <>
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                        Active Tasks
+                      </h1>
+                      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                        Manage and track your tasks
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2">
+                        <Plus className="h-4 w-4" />
+                        Add Task
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={handleShowArchive} className="gap-2">
+                        <Archive className="h-4 w-4" />
+                        Archive
+                      </Button>
+                      <Filters />
+                    </div>
+                  </div>
+                  <StatsCards />
+                  {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
+                </>
               )}
-
-              {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
             </>
           )}
 
@@ -197,7 +233,7 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {isMobile && <BottomNav onSectionChange={setActiveSection} />}
+      {isMobile && <BottomNav onSectionChange={handleSectionChange} />}
 
       {/* Floating dark mode toggle */}
       <button
@@ -214,7 +250,7 @@ export default function DashboardPage() {
       <GlobalSearch
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
-        onNavigate={setActiveSection}
+        onNavigate={handleSectionChange}
       />
 
       <Toaster />

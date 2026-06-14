@@ -38,7 +38,7 @@ type ChallengeStore = {
 
 export const useChallengeStore = create<ChallengeStore>((set, get) => ({
   challenges: [],
-  viewMode: "kanban",
+  viewMode: "card",
   selectedChallengeId: null,
   isCreateModalOpen: false,
 
@@ -64,7 +64,18 @@ export const useChallengeStore = create<ChallengeStore>((set, get) => ({
 
   updateChallenge: (id, updates) => {
     set((state) => ({
-      challenges: state.challenges.map((c) => (c.id === id ? { ...c, ...updates } : c)),
+      challenges: state.challenges.map((c) => {
+        if (c.id !== id) return c
+        const updated = { ...c, ...updates }
+        if (updates.type || updates.startDate) {
+          const start = updated.startDate ? new Date(updated.startDate) : new Date()
+          const total = parseInt(updated.type)
+          updated.days = generateDays(updated.type, format(start, "yyyy-MM-dd"))
+          updated.startDate = format(start, "yyyy-MM-dd")
+          updated.endDate = updated.endDate || format(addDays(start, total), "yyyy-MM-dd")
+        }
+        return updated
+      }),
     }))
   },
 

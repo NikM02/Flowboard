@@ -168,13 +168,13 @@ function ListRow({ task, index }: { task: Task; index: number }) {
   )
 }
 
-export function TaskListView() {
+export function TaskListView({ archive }: { archive?: boolean }) {
   const { getFilteredTasks } = useTaskStore()
   const tasks = getFilteredTasks()
   const isMobile = useMediaQuery("(max-width: 640px)")
 
   if (tasks.length === 0) {
-    return <EmptyState />
+    return <EmptyState archive={archive} />
   }
 
   if (isMobile) {

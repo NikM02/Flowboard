@@ -25,6 +25,8 @@ export function CreateHabitModal() {
   const [description, setDescription] = useState("")
   const [category, setCategory] = useState<HabitCategory>("health")
   const [frequency, setFrequency] = useState<"daily" | "weekly">("daily")
+  const [startDate, setStartDate] = useState("")
+  const [endDate, setEndDate] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -35,11 +37,15 @@ export function CreateHabitModal() {
       category,
       icon: "heart",
       frequency,
+      startDate: startDate || undefined,
+      endDate: endDate || undefined,
     })
     setName("")
     setDescription("")
     setCategory("health")
     setFrequency("daily")
+    setStartDate("")
+    setEndDate("")
     setIsCreateModalOpen(false)
   }
 
@@ -69,6 +75,16 @@ export function CreateHabitModal() {
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-2">
+              <Label htmlFor="habit-start">Start Date</Label>
+              <Input id="habit-start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="habit-end">End Date</Label>
+              <Input id="habit-end" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            </div>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>

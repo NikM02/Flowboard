@@ -42,18 +42,22 @@ export function HabitTrackerSection() {
   const [editName, setEditName] = useState("")
   const [editDesc, setEditDesc] = useState("")
   const [editCategory, setEditCategory] = useState<HabitCategory>("health")
+  const [editStart, setEditStart] = useState("")
+  const [editEnd, setEditEnd] = useState("")
 
   const openEdit = (habit: Habit) => {
     setEditingHabit(habit)
     setEditName(habit.name)
     setEditDesc(habit.description)
     setEditCategory(habit.category)
+    setEditStart(habit.startDate || "")
+    setEditEnd(habit.endDate || "")
   }
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingHabit || !editName.trim()) return
-    updateHabit(editingHabit.id, { name: editName.trim(), description: editDesc.trim(), category: editCategory })
+    updateHabit(editingHabit.id, { name: editName.trim(), description: editDesc.trim(), category: editCategory, startDate: editStart || undefined, endDate: editEnd || undefined })
     setEditingHabit(null)
   }
 
@@ -113,6 +117,16 @@ export function HabitTrackerSection() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-2">
+                <Label htmlFor="habit-start">Start Date</Label>
+                <Input id="habit-start" type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="habit-end">End Date</Label>
+                <Input id="habit-end" type="date" value={editEnd} onChange={(e) => setEditEnd(e.target.value)} />
               </div>
             </div>
             <div className="flex justify-end gap-3 pt-2">

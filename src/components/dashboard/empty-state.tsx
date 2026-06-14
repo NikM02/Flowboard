@@ -5,7 +5,7 @@ import { ClipboardList, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTaskStore } from "@/store/use-task-store"
 
-export function EmptyState() {
+export function EmptyState({ archive }: { archive?: boolean }) {
   const { setIsCreateModalOpen } = useTaskStore()
 
   return (
@@ -24,20 +24,24 @@ export function EmptyState() {
         <ClipboardList className="h-10 w-10 text-neutral-400 dark:text-neutral-500" />
       </motion.div>
       <h3 className="mb-2 text-xl font-semibold text-neutral-900 dark:text-neutral-50">
-        No tasks yet
+        {archive ? "No completed tasks" : "No tasks yet"}
       </h3>
       <p className="mb-8 max-w-sm text-center text-sm text-neutral-500 dark:text-neutral-400">
-        Create your first task and start organizing your work.
+        {archive
+          ? "Complete a task and it will appear here."
+          : "Create your first task and start organizing your work."}
       </p>
-      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-        <Button
-          onClick={() => setIsCreateModalOpen(true)}
-          className="gap-2 rounded-xl px-6 py-2.5 text-sm shadow-lg shadow-neutral-200/50 dark:shadow-neutral-950/50"
-        >
-          <Plus className="h-4 w-4" />
-          Create your first task
-        </Button>
-      </motion.div>
+      {!archive && (
+        <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+          <Button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="gap-2 rounded-xl px-6 py-2.5 text-sm shadow-lg shadow-neutral-200/50 dark:shadow-neutral-950/50"
+          >
+            <Plus className="h-4 w-4" />
+            Create your first task
+          </Button>
+        </motion.div>
+      )}
     </motion.div>
   )
 }
