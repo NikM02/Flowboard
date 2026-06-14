@@ -124,7 +124,6 @@ export function useSupabasePersistence() {
               if (d.stocks?.length) useFinanceStore.setState({ stocks: d.stocks as any })
               if (d.mutualFunds?.length) useFinanceStore.setState({ mutualFunds: d.mutualFunds as any })
               if (d.futureGoals?.length) useFutureStore.setState({ goals: d.futureGoals as any })
-            } else if (error?.code === "PGRST116") {
             } else {
               loadFromLocal()
             }
