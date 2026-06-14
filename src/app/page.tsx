@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Moon, Sun, Download, Trash2, Plus, Archive } from "lucide-react"
+import { Moon, Sun, Download, Trash2, Plus, Archive, Loader2 } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { GlobalSearch } from "@/components/dashboard/global-search"
@@ -10,7 +10,7 @@ import { Confetti } from "@/components/dashboard/confetti"
 import { Toaster } from "@/components/ui/toaster"
 import { useToastWatcher } from "@/hooks/use-toast-watcher"
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
-import { useLocalPersistence } from "@/hooks/use-store-persistence"
+import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { Filters } from "@/components/dashboard/filters"
 import { TaskCardView } from "@/components/dashboard/task-card-view"
@@ -63,7 +63,7 @@ export default function DashboardPage() {
   const onAdd = useCallback(() => setConfettiTrigger((c) => c + 1), [])
   useToastWatcher(onAdd)
   useNotificationGenerator()
-  useLocalPersistence()
+  const { loading: dataLoading } = useSupabasePersistence()
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -92,7 +92,15 @@ export default function DashboardPage() {
   return (
     <>
       {!authenticated && <LoginScreen onAuth={handleAuth} />}
-      {authenticated && (
+      {authenticated && dataLoading && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+            <p className="text-sm text-neutral-500">Loading your data...</p>
+          </div>
+        </div>
+      )}
+      {authenticated && !dataLoading && (
     <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
           <Sidebar
             open={sidebarOpen}
