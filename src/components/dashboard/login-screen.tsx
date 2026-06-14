@@ -13,6 +13,13 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
   const [error, setError] = useState("")
 
   useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const oauthError = params.get("error_description") || params.get("error")
+    if (oauthError) {
+      setError(oauthError.replace(/\+/g, " "))
+      window.history.replaceState({}, "", window.location.pathname)
+    }
+
     try {
       const client = createClient()
       supabaseRef.current = client
