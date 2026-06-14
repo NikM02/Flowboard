@@ -80,8 +80,9 @@ export default function DashboardPage() {
     setAuthenticated(true)
   }, [])
 
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem("arise-auth")
+  const handleLogout = useCallback(async () => {
+    const { createClient } = await import("@/lib/supabase/client")
+    await createClient().auth.signOut()
     setAuthenticated(false)
   }, [])
 
