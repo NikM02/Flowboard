@@ -43,8 +43,8 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
           <div className="min-w-0">
             <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{challenge.title}</h4>
-            {challenge.description && <p className="text-xs text-neutral-400 truncate">{challenge.description}</p>}
-            <p className="text-[10px] text-neutral-400 mt-0.5">
+            {challenge.description && <p className="text-[11px] sm:text-xs text-neutral-400 truncate">{challenge.description}</p>}
+            <p className="text-[9px] sm:text-[10px] text-neutral-400 mt-0.5">
               {format(new Date(challenge.startDate), "MMM d")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
             </p>
           </div>
@@ -64,32 +64,32 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-2 mb-3">
-        <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-          <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{completed}</p>
-          <p className="text-[10px] text-neutral-400">Done</p>
+      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+        <div className="rounded-lg bg-neutral-50 p-1.5 sm:p-2 text-center dark:bg-neutral-900">
+          <p className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-50">{completed}</p>
+          <p className="text-[9px] sm:text-[10px] text-neutral-400">Done</p>
         </div>
-        <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-          <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{remaining}</p>
-          <p className="text-[10px] text-neutral-400">Left</p>
+        <div className="rounded-lg bg-neutral-50 p-1.5 sm:p-2 text-center dark:bg-neutral-900">
+          <p className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-50">{remaining}</p>
+          <p className="text-[9px] sm:text-[10px] text-neutral-400">Left</p>
         </div>
-        <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-          <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{progress}%</p>
-          <p className="text-[10px] text-neutral-400">Progress</p>
+        <div className="rounded-lg bg-neutral-50 p-1.5 sm:p-2 text-center dark:bg-neutral-900">
+          <p className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-50">{progress}%</p>
+          <p className="text-[9px] sm:text-[10px] text-neutral-400">Progress</p>
         </div>
       </div>
 
-      <Progress value={progress} className="h-1.5 mb-3" />
+      <Progress value={progress} className="h-1 mb-2 sm:h-1.5 sm:mb-3" />
 
-      <div className="flex items-center justify-between mb-3">
-        <span className="text-[10px] font-medium text-neutral-400 uppercase">{typeLabel[challenge.type]}</span>
+      <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <span className="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">{typeLabel[challenge.type]}</span>
         <button
           onClick={() => {
             const todayDay = challenge.days.find((d) => d.date === format(new Date(), "yyyy-MM-dd"))
             if (todayDay) toggleDay(challenge.id, todayDay.day)
           }}
           className={cn(
-            "flex items-center justify-center rounded-lg border text-xs font-medium transition-all h-7 px-2 gap-1",
+            "flex items-center justify-center rounded-lg border text-[10px] sm:text-xs font-medium transition-all h-6 sm:h-7 px-1.5 sm:px-2 gap-0.5 sm:gap-1",
             challenge.days.some((d) => d.date === format(new Date(), "yyyy-MM-dd") && d.completed)
               ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
               : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
@@ -116,7 +116,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
 
   return (
     <div className="max-h-48 overflow-x-auto pr-1">
-      <div className={cn("grid gap-1.5 min-w-[280px]", cols === 7 ? "grid-cols-7" : "grid-cols-10")}>
+      <div className={cn("grid gap-1 sm:gap-1.5 min-w-[260px]", cols === 7 ? "grid-cols-7" : "grid-cols-10")}>
         {challenge.days.map((d) => {
           const isToday = d.date === todayDate
           return (
@@ -124,8 +124,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
               key={d.day}
               onClick={() => toggleDay(challenge.id, d.day)}
               className={cn(
-                "flex items-center justify-center rounded-lg border-2 font-semibold text-xs transition-all relative",
-                total === 21 ? "h-[34px]" : "h-[30px]",
+                "flex items-center justify-center rounded-lg border-2 font-semibold text-[10px] sm:text-xs transition-all relative",
+                total === 21 ? "h-[30px] sm:h-[34px]" : "h-[26px] sm:h-[30px]",
                 d.completed
                   ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
                   : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
@@ -176,7 +176,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
           </p>
         </div>
 
-        <div className="flex items-center gap-1.5 overflow-x-auto max-w-[80px] sm:max-w-[200px]">
+        <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-[200px]">
           {challenge.days.filter((d) => d.day <= 14 || d.day > challenge.days.length - 7).map((d) => {
             const isToday = d.date === todayDate
             return (
