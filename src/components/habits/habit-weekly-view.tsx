@@ -31,8 +31,8 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
         </button>
       </div>
 
-      <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-950">
-        <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-1">
+      <div className="overflow-x-auto rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-950">
+        <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-1 min-w-[320px]">
           <div className="text-[10px] font-semibold text-neutral-300 dark:text-neutral-600" />
 
           {weekDays.map((d) => (

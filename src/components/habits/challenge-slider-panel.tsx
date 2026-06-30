@@ -115,8 +115,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="max-h-48 overflow-y-auto pr-1">
-      <div className={cn("grid gap-1.5", cols === 7 ? "grid-cols-7" : "grid-cols-10")}>
+    <div className="max-h-48 overflow-x-auto pr-1">
+      <div className={cn("grid gap-1.5 min-w-[280px]", cols === 7 ? "grid-cols-7" : "grid-cols-10")}>
         {challenge.days.map((d) => {
           const isToday = d.date === todayDate
           return (

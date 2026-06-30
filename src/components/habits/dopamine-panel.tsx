@@ -99,7 +99,7 @@ export function DopaminePanel() {
                 key={ds}
                 onClick={() => handleDaySelect(ds)}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-xl px-1.5 sm:px-3 py-2 transition-all shrink-0 min-w-[40px] sm:min-w-[52px]",
+                  "flex flex-col items-center gap-1 rounded-xl px-1 sm:px-3 py-2 transition-all shrink-0 min-w-[36px] sm:min-w-[52px]",
                   isSelected
                     ? "bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900"
                     : "bg-neutral-50 text-neutral-500 hover:bg-neutral-100 dark:bg-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800"

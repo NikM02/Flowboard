@@ -37,7 +37,7 @@ export function HabitMonthlyPanel() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+      className="overflow-x-hidden rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Monthly Overview</h3>
