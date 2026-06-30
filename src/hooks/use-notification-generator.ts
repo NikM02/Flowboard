@@ -37,9 +37,6 @@ export function useNotificationGenerator() {
       }
     }
 
-    // Check on mount and whenever tasks change
-    checkDueTasks()
-
     const unsubTasks = useTaskStore.subscribe((state, prevState) => {
       const { tasks } = state
       const { tasks: prevTasks } = prevState
