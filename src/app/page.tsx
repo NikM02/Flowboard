@@ -245,7 +245,7 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {isMobile && <BottomNav onSectionChange={handleSectionChange} />}
+      {isMobile && activeSection !== "future" && <BottomNav onSectionChange={handleSectionChange} />}
 
       {/* Floating dark mode toggle */}
       <button
