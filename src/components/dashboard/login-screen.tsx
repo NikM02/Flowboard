@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useRef } from "react"
 import { motion } from "framer-motion"
-import { Sparkles, Loader2 } from "lucide-react"
+import Image from "next/image"
+import { Loader2 } from "lucide-react"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createClient } from "@/lib/supabase/client"
 
@@ -57,9 +58,9 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
             initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: "spring", damping: 18, stiffness: 200 }}
-            className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-neutral-900 to-neutral-700 shadow-lg shadow-neutral-900/10 dark:from-neutral-50 dark:to-neutral-300"
+            className="mx-auto mb-5"
           >
-            <Sparkles className="h-7 w-7 text-white dark:text-neutral-900" />
+            <Image src="/T.png" alt="Logo" width={64} height={64} className="rounded-2xl shadow-lg" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}

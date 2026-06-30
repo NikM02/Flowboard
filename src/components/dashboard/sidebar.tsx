@@ -1,6 +1,7 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
+import Image from "next/image"
 import {
   ListTodo,
   X,
@@ -37,9 +38,7 @@ export function Sidebar({
   const content = (
     <div className="flex h-full flex-col gap-1 p-4">
         <div className="flex items-center gap-3 px-3 pb-6 pt-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-900 dark:bg-neutral-50">
-            <Sparkles className="h-4 w-4 text-white dark:text-neutral-900" />
-          </div>
+          <Image src="/T.png" alt="Logo" width={32} height={32} className="rounded-lg" />
           <span className="text-lg font-semibold tracking-tight">FlowBoard</span>
         </div>
 
@@ -105,7 +104,7 @@ export function Sidebar({
               : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
           )}
         >
-          <Sparkles className="h-4 w-4" />
+          <Sparkles className="h-4 w-4 shrink-0" />
           Future Self
         </button>
       </div>
