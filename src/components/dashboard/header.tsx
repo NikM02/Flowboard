@@ -1,15 +1,17 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Search } from "lucide-react"
+import { Search, LogOut } from "lucide-react"
 import Image from "next/image"
 import { NotificationBell } from "./notification-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function Header({
   onSearchOpen,
+  onLogout,
 }: {
   onSearchOpen: () => void
+  onLogout?: () => void
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
 
@@ -44,6 +46,14 @@ export function Header({
         </button>
 
         <NotificationBell />
+
+        <button
+          onClick={onLogout}
+          className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors"
+          title="Logout"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
       </div>
     </motion.header>
   )

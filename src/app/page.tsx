@@ -109,7 +109,7 @@ export default function DashboardPage() {
           />
 
       <div className="flex flex-1 flex-col pb-16 md:pb-0">
-        <Header onSearchOpen={() => setSearchOpen(true)} />
+        <Header onSearchOpen={() => setSearchOpen(true)} onLogout={handleLogout} />
 
         <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
           {activeSection === "tasks" && (
