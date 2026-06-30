@@ -50,10 +50,10 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <button onClick={() => onEdit(challenge)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => onEdit(challenge)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 opacity-0 group-hover:opacity-100 transition-opacity">
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
           {allDone && (
