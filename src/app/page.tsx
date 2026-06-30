@@ -189,7 +189,7 @@ export default function DashboardPage() {
                       <Filters />
                     </div>
                   </div>
-                  <StatsCards />
+                  <div className="hidden sm:block"><StatsCards /></div>
                   {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
                 </>
               )}
