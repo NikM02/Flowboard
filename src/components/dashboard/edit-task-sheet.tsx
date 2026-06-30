@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useTaskStore } from "@/store/use-task-store"
+import { useMediaQuery } from "@/hooks/use-media-query"
+import { cn } from "@/lib/shadcn-utils"
 import type { Priority } from "@/types"
 
 function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void }) {
@@ -176,11 +178,12 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
 }
 
 export function EditTaskSheet() {
+  const isMobile = useMediaQuery("(max-width: 768px)")
   const { selectedTask, isEditSheetOpen, setIsEditSheetOpen } = useTaskStore()
 
   return (
     <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-      <SheetContent className="overflow-y-auto sm:max-w-lg">
+      <SheetContent side={isMobile ? "bottom" : "right"} className={cn("overflow-y-auto", isMobile ? "max-h-[85vh] rounded-t-2xl" : "sm:max-w-lg")}>
         <SheetHeader className="mb-6">
           <SheetTitle className="text-xl">Edit Task</SheetTitle>
           <SheetDescription>
