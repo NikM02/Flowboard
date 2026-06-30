@@ -5,6 +5,7 @@ import { motion } from "framer-motion"
 import { Moon, Sun, Download, Trash2, Plus, Archive, Loader2 } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
+import { BottomNav } from "@/components/dashboard/bottom-nav"
 import { GlobalSearch } from "@/components/dashboard/global-search"
 import { Confetti } from "@/components/dashboard/confetti"
 import { Toaster } from "@/components/ui/toaster"
@@ -18,7 +19,7 @@ import { TaskListView } from "@/components/dashboard/task-list-view"
 import { CreateTaskModal } from "@/components/dashboard/create-task-modal"
 import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
-import { BottomNav } from "@/components/dashboard/bottom-nav"
+
 import { LoginScreen } from "@/components/dashboard/login-screen"
 import { Button } from "@/components/ui/button"
 import { HabitTrackerSection } from "@/components/habits/habit-tracker-section"
@@ -111,7 +112,7 @@ export default function DashboardPage() {
           />
 
       <div className="flex flex-1 flex-col pb-16 md:pb-0">
-        <Header onMenuClick={() => setSidebarOpen(true)} onSearchOpen={() => setSearchOpen(true)} />
+        <Header onSearchOpen={() => setSearchOpen(true)} />
 
         <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
           {activeSection === "tasks" && (
@@ -245,7 +246,7 @@ export default function DashboardPage() {
         </main>
       </div>
 
-      {isMobile && activeSection !== "future" && <BottomNav onSectionChange={handleSectionChange} />}
+      <BottomNav activeSection={activeSection} onSectionChange={handleSectionChange} />
 
       {/* Floating dark mode toggle */}
       <button
