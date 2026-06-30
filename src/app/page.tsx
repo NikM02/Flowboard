@@ -7,9 +7,7 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { BottomNav } from "@/components/dashboard/bottom-nav"
 import { GlobalSearch } from "@/components/dashboard/global-search"
-import { Confetti } from "@/components/dashboard/confetti"
-import { Toaster } from "@/components/ui/toaster"
-import { useToastWatcher } from "@/hooks/use-toast-watcher"
+
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { StatsCards } from "@/components/dashboard/stats-cards"
@@ -36,7 +34,7 @@ export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [activeSection, setActiveSection] = useState<DashboardSection>("tasks")
   const [searchOpen, setSearchOpen] = useState(false)
-  const [confettiTrigger, setConfettiTrigger] = useState(0)
+
   const [authenticated, setAuthenticated] = useState(false)
   const [showTaskArchive, setShowTaskArchive] = useState(false)
   const { viewMode, setFilterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
@@ -61,8 +59,7 @@ export default function DashboardPage() {
     setShowTaskArchive(false)
   }, [setFilterStatus])
 
-  const onAdd = useCallback(() => setConfettiTrigger((c) => c + 1), [])
-  useToastWatcher(onAdd)
+
   useNotificationGenerator()
   const { loading: dataLoading } = useSupabasePersistence()
 
@@ -266,8 +263,7 @@ export default function DashboardPage() {
         onNavigate={handleSectionChange}
       />
 
-      <Toaster />
-      <Confetti trigger={confettiTrigger} />
+
     </div>
       )}
     </>
