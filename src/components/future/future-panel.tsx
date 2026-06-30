@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive,
@@ -175,8 +175,11 @@ function getPreviousDate(period: GrowthPeriod, date: Date): Date {
 
 function SimulatorTab() {
   const [period, setPeriod] = useState<GrowthPeriod>("monthly")
-  const now = new Date()
-  const [selectedDate, setSelectedDate] = useState(now)
+  const [selectedDate, setSelectedDate] = useState(new Date())
+
+  useEffect(() => {
+    setSelectedDate(new Date())
+  }, [])
   const [goalDialogOpen, setGoalDialogOpen] = useState(false)
   const [editGoalId, setEditGoalId] = useState<string | null>(null)
   const [goalForm, setGoalForm] = useState({ title: "", category: "tasks" as GrowthCategory, targetValue: 0, currentValue: 0 })
@@ -215,7 +218,7 @@ function SimulatorTab() {
         case "yearly": return new Date(selectedDate.getFullYear() + 1, 0, 1)
       }
     })()
-    return next <= now
+    return next <= new Date()
   }
 
   const handleGoalSubmit = () => {
@@ -258,7 +261,7 @@ function SimulatorTab() {
           {(["monthly", "quarterly", "yearly"] as const).map((p) => (
             <button
               key={p}
-              onClick={() => { setPeriod(p); setSelectedDate(now) }}
+              onClick={() => { setPeriod(p); setSelectedDate(new Date()) }}
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-medium transition-all capitalize",
                 period === p
