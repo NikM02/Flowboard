@@ -37,7 +37,7 @@ export function Filters() {
       </div>
 
       <Select value={sortBy} onValueChange={(v) => setSortBy(v as SortOption)}>
-        <SelectTrigger aria-label="Sort tasks" className="h-9 w-[140px] gap-1.5 border-neutral-200/60 bg-white text-sm dark:border-neutral-800/60 dark:bg-neutral-950">
+        <SelectTrigger aria-label="Sort tasks" className="h-9 w-[110px] sm:w-[140px] gap-1 border-neutral-200/60 bg-white text-xs sm:text-sm dark:border-neutral-800/60 dark:bg-neutral-950">
           <ArrowUpDown className="h-3.5 w-3.5 text-neutral-500" />
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
