@@ -58,7 +58,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
             initial={{ scale: 0, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ delay: 0.2, type: "spring", damping: 18, stiffness: 200 }}
-            className="mx-auto mb-5"
+            className="flex justify-center mb-5"
           >
             <Image src="/T.png" alt="Logo" width={96} height={96} className="object-contain" />
           </motion.div>
