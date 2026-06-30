@@ -76,7 +76,7 @@ export function HabitTrackerSection() {
             )}
           >
             <t.icon className="h-4 w-4" />
-            <span className={cn(tab === t.key ? "inline" : "hidden sm:inline")}>{t.label}</span>
+            <span className={cn(tab !== t.key && "hidden sm:inline")}>{t.label}</span>
           </button>
         ))}
       </div>
