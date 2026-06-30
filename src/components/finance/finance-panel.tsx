@@ -1211,7 +1211,7 @@ export function FinancePanel() {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />
-              <span className="hidden sm:inline">{t.label}</span>
+              <span className={cn(tab === t.key ? "inline" : "hidden sm:inline")}>{t.label}</span>
             </button>
           )
         })}
