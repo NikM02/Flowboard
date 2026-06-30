@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { useToastStore } from "@/store/use-toast-store"
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
@@ -9,18 +9,20 @@ import { useDopamineStore } from "@/store/use-dopamine-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 
-function isBulk(prev: number, cur: number) {
-  return prev === 0 && cur - prev > 1
-}
-
 export function useToastWatcher(onAdd: () => void) {
   const show = useToastStore((s) => s.show)
+  const ready = useRef(false)
 
   useEffect(() => {
+    // Skip all state changes within the first 500ms (hydration window)
+    const timer = setTimeout(() => { ready.current = true }, 500)
+
+    const skip = () => !ready.current
+
     const unsubTasks = useTaskStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { tasks } = state
       const { tasks: prevTasks } = prevState
-      if (isBulk(prevTasks.length, tasks.length)) return
       if (tasks.length > prevTasks.length) {
         const added = tasks[0]
         show({ type: "success", title: "Task added", description: added.title })
@@ -40,9 +42,9 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     const unsubHabits = useHabitStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { habits } = state
       const { habits: prevHabits } = prevState
-      if (isBulk(prevHabits.length, habits.length)) return
       if (habits.length > prevHabits.length) {
         const added = habits[0]
         show({ type: "success", title: "Habit created", description: added.name })
@@ -67,9 +69,9 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     const unsubChallenges = useChallengeStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { challenges } = state
       const { challenges: prevChallenges } = prevState
-      if (isBulk(prevChallenges.length, challenges.length)) return
       if (challenges.length > prevChallenges.length) {
         const added = challenges[0]
         show({ type: "success", title: "Challenge created", description: added.title })
@@ -91,7 +93,7 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     const unsubDopamine = useDopamineStore.subscribe((state, prevState) => {
-      if (isBulk(prevState.entries.length, state.entries.length)) return
+      if (skip()) return
       if (state.entries.length > prevState.entries.length) {
         show({ type: "success", title: "Daily check-in saved" })
         onAdd()
@@ -99,9 +101,9 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     const unsubSkills = useSkillStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { skills } = state
       const { skills: prevSkills } = prevState
-      if (isBulk(prevSkills.length, skills.length)) return
       if (skills.length > prevSkills.length) {
         const added = skills[0]
         show({ type: "success", title: "Skill added", description: added.name })
@@ -125,9 +127,7 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     const unsubFinance = useFinanceStore.subscribe((state, prevState) => {
-      if (isBulk(prevState.incomes.length, state.incomes.length)) {
-        // Skip bulk hydration but still check for individual changes in other arrays
-      }
+      if (skip()) return
       if (state.incomes.length > prevState.incomes.length) {
         const added = state.incomes[0]
         show({ type: "success", title: "Income added", description: `₹${added.amount} — ${added.description}` })
@@ -168,6 +168,7 @@ export function useToastWatcher(onAdd: () => void) {
     })
 
     return () => {
+      clearTimeout(timer)
       unsubTasks()
       unsubHabits()
       unsubChallenges()

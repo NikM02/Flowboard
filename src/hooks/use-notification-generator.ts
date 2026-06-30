@@ -11,8 +11,12 @@ import { useSkillStore } from "@/store/use-skill-store"
 export function useNotificationGenerator() {
   const add = useNotificationStore((s) => s.add)
   const notifiedDueTaskIds = useRef(new Set<string>())
+  const ready = useRef(false)
 
   useEffect(() => {
+    const timer = setTimeout(() => { ready.current = true }, 500)
+    const skip = () => !ready.current
+
     const checkDueTasks = () => {
       const { tasks } = useTaskStore.getState()
       const today = startOfDay(new Date())
@@ -38,12 +42,12 @@ export function useNotificationGenerator() {
     }
 
     const unsubTasks = useTaskStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { tasks } = state
       const { tasks: prevTasks } = prevState
 
       // Re-check due dates when tasks change (new task added, due date changed)
       if (tasks.length !== prevTasks.length || tasks.some((t, i) => t.dueDate !== prevTasks[i]?.dueDate)) {
-        // Clear stale keys for tasks that changed their due date
         for (const t of tasks) {
           const prevT = prevTasks.find((p) => p.id === t.id)
           if (prevT && t.dueDate !== prevT.dueDate) {
@@ -66,6 +70,7 @@ export function useNotificationGenerator() {
     const interval = setInterval(checkDueTasks, 5 * 60 * 1000)
 
     const unsubHabits = useHabitStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { habits } = state
       const { habits: prevHabits } = prevState
       for (const h of habits) {
@@ -80,6 +85,7 @@ export function useNotificationGenerator() {
     })
 
     const unsubChallenges = useChallengeStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { challenges } = state
       const { challenges: prevChallenges } = prevState
       for (const c of challenges) {
@@ -94,6 +100,7 @@ export function useNotificationGenerator() {
     })
 
     const unsubSkills = useSkillStore.subscribe((state, prevState) => {
+      if (skip()) return
       const { skills } = state
       const { skills: prevSkills } = prevState
       for (const s of skills) {
@@ -106,6 +113,7 @@ export function useNotificationGenerator() {
     })
 
     return () => {
+      clearTimeout(timer)
       unsubTasks()
       unsubHabits()
       unsubChallenges()
