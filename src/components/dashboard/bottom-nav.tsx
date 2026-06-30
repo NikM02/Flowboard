@@ -20,7 +20,7 @@ export function BottomNav({
   onSectionChange?: (s: DashboardSection) => void
 }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200/60 bg-white/80 backdrop-blur-xl md:hidden dark:border-neutral-800/60 dark:bg-neutral-950/80">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-neutral-200/60 bg-white/80 backdrop-blur-xl md:hidden dark:border-neutral-800/60 dark:bg-neutral-950/80">
       <div className="flex items-center justify-around px-2 py-1">
         {navItems.map((item) => {
           const Icon = item.icon

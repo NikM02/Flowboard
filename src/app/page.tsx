@@ -34,7 +34,7 @@ import type { DashboardSection } from "@/types"
 
 export default function DashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState<DashboardSection>("habits")
+  const [activeSection, setActiveSection] = useState<DashboardSection>("tasks")
   const [searchOpen, setSearchOpen] = useState(false)
   const [confettiTrigger, setConfettiTrigger] = useState(0)
   const [authenticated, setAuthenticated] = useState(false)
