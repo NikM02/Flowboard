@@ -38,7 +38,7 @@ export default function DashboardPage() {
 
   const [authenticated, setAuthenticated] = useState(false)
   const [taskView, setTaskView] = useState<"active" | "todo" | "archive">("active")
-  const { viewMode, setFilterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
+  const { setFilterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
   const { darkMode, toggleDarkMode } = useThemeStore()
   const isMobile = useMediaQuery("(max-width: 768px)")
 
@@ -141,7 +141,7 @@ export default function DashboardPage() {
                     </div>
                   </div>
                   <div className="hidden sm:block"><StatsCards /></div>
-                  {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
+                  <TaskCardView />
                 </>
               )}
 
