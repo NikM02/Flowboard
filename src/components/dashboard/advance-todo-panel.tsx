@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Check, Plus, Pencil, Trash2, X, ListTodo } from "lucide-react"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"

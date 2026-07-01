@@ -10,6 +10,8 @@ import {
   ChevronDown,
   ChevronRight,
   CheckSquare,
+  Plus,
+  Minus,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
@@ -36,12 +38,16 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
 
   const priority = priorityConfig[task.priority]
 
-  const handleMarkComplete = () => {
-    updateTask(task.id, { completed: true, progress: 100 })
-  }
-
-  const handleMarkActive = () => {
-    updateTask(task.id, { completed: false })
+  const adjustProgress = (delta: number) => {
+    const step = 25
+    const current = task.progress
+    let next = Math.round(current / step) * step + delta
+    next = Math.max(0, Math.min(100, next))
+    if (next >= 100) {
+      updateTask(task.id, { progress: 100, completed: true })
+    } else {
+      updateTask(task.id, { progress: next, completed: false })
+    }
   }
 
   return (
@@ -57,17 +63,6 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="mb-1 flex items-center gap-2">
-            <button
-              onClick={task.completed ? handleMarkActive : handleMarkComplete}
-              className="shrink-0"
-              title={task.completed ? "Mark active" : "Mark complete"}
-            >
-              {task.completed ? (
-                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
-              ) : (
-                <Circle className="h-5 w-5 text-neutral-300 hover:text-emerald-400 dark:text-neutral-600 dark:hover:text-emerald-500 transition-colors" />
-              )}
-            </button>
             <h3 className={`text-base font-semibold truncate ${task.completed ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-900 dark:text-neutral-50"}`}>
               {task.title}
             </h3>
@@ -127,7 +122,23 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       <div className="space-y-1.5">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-neutral-600 dark:text-neutral-400">Progress</span>
-          <span className="font-semibold text-neutral-700 dark:text-neutral-300">{task.progress}%</span>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => adjustProgress(-25)}
+              disabled={task.progress <= 0}
+              className="flex h-5 w-5 items-center justify-center rounded border border-neutral-200 text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            >
+              <Minus className="h-3 w-3" />
+            </button>
+            <span className="min-w-[28px] text-center font-semibold text-neutral-700 dark:text-neutral-300">{task.progress}%</span>
+            <button
+              onClick={() => adjustProgress(25)}
+              disabled={task.progress >= 100}
+              className="flex h-5 w-5 items-center justify-center rounded border border-neutral-200 text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
+            >
+              <Plus className="h-3 w-3" />
+            </button>
+          </div>
         </div>
         <Progress value={task.progress} className="h-2" />
       </div>
