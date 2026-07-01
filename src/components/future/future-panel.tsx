@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive,
+  TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive, CalendarDays,
   Plus, Trash2, Pencil, Download, Sparkles, ArrowUp, ArrowDown, Minus,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
@@ -24,10 +24,12 @@ import { useDopamineStore } from "@/store/use-dopamine-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import { useFutureStore } from "@/store/use-future-store"
+import { CalendarTab } from "./future-calendar-tab"
 import type { GrowthPeriod, GrowthCategory, FutureGoal } from "@/types"
 
-const tabs: { key: "simulator" | "archive"; label: string; icon: typeof Target }[] = [
-  { key: "simulator", label: "Growth Simulator", icon: TrendingUp },
+const tabs: { key: "simulator" | "calendar" | "archive"; label: string; icon: typeof Target }[] = [
+  { key: "simulator", label: "Growth", icon: TrendingUp },
+  { key: "calendar", label: "Calendar", icon: CalendarDays },
   { key: "archive", label: "Archive", icon: Archive },
 ]
 
@@ -563,7 +565,7 @@ function ArchiveTab() {
 // ─── Main Panel ───────────────────────────────────────────
 
 export function FuturePanel() {
-  const [tab, setTab] = useState<"simulator" | "archive">("simulator")
+  const [tab, setTab] = useState<"simulator" | "calendar" | "archive">("simulator")
 
   return (
     <div>
@@ -606,6 +608,7 @@ export function FuturePanel() {
           transition={{ duration: 0.2 }}
         >
           {tab === "simulator" && <SimulatorTab />}
+          {tab === "calendar" && <CalendarTab />}
           {tab === "archive" && <ArchiveTab />}
         </motion.div>
       </AnimatePresence>

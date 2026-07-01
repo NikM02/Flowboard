@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Moon, Sun, Download, Trash2, Plus, Archive, Loader2 } from "lucide-react"
+import { Moon, Sun, Download, Trash2, Plus, Archive, Loader2, ListChecks, Zap } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { BottomNav } from "@/components/dashboard/bottom-nav"
@@ -20,6 +20,7 @@ import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialo
 
 import { LoginScreen } from "@/components/dashboard/login-screen"
 import { Button } from "@/components/ui/button"
+import { AdvanceTodoPanel } from "@/components/dashboard/advance-todo-panel"
 import { HabitTrackerSection } from "@/components/habits/habit-tracker-section"
 import { SkillPanel } from "@/components/skills/skill-panel"
 import { FinancePanel } from "@/components/finance/finance-panel"
@@ -36,7 +37,7 @@ export default function DashboardPage() {
   const [searchOpen, setSearchOpen] = useState(false)
 
   const [authenticated, setAuthenticated] = useState(false)
-  const [showTaskArchive, setShowTaskArchive] = useState(false)
+  const [taskView, setTaskView] = useState<"active" | "todo" | "archive">("active")
   const { viewMode, setFilterStatus, clearCompleted, setIsCreateModalOpen } = useTaskStore()
   const { darkMode, toggleDarkMode } = useThemeStore()
   const isMobile = useMediaQuery("(max-width: 768px)")
@@ -45,18 +46,17 @@ export default function DashboardPage() {
     setActiveSection(section)
     if (section === "tasks") {
       setFilterStatus("active")
-      setShowTaskArchive(false)
+      setTaskView("active")
     }
   }, [setFilterStatus])
 
-  const handleShowArchive = useCallback(() => {
-    setFilterStatus("completed")
-    setShowTaskArchive(true)
-  }, [setFilterStatus])
-
-  const handleHideArchive = useCallback(() => {
-    setFilterStatus("active")
-    setShowTaskArchive(false)
+  const handleTaskViewChange = useCallback((view: "active" | "todo" | "archive") => {
+    setTaskView(view)
+    if (view === "archive") {
+      setFilterStatus("completed")
+    } else {
+      setFilterStatus("active")
+    }
   }, [setFilterStatus])
 
 
@@ -114,7 +114,57 @@ export default function DashboardPage() {
         <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
           {activeSection === "tasks" && (
             <>
-              {showTaskArchive ? (
+              {taskView === "active" && (
+                <>
+                  <div className="space-y-3">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                        Active Tasks
+                      </h1>
+                      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                        Manage and track your tasks
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2 text-xs sm:text-sm h-9 px-3">
+                        <Plus className="h-4 w-4" />
+                        Add Task
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleTaskViewChange("todo")} className="gap-2 text-xs sm:text-sm">
+                        Todo
+                      </Button>
+                      <Button variant="outline" size="sm" onClick={() => handleTaskViewChange("archive")} className="gap-2 text-xs sm:text-sm">
+                        <Archive className="h-4 w-4" />
+                        Archive
+                      </Button>
+                      <Filters />
+                    </div>
+                  </div>
+                  <div className="hidden sm:block"><StatsCards /></div>
+                  {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
+                </>
+              )}
+
+              {taskView === "todo" && (
+                <>
+                  <div className="flex items-center justify-between mb-4">
+                    <div>
+                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                        Advance Todo
+                      </h1>
+                      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+                        Daily todos that reset tomorrow
+                      </p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => handleTaskViewChange("active")} className="gap-2">
+                      Back to Tasks
+                    </Button>
+                  </div>
+                  <AdvanceTodoPanel />
+                </>
+              )}
+
+              {taskView === "archive" && (
                 <>
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div>
@@ -125,11 +175,9 @@ export default function DashboardPage() {
                         Completed tasks archive
                       </p>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <Button variant="outline" size="sm" onClick={handleHideArchive} className="gap-2">
-                        Back to Active
-                      </Button>
-                    </div>
+                    <Button variant="outline" size="sm" onClick={() => handleTaskViewChange("active")} className="gap-2">
+                      Back to Tasks
+                    </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     <Button
@@ -162,32 +210,6 @@ export default function DashboardPage() {
                     </Button>
                   </div>
                   <TaskListView archive />
-                </>
-              ) : (
-                <>
-                  <div className="space-y-3">
-                    <div>
-                      <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-                        Active Tasks
-                      </h1>
-                      <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-                        Manage and track your tasks
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2">
-                      <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2 text-xs sm:text-sm h-9 px-3">
-                        <Plus className="h-4 w-4" />
-                        Add Task
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={handleShowArchive} className="gap-2 text-xs sm:text-sm">
-                        <Archive className="h-4 w-4" />
-                        Archive
-                      </Button>
-                      <Filters />
-                    </div>
-                  </div>
-                  <div className="hidden sm:block"><StatsCards /></div>
-                  {viewMode === "card" ? <TaskCardView /> : <TaskListView />}
                 </>
               )}
             </>

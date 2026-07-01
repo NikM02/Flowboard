@@ -161,6 +161,14 @@ export type MutualFund = {
 
 export type FinanceTab = "expenses" | "sips" | "stocks" | "funds" | "networth" | "archive"
 
+export type AdvanceTodo = {
+  id: string
+  title: string
+  completed: boolean
+  date: string
+  createdAt: number
+}
+
 export type GrowthPeriod = "monthly" | "quarterly" | "yearly"
 
 export type FutureGoal = {
