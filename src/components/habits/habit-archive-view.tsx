@@ -147,31 +147,10 @@ function HabitsArchive() {
 }
 
 function DopamineArchive() {
-  const { getHistory, clearAll } = useDopamineStore()
-  const entries = getHistory()
-
-  const stats = useMemo(() => {
-    if (entries.length === 0) return null
-    const avg = entries.reduce((s, e) => s + e.average, 0) / entries.length
-    return {
-      total: entries.length,
-      average: Math.round(avg * 10) / 10,
-      best: Math.max(...entries.map((e) => e.average)),
-      worst: Math.min(...entries.map((e) => e.average)),
-    }
-  }, [entries.length])
+  const { entries, clearAll } = useDopamineStore()
 
   const handleExport = () => {
-    const data = entries.map((e) => ({
-      date: e.date,
-      mood: e.mood,
-      energy: e.energy,
-      motivation: e.motivation,
-      focus: e.focus,
-      stress: e.stress,
-      sleep: e.sleep,
-      average: e.average,
-    }))
+    const data = entries.map((e) => ({ date: e.date }))
     const ws = XLSX.utils.json_to_sheet(data)
     const wb = XLSX.utils.book_new()
     XLSX.utils.book_append_sheet(wb, ws, "Dopamine")
@@ -184,9 +163,7 @@ function DopamineArchive() {
     }
   }
 
-  const metricLabels: Record<string, string> = {
-    mood: "Mood", energy: "Energy", motivation: "Motivation", focus: "Focus", stress: "Stress", sleep: "Sleep",
-  }
+  const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date))
 
   return (
     <div>
@@ -202,53 +179,26 @@ function DopamineArchive() {
         </div>
       </div>
 
-      {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-          <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
-            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{stats.total}</p>
-            <p className="text-[10px] text-neutral-400">Check-ins</p>
-          </div>
-          <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
-            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{stats.average}</p>
-            <p className="text-[10px] text-neutral-400">Avg Score</p>
-          </div>
-          <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
-            <p className="text-lg font-bold text-emerald-600">{stats.best}</p>
-            <p className="text-[10px] text-neutral-400">Best</p>
-          </div>
-          <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
-            <p className="text-lg font-bold text-red-500">{stats.worst}</p>
-            <p className="text-[10px] text-neutral-400">Worst</p>
-          </div>
-        </div>
-      )}
+      <div className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900 mb-4">
+        <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{entries.length}</p>
+        <p className="text-[10px] text-neutral-400">Total check-ins</p>
+      </div>
 
-      <div className="max-h-96 overflow-y-auto overflow-x-auto">
-        <div className="grid grid-cols-8 gap-1 text-[10px] font-semibold text-neutral-400 uppercase tracking-wider px-2 py-1.5 border-b border-neutral-100 dark:border-neutral-800 min-w-[500px]">
-          <span>Date</span>
-          {["mood", "energy", "motivation", "focus", "stress", "sleep"].map((k) => (
-            <span key={k} className="text-center">{metricLabels[k]}</span>
-          ))}
-          <span className="text-center">Avg</span>
-        </div>
-        {entries.length === 0 ? (
-          <div className="flex items-center justify-center py-12 text-sm text-neutral-400">No dopamine check-ins yet</div>
+      <div className="max-h-96 overflow-y-auto">
+        {sorted.length === 0 ? (
+          <div className="flex items-center justify-center py-12 text-sm text-neutral-400">No check-ins yet</div>
         ) : (
           <div className="divide-y divide-neutral-100 dark:divide-neutral-800">
-            {entries.map((e) => (
-              <div key={e.id} className="grid grid-cols-8 gap-1 px-2 py-2 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50">
-                <span>{format(parseISO(e.date), "MMM d")}</span>
-                {["mood", "energy", "motivation", "focus", "stress", "sleep"].map((k) => {
-                  const v = e[k as keyof typeof e] as number
-                  return <span key={k} className={`text-center font-medium ${v >= 4 ? "text-emerald-600" : v >= 2 ? "text-neutral-600 dark:text-neutral-400" : "text-red-400"}`}>{v}</span>
-                })}
-                <span className="text-center font-semibold text-neutral-800 dark:text-neutral-200">{e.average.toFixed(1)}</span>
+            {sorted.map((e) => (
+              <div key={e.id} className="flex items-center gap-3 px-2 py-2 text-xs text-neutral-600 dark:text-neutral-400 hover:bg-neutral-50 dark:hover:bg-neutral-900/50">
+                <span className="font-medium text-neutral-800 dark:text-neutral-200">{format(parseISO(e.date), "EEE, MMM d, yyyy")}</span>
+                <span className="ml-auto text-emerald-600 font-medium">✓ Checked in</span>
               </div>
             ))}
           </div>
         )}
       </div>
-      <p className="text-[10px] text-neutral-400 mt-3 text-right">{entries.length} check-ins</p>
+      <p className="text-[10px] text-neutral-400 mt-3 text-right">{entries.length} records</p>
     </div>
   )
 }

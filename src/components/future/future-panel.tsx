@@ -84,8 +84,7 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
     ? Math.round(skillsInRange.reduce((s, sk) => s + sk.progress, 0) / skillsInRange.length) : 0
 
   const entriesInRange = entries.filter((e) => dateInRange(e.date))
-  const avgWellness = entriesInRange.length > 0
-    ? Math.round((entriesInRange.reduce((s, e) => s + e.average, 0) / entriesInRange.length) * 10) / 10 : 0
+  const checkInCount = entriesInRange.length
 
   const incomeInRange = incomes.filter((i) => dateInRange(i.date)).reduce((s, i) => s + i.amount, 0)
   const expensesInRange = expenses.filter((e) => dateInRange(e.date)).reduce((s, e) => s + e.amount, 0)
@@ -100,7 +99,7 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
     tasks: { value: taskScore, label: `${tasksCompleted}/${tasksInRange.length} done` },
     habits: { value: habitScore, label: `${habitCompleted}/${habitTotal} check-ins` },
     skills: { value: avgSkillProgress, label: `${skillsCompleted} done, ${skillsInRange.length - skillsCompleted} active` },
-    dopamine: { value: Math.round(avgWellness * 20), label: `avg ${avgWellness}/5 wellness` },
+    dopamine: { value: Math.min(100, checkInCount * 10), label: `${checkInCount} check-ins` },
     finance: { value: financeValue, label: hasFinanceData ? `₹${netCashFlow.toLocaleString()} flow` : "No data" },
   }
 }
