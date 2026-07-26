@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { List, Zap, Archive, Brain } from "lucide-react"
+import { List, Zap, Archive } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import { HabitListView } from "./habit-list-view"
 import { ChallengeSliderPanel } from "./challenge-slider-panel"
 import { HabitArchiveView } from "./habit-archive-view"
-import { DopaminePanel } from "./dopamine-panel"
 import { CreateHabitModal } from "./create-habit-modal"
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
@@ -29,7 +28,6 @@ const categoryLabels: Record<HabitCategory, string> = {
 const tabs = [
   { key: "habits", label: "Habits", icon: List },
   { key: "challenges", label: "Challenges", icon: Zap },
-  { key: "dopamine", label: "Dopamine", icon: Brain },
   { key: "archive", label: "Archive", icon: Archive },
 ] as const
 
@@ -84,8 +82,6 @@ export function HabitTrackerSection() {
       {tab === "habits" && <HabitListView onEdit={openEdit} />}
 
       {tab === "challenges" && <ChallengeSliderPanel />}
-
-      {tab === "dopamine" && <DopaminePanel />}
 
       {tab === "archive" && <HabitArchiveView />}
 
