@@ -25,7 +25,7 @@ export function Header({
         animate={{ y: 0, opacity: 1 }}
         className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/80 backdrop-blur-xl dark:border-neutral-800/60 dark:bg-neutral-950/80"
       >
-        <div className="flex h-14 items-center gap-2 px-4 lg:px-6">
+        <div className="flex h-14 items-center px-4 lg:px-6">
           <div className="flex items-center gap-2.5">
             <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
             <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
@@ -33,45 +33,47 @@ export function Header({
             </span>
           </div>
 
-          <button
-            onClick={onSearchOpen}
-            className="relative ml-auto hidden max-w-[200px] sm:block md:max-w-sm"
-          >
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-              <div className="flex h-8 cursor-text items-center rounded-xl border border-neutral-200 bg-neutral-50 pl-9 pr-3 text-xs text-neutral-400 transition-colors hover:border-neutral-300 focus:bg-white dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:focus:bg-neutral-950">
-                <span>Search across all sections...</span>
-                <kbd className="ml-auto hidden rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-500 md:inline-block">
-                  \u2318K
-                </kbd>
+          <div className="ml-auto flex items-center gap-1.5">
+            <button
+              onClick={onSearchOpen}
+              className="relative hidden max-w-[200px] sm:block md:max-w-sm"
+            >
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+                <div className="flex h-8 cursor-text items-center rounded-xl border border-neutral-200 bg-neutral-50 pl-9 pr-3 text-xs text-neutral-400 transition-colors hover:border-neutral-300 focus:bg-white dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:focus:bg-neutral-950">
+                  <span>Search across all sections...</span>
+                  <kbd className="ml-auto hidden rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-medium text-neutral-400 dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-500 md:inline-block">
+                    \u2318K
+                  </kbd>
+                </div>
               </div>
-            </div>
-          </button>
+            </button>
 
-          <button
-            onClick={onSearchOpen}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 sm:hidden"
-          >
-            <Search className="h-4 w-4" />
-          </button>
+            <button
+              onClick={onSearchOpen}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 sm:hidden"
+            >
+              <Search className="h-4 w-4" />
+            </button>
 
-          <button
-            onClick={() => setTgOpen(!tgOpen)}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-blue-500 dark:hover:bg-neutral-800 dark:hover:text-blue-400 transition-colors"
-            title="Telegram Settings"
-          >
-            <Send className="h-4 w-4" />
-          </button>
+            <button
+              onClick={() => setTgOpen(!tgOpen)}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-blue-500 dark:hover:bg-neutral-800 dark:hover:text-blue-400 transition-colors"
+              title="Telegram Settings"
+            >
+              <Send className="h-4 w-4" />
+            </button>
 
-          <NotificationBell />
+            <NotificationBell />
 
-          <button
-            onClick={onLogout}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors"
-            title="Logout"
-          >
-            <LogOut className="h-4 w-4" />
-          </button>
+            <button
+              onClick={onLogout}
+              className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors"
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
         </div>
       </motion.header>
 
