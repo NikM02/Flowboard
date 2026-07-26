@@ -1,7 +1,7 @@
 import { createServiceClient } from "@/lib/supabase/service"
 
 interface UserData {
-  tasks?: { id: string; title: string; completed: boolean; priority: string; dueDate: string; project?: string }[]
+  tasks?: { id: string; title: string; description?: string; completed: boolean; priority: string; dueDate: string; project?: string; reminder?: string; createdAt?: number }[]
   habits?: { id: string; name: string; records?: { date: string; completed: boolean }[]; streak?: number }[]
   incomes?: { id: string; amount: number; source: string; date: string }[]
   expenses?: { id: string; amount: number; category: string; date: string; description?: string }[]
@@ -12,7 +12,7 @@ interface UserData {
   contentItems?: { id: string; title: string; status: string; deadline: string; subtasks?: { completed: boolean }[] }[]
   northStar?: { vision: string; mission: string; identity: string; pillars?: { title: string; icon: string }[] }
   bucketListItems?: { id: string; title: string; completed: boolean; expectedDate: string }[]
-  advanceTodos?: { id: string; title: string; completed: boolean; date: string }[]
+  advanceTodos?: { id: string; title: string; completed: boolean; date: string; createdAt?: number }[]
 }
 
 export async function getUserIdForChatId(chatId: string): Promise<string | null> {
@@ -33,4 +33,15 @@ export async function getUserData(userId: string): Promise<UserData | null> {
     .eq("user_id", userId)
     .single()
   return (data?.data as UserData) ?? null
+}
+
+export async function saveUserData(userId: string, data: UserData): Promise<boolean> {
+  const supabase = createServiceClient()
+  const { error } = await supabase
+    .from("user_data")
+    .upsert(
+      { user_id: userId, data: data as any, updated_at: new Date().toISOString() },
+      { onConflict: "user_id" }
+    )
+  return !error
 }
