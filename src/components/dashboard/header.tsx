@@ -4,6 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, LogOut, Send, X } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 import { NotificationBell } from "./notification-panel"
 import { TelegramSettings } from "./telegram-settings"
 import { useMediaQuery } from "@/hooks/use-media-query"
@@ -26,12 +27,12 @@ export function Header({
         className="sticky top-0 z-30 border-b border-neutral-200/60 bg-white/80 backdrop-blur-xl dark:border-neutral-800/60 dark:bg-neutral-950/80"
       >
         <div className="flex h-14 items-center px-4 lg:px-6">
-          <div className="flex items-center gap-2.5">
+          <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
             <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
               Nexus
             </span>
-          </div>
+          </Link>
 
           <div className="ml-auto flex items-center gap-1.5">
             <button

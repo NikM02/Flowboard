@@ -42,10 +42,10 @@ export function Sidebar({
 
   const content = (
     <div className="flex h-full flex-col gap-1 p-4">
-      <div className="flex items-center gap-3 px-3 pb-6 pt-2">
+      <Link href="/dashboard" className="flex items-center gap-3 px-3 pb-6 pt-2">
         <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
         <span className="text-lg font-semibold tracking-tight">Nexus</span>
-      </div>
+      </Link>
 
       <div className="space-y-1">
         <Link
