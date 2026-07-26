@@ -2,7 +2,8 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Book, Video, GraduationCap, Users, Plus, Check, Archive, Download, Trash2, Pencil } from "lucide-react"
+import { Book, Video, GraduationCap, Users, Plus, Check, Archive, Download, Trash2, Pencil, List } from "lucide-react"
+import Link from "next/link"
 import { cn } from "@/lib/shadcn-utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -316,19 +317,27 @@ export function SkillPanel() {
 
   return (
     <div>
-      <div className="mb-6 flex items-center justify-between">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
             Skill Enhancement
           </h1>
           <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             Track skills you're learning from books, courses, YouTube, and people
           </p>
         </div>
-        <Button onClick={() => setCreateOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          New Skill
-        </Button>
+        <div className="flex items-center gap-2 self-start">
+          <Link href="/skills/bucket-list">
+            <Button variant="outline" className="gap-2">
+              <List className="h-4 w-4" />
+              Bucket List
+            </Button>
+          </Link>
+          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            New Skill
+          </Button>
+        </div>
       </div>
 
       {active.length === 0 && completed.length === 0 ? (

@@ -60,7 +60,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
             transition={{ delay: 0.2, type: "spring", damping: 18, stiffness: 200 }}
             className="flex justify-center mb-5"
           >
-            <Image src="/T.png" alt="Logo" width={96} height={96} className="object-contain" />
+            <Image src="/Nexus.png" alt="Logo" width={96} height={96} className="object-contain" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}
@@ -68,7 +68,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
             transition={{ delay: 0.35, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
             className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50"
           >
-            FlowBoard
+            Nexus
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 10 }}

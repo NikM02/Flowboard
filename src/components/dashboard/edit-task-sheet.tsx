@@ -28,12 +28,24 @@ import type { Priority } from "@/types"
 
 function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void }) {
   const task = useTaskStore((s) => s.tasks.find((t) => t.id === taskId))
-  const { updateTask, toggleSubtask } = useTaskStore()
+  const { updateTask, toggleSubtask, getProjects } = useTaskStore()
+  const projects = getProjects()
 
   const [title, setTitle] = useState(task?.title ?? "")
   const [description, setDescription] = useState(task?.description ?? "")
+  const [project, setProject] = useState(task?.project ?? "")
   const [priority, setPriority] = useState<Priority>(task?.priority ?? "medium")
   const [dueDate, setDueDate] = useState(task?.dueDate ?? "")
+  const [reminderMins, setReminderMins] = useState<number | null>(() => {
+    if (!task?.reminder || !task?.dueDate) return null
+    const diff = new Date(task.dueDate).getTime() - new Date(task.reminder).getTime()
+    if (diff <= 0) return null
+    const mins = Math.round(diff / 60000)
+    if (mins <= 15) return 15
+    if (mins <= 60) return 60
+    if (mins <= 1440) return 1440
+    return null
+  })
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("")
 
   if (!task) return null
@@ -42,11 +54,20 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
     e.preventDefault()
     if (!title.trim()) return
 
+    let reminder: string | null = null
+    if (reminderMins && dueDate) {
+      const d = new Date(dueDate)
+      const r = new Date(d.getTime() - reminderMins * 60000)
+      if (r > new Date()) reminder = r.toISOString()
+    }
+
     updateTask(task.id, {
       title: title.trim(),
       description: description.trim(),
+      project: project.trim() || "Uncategorized",
       priority,
       dueDate,
+      reminder,
     })
 
     onClose()
@@ -80,6 +101,22 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
         />
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="edit-project">Project</Label>
+        <Input
+          id="edit-project"
+          value={project}
+          onChange={(e) => setProject(e.target.value)}
+          placeholder="Enter project name..."
+          list="edit-project-suggestions"
+        />
+        <datalist id="edit-project-suggestions">
+          {projects.map((p) => (
+            <option key={p} value={p} />
+          ))}
+        </datalist>
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="edit-task-priority">Priority</Label>
@@ -102,6 +139,31 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
           />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Reminder</Label>
+        <div className="flex gap-1.5">
+          {[
+            { label: "Off", mins: null },
+            { label: "15m", mins: 15 },
+            { label: "1h", mins: 60 },
+            { label: "1d", mins: 1440 },
+          ].map((opt) => (
+            <button
+              key={opt.label}
+              type="button"
+              onClick={() => setReminderMins(opt.mins)}
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+                reminderMins === opt.mins
+                  ? "bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900"
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
         </div>
       </div>
 

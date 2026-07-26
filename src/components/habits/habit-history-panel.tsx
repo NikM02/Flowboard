@@ -10,6 +10,7 @@ import { format, parseISO, subDays, startOfMonth, endOfMonth } from "date-fns"
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
 } from "recharts"
+import { ChartTooltip } from "@/components/charts/chart-components"
 
 export function HabitHistoryPanel() {
   const { habits, getStreak, getLongestStreak, getHistoryRange } = useHabitStore()
@@ -48,7 +49,7 @@ export function HabitHistoryPanel() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+      className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
     >
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="h-4 w-4 text-neutral-500" />
@@ -78,11 +79,17 @@ export function HabitHistoryPanel() {
         <p className="text-xs font-medium text-neutral-500 mb-2">Last 7 Days</p>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={weeklyData} barCategoryGap="30%">
-            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
+            <defs>
+              <linearGradient id="habitBarGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#6366f1" stopOpacity={0.95} />
+                <stop offset="100%" stopColor="#6366f1" stopOpacity={0.5} />
+              </linearGradient>
+            </defs>
+            <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" strokeOpacity={0.3} vertical={false} />
             <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
             <YAxis domain={[0, 100]} hide />
-            <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e5e5e5", fontSize: 12 }} />
-            <Bar dataKey="rate" fill="#171717" radius={[4, 4, 0, 0]} maxBarSize={24} />
+            <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+            <Bar dataKey="rate" fill="url(#habitBarGrad)" radius={[6, 6, 0, 0]} maxBarSize={24} />
           </BarChart>
         </ResponsiveContainer>
       </div>

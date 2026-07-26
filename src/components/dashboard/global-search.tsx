@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
+import { useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, ListTodo, Flame, GraduationCap, Wallet, Sparkles, X, ArrowRight } from "lucide-react"
+import { Search, ListTodo, Heart, GraduationCap, Wallet, X, ArrowRight } from "lucide-react"
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
@@ -20,7 +21,7 @@ type SearchResult = {
 
 const sectionLabels: Record<DashboardSection, string> = {
   tasks: "Tasks",
-  habits: "Habits & Challenges",
+  habits: "Health",
   skills: "Skills",
   finance: "Finance",
   future: "Future Self",
@@ -29,16 +30,15 @@ const sectionLabels: Record<DashboardSection, string> = {
 export function GlobalSearch({
   open,
   onClose,
-  onNavigate,
 }: {
   open: boolean
   onClose: () => void
-  onNavigate: (section: DashboardSection) => void
 }) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResult[]>([])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const inputRef = useRef<HTMLInputElement>(null)
+  const router = useRouter()
 
   const tasks = useTaskStore((s) => s.tasks)
   const habits = useHabitStore((s) => s.habits)
@@ -82,12 +82,12 @@ export function GlobalSearch({
     }
     for (const h of habits) {
       if (h.name.toLowerCase().includes(needle) || h.description.toLowerCase().includes(needle)) {
-        found.push({ id: h.id, label: h.name, sublabel: h.description || h.category, section: "habits", icon: Flame })
+        found.push({ id: h.id, label: h.name, sublabel: h.description || h.category, section: "habits", icon: Heart })
       }
     }
     for (const c of challenges) {
       if (c.title.toLowerCase().includes(needle) || c.description.toLowerCase().includes(needle)) {
-        found.push({ id: c.id, label: c.title, sublabel: c.description || "Challenge", section: "habits", icon: Flame })
+        found.push({ id: c.id, label: c.title, sublabel: c.description || "Challenge", section: "habits", icon: Heart })
       }
     }
     for (const s of skills) {
@@ -125,9 +125,17 @@ export function GlobalSearch({
     setSelectedIndex(0)
   }, [tasks, habits, challenges, skills, incomes, expenses, sips, stocks, mutualFunds])
 
+  const sectionRoutes: Record<DashboardSection, string> = {
+    tasks: "/tasks",
+    habits: "/habits",
+    skills: "/skills",
+    finance: "/finance",
+    future: "/future",
+  }
+
   const handleSelect = (r: SearchResult) => {
     onClose()
-    onNavigate(r.section)
+    router.push(sectionRoutes[r.section])
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {

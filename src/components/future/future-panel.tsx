@@ -1,17 +1,19 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import { useState, useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive, CalendarDays,
+  Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+} from "recharts"
+import {
+  TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive,
   Plus, Trash2, Pencil, Download, Sparkles, ArrowUp, ArrowDown, Minus,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
-import { format, startOfMonth, endOfMonth, subMonths, startOfQuarter, endOfQuarter, subQuarters, startOfYear, endOfYear, subYears, isWithinInterval, parseISO } from "date-fns"
+import { ChartTooltip } from "@/components/charts/chart-components"
+import { format, startOfMonth, endOfMonth, subMonths, startOfQuarter, endOfQuarter, subQuarters, startOfYear, endOfYear, subYears, parseISO } from "date-fns"
 import { Button } from "@/components/ui/button"
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-} from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
@@ -24,24 +26,20 @@ import { useDopamineStore } from "@/store/use-dopamine-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import { useFutureStore } from "@/store/use-future-store"
-import { CalendarTab } from "./future-calendar-tab"
 import type { GrowthPeriod, GrowthCategory, FutureGoal } from "@/types"
 
-const tabs: { key: "simulator" | "calendar" | "archive"; label: string; icon: typeof Target }[] = [
+const tabs: { key: "simulator" | "archive"; label: string; icon: typeof Target }[] = [
   { key: "simulator", label: "Growth", icon: TrendingUp },
-  { key: "calendar", label: "Calendar", icon: CalendarDays },
   { key: "archive", label: "Archive", icon: Archive },
 ]
 
-const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string }> = {
-  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500" },
-  habits: { label: "Habits", icon: Target, color: "bg-orange-500" },
-  skills: { label: "Skills", icon: Sparkles, color: "bg-purple-500" },
-  dopamine: { label: "Wellness", icon: Brain, color: "bg-emerald-500" },
-  finance: { label: "Finance", icon: Wallet, color: "bg-rose-500" },
+const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string }> = {
+  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500", hex: "#3b82f6" },
+  habits: { label: "Habits", icon: Target, color: "bg-orange-500", hex: "#f97316" },
+  skills: { label: "Skills", icon: Sparkles, color: "bg-purple-500", hex: "#a855f7" },
+  dopamine: { label: "Wellness", icon: Brain, color: "bg-emerald-500", hex: "#10b981" },
+  finance: { label: "Finance", icon: Wallet, color: "bg-rose-500", hex: "#f43f5e" },
 }
-
-// ─── Growth Computation ───────────────────────────────────
 
 type PeriodMetrics = Record<GrowthCategory, { value: number; label: string }>
 
@@ -67,121 +65,73 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
 
   const start = range.start.getTime()
   const end = range.end.getTime()
-
   const inRange = (ts: number) => ts >= start && ts <= end
-  const dateInRange = (d: string) => {
-    const t = parseISO(d).getTime()
-    return t >= start && t <= end
-  }
+  const dateInRange = (d: string) => { const t = parseISO(d).getTime(); return t >= start && t <= end }
 
-  // Tasks
   const tasksInRange = tasks.filter((t) => inRange(t.createdAt) || (t.dueDate && dateInRange(t.dueDate)))
   const tasksCompleted = tasksInRange.filter((t) => t.completed).length
   const taskScore = tasksInRange.length > 0 ? Math.round((tasksCompleted / tasksInRange.length) * 100) : 0
 
-  // Habits
-  const habitRecordsInRange = habits.flatMap((h) =>
-    h.records.filter((r) => dateInRange(r.date))
-  )
-  const habitCompleted = habitRecordsInRange.filter((r) => r.completed).length
-  const habitTotal = habitRecordsInRange.length
+  const habitRecords = habits.flatMap((h) => h.records.filter((r) => dateInRange(r.date)))
+  const challengeDays = challenges.flatMap((c) => c.days.filter((d) => dateInRange(d.date)))
+  const habitTotal = habitRecords.length + challengeDays.length
+  const habitCompleted = habitRecords.filter((r) => r.completed).length + challengeDays.filter((d) => d.completed).length
   const habitScore = habitTotal > 0 ? Math.round((habitCompleted / habitTotal) * 100) : 0
 
-  // Challenges
-  const challengeDaysInRange = challenges.flatMap((c) =>
-    c.days.filter((d) => dateInRange(d.date))
-  )
-  const challengeCompleted = challengeDaysInRange.filter((d) => d.completed).length
-  const challengeTotal = challengeDaysInRange.length
-  const challengeScore = challengeTotal > 0 ? Math.round((challengeCompleted / challengeTotal) * 100) : 0
-
-  // Combine habits + challenges into "habits"
-  const combinedHabitTotal = habitTotal + challengeTotal
-  const combinedHabitCompleted = habitCompleted + challengeCompleted
-  const finalHabitScore = combinedHabitTotal > 0 ? Math.round((combinedHabitCompleted / combinedHabitTotal) * 100) : 0
-
-  // Skills
   const skillsInRange = skills.filter((s) => dateInRange(s.startDate) || dateInRange(s.endDate))
   const skillsCompleted = skillsInRange.filter((s) => s.completed).length
   const avgSkillProgress = skillsInRange.length > 0
-    ? Math.round(skillsInRange.reduce((s, sk) => s + sk.progress, 0) / skillsInRange.length)
-    : 0
+    ? Math.round(skillsInRange.reduce((s, sk) => s + sk.progress, 0) / skillsInRange.length) : 0
 
-  // Dopamine / Wellness
   const entriesInRange = entries.filter((e) => dateInRange(e.date))
   const avgWellness = entriesInRange.length > 0
-    ? Math.round((entriesInRange.reduce((s, e) => s + e.average, 0) / entriesInRange.length) * 10) / 10
-    : 0
+    ? Math.round((entriesInRange.reduce((s, e) => s + e.average, 0) / entriesInRange.length) * 10) / 10 : 0
 
-  // Finance
   const incomeInRange = incomes.filter((i) => dateInRange(i.date)).reduce((s, i) => s + i.amount, 0)
   const expensesInRange = expenses.filter((e) => dateInRange(e.date)).reduce((s, e) => s + e.amount, 0)
   const netCashFlow = incomeInRange - expensesInRange
-  const sipInvested = sips.reduce((s, si) => s + si.investedAmount, 0)
-  const sipCurrent = sips.reduce((s, si) => s + si.currentValue, 0)
-  const stockInvested = stocks.reduce((s, st) => s + st.buyPrice * st.quantity, 0)
-  const stockCurrent = stocks.reduce((s, st) => s + st.currentPrice * st.quantity, 0)
-  const mfInvested = mutualFunds.reduce((s, mf) => s + mf.investedAmount, 0)
-  const mfCurrent = mutualFunds.reduce((s, mf) => s + mf.currentValue, 0)
-  const totalCurrent = sipCurrent + stockCurrent + mfCurrent
-  const totalInvested = sipInvested + stockInvested + mfInvested
+  const totalInvested = sips.reduce((s, si) => s + si.investedAmount, 0) + stocks.reduce((s, st) => s + st.buyPrice * st.quantity, 0) + mutualFunds.reduce((s, mf) => s + mf.investedAmount, 0)
+  const totalCurrent = sips.reduce((s, si) => s + si.currentValue, 0) + stocks.reduce((s, st) => s + st.currentPrice * st.quantity, 0) + mutualFunds.reduce((s, mf) => s + mf.currentValue, 0)
   const gainPct = totalInvested > 0 ? Math.round(((totalCurrent - totalInvested) / totalInvested) * 100) : 0
-
   const hasFinanceData = incomes.length > 0 || expenses.length > 0 || sips.length > 0 || stocks.length > 0 || mutualFunds.length > 0
   const financeValue = hasFinanceData ? Math.max(0, 50 + gainPct + Math.round(netCashFlow / 1000)) : 0
 
   return {
-    tasks: { value: taskScore, label: `${tasksCompleted}/${tasksInRange.length} tasks` },
-    habits: { value: finalHabitScore, label: `${combinedHabitCompleted}/${combinedHabitTotal} check-ins` },
-    skills: { value: avgSkillProgress, label: `${skillsCompleted} completed, ${skillsInRange.length - skillsCompleted} active` },
-    dopamine: { value: Math.round(avgWellness * 20), label: `${entriesInRange.length} entries, avg ${avgWellness}/5` },
-    finance: { value: financeValue, label: hasFinanceData ? `₹${netCashFlow.toLocaleString()} cash flow` : "No data" },
+    tasks: { value: taskScore, label: `${tasksCompleted}/${tasksInRange.length} done` },
+    habits: { value: habitScore, label: `${habitCompleted}/${habitTotal} check-ins` },
+    skills: { value: avgSkillProgress, label: `${skillsCompleted} done, ${skillsInRange.length - skillsCompleted} active` },
+    dopamine: { value: Math.round(avgWellness * 20), label: `avg ${avgWellness}/5 wellness` },
+    finance: { value: financeValue, label: hasFinanceData ? `₹${netCashFlow.toLocaleString()} flow` : "No data" },
   }
 }
 
 function getPeriodLabel(period: GrowthPeriod, date: Date): string {
   switch (period) {
-    case "monthly":
-      return format(date, "MMMM yyyy")
-    case "quarterly":
-      const q = Math.floor(date.getMonth() / 3) + 1
-      return `Q${q} ${format(date, "yyyy")}`
-    case "yearly":
-      return format(date, "yyyy")
+    case "monthly": return format(date, "MMMM yyyy")
+    case "quarterly": return `Q${Math.floor(date.getMonth() / 3) + 1} ${format(date, "yyyy")}`
+    case "yearly": return format(date, "yyyy")
   }
 }
 
 function getPeriodKey(period: GrowthPeriod, date: Date): string {
   switch (period) {
-    case "monthly":
-      return format(date, "yyyy-MM")
-    case "quarterly":
-      return `${format(date, "yyyy")}-Q${Math.floor(date.getMonth() / 3) + 1}`
-    case "yearly":
-      return format(date, "yyyy")
+    case "monthly": return format(date, "yyyy-MM")
+    case "quarterly": return `${format(date, "yyyy")}-Q${Math.floor(date.getMonth() / 3) + 1}`
+    case "yearly": return format(date, "yyyy")
   }
 }
 
 function getPreviousDate(period: GrowthPeriod, date: Date): Date {
   switch (period) {
-    case "monthly":
-      return subMonths(date, 1)
-    case "quarterly":
-      return subQuarters(date, 1)
-    case "yearly":
-      return subYears(date, 1)
+    case "monthly": return subMonths(date, 1)
+    case "quarterly": return subQuarters(date, 1)
+    case "yearly": return subYears(date, 1)
   }
 }
 
-// ─── Growth Simulator Tab ─────────────────────────────────
-
 function SimulatorTab() {
   const [period, setPeriod] = useState<GrowthPeriod>("monthly")
-  const [selectedDate, setSelectedDate] = useState(new Date())
-
-  useEffect(() => {
-    setSelectedDate(new Date())
-  }, [])
+  const [selectedDate, setSelectedDate] = useState(() => new Date())
   const [goalDialogOpen, setGoalDialogOpen] = useState(false)
   const [editGoalId, setEditGoalId] = useState<string | null>(null)
   const [goalForm, setGoalForm] = useState({ title: "", category: "tasks" as GrowthCategory, targetValue: 0, currentValue: 0 })
@@ -200,18 +150,11 @@ function SimulatorTab() {
   const handlePrev = () => setSelectedDate(getPreviousDate(period, selectedDate))
   const handleNext = () => {
     switch (period) {
-      case "monthly":
-        setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1))
-        break
-      case "quarterly":
-        setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() + 3, 1))
-        break
-      case "yearly":
-        setSelectedDate((d) => new Date(d.getFullYear() + 1, 0, 1))
-        break
+      case "monthly": setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() + 1, 1)); break
+      case "quarterly": setSelectedDate((d) => new Date(d.getFullYear(), d.getMonth() + 3, 1)); break
+      case "yearly": setSelectedDate((d) => new Date(d.getFullYear() + 1, 0, 1)); break
     }
   }
-
   const canGoNext = () => {
     const next = (() => {
       switch (period) {
@@ -225,11 +168,8 @@ function SimulatorTab() {
 
   const handleGoalSubmit = () => {
     if (!goalForm.title.trim() || !goalForm.targetValue) return
-    if (editGoalId) {
-      updateGoal(editGoalId, goalForm)
-    } else {
-      addGoal({ ...goalForm, period, periodKey: getPeriodKey(period, selectedDate) })
-    }
+    if (editGoalId) updateGoal(editGoalId, goalForm)
+    else addGoal({ ...goalForm, period, periodKey: getPeriodKey(period, selectedDate) })
     setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 })
     setEditGoalId(null)
     setGoalDialogOpen(false)
@@ -242,22 +182,38 @@ function SimulatorTab() {
   }
 
   const overallGrowth = useMemo(() => {
-    let total = 0
-    let count = 0
+    let total = 0, count = 0
     for (const cat of Object.keys(categoryConfig) as GrowthCategory[]) {
-      const curr = currentMetrics[cat].value
-      const prev = prevMetrics[cat].value
-      if (prev > 0) {
-        total += ((curr - prev) / prev) * 100
-        count++
-      }
+      const curr = currentMetrics[cat].value, prev = prevMetrics[cat].value
+      if (prev > 0) { total += ((curr - prev) / prev) * 100; count++ }
     }
     return count > 0 ? Math.round(total / count) : 0
   }, [currentMetrics, prevMetrics])
 
+  // Chart data
+  const radarData = useMemo(() =>
+    (Object.keys(categoryConfig) as GrowthCategory[]).map((cat) => ({
+      category: categoryConfig[cat].label,
+      current: currentMetrics[cat].value,
+      previous: prevMetrics[cat].value,
+      fullMark: 100,
+    })),
+    [currentMetrics, prevMetrics]
+  )
+
+  const barData = useMemo(() =>
+    (Object.keys(categoryConfig) as GrowthCategory[]).map((cat) => ({
+      name: categoryConfig[cat].label,
+      current: currentMetrics[cat].value,
+      previous: prevMetrics[cat].value,
+      color: categoryConfig[cat].hex,
+    })),
+    [currentMetrics, prevMetrics]
+  )
+
   return (
     <div className="space-y-6">
-      {/* Period Selector */}
+      {/* Period selector + nav */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
           {(["monthly", "quarterly", "yearly"] as const).map((p) => (
@@ -270,12 +226,9 @@ function SimulatorTab() {
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
               )}
-            >
-              {p}
-            </button>
+            >{p}</button>
           ))}
         </div>
-
         <div className="flex items-center gap-2">
           <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800">&larr;</button>
           <span className="min-w-[140px] text-center text-sm font-medium text-neutral-900 dark:text-neutral-50">{currentLabel}</span>
@@ -284,103 +237,166 @@ function SimulatorTab() {
       </div>
 
       {/* Overall Growth Banner */}
-      <div className={cn(
-        "rounded-2xl border p-5 text-center",
-        overallGrowth > 0
-          ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30"
-          : overallGrowth < 0
-          ? "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30"
-          : "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
-      )}>
-        <p className="text-xs text-neutral-500 mb-1">Overall Growth vs {prevLabel}</p>
-        <div className="flex items-center justify-center gap-2">
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        className={cn(
+          "relative overflow-hidden rounded-3xl border p-6 text-center",
+          overallGrowth > 0
+            ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 dark:border-green-900/40 dark:from-green-950/30 dark:to-emerald-950/20"
+            : overallGrowth < 0
+            ? "border-red-200 bg-gradient-to-br from-red-50 to-rose-50/50 dark:border-red-900/40 dark:from-red-950/30 dark:to-rose-950/20"
+            : "border-neutral-200 bg-gradient-to-br from-neutral-50 to-white dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900"
+        )}
+      >
+        <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Overall Growth vs {prevLabel}</p>
+        <div className="mt-2 flex items-center justify-center gap-2">
           {overallGrowth > 0 ? <ArrowUp className="h-5 w-5 text-green-500" /> : overallGrowth < 0 ? <ArrowDown className="h-5 w-5 text-red-500" /> : <Minus className="h-5 w-5 text-neutral-400" />}
-          <span className={cn("text-3xl font-bold", overallGrowth > 0 ? "text-green-600" : overallGrowth < 0 ? "text-red-500" : "text-neutral-600")}>
+          <span className={cn("text-4xl font-bold tracking-tight", overallGrowth > 0 ? "text-green-600 dark:text-green-400" : overallGrowth < 0 ? "text-red-500 dark:text-red-400" : "text-neutral-600 dark:text-neutral-400")}>
             {overallGrowth > 0 ? "+" : ""}{overallGrowth}%
           </span>
         </div>
+      </motion.div>
+
+      {/* Charts Row */}
+      <div className="grid gap-5 lg:grid-cols-2">
+        {/* Radar Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
+        >
+          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Growth Radar</h3>
+          <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current vs Previous period</p>
+          <div className="mt-4 h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="72%">
+                <PolarGrid stroke="#e5e7eb" strokeOpacity={0.5} />
+                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#737373" }} />
+                <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
+                <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.15} strokeWidth={1.5} strokeDasharray="4 4" />
+                <Radar name="Current" dataKey="current" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} strokeWidth={2} />
+                <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
+              </RadarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        {/* Bar Chart */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
+        >
+          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Category Comparison</h3>
+          <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current period breakdown</p>
+          <div className="mt-4 h-[280px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={barData} layout="vertical" margin={{ left: 0, right: 16 }}>
+                <defs>
+                  {barData.map((entry, i) => (
+                    <linearGradient key={i} id={`futureBarGrad${i}`} x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.5} />
+                      <stop offset="100%" stopColor={entry.color} stopOpacity={0.9} />
+                    </linearGradient>
+                  ))}
+                </defs>
+                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
+                <YAxis type="category" dataKey="name" width={70} tick={{ fontSize: 11, fill: "#737373" }} axisLine={false} tickLine={false} />
+                <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+                <Bar dataKey="current" radius={[0, 8, 8, 0]} barSize={18} name="Current">
+                  {barData.map((entry, i) => (
+                    <Cell key={i} fill={`url(#futureBarGrad${i})`} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
       </div>
 
-      {/* Category Cards */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {(Object.keys(categoryConfig) as GrowthCategory[]).map((cat) => {
+      {/* Category Cards — compact row */}
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+        {(Object.keys(categoryConfig) as GrowthCategory[]).map((cat, i) => {
           const cfg = categoryConfig[cat]
           const Icon = cfg.icon
           const curr = currentMetrics[cat]
           const prev = prevMetrics[cat]
           const diff = curr.value - prev.value
-          const diffPct = prev.value > 0 ? Math.round((diff / prev.value) * 100) : 0
           return (
             <motion.div
               key={cat}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900"
+              transition={{ delay: 0.05 * i }}
+              className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
             >
-              <div className="flex items-center gap-2 mb-3">
-                <div className={cn("flex h-7 w-7 items-center justify-center rounded-lg", cfg.color.replace("bg-", "bg-").replace("500", "100"), "text-" + cfg.color.match(/bg-(\w+)-/)?.[1])}>
-                  <Icon className="h-3.5 w-3.5" />
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${cfg.hex}15` }}>
+                  <Icon className="h-4 w-4" style={{ color: cfg.hex }} />
                 </div>
-                <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{cfg.label}</h3>
+                <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{cfg.label}</span>
               </div>
-
-              {/* Current period */}
-              <div className="mb-3">
-                <div className="flex items-end justify-between">
-                  <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{curr.value}<span className="text-xs text-neutral-400 font-normal">%</span></span>
-                  <div className="flex items-center gap-1 text-xs">
-                    <span className={cn(diff > 0 ? "text-green-600" : diff < 0 ? "text-red-500" : "text-neutral-400")}>
-                      {diff > 0 ? "+" : ""}{diffPct}%
-                    </span>
-                    {diff > 0 ? <ArrowUp className="h-3 w-3 text-green-500" /> : diff < 0 ? <ArrowDown className="h-3 w-3 text-red-500" /> : null}
-                  </div>
-                </div>
-                <p className="text-xs text-neutral-500 mt-0.5">{curr.label}</p>
+              <div className="mt-3 flex items-end justify-between">
+                <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+                  {curr.value}<span className="text-xs text-neutral-400 font-normal">%</span>
+                </span>
+                {diff !== 0 && (
+                  <span className={cn("flex items-center gap-0.5 text-[11px] font-medium", diff > 0 ? "text-green-600" : "text-red-500")}>
+                    {diff > 0 ? <ArrowUp className="h-3 w-3" /> : <ArrowDown className="h-3 w-3" />}
+                    {diff > 0 ? "+" : ""}{diff}%
+                  </span>
+                )}
               </div>
-
-              {/* Progress bar to target (goal if set, otherwise 100%) */}
-              <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              <p className="mt-1 text-[11px] text-neutral-400 dark:text-neutral-500">{curr.label}</p>
+              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                 <motion.div
-                  className={cn("absolute inset-y-0 left-0 rounded-full", curr.value >= 80 ? "bg-green-500" : curr.value >= 50 ? "bg-amber-500" : "bg-red-500")}
+                  className="h-full rounded-full"
+                  style={{ backgroundColor: cfg.hex }}
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(curr.value, 100)}%` }}
-                  transition={{ duration: 0.5 }}
+                  transition={{ duration: 0.5, delay: 0.1 * i }}
                 />
               </div>
-
-              {/* Previous period comparison */}
-              <p className="text-xs text-neutral-400 mt-2">
-                {prevLabel}: <span className="font-medium text-neutral-600 dark:text-neutral-300">{prev.value}%</span> &middot; {prev.label}
-              </p>
             </motion.div>
           )
         })}
       </div>
 
-      {/* Future Goals */}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="flex items-center justify-between mb-4">
+      {/* Goals */}
+      <div className="rounded-3xl border border-neutral-200/60 bg-white p-6 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-semibold text-neutral-900 dark:text-neutral-50">Future Self Goals</h3>
-            <p className="text-xs text-neutral-500">Set targets for {currentLabel}</p>
+            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">Goals for {currentLabel}</h3>
+            <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{periodGoals.length} goal{periodGoals.length !== 1 ? "s" : ""} set</p>
           </div>
-          <Button size="sm" onClick={() => { setEditGoalId(null); setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 }); setGoalDialogOpen(true) }} className="gap-2">
+          <Button size="sm" className="gap-1.5 rounded-xl" onClick={() => { setEditGoalId(null); setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 }); setGoalDialogOpen(true) }}>
             <Plus className="h-3.5 w-3.5" /> Add Goal
           </Button>
         </div>
+
         {periodGoals.length === 0 ? (
-          <p className="text-sm text-neutral-400 text-center py-6">No goals set for this period. Add a goal to track your future self targets.</p>
+          <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-10 dark:border-neutral-800">
+            <Target className="mb-2 h-8 w-8 text-neutral-300 dark:text-neutral-600" />
+            <p className="text-xs text-neutral-500 dark:text-neutral-400">No goals set for this period</p>
+            <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={() => setGoalDialogOpen(true)}>
+              <Plus className="h-3.5 w-3.5" /> Add first goal
+            </Button>
+          </div>
         ) : (
-          <div className="space-y-2">
+          <div className="mt-4 space-y-2">
             {periodGoals.map((g) => {
               const curVal = currentMetrics[g.category]?.value ?? 0
               const pct = g.targetValue > 0 ? Math.min(Math.round((curVal / g.targetValue) * 100), 100) : 0
+              const catCfg = categoryConfig[g.category]
               return (
                 <div key={g.id} className={cn(
-                  "flex items-center gap-3 rounded-xl border p-3 transition-all",
+                  "group flex items-center gap-3 rounded-xl border p-3 transition-all",
                   g.completed
-                    ? "border-green-200 bg-green-50 dark:border-green-900 dark:bg-green-950/30"
-                    : "border-neutral-200 dark:border-neutral-800"
+                    ? "border-green-200 bg-green-50/50 dark:border-green-900/30 dark:bg-green-950/15"
+                    : "border-neutral-200/60 dark:border-neutral-800/60"
                 )}>
                   <button
                     onClick={() => toggleGoalComplete(g.id)}
@@ -392,31 +408,29 @@ function SimulatorTab() {
                     {g.completed && <CheckCircle2 className="h-3 w-3 text-white" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className={cn("text-sm font-medium", g.completed ? "text-green-700 line-through dark:text-green-300" : "text-neutral-900 dark:text-neutral-50")}>
                         {g.title}
                       </span>
-                      <span className={cn("text-xs rounded px-1.5 py-0.5 font-medium", g.completed ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400")}>
-                        {categoryConfig[g.category].label}
+                      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: `${catCfg.hex}15`, color: catCfg.hex }}>
+                        {catCfg.label}
                       </span>
                     </div>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-xs text-neutral-500">Target: {g.targetValue}%</span>
-                      <span className="text-xs text-neutral-300">|</span>
-                      <span className="text-xs text-neutral-500">Current: {curVal}%</span>
-                      <div className="flex-1 max-w-[120px]">
-                        <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                          <motion.div
-                            className={cn("absolute inset-y-0 left-0 rounded-full", pct >= 100 ? "bg-green-500" : "bg-neutral-900 dark:bg-neutral-50")}
-                            initial={{ width: 0 }}
-                            animate={{ width: `${pct}%` }}
-                            transition={{ duration: 0.4 }}
-                          />
-                        </div>
+                    <div className="mt-1.5 flex items-center gap-3">
+                      <span className="text-[11px] text-neutral-400">{curVal}% / {g.targetValue}%</span>
+                      <div className="flex-1 max-w-[140px] h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                        <motion.div
+                          className="h-full rounded-full"
+                          style={{ backgroundColor: catCfg.hex }}
+                          initial={{ width: 0 }}
+                          animate={{ width: `${pct}%` }}
+                          transition={{ duration: 0.4 }}
+                        />
                       </div>
+                      <span className={cn("text-[11px] font-medium", pct >= 100 ? "text-green-600" : "text-neutral-400")}>{pct}%</span>
                     </div>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                     <button onClick={() => openGoalEdit(g)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
@@ -432,47 +446,62 @@ function SimulatorTab() {
       </div>
 
       {/* Goal Dialog */}
-      <Dialog open={goalDialogOpen} onOpenChange={setGoalDialogOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>{editGoalId ? "Edit" : "Add"} Goal</DialogTitle>
-            <DialogDescription>Set a target for your future self</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="space-y-2">
-              <Label htmlFor="goal-title">Title</Label>
-              <Input id="goal-title" value={goalForm.title} onChange={(e) => setGoalForm({ ...goalForm, title: e.target.value })} placeholder="e.g. Complete 80% of tasks" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goal-category">Category</Label>
-              <Select value={goalForm.category} onValueChange={(v) => setGoalForm({ ...goalForm, category: v as GrowthCategory })}>
-                <SelectTrigger id="goal-category"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(categoryConfig) as GrowthCategory[]).map((c) => (
-                    <SelectItem key={c} value={c}>{categoryConfig[c].label}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="goal-target">Target value (%)</Label>
-              <Input id="goal-target" type="number" min={0} max={100} value={goalForm.targetValue || ""} onChange={(e) => setGoalForm({ ...goalForm, targetValue: Number(e.target.value) })} />
-            </div>
-            <Button className="w-full" onClick={handleGoalSubmit} disabled={!goalForm.title.trim() || !goalForm.targetValue}>
-              {editGoalId ? "Save Goal" : "Add Goal"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <AnimatePresence>
+        {goalDialogOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
+            onClick={() => setGoalDialogOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 8 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 8 }}
+              transition={{ duration: 0.15 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
+            >
+              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{editGoalId ? "Edit" : "Add"} Goal</h3>
+              <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Set a target for {currentLabel}</p>
+              <div className="mt-5 space-y-4">
+                <div>
+                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Title</Label>
+                  <Input className="mt-1.5" value={goalForm.title} onChange={(e) => setGoalForm({ ...goalForm, title: e.target.value })} placeholder="e.g. Complete 80% of tasks" autoFocus />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Category</Label>
+                  <Select value={goalForm.category} onValueChange={(v) => setGoalForm({ ...goalForm, category: v as GrowthCategory })}>
+                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(categoryConfig) as GrowthCategory[]).map((c) => (
+                        <SelectItem key={c} value={c}>{categoryConfig[c].label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Target (%)</Label>
+                  <Input className="mt-1.5" type="number" min={0} max={100} value={goalForm.targetValue || ""} onChange={(e) => setGoalForm({ ...goalForm, targetValue: Number(e.target.value) })} />
+                </div>
+              </div>
+              <div className="mt-6 flex justify-end gap-2">
+                <Button variant="outline" size="sm" onClick={() => setGoalDialogOpen(false)}>Cancel</Button>
+                <Button size="sm" disabled={!goalForm.title.trim() || !goalForm.targetValue} onClick={handleGoalSubmit}>
+                  {editGoalId ? "Save" : "Add Goal"}
+                </Button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
 
-// ─── Archive Tab ──────────────────────────────────────────
-
 function ArchiveTab() {
   const { goals, clearAll } = useFutureStore()
-  const [subTab, setSubTab] = useState<"goals" | "snapshots">("goals")
 
   const handleExport = async () => {
     const data = goals.map((g) => ({
@@ -491,81 +520,50 @@ function ArchiveTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2 border-b border-neutral-200 dark:border-neutral-800">
-        {(["goals", "snapshots"] as const).map((t) => (
-          <button
-            key={t}
-            onClick={() => setSubTab(t)}
-            className={cn(
-              "pb-2 text-sm font-medium transition-colors border-b-2 -mb-[1px] capitalize",
-              subTab === t
-                ? "border-neutral-900 text-neutral-900 dark:border-neutral-50 dark:text-neutral-50"
-                : "border-transparent text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-            )}
-          >
-            {t}
-          </button>
-        ))}
+      <div className="flex gap-2">
+        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+          <Download className="h-3.5 w-3.5" /> Export .xlsx
+        </Button>
+        <Button variant="outline" size="sm" onClick={clearAll} className="gap-2 text-red-500 hover:text-red-600">
+          <Trash2 className="h-3.5 w-3.5" /> Clear All
+        </Button>
       </div>
-
-      {subTab === "goals" ? (
-        <div className="space-y-3">
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
-              <Download className="h-3.5 w-3.5" /> Export .xlsx
-            </Button>
-            <Button variant="outline" size="sm" onClick={clearAll} className="gap-2 text-red-500 hover:text-red-600">
-              <Trash2 className="h-3.5 w-3.5" /> Clear All
-            </Button>
-          </div>
-          {goals.length === 0 ? (
-            <p className="text-sm text-neutral-400 py-8 text-center">No goals archived</p>
-          ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-neutral-200 dark:border-neutral-800 text-left text-xs text-neutral-500">
-                    <th className="pb-2 font-medium">Title</th>
-                    <th className="pb-2 font-medium">Category</th>
-                    <th className="pb-2 font-medium">Period</th>
-                    <th className="pb-2 font-medium">Target</th>
-                    <th className="pb-2 font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {goals.map((g) => (
-                    <tr key={g.id} className="border-b border-neutral-100 dark:border-neutral-800/50">
-                      <td className="py-2 font-medium text-neutral-900 dark:text-neutral-50">{g.title}</td>
-                      <td className="py-2"><span className="rounded bg-neutral-100 px-2 py-0.5 text-xs dark:bg-neutral-800">{categoryConfig[g.category].label}</span></td>
-                      <td className="py-2 text-neutral-500">{g.periodKey}</td>
-                      <td className="py-2 text-neutral-500">{g.targetValue}%</td>
-                      <td className="py-2">
-                        <span className={cn("rounded px-2 py-0.5 text-xs font-medium", g.completed ? "bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400")}>
-                          {g.completed ? "Done" : "Active"}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          )}
+      {goals.length === 0 ? (
+        <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-16 dark:border-neutral-800">
+          <Archive className="mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600" />
+          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No goals archived</p>
         </div>
       ) : (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-16 dark:border-neutral-800">
-          <Sparkles className="mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Growth snapshots coming soon</p>
-          <p className="text-xs text-neutral-400 mt-1">Auto-snapshots will be saved each period</p>
+        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <div className="space-y-2">
+            {goals.map((g) => {
+              const catCfg = categoryConfig[g.category]
+              return (
+                <div key={g.id} className="flex items-center gap-3 rounded-xl border border-neutral-200/60 p-3 dark:border-neutral-800/60">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${catCfg.hex}15` }}>
+                    <catCfg.icon className="h-4 w-4" style={{ color: catCfg.hex }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className={cn("text-sm font-medium", g.completed ? "text-green-700 line-through dark:text-green-300" : "text-neutral-900 dark:text-neutral-50")}>
+                      {g.title}
+                    </span>
+                    <p className="text-[11px] text-neutral-400">{g.periodKey} &middot; Target: {g.targetValue}%</p>
+                  </div>
+                  <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", g.completed ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400")}>
+                    {g.completed ? "Done" : "Active"}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
         </div>
       )}
     </div>
   )
 }
 
-// ─── Main Panel ───────────────────────────────────────────
-
 export function FuturePanel() {
-  const [tab, setTab] = useState<"simulator" | "calendar" | "archive">("simulator")
+  const [tab, setTab] = useState<"simulator" | "archive">("simulator")
 
   return (
     <div>
@@ -574,7 +572,7 @@ export function FuturePanel() {
           Future Self
         </h1>
         <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Compare your growth across all areas — monthly, quarterly, and yearly
+          Track your growth across all areas of life
         </p>
       </div>
 
@@ -586,7 +584,7 @@ export function FuturePanel() {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200",
+                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap",
                 tab === t.key
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
@@ -608,7 +606,6 @@ export function FuturePanel() {
           transition={{ duration: 0.2 }}
         >
           {tab === "simulator" && <SimulatorTab />}
-          {tab === "calendar" && <CalendarTab />}
           {tab === "archive" && <ArchiveTab />}
         </motion.div>
       </AnimatePresence>

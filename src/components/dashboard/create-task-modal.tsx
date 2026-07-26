@@ -26,9 +26,11 @@ import type { Priority } from "@/types"
 import { generateId } from "@/lib/utils"
 
 export function CreateTaskModal() {
-  const { isCreateModalOpen, setIsCreateModalOpen, addTask } = useTaskStore()
+  const { isCreateModalOpen, setIsCreateModalOpen, addTask, getProjects } = useTaskStore()
+  const projects = getProjects()
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
+  const [project, setProject] = useState("")
   const [priority, setPriority] = useState<Priority>("medium")
   const [dueDate, setDueDate] = useState("")
   const [subtasks, setSubtasks] = useState<{ id: string; title: string }[]>([])
@@ -40,13 +42,16 @@ export function CreateTaskModal() {
     addTask({
       title: title.trim(),
       description: description.trim(),
+      project: project.trim() || "Uncategorized",
       priority,
       dueDate: dueDate || new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0],
+      reminder: null,
       subtasks: subtasks.map((s) => ({ id: s.id, title: s.title, completed: false })),
     })
 
     setTitle("")
     setDescription("")
+    setProject("")
     setPriority("medium")
     setDueDate("")
     setSubtasks([])
@@ -97,6 +102,22 @@ export function CreateTaskModal() {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="project">Project</Label>
+            <Input
+              id="project"
+              placeholder="Enter project name..."
+              value={project}
+              onChange={(e) => setProject(e.target.value)}
+              list="project-suggestions"
+            />
+            <datalist id="project-suggestions">
+              {projects.map((p) => (
+                <option key={p} value={p} />
+              ))}
+            </datalist>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

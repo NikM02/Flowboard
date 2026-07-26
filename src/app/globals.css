@@ -20,11 +20,245 @@
   --color-neutral-950: #0a0a0a;
 }
 
+/* ── Dark (default) ─────────────────────────────────── */
 .dark {
   --color-background: #0a0a0a;
   --color-foreground: #fafafa;
 }
 
+/* ══════════════════════════════════════════════════════
+   OCEAN — Deep space blue with teal bioluminescence
+   ══════════════════════════════════════════════════════ */
+.theme-ocean {
+  --color-background: #060d1f;
+  --color-foreground: #d4e4f7;
+}
+
+.theme-ocean body {
+  background: linear-gradient(160deg, #060d1f 0%, #0a1628 30%, #0d1f3a 60%, #081422 100%);
+  background-attachment: fixed;
+}
+
+.theme-ocean::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 600px 400px at 20% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 80% 70%, rgba(59, 130, 246, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 300px 300px at 50% 50%, rgba(168, 85, 247, 0.03) 0%, transparent 70%);
+}
+
+.theme-ocean > * {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-ocean [class*="bg-white"],
+.theme-ocean [class*="dark:bg-neutral-900"] {
+  background: linear-gradient(135deg, rgba(10, 25, 50, 0.95), rgba(15, 30, 55, 0.9)) !important;
+  border-color: rgba(6, 182, 212, 0.12) !important;
+  backdrop-filter: blur(12px);
+}
+
+.theme-ocean [class*="bg-neutral-50"],
+.theme-ocean [class*="dark:bg-neutral-800"] {
+  background: rgba(8, 20, 40, 0.7) !important;
+}
+
+.theme-ocean [class*="dark:bg-neutral-800/30"],
+.theme-ocean [class*="dark:bg-neutral-800/50"] {
+  background: rgba(8, 20, 40, 0.5) !important;
+}
+
+.theme-ocean [class*="dark:bg-neutral-950"] {
+  background: #050b18 !important;
+}
+
+.theme-ocean [class*="border-neutral-200"],
+.theme-ocean [class*="dark:border-neutral-800"],
+.theme-ocean [class*="dark:border-neutral-700"] {
+  border-color: rgba(6, 182, 212, 0.1) !important;
+}
+
+.theme-ocean [class*="text-neutral-900"],
+.theme-ocean [class*="dark:text-neutral-50"] {
+  color: #d4e4f7 !important;
+}
+
+.theme-ocean [class*="text-neutral-700"],
+.theme-ocean [class*="dark:text-neutral-300"] {
+  color: #8ab4d8 !important;
+}
+
+.theme-ocean [class*="text-neutral-500"],
+.theme-ocean [class*="dark:text-neutral-400"] {
+  color: #5a8ab5 !important;
+}
+
+.theme-ocean [class*="text-neutral-400"] {
+  color: #4a7a9e !important;
+}
+
+.theme-ocean [class*="bg-neutral-100"],
+.theme-ocean [class*="dark:bg-neutral-800"] {
+  background: rgba(8, 22, 45, 0.6) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   AURORA — Dreamy light with shifting northern lights
+   ══════════════════════════════════════════════════════ */
+.theme-aurora {
+  --color-background: #f0eef8;
+  --color-foreground: #2a2540;
+}
+
+.theme-aurora body {
+  background: linear-gradient(135deg, #ede8f8 0%, #e8f0fa 25%, #e5f0ee 50%, #f0eaef 75%, #f5ede8 100%);
+  background-attachment: fixed;
+}
+
+.theme-aurora::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 700px 500px at 15% 15%, rgba(168, 85, 247, 0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 600px 400px at 85% 25%, rgba(59, 130, 246, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 50% 80%, rgba(16, 185, 129, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 75% 70%, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+}
+
+.theme-aurora > * {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-aurora [class*="bg-white"],
+.theme-aurora [class*="bg-neutral-50"],
+.theme-aurora [class*="dark:bg-neutral-900"] {
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.85), rgba(245, 240, 255, 0.75)) !important;
+  border-color: rgba(168, 85, 247, 0.1) !important;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 2px 20px rgba(168, 85, 247, 0.04), 0 1px 3px rgba(0, 0, 0, 0.03);
+}
+
+.theme-aurora [class*="bg-neutral-100"] {
+  background: rgba(240, 235, 250, 0.6) !important;
+  border-color: rgba(168, 85, 247, 0.08) !important;
+}
+
+.theme-aurora [class*="border-neutral-200"],
+.theme-aurora [class*="border-neutral-100"] {
+  border-color: rgba(168, 85, 247, 0.1) !important;
+}
+
+.theme-aurora [class*="text-neutral-900"] {
+  color: #2a2540 !important;
+}
+
+.theme-aurora [class*="text-neutral-700"] {
+  color: #4a4560 !important;
+}
+
+.theme-aurora [class*="text-neutral-500"] {
+  color: #7a7590 !important;
+}
+
+.theme-aurora [class*="text-neutral-400"] {
+  color: #9a95b0 !important;
+}
+
+.theme-aurora [class*="bg-neutral-100"] {
+  background: rgba(235, 228, 248, 0.5) !important;
+}
+
+/* ══════════════════════════════════════════════════════
+   SUNSET — Warm amber-to-crimson dark with fire glow
+   ══════════════════════════════════════════════════════ */
+.theme-sunset {
+  --color-background: #140a06;
+  --color-foreground: #fce8d4;
+}
+
+.theme-sunset body {
+  background: linear-gradient(160deg, #140a06 0%, #1a0e08 30%, #1e100a 60%, #150b07 100%);
+  background-attachment: fixed;
+}
+
+.theme-sunset::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 600px 400px at 25% 15%, rgba(251, 146, 60, 0.07) 0%, transparent 70%),
+    radial-gradient(ellipse 500px 500px at 75% 75%, rgba(239, 68, 68, 0.05) 0%, transparent 70%),
+    radial-gradient(ellipse 400px 300px at 50% 40%, rgba(245, 158, 11, 0.04) 0%, transparent 70%);
+}
+
+.theme-sunset > * {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-sunset [class*="bg-white"],
+.theme-sunset [class*="dark:bg-neutral-900"] {
+  background: linear-gradient(135deg, rgba(30, 14, 8, 0.95), rgba(35, 18, 10, 0.9)) !important;
+  border-color: rgba(251, 146, 60, 0.1) !important;
+  backdrop-filter: blur(12px);
+}
+
+.theme-sunset [class*="bg-neutral-50"],
+.theme-sunset [class*="dark:bg-neutral-800"] {
+  background: rgba(25, 12, 6, 0.6) !important;
+}
+
+.theme-sunset [class*="dark:bg-neutral-800/30"],
+.theme-sunset [class*="dark:bg-neutral-800/50"] {
+  background: rgba(25, 12, 6, 0.4) !important;
+}
+
+.theme-sunset [class*="dark:bg-neutral-950"] {
+  background: #100805 !important;
+}
+
+.theme-sunset [class*="border-neutral-200"],
+.theme-sunset [class*="dark:border-neutral-800"],
+.theme-sunset [class*="dark:border-neutral-700"] {
+  border-color: rgba(251, 146, 60, 0.08) !important;
+}
+
+.theme-sunset [class*="text-neutral-900"],
+.theme-sunset [class*="dark:text-neutral-50"] {
+  color: #fce8d4 !important;
+}
+
+.theme-sunset [class*="text-neutral-700"],
+.theme-sunset [class*="dark:text-neutral-300"] {
+  color: #d4a882 !important;
+}
+
+.theme-sunset [class*="text-neutral-500"],
+.theme-sunset [class*="dark:text-neutral-400"] {
+  color: #b08868 !important;
+}
+
+.theme-sunset [class*="text-neutral-400"] {
+  color: #8a6a52 !important;
+}
+
+.theme-sunset [class*="bg-neutral-100"],
+.theme-sunset [class*="dark:bg-neutral-800"] {
+  background: rgba(28, 14, 8, 0.6) !important;
+}
+
+/* ── Scrollbar ──────────────────────────────────────── */
 * {
   scrollbar-width: thin;
   scrollbar-color: #e5e5e5 transparent;
@@ -34,6 +268,19 @@
   scrollbar-color: #262626 transparent;
 }
 
+.theme-ocean * {
+  scrollbar-color: rgba(6, 182, 212, 0.15) transparent;
+}
+
+.theme-aurora * {
+  scrollbar-color: rgba(168, 85, 247, 0.15) transparent;
+}
+
+.theme-sunset * {
+  scrollbar-color: rgba(251, 146, 60, 0.15) transparent;
+}
+
+/* ── Body ───────────────────────────────────────────── */
 body {
   background: var(--color-background);
   color: var(--color-foreground);
@@ -42,6 +289,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Animations ─────────────────────────────────────── */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -50,5 +298,12 @@ body {
 @layer utilities {
   .animate-fade-in {
     animation: fadeIn 0.4s ease-out;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
   }
 }

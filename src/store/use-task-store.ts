@@ -8,6 +8,7 @@ type TaskStore = {
   filterStatus: FilterStatus
   sortBy: SortOption
   searchQuery: string
+  projectFilter: string
   selectedTask: Task | null
   isCreateModalOpen: boolean
   isEditSheetOpen: boolean
@@ -17,6 +18,7 @@ type TaskStore = {
   setFilterStatus: (status: FilterStatus) => void
   setSortBy: (sort: SortOption) => void
   setSearchQuery: (query: string) => void
+  setProjectFilter: (project: string) => void
   setSelectedTask: (task: Task | null) => void
   setIsCreateModalOpen: (open: boolean) => void
   setIsEditSheetOpen: (open: boolean) => void
@@ -30,7 +32,10 @@ type TaskStore = {
   removeSubtask: (taskId: string, subtaskId: string) => void
 
   getFilteredTasks: () => Task[]
+  getProjects: () => string[]
   getStats: () => { total: number; active: number; completed: number; progress: number }
+  getProjectStats: () => Record<string, { total: number; completed: number; active: number; avgProgress: number }>
+  getPriorityStats: () => Record<string, number>
   clearCompleted: () => void
 }
 
@@ -40,6 +45,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   filterStatus: "all",
   sortBy: "createdAt",
   searchQuery: "",
+  projectFilter: "all",
   selectedTask: null,
   isCreateModalOpen: false,
   isEditSheetOpen: false,
@@ -49,6 +55,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   setFilterStatus: (status) => set({ filterStatus: status }),
   setSortBy: (sort) => set({ sortBy: sort }),
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setProjectFilter: (project) => set({ projectFilter: project }),
   setSelectedTask: (task) => set({ selectedTask: task }),
   setIsCreateModalOpen: (open) => set({ isCreateModalOpen: open }),
   setIsEditSheetOpen: (open) => set({ isEditSheetOpen: open }),
@@ -119,7 +126,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   getFilteredTasks: () => {
-    const { tasks, filterStatus, searchQuery, sortBy } = get()
+    const { tasks, filterStatus, searchQuery, sortBy, projectFilter } = get()
     let filtered = [...tasks]
 
     if (filterStatus === "active") {
@@ -128,12 +135,17 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       filtered = filtered.filter((t) => t.completed)
     }
 
+    if (projectFilter !== "all") {
+      filtered = filtered.filter((t) => t.project === projectFilter)
+    }
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       filtered = filtered.filter(
         (t) =>
           t.title.toLowerCase().includes(q) ||
-          t.description.toLowerCase().includes(q)
+          t.description.toLowerCase().includes(q) ||
+          t.project.toLowerCase().includes(q)
       )
     }
 
@@ -157,6 +169,12 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     return filtered
   },
 
+  getProjects: () => {
+    const { tasks } = get()
+    const projects = [...new Set(tasks.map((t) => t.project).filter(Boolean))]
+    return projects.sort()
+  },
+
   getStats: () => {
     const { tasks } = get()
     const total = tasks.length
@@ -164,6 +182,36 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const active = total - completed
     const progress = total > 0 ? Math.round((completed / total) * 100) : 0
     return { total, active, completed, progress }
+  },
+
+  getProjectStats: () => {
+    const { tasks } = get()
+    const stats: Record<string, { total: number; completed: number; active: number; avgProgress: number }> = {}
+    for (const task of tasks) {
+      const p = task.project || "Uncategorized"
+      if (!stats[p]) stats[p] = { total: 0, completed: 0, active: 0, avgProgress: 0 }
+      stats[p].total++
+      if (task.completed) stats[p].completed++
+      else stats[p].active++
+    }
+    for (const key of Object.keys(stats)) {
+      const projectTasks = tasks.filter((t) => (t.project || "Uncategorized") === key)
+      stats[key].avgProgress = projectTasks.length > 0
+        ? Math.round(projectTasks.reduce((sum, t) => sum + t.progress, 0) / projectTasks.length)
+        : 0
+    }
+    return stats
+  },
+
+  getPriorityStats: () => {
+    const { tasks } = get()
+    return tasks.reduce(
+      (acc, t) => {
+        acc[t.priority] = (acc[t.priority] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
   },
 
   clearCompleted: () => {

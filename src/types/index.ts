@@ -10,10 +10,12 @@ export type Task = {
   id: string
   title: string
   description: string
+  project: string
   completed: boolean
   progress: number
   priority: Priority
   dueDate: string
+  reminder: string | null
   subtasks: Subtask[]
   createdAt: number
 }
@@ -184,3 +186,28 @@ export type FutureGoal = {
 }
 
 export type GrowthCategory = "tasks" | "habits" | "skills" | "dopamine" | "finance"
+
+export type BucketListItem = {
+  id: string
+  title: string
+  description: string
+  imageUrl: string
+  expectedDate: string
+  timeframe: string
+  completed: boolean
+  createdAt: number
+}
+
+export type ContentStatus = "ideas" | "scripts" | "filming" | "editing" | "published"
+
+export type ContentItem = {
+  id: string
+  emoji: string
+  title: string
+  description: string
+  deadline: string
+  status: ContentStatus
+  subtasks: { id: string; title: string; completed: boolean }[]
+  createdAt: number
+  archivedAt?: number
+}
