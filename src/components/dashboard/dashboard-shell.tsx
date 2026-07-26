@@ -21,13 +21,30 @@ import { useThemeStore } from "@/store/use-theme-store"
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const [authenticated, setAuthenticated] = useState(true)
+  const [authenticated, setAuthenticated] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false)
   const router = useRouter()
   const { colorTheme } = useThemeStore()
 
   useNotificationGenerator()
   const { permission, requestPermission } = usePushNotifications()
   const { loading: dataLoading } = useSupabasePersistence()
+
+  // Check session on mount
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase/client")
+        const client = createClient()
+        const { data: { session } } = await client.auth.getSession()
+        setAuthenticated(!!session)
+      } catch {
+        setAuthenticated(false)
+      }
+      setAuthChecked(true)
+    }
+    checkSession()
+  }, [])
 
   // Apply theme class on mount
   useEffect(() => {
@@ -65,8 +82,16 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      {!authenticated && <LoginScreen onAuth={handleAuth} />}
-      {authenticated && dataLoading && (
+      {!authChecked && (
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
+          <div className="flex flex-col items-center gap-3">
+            <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
+            <p className="text-sm text-neutral-500">Loading Nexus...</p>
+          </div>
+        </div>
+      )}
+      {authChecked && !authenticated && <LoginScreen onAuth={handleAuth} />}
+      {authChecked && authenticated && dataLoading && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
           <div className="flex flex-col items-center gap-3">
             <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
@@ -74,7 +99,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       )}
-      {authenticated && !dataLoading && (
+      {authChecked && authenticated && !dataLoading && (
         <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
           <Sidebar
             open={sidebarOpen}
