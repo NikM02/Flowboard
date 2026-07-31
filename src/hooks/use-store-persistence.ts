@@ -113,9 +113,16 @@ function applyData(d: AppData) {
   if (d.contentItems?.length) useContentStore.setState({ items: d.contentItems as any })
   if (d.northStar) {
     const ns = d.northStar
-    if (ns.vision !== undefined) useNorthStarStore.setState({ vision: ns.vision })
-    if (ns.mission !== undefined) useNorthStarStore.setState({ mission: ns.mission })
-    if (ns.identity !== undefined) useNorthStarStore.setState({ identity: ns.identity })
+    const cur = useNorthStarStore.getState()
+    // Merge strings preferring non-empty values so a stale/empty write can
+    // never wipe real content (e.g. a hydration re-save writing "").
+    const pick = (curVal: string, incVal: string | undefined) =>
+      incVal === undefined ? curVal : incVal || curVal
+    useNorthStarStore.setState({
+      vision: pick(cur.vision, ns.vision),
+      mission: pick(cur.mission, ns.mission),
+      identity: pick(cur.identity, ns.identity),
+    })
     if (ns.pillars?.length) useNorthStarStore.setState({ pillars: ns.pillars as any })
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
@@ -204,15 +211,21 @@ export function useSupabasePersistence() {
             const supabaseTs = data?.updated_at
               ? new Date(data.updated_at).getTime()
               : -1
+            const localBelongs =
+              !localMeta?.userId || localMeta.userId === session.user.id
             const localIsNewer =
               !!localMeta &&
-              localMeta.userId === session.user.id &&
+              localBelongs &&
               localMeta.savedAt > supabaseTs + 5000
 
+            // Always restore the local backup first. applyData merges with a
+            // non-empty preference, so real content survives even when
+            // Supabase was overwritten with empty values (e.g. by an old
+            // hydration re-save). When Supabase is the newer source it is
+            // applied afterwards so it wins ties for array fields.
+            loadFromLocal()
             if (data?.data && !localIsNewer) {
               applyData(data.data as AppData)
-            } else {
-              loadFromLocal()
             }
 
             loadedRef.current = true
