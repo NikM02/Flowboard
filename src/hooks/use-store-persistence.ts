@@ -13,8 +13,10 @@ import { useContentStore } from "@/store/use-content-store"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
+import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 
 const STORAGE_KEY = "flowboard-data"
+const META_KEY = "flowboard-meta"
 
 type AppData = {
   tasks: unknown[]
@@ -33,6 +35,12 @@ type AppData = {
   northStar: { vision: string; mission: string; identity: string; pillars: unknown[] }
   bucketListItems: unknown[]
   advanceTodos: unknown[]
+  colorTheme: ColorTheme
+}
+
+type LocalMeta = {
+  savedAt: number
+  userId: string | null
 }
 
 function collectData(): AppData {
@@ -58,13 +66,26 @@ function collectData(): AppData {
     },
     bucketListItems: useBucketListStore.getState().items,
     advanceTodos: useAdvanceTodoStore.getState().todos,
+    colorTheme: useThemeStore.getState().colorTheme,
   }
 }
 
-function saveToLocal(data: AppData) {
+function saveToLocal(data: AppData, userId: string | null) {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    const meta: LocalMeta = { savedAt: Date.now(), userId }
+    localStorage.setItem(META_KEY, JSON.stringify(meta))
   } catch {}
+}
+
+function readLocalMeta(): LocalMeta | null {
+  try {
+    const raw = localStorage.getItem(META_KEY)
+    if (!raw) return null
+    return JSON.parse(raw)
+  } catch {
+    return null
+  }
 }
 
 function loadFromLocal() {
@@ -72,32 +93,11 @@ function loadFromLocal() {
     const raw = localStorage.getItem(STORAGE_KEY)
     if (!raw) return
     const data: AppData = JSON.parse(raw)
-    if (data.tasks?.length) useTaskStore.setState({ tasks: data.tasks as any })
-    if (data.habits?.length) useHabitStore.setState({ habits: data.habits as any })
-    if (data.challenges?.length) useChallengeStore.setState({ challenges: data.challenges as any })
-    if (data.dopamine?.length) useDopamineStore.setState({ entries: data.dopamine as any })
-    if (data.skills?.length) useSkillStore.setState({ skills: data.skills as any })
-    if (data.incomes?.length) useFinanceStore.setState({ incomes: data.incomes as any })
-    if (data.expenses?.length) useFinanceStore.setState({ expenses: data.expenses as any })
-    if (data.budgets?.length) useFinanceStore.setState({ budgets: data.budgets as any })
-    if (data.sips?.length) useFinanceStore.setState({ sips: data.sips as any })
-    if (data.stocks?.length) useFinanceStore.setState({ stocks: data.stocks as any })
-    if (data.mutualFunds?.length) useFinanceStore.setState({ mutualFunds: data.mutualFunds as any })
-    if (data.futureGoals?.length) useFutureStore.setState({ goals: data.futureGoals as any })
-    if (data.contentItems?.length) useContentStore.setState({ items: data.contentItems as any })
-    if (data.northStar) {
-      const ns = data.northStar
-      if (ns.vision) useNorthStarStore.setState({ vision: ns.vision })
-      if (ns.mission) useNorthStarStore.setState({ mission: ns.mission })
-      if (ns.identity) useNorthStarStore.setState({ identity: ns.identity })
-      if (ns.pillars?.length) useNorthStarStore.setState({ pillars: ns.pillars as any })
-    }
-    if (data.bucketListItems?.length) useBucketListStore.setState({ items: data.bucketListItems as any })
-    if (data.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: data.advanceTodos as any })
+    applyData(data)
   } catch {}
 }
 
-function hydrateFromData(d: AppData) {
+function applyData(d: AppData) {
   if (d.tasks?.length) useTaskStore.setState({ tasks: d.tasks as any })
   if (d.habits?.length) useHabitStore.setState({ habits: d.habits as any })
   if (d.challenges?.length) useChallengeStore.setState({ challenges: d.challenges as any })
@@ -120,11 +120,16 @@ function hydrateFromData(d: AppData) {
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
+  if (d.colorTheme && ["dark", "light", "ocean", "aurora", "sunset"].includes(d.colorTheme)) {
+    useThemeStore.setState({ colorTheme: d.colorTheme as ColorTheme })
+  }
 }
 
 export function useSupabasePersistence() {
   const [loading, setLoading] = useState(true)
   const loadedRef = useRef(false)
+  const dirtyRef = useRef(false)
+  const hydratedRef = useRef(false)
   const userIdRef = useRef<string | null>(null)
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
@@ -140,37 +145,82 @@ export function useSupabasePersistence() {
     } catch {}
   }, [])
 
+  const flushSave = useCallback(() => {
+    if (!loadedRef.current || !dirtyRef.current) return
+    dirtyRef.current = false
+    const data = collectData()
+    saveToLocal(data, userIdRef.current)
+    saveToSupabase(data)
+  }, [saveToSupabase])
+
   const scheduleSave = useCallback(() => {
+    if (!loadedRef.current) return
+    dirtyRef.current = true
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
-    saveTimerRef.current = setTimeout(() => {
-      if (!loadedRef.current) return
+    saveTimerRef.current = setTimeout(flushSave, 2000)
+  }, [flushSave])
+
+  // Flush pending changes immediately when the tab is being hidden or closed
+  useEffect(() => {
+    const flush = () => {
+      if (!loadedRef.current || !dirtyRef.current) return
       const data = collectData()
-      saveToLocal(data)
+      saveToLocal(data, userIdRef.current)
       saveToSupabase(data)
-    }, 2000)
+    }
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush()
+    }
+    window.addEventListener("pagehide", flush)
+    window.addEventListener("beforeunload", flush)
+    document.addEventListener("visibilitychange", onVisibility)
+    return () => {
+      window.removeEventListener("pagehide", flush)
+      window.removeEventListener("beforeunload", flush)
+      document.removeEventListener("visibilitychange", onVisibility)
+    }
   }, [saveToSupabase])
 
   useEffect(() => {
     const client = createClient()
 
     client.auth.getSession().then(({ data: { session } }) => {
+      if (hydratedRef.current) return
       if (session?.user) {
         userIdRef.current = session.user.id
         client
           .from("user_data")
-          .select("data")
+          .select("data, updated_at")
           .eq("user_id", session.user.id)
           .single()
           .then(({ data, error }) => {
-            if (data?.data) {
-              hydrateFromData(data.data as AppData)
+            if (hydratedRef.current) return
+            hydratedRef.current = true
+
+            // Prefer the newer source between Supabase and the local backup.
+            // The local backup can be newer when the Supabase write lagged
+            // behind or the page was closed before the debounced save fired.
+            const localMeta = readLocalMeta()
+            const supabaseTs = data?.updated_at
+              ? new Date(data.updated_at).getTime()
+              : -1
+            const localIsNewer =
+              !!localMeta &&
+              localMeta.userId === session.user.id &&
+              localMeta.savedAt > supabaseTs + 5000
+
+            if (data?.data && !localIsNewer) {
+              applyData(data.data as AppData)
             } else {
               loadFromLocal()
             }
+
             loadedRef.current = true
+            dirtyRef.current = false
             setLoading(false)
           })
       } else {
+        hydratedRef.current = true
         loadFromLocal()
         loadedRef.current = true
         setLoading(false)
@@ -195,6 +245,7 @@ export function useSupabasePersistence() {
       useNorthStarStore.subscribe(scheduleSave),
       useBucketListStore.subscribe(scheduleSave),
       useAdvanceTodoStore.subscribe(scheduleSave),
+      useThemeStore.subscribe(scheduleSave),
     ]
     return () => unsubs.forEach((u) => u())
   }, [scheduleSave])
@@ -204,4 +255,5 @@ export function useSupabasePersistence() {
 
 export function clearLocalData() {
   localStorage.removeItem(STORAGE_KEY)
+  localStorage.removeItem(META_KEY)
 }
