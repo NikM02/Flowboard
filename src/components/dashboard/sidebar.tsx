@@ -16,6 +16,7 @@ import {
   BookOpen,
   Compass,
   ChevronsLeft,
+  Workflow,
 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
@@ -91,6 +92,11 @@ export function Sidebar({
         <Link href="/north-star" className={navLinkClass("/north-star")} title="North Star">
           <Compass className="h-4 w-4 shrink-0" />
           <span className={labelClass}>North Star</span>
+        </Link>
+
+        <Link href="/mindmap" className={navLinkClass("/mindmap")} title="Brainstorm">
+          <Workflow className="h-4 w-4 shrink-0" />
+          <span className={labelClass}>Brainstorm</span>
         </Link>
 
         {navItems.map((item) => (

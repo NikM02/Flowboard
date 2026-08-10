@@ -473,3 +473,28 @@ body {
     display: none;
   }
 }
+
+/* ── Print / PDF export ─────────────────────────────── */
+.print-only {
+  display: none;
+}
+
+@page {
+  margin: 10mm;
+}
+
+@media print {
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  body > *:not(.print-only) {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+}
