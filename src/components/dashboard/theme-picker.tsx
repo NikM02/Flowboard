@@ -127,7 +127,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="absolute bottom-14 right-0 z-50 w-52 rounded-2xl border border-neutral-200/60 bg-white p-2.5 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900"
+            className="absolute bottom-14 right-0 z-50 w-52 rounded-2xl border border-white/40 bg-white/85 p-2.5 shadow-2xl shadow-indigo-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-neutral-900/85"
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">

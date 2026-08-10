@@ -23,6 +23,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    if (typeof window === "undefined") return true
+    try {
+      const stored = localStorage.getItem("nexus-sidebar-collapsed")
+      if (stored) return stored === "1"
+    } catch {}
+    return true
+  })
   const router = useRouter()
   const { colorTheme } = useThemeStore()
 
@@ -80,6 +88,16 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     setAuthenticated(false)
   }, [])
 
+  const toggleSidebarCollapsed = useCallback(() => {
+    setSidebarCollapsed((c) => {
+      const next = !c
+      try {
+        localStorage.setItem("nexus-sidebar-collapsed", next ? "1" : "0")
+      } catch {}
+      return next
+    })
+  }, [])
+
   return (
     <>
       {!authChecked && (
@@ -105,6 +123,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             open={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
             onLogout={handleLogout}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={toggleSidebarCollapsed}
           />
 
           <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">

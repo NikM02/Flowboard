@@ -127,9 +127,6 @@ function applyData(d: AppData) {
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
-  if (d.colorTheme && ["dark", "light", "ocean", "aurora", "sunset"].includes(d.colorTheme)) {
-    useThemeStore.setState({ colorTheme: d.colorTheme as ColorTheme })
-  }
 }
 
 export function useSupabasePersistence() {

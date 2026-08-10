@@ -167,9 +167,9 @@ export function GlobalSearch({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -20 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
+            className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-3xl border border-white/40 bg-white/90 shadow-2xl shadow-indigo-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-neutral-900/90"
           >
-            <div className="flex items-center gap-3 border-b border-neutral-200 px-4 dark:border-neutral-800">
+            <div className="flex items-center gap-3 border-b border-neutral-200/60 px-4 dark:border-neutral-800/60">
               <Search className="h-4 w-4 shrink-0 text-neutral-400" />
               <input
                 ref={inputRef}

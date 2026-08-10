@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Compass, Heart, Wallet, TrendingUp, BookOpen,
+  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo,
   CheckCircle2, Circle, Flame, ArrowUpRight, ArrowDownRight,
   AlertTriangle, ChevronDown, ChevronRight,
   Plus, Minus, Check, Calendar, Trophy, Zap, Bell, BellOff,
@@ -56,25 +56,118 @@ function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: t
   )
 }
 
+/* ── Hero ────────────────────────────────────────────── */
+function DashboardHero() {
+  const tasks = useTaskStore((s) => s.tasks)
+  const habits = useHabitStore((s) => s.habits)
+  const getStreak = useHabitStore((s) => s.getStreak)
+  const incomes = useFinanceStore((s) => s.incomes)
+  const expenses = useFinanceStore((s) => s.expenses)
+
+  const hour = new Date().getHours()
+  const greeting =
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
+
+  const dueToday = tasks.filter(
+    (t) => !t.completed && t.dueDate === format(new Date(), "yyyy-MM-dd")
+  ).length
+  const bestStreak = Math.max(...habits.map((h) => getStreak(h.id)), 0)
+  const net =
+    incomes.reduce((s, i) => s + i.amount, 0) -
+    expenses.reduce((s, e) => s + e.amount, 0)
+
+  const stats = [
+    {
+      label: "Tasks due today",
+      value: String(dueToday),
+      icon: ListTodo,
+      tile: "bg-indigo-500/10 text-indigo-500 dark:text-indigo-300",
+    },
+    {
+      label: "Best habit streak",
+      value: bestStreak > 0 ? `${bestStreak}d` : "—",
+      icon: Flame,
+      tile: "bg-amber-500/10 text-amber-500 dark:text-amber-300",
+    },
+    {
+      label: "Net cash flow",
+      value: `₹${net.toLocaleString("en-IN")}`,
+      icon: Wallet,
+      tile: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300",
+    },
+  ]
+
+  return (
+    <div className="card-modern relative overflow-hidden rounded-3xl glass p-6 sm:p-8">
+      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-400/30 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-gradient-to-br from-fuchsia-400/20 to-emerald-400/20 blur-3xl" />
+      <div className="relative">
+        <p className="text-sm font-semibold text-indigo-500 dark:text-indigo-300">
+          {greeting}
+        </p>
+        <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
+          <span className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-indigo-600 bg-clip-text text-transparent dark:from-white dark:via-neutral-300 dark:to-indigo-400">
+            Dashboard
+          </span>
+        </h1>
+        <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+          {format(new Date(), "EEEE, MMMM d")}
+        </p>
+
+        <div className="mt-6 grid grid-cols-3 gap-2.5 sm:gap-4">
+          {stats.map((s) => (
+            <div
+              key={s.label}
+              className="flex items-center gap-2.5 rounded-2xl border border-white/60 bg-white/60 p-3 backdrop-blur dark:border-white/10 dark:bg-white/5"
+            >
+              <div
+                className={cn(
+                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                  s.tile
+                )}
+              >
+                <s.icon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-[11px] text-neutral-500 dark:text-neutral-400">
+                  {s.label}
+                </p>
+                <p className="truncate text-sm font-bold text-neutral-900 dark:text-neutral-50 sm:text-base">
+                  {s.value}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 /* ── Mission ─────────────────────────────────────────── */
 function MissionSection() {
   const mission = useNorthStarStore((s) => s.mission)
 
   return (
-    <Card delay={0} className="border-neutral-200/40 bg-gradient-to-br from-neutral-50 via-white to-neutral-50 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-950 overflow-hidden relative">
-      <div className="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-neutral-900/[0.03] dark:bg-neutral-50/[0.03]" />
-      <div className="flex items-start gap-3 relative">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-neutral-900 dark:bg-neutral-50">
-          <Compass className="h-4 w-4 text-white dark:text-neutral-900" />
+    <Card
+      delay={0}
+      className="relative overflow-hidden border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 via-white to-violet-500/10 dark:from-indigo-500/15 dark:via-neutral-900/60 dark:to-violet-500/15"
+    >
+      <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-indigo-400/30 to-fuchsia-400/30 blur-2xl" />
+      <div className="relative flex items-start gap-3">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/30">
+          <Compass className="h-5 w-5 text-white" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 mb-1">Mission</p>
+          <p className="mb-1 text-[11px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-300">
+            Mission
+          </p>
           {mission ? (
-            <p className="text-sm leading-relaxed text-neutral-700 dark:text-neutral-300 line-clamp-2 italic">
+            <p className="line-clamp-2 text-sm font-medium leading-relaxed text-neutral-700 dark:text-neutral-300 sm:text-[15px]">
               &ldquo;{mission}&rdquo;
             </p>
           ) : (
-            <Link href="/north-star" className="text-xs text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300 transition-colors">
+            <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300">
               Set your mission in North Star →
             </Link>
           )}
@@ -147,7 +240,7 @@ function HighPriorityTasks() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 8, height: 0 }}
-                  className="rounded-xl border border-neutral-100 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-800/30 overflow-hidden"
+                  className="rounded-xl border border-white/60 bg-white/60 backdrop-blur dark:border-white/5 dark:bg-white/5 overflow-hidden"
                 >
                   <div className="flex items-center gap-2.5 px-3 py-2.5">
                     <button onClick={() => handleComplete(t)} className="shrink-0">
@@ -295,8 +388,8 @@ function HabitsChallengesSection() {
                   className={cn(
                     "flex items-center gap-2 rounded-xl px-2.5 py-2 text-left transition-all",
                     done
-                      ? "bg-emerald-50 dark:bg-emerald-950/20"
-                      : "bg-neutral-50 hover:bg-neutral-100 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                      ? "border border-emerald-200/60 bg-emerald-500/10 dark:border-emerald-900/30"
+                      : "border border-white/60 bg-white/60 hover:bg-white/80 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"
                   )}
                 >
                   <div className={cn(
@@ -330,7 +423,7 @@ function HabitsChallengesSection() {
               const progress = getProgress(c.id)
               const isTodayDone = todayDay?.completed ?? false
               return (
-                <div key={c.id} className="flex items-center gap-2.5 rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/50">
+                <div key={c.id} className="flex items-center gap-2.5 rounded-xl border border-white/60 bg-white/60 px-3 py-2 backdrop-blur dark:border-white/5 dark:bg-white/5">
                   <button
                     onClick={() => {
                       if (todayDay) toggleDayC(c.id, todayDay.day)
@@ -447,7 +540,7 @@ function FinanceSection() {
         <div className="space-y-1">
           <span className="text-[10px] font-medium text-neutral-400">Recent</span>
           {recentExpenses.map((e) => (
-            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
+            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
               <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{e.description}</span>
               <span className="text-xs font-medium text-red-500 shrink-0 ml-2">-₹{e.amount.toLocaleString("en-IN")}</span>
             </div>
@@ -549,7 +642,7 @@ function InvestmentsSection() {
         <div className="space-y-1">
           <span className="text-[10px] font-medium text-neutral-400">Top Stocks</span>
           {topStocks.map((s) => (
-            <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors">
+            <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
               <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{s.name}</span>
               <span className={cn("text-xs font-medium shrink-0 ml-2", s.gain >= 0 ? "text-emerald-500" : "text-red-500")}>
                 {s.gain >= 0 ? "+" : ""}{s.pct}%
@@ -597,7 +690,7 @@ function ContentSection() {
             const nextStatus = sc?.next
 
             return (
-              <div key={item.id} className="rounded-xl border border-neutral-100 bg-neutral-50/50 p-3 dark:border-neutral-800 dark:bg-neutral-800/30">
+              <div key={item.id} className="rounded-xl border border-white/60 bg-white/60 p-3 backdrop-blur dark:border-white/5 dark:bg-white/5">
                 <div className="flex items-center gap-2.5">
                   <span className="text-lg shrink-0">{item.emoji}</span>
                   <div className="min-w-0 flex-1">
@@ -647,14 +740,7 @@ export default function DashboardPage() {
         transition={{ duration: 0.3 }}
         className="space-y-4 sm:space-y-5"
       >
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-            Dashboard
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {format(new Date(), "EEEE, MMMM d")}
-          </p>
-        </div>
+        <DashboardHero />
 
         <MissionSection />
 
@@ -663,9 +749,10 @@ export default function DashboardPage() {
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
+          <div className="lg:col-span-2">
+            <ContentSection />
+          </div>
         </div>
-
-        <ContentSection />
       </motion.div>
     </DashboardShell>
   )

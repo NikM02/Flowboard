@@ -7,7 +7,10 @@ type ThemeStore = {
   setColorTheme: (theme: ColorTheme) => void
 }
 
-const THEME_KEY = "nexus-color-theme"
+// v2: design refresh made white the default. The key is versioned so devices
+// that previously saved "dark" under the old key get the new light default
+// once, instead of the stale choice overriding the redesign forever.
+const THEME_KEY = "nexus-color-theme-v2"
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement

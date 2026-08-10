@@ -15,6 +15,7 @@ import {
   LayoutDashboard,
   BookOpen,
   Compass,
+  ChevronsLeft,
 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
@@ -32,56 +33,79 @@ export function Sidebar({
   open,
   onClose,
   onLogout,
+  collapsed,
+  onToggleCollapse,
 }: {
   open: boolean
   onClose: () => void
   onLogout: () => void
+  collapsed: boolean
+  onToggleCollapse: () => void
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const pathname = usePathname()
 
+  const isCollapsed = !isMobile && collapsed
+
   const navLinkClass = (href: string) =>
     cn(
-      "group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+      "group relative flex w-full items-center rounded-xl text-sm font-medium transition-all duration-200",
+      isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
       pathname === href
         ? "bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-600 dark:text-indigo-300"
         : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
     )
 
+  const labelClass = cn(
+    "truncate",
+    isCollapsed && "sr-only"
+  )
+
   const content = (
-    <div className="flex h-full flex-col gap-1 p-4">
-      <Link href="/dashboard" className="flex items-center gap-3 px-3 pb-6 pt-2">
+    <>
+      <Link
+        href="/dashboard"
+        className={cn(
+          "flex items-center px-3 pb-6 pt-2",
+          isCollapsed ? "justify-center px-0" : "gap-3"
+        )}
+      >
         <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
-        <span className="text-lg font-bold tracking-tight">
+        <span
+          className={cn(
+            "text-lg font-bold tracking-tight whitespace-nowrap",
+            isCollapsed && "hidden"
+          )}
+        >
           Nexus
           <span className="ml-1.5 bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">·</span>
         </span>
       </Link>
 
       <div className="space-y-1">
-        <Link href="/dashboard" className={navLinkClass("/dashboard")}>
-          <LayoutDashboard className="h-4 w-4" />
-          Dashboard
+        <Link href="/dashboard" className={navLinkClass("/dashboard")} title="Dashboard">
+          <LayoutDashboard className="h-4 w-4 shrink-0" />
+          <span className={labelClass}>Dashboard</span>
         </Link>
 
-        <Link href="/north-star" className={navLinkClass("/north-star")}>
-          <Compass className="h-4 w-4" />
-          North Star
+        <Link href="/north-star" className={navLinkClass("/north-star")} title="North Star">
+          <Compass className="h-4 w-4 shrink-0" />
+          <span className={labelClass}>North Star</span>
         </Link>
 
         {navItems.map((item) => (
-          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
+          <Link key={item.href} href={item.href} className={navLinkClass(item.href)} title={item.label}>
             <item.icon className="h-4 w-4 shrink-0" />
-            {item.label}
+            <span className={labelClass}>{item.label}</span>
           </Link>
         ))}
 
-        <Link href="/content-hub" className={navLinkClass("/content-hub")}>
-          <BookOpen className="h-4 w-4" />
-          Content Hub
+        <Link href="/content-hub" className={navLinkClass("/content-hub")} title="Content Hub">
+          <BookOpen className="h-4 w-4 shrink-0" />
+          <span className={labelClass}>Content Hub</span>
         </Link>
       </div>
-    </div>
+    </>
   )
 
   if (isMobile) {
@@ -109,7 +133,7 @@ export function Sidebar({
               >
                 <X className="h-5 w-5" />
               </button>
-              {content}
+              <div className="flex h-full flex-col gap-1 p-4">{content}</div>
             </motion.aside>
           </>
         )}
@@ -118,8 +142,29 @@ export function Sidebar({
   }
 
   return (
-    <aside className="glass sticky top-0 hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-neutral-200/60 md:block dark:border-neutral-800/60">
-      {content}
+    <aside
+      className={cn(
+        "glass sticky top-0 hidden h-screen shrink-0 overflow-y-auto border-r border-neutral-200/60 transition-[width] duration-300 ease-in-out md:block dark:border-neutral-800/60",
+        isCollapsed ? "w-[76px]" : "w-64"
+      )}
+    >
+      <div className={cn("flex h-full flex-col gap-1", isCollapsed ? "p-3" : "p-4")}>
+        {content}
+
+        <div className="mt-auto border-t border-neutral-200/60 pt-2 dark:border-neutral-800/60">
+          <button
+            onClick={onToggleCollapse}
+            title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+            className={cn(
+              "flex w-full items-center rounded-xl text-sm font-medium text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50",
+              isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5"
+            )}
+          >
+            <ChevronsLeft className={cn("h-4 w-4 shrink-0 transition-transform duration-300", isCollapsed && "rotate-180")} />
+            <span className={labelClass}>Collapse</span>
+          </button>
+        </div>
+      </div>
     </aside>
   )
 }
