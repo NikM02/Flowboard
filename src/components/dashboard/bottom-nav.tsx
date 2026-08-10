@@ -45,7 +45,7 @@ export function BottomNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-50 bg-neutral-950/50 md:hidden"
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -82,7 +82,7 @@ export function BottomNav() {
       </AnimatePresence>
 
       {/* Bottom bar */}
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200/60 bg-white/80 backdrop-blur-xl md:hidden dark:border-neutral-800/60 dark:bg-neutral-950/80">
+      <nav               className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-200 bg-white md:hidden dark:border-neutral-800 dark:bg-neutral-950">
         <div className="flex items-center justify-around px-1 py-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon

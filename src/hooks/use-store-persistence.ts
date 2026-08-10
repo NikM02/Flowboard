@@ -13,6 +13,7 @@ import { useContentStore } from "@/store/use-content-store"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
+import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 
 const STORAGE_KEY = "flowboard-data"
@@ -20,6 +21,8 @@ const META_KEY = "flowboard-meta"
 
 type AppData = {
   tasks: unknown[]
+  projects: string[]
+  sleepEntries: unknown[]
   habits: unknown[]
   challenges: unknown[]
   dopamine: unknown[]
@@ -46,6 +49,8 @@ type LocalMeta = {
 function collectData(): AppData {
   return {
     tasks: useTaskStore.getState().tasks,
+    projects: useTaskStore.getState().projects,
+    sleepEntries: useSleepStore.getState().entries,
     habits: useHabitStore.getState().habits,
     challenges: useChallengeStore.getState().challenges,
     dopamine: useDopamineStore.getState().entries,
@@ -99,6 +104,8 @@ function loadFromLocal() {
 
 function applyData(d: AppData) {
   if (d.tasks?.length) useTaskStore.setState({ tasks: d.tasks as any })
+  if (d.projects?.length) useTaskStore.setState({ projects: d.projects as any })
+  if (d.sleepEntries?.length) useSleepStore.setState({ entries: d.sleepEntries as any })
   if (d.habits?.length) useHabitStore.setState({ habits: d.habits as any })
   if (d.challenges?.length) useChallengeStore.setState({ challenges: d.challenges as any })
   if (d.dopamine?.length) useDopamineStore.setState({ entries: d.dopamine as any })
@@ -245,6 +252,7 @@ export function useSupabasePersistence() {
   useEffect(() => {
     const unsubs = [
       useTaskStore.subscribe(scheduleSave),
+      useSleepStore.subscribe(scheduleSave),
       useHabitStore.subscribe(scheduleSave),
       useChallengeStore.subscribe(scheduleSave),
       useDopamineStore.subscribe(scheduleSave),

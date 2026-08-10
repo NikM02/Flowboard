@@ -17,7 +17,7 @@ const SheetOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SheetPrimitive.Overlay
     className={cn(
-      "fixed inset-0 z-50 bg-neutral-950/50 backdrop-blur-md data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
+      "fixed inset-0 z-50 bg-neutral-950/50 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
       className
     )}
     {...props}
@@ -27,7 +27,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 const sheetVariants = cva(
-  "fixed z-50 gap-4 border border-white/40 bg-white/85 p-6 shadow-2xl shadow-indigo-950/20 backdrop-blur-2xl transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 dark:border-white/10 dark:bg-neutral-900/85",
+  "fixed z-50 gap-4 border border-neutral-200 bg-white p-6 shadow-2xl shadow-neutral-900/20 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 dark:border-neutral-800 dark:bg-neutral-900",
   {
     variants: {
       side: {
@@ -61,7 +61,7 @@ const SheetContent = React.forwardRef<
       {...props}
     >
       {children}
-      <SheetPrimitive.Close className="absolute right-4 top-4 z-10 rounded-full border border-neutral-200/60 bg-white/70 p-2 opacity-80 shadow-sm backdrop-blur transition-all hover:scale-105 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 disabled:pointer-events-none dark:border-neutral-700/60 dark:bg-neutral-800/80">
+      <SheetPrimitive.Close className="absolute right-4 top-4 z-10 rounded-full border border-neutral-200 bg-white p-2 opacity-80 shadow-sm transition-all hover:scale-105 hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-indigo-400/50 disabled:pointer-events-none dark:border-neutral-700 dark:bg-neutral-800">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </SheetPrimitive.Close>

@@ -263,22 +263,22 @@
    ══════════════════════════════════════════════════════ */
 
 @layer utilities {
-  /* Frosted glass surface */
+  /* Clean solid surface (no glass blur) */
   .glass {
-    background: rgba(255, 255, 255, 0.72);
-    border: 1px solid rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(16px) saturate(160%);
-    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.07);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
   }
 
   .dark .glass {
-    background: rgba(17, 17, 17, 0.6);
-    border-color: rgba(255, 255, 255, 0.08);
+    background: #0c0c0c;
+    border-color: rgba(255, 255, 255, 0.09);
   }
 
-  .theme-ocean .glass { background: rgba(10, 25, 50, 0.6); border-color: rgba(6, 182, 212, 0.14); }
-  .theme-aurora .glass { background: rgba(255, 255, 255, 0.66); border-color: rgba(168, 85, 247, 0.14); }
-  .theme-sunset .glass { background: rgba(30, 14, 8, 0.6); border-color: rgba(251, 146, 60, 0.14); }
+  .theme-ocean .glass { background: #0d1b2a; border-color: rgba(6, 182, 212, 0.18); }
+  .theme-aurora .glass { background: #ffffff; border-color: rgba(168, 85, 247, 0.18); }
+  .theme-sunset .glass { background: #1c0f07; border-color: rgba(251, 146, 60, 0.18); }
 
   /* Lifted card with soft layered shadow */
   .card-modern {

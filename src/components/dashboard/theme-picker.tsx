@@ -54,7 +54,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm md:hidden"
+                className="fixed inset-0 z-50 bg-neutral-950/50 md:hidden"
                 onClick={() => setOpen(false)}
               />
               <motion.div
@@ -127,7 +127,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="absolute bottom-14 right-0 z-50 w-52 rounded-2xl border border-white/40 bg-white/85 p-2.5 shadow-2xl shadow-indigo-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-neutral-900/85"
+            className="absolute bottom-14 right-0 z-50 w-52 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">

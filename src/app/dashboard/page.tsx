@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo,
+  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo, Moon, MoonStar, Clock,
   CheckCircle2, Circle, Flame, ArrowUpRight, ArrowDownRight,
   AlertTriangle, ChevronDown, ChevronRight,
   Plus, Minus, Check, Calendar, Trophy, Zap, Bell, BellOff,
@@ -24,6 +24,7 @@ import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import { useContentStore } from "@/store/use-content-store"
+import { useSleepStore } from "@/store/use-sleep-store"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
@@ -118,7 +119,7 @@ function DashboardHero() {
           {stats.map((s) => (
             <div
               key={s.label}
-              className="flex items-center gap-2.5 rounded-2xl border border-white/60 bg-white/60 p-3 backdrop-blur dark:border-white/10 dark:bg-white/5"
+              className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900"
             >
               <div
                 className={cn(
@@ -240,7 +241,7 @@ function HighPriorityTasks() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 8, height: 0 }}
-                  className="rounded-xl border border-white/60 bg-white/60 backdrop-blur dark:border-white/5 dark:bg-white/5 overflow-hidden"
+                  className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden"
                 >
                   <div className="flex items-center gap-2.5 px-3 py-2.5">
                     <button onClick={() => handleComplete(t)} className="shrink-0">
@@ -389,7 +390,7 @@ function HabitsChallengesSection() {
                     "flex items-center gap-2 rounded-xl px-2.5 py-2 text-left transition-all",
                     done
                       ? "border border-emerald-200/60 bg-emerald-500/10 dark:border-emerald-900/30"
-                      : "border border-white/60 bg-white/60 hover:bg-white/80 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"
+                      : "border border-neutral-200 bg-white hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800"
                   )}
                 >
                   <div className={cn(
@@ -423,7 +424,7 @@ function HabitsChallengesSection() {
               const progress = getProgress(c.id)
               const isTodayDone = todayDay?.completed ?? false
               return (
-                <div key={c.id} className="flex items-center gap-2.5 rounded-xl border border-white/60 bg-white/60 px-3 py-2 backdrop-blur dark:border-white/5 dark:bg-white/5">
+                <div key={c.id} className="flex items-center gap-2.5 rounded-xl border border-neutral-200 bg-white px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900">
                   <button
                     onClick={() => {
                       if (todayDay) toggleDayC(c.id, todayDay.day)
@@ -690,7 +691,7 @@ function ContentSection() {
             const nextStatus = sc?.next
 
             return (
-              <div key={item.id} className="rounded-xl border border-white/60 bg-white/60 p-3 backdrop-blur dark:border-white/5 dark:bg-white/5">
+              <div key={item.id} className="rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
                 <div className="flex items-center gap-2.5">
                   <span className="text-lg shrink-0">{item.emoji}</span>
                   <div className="min-w-0 flex-1">
@@ -730,6 +731,74 @@ function ContentSection() {
   )
 }
 
+/* ── Sleep ───────────────────────────────────────────── */
+function SleepSection() {
+  const { entries, getStats, getWeekEntries } = useSleepStore()
+  const stats = useMemo(() => getStats(), [getStats, entries.length])
+  const weekEntries = useMemo(() => getWeekEntries(), [getWeekEntries, entries.length])
+
+  const chartData = useMemo(() => {
+    const days: { day: string; hours: number }[] = []
+    const now = new Date()
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(now)
+      d.setDate(d.getDate() - i)
+      const dateStr = d.toISOString().slice(0, 10)
+      const entry = weekEntries.find((e) => e.date === dateStr) || entries.find((e) => e.date === dateStr)
+      days.push({ day: dateStr.slice(5), hours: entry?.hours ?? 0 })
+    }
+    return days
+  }, [entries, weekEntries])
+
+  const last = stats.lastNight
+
+  return (
+    <Card delay={0.3}>
+      <CardHeader icon={Moon} label="Sleep" color="text-indigo-500" />
+      {entries.length === 0 ? (
+        <Link href="/habits" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
+          <MoonStar className="h-8 w-8" />
+          <p className="text-xs">Start tracking your sleep</p>
+        </Link>
+      ) : (
+        <>
+          <div className="mb-3 flex items-center gap-4">
+            {last && (
+              <div className="min-w-0 flex-1">
+                <p className="text-[11px] text-neutral-400">Last night</p>
+                <p className="text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                  {last.hours}h
+                  <span className="ml-2 text-[11px] font-medium text-neutral-400">{last.date}</span>
+                </p>
+                <p className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
+                  <Clock className="h-3 w-3" /> {last.bedtime} → {last.wakeTime}
+                </p>
+              </div>
+            )}
+            <div className="shrink-0 text-right">
+              <p className="text-[11px] text-neutral-400">Avg (30d)</p>
+              <p className="text-lg font-bold tracking-tight text-indigo-600 dark:text-indigo-300">{stats.avgHours}h</p>
+              <p className="text-[11px] text-neutral-400">{stats.totalNights} nights</p>
+            </div>
+          </div>
+          <div className="h-24">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={chartData} margin={{ top: 4, right: 4, left: -26, bottom: 0 }}>
+                <ChartGradients ids={["dash-sleep"]} />
+                <CartesianGrid {...CHART_GRID_STYLES} />
+                <XAxis dataKey="day" {...CHART_AXIS_STYLES} />
+                <YAxis {...CHART_AXIS_STYLES} />
+                <Tooltip content={<ChartTooltip formatter={(v) => `${v}h`} />} cursor={CHART_CURSOR_STYLES} />
+                <Bar dataKey="hours" fill="url(#dash-sleep)" radius={[5, 5, 2, 2]} barSize={14} name="Sleep" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </>
+      )}
+    </Card>
+  )
+}
+
 /* ── Page ────────────────────────────────────────────── */
 export default function DashboardPage() {
   return (
@@ -749,6 +818,7 @@ export default function DashboardPage() {
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
+          <SleepSection />
           <div className="lg:col-span-2">
             <ContentSection />
           </div>

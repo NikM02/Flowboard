@@ -4,6 +4,7 @@ import { generateId, calculateProgress, isAllSubtasksComplete } from "@/lib/util
 
 type TaskStore = {
   tasks: Task[]
+  projects: string[]
   viewMode: ViewMode
   filterStatus: FilterStatus
   sortBy: SortOption
@@ -30,6 +31,8 @@ type TaskStore = {
   toggleSubtask: (taskId: string, subtaskId: string) => void
   addSubtask: (taskId: string, title: string) => void
   removeSubtask: (taskId: string, subtaskId: string) => void
+  addProject: (name: string) => void
+  deleteProject: (name: string) => void
 
   getFilteredTasks: () => Task[]
   getProjects: () => string[]
@@ -41,6 +44,7 @@ type TaskStore = {
 
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
+  projects: [],
   viewMode: "card",
   filterStatus: "all",
   sortBy: "createdAt",
@@ -125,6 +129,21 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }))
   },
 
+  addProject: (name) => {
+    const clean = name.trim()
+    if (!clean) return
+    const { projects } = get()
+    if (projects.includes(clean)) return
+    set({ projects: [...projects, clean] })
+  },
+
+  deleteProject: (name) => {
+    const { projects } = get()
+    if (projects.includes(name)) {
+      set({ projects: projects.filter((p) => p !== name) })
+    }
+  },
+
   getFilteredTasks: () => {
     const { tasks, filterStatus, searchQuery, sortBy, projectFilter } = get()
     let filtered = [...tasks]
@@ -170,9 +189,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   },
 
   getProjects: () => {
-    const { tasks } = get()
-    const projects = [...new Set(tasks.map((t) => t.project).filter(Boolean))]
-    return projects.sort()
+    const { tasks, projects } = get()
+    const derived = tasks.map((t) => t.project).filter(Boolean)
+    return [...new Set([...projects, ...derived])].sort()
   },
 
   getStats: () => {

@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Bell, CheckCheck, Trash2, CheckCircle2 } from "lucide-react"
 import { useNotificationStore } from "@/store/use-notification-store"
+import { cn } from "@/lib/shadcn-utils"
 import { format } from "date-fns"
 
 export function NotificationBell() {
@@ -23,11 +24,16 @@ export function NotificationBell() {
     <div ref={ref} className="relative hidden sm:block">
       <button
         onClick={() => setOpen((v) => !v)}
-        className="relative rounded-xl p-2 text-neutral-500 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+        className={cn(
+          "relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-200",
+          open
+            ? "border-indigo-200 bg-indigo-50 text-indigo-600 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300"
+            : "border-neutral-200 bg-white text-neutral-500 shadow-sm hover:border-indigo-200 hover:text-indigo-600 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:text-indigo-300"
+        )}
       >
-        <Bell className="h-4 w-4" />
+        <Bell className={cn("h-4 w-4", open && "animate-pulse-glow")} />
         {unreadCount > 0 && (
-          <span className="absolute right-1.5 top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white leading-none">
+          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-1 text-[9px] font-bold text-white leading-none shadow-md shadow-rose-500/30">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -41,9 +47,9 @@ export function NotificationBell() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-white/40 bg-white/85 shadow-2xl shadow-indigo-950/20 backdrop-blur-2xl dark:border-white/10 dark:bg-neutral-900/85"
+              className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
             >
-              <div className="flex items-center justify-between border-b border-neutral-200/60 px-4 py-3 dark:border-neutral-800/60">
+              <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
                 <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
                   Notifications
                 </h3>

@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Nexus — Your Personal Dashboard",
-  description: "A premium CRM-style todo dashboard built with Next.js",
+  title: "Nexus - My Journey",
+  description: "Your personal command center for tasks, projects, habits, and growth",
   icons: {
     icon: [
       { url: "/N.ico", type: "image/x-icon" },

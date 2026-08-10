@@ -73,12 +73,12 @@ export function Sidebar({
         <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
         <span
           className={cn(
-            "text-lg font-bold tracking-tight whitespace-nowrap",
+            "flex items-baseline gap-1.5 whitespace-nowrap",
             isCollapsed && "hidden"
           )}
         >
-          Nexus
-          <span className="ml-1.5 bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">·</span>
+          <span className="text-lg font-bold tracking-tight">Nexus</span>
+          <span className="bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-[10px] font-semibold uppercase tracking-widest text-transparent">My Journey</span>
         </span>
       </Link>
 
@@ -117,7 +117,7 @@ export function Sidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-neutral-950/50"
               onClick={onClose}
             />
             <motion.aside
