@@ -49,7 +49,7 @@ export function DopaminePanel() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-neutral-200/60 bg-white p-4 sm:p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+        className="card-modern glass rounded-2xl p-4 sm:p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">This Week</h3>
@@ -122,7 +122,7 @@ export function DopaminePanel() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="rounded-2xl border border-neutral-200/60 bg-white p-4 sm:p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+        className="card-modern glass rounded-2xl p-4 sm:p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Last 30 Days</h3>

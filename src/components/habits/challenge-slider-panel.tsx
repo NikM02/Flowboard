@@ -34,7 +34,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="group rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-950"
+      className="group card-modern card-hover glass rounded-2xl p-4"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -158,7 +158,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-neutral-200/60 bg-white p-3 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-950"
+      className="card-modern card-hover glass rounded-xl p-3"
     >
       <div className="flex items-center gap-3">
         <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">

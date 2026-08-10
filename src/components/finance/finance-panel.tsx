@@ -10,7 +10,10 @@ import {
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid,
 } from "recharts"
-import { ChartTooltip } from "@/components/charts/chart-components"
+import {
+  ChartTooltip, ChartGradients, ChartGlow,
+  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+} from "@/components/charts/chart-components"
 import { cn } from "@/lib/shadcn-utils"
 import { Button } from "@/components/ui/button"
 import {
@@ -135,28 +138,24 @@ function OverviewTab() {
 
       {categoryData.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="card-modern glass rounded-2xl p-5">
             <h3 className="mb-4 font-semibold text-neutral-900 dark:text-neutral-50">Expense Breakdown</h3>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
-                <defs>
-                  <filter id="financePieShadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
-                  </filter>
-                </defs>
+                <ChartGlow id="fin-pie-glow" />
                 <Pie
                   data={categoryData}
                   cx="50%"
                   cy="50%"
                   innerRadius={55}
                   outerRadius={90}
-                  paddingAngle={4}
+                  paddingAngle={5}
+                  cornerRadius={8}
                   dataKey="value"
                   stroke="none"
-                  filter="url(#financePieShadow)"
                 >
                   {categoryData.map((_, i) => (
-                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} fillOpacity={0.9} />
+                    <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} style={{ filter: "url(#fin-pie-glow)" }} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} />
@@ -166,27 +165,18 @@ function OverviewTab() {
           </div>
 
           {monthlyData.length > 0 && (
-            <div className="rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+            <div className="card-modern glass rounded-2xl p-5">
               <h3 className="mb-4 font-semibold text-neutral-900 dark:text-neutral-50">Monthly Trend</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={monthlyData}>
-                  <defs>
-                    <linearGradient id="finIncomeGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#22c55e" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#22c55e" stopOpacity={0.5} />
-                    </linearGradient>
-                    <linearGradient id="finExpenseGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#ef4444" stopOpacity={0.9} />
-                      <stop offset="100%" stopColor="#ef4444" stopOpacity={0.5} />
-                    </linearGradient>
-                  </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" strokeOpacity={0.3} vertical={false} />
-                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                  <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+                  <ChartGradients ids={["fin-income", "fin-expense"]} />
+                  <CartesianGrid {...CHART_GRID_STYLES} />
+                  <XAxis dataKey="month" {...CHART_AXIS_STYLES} />
+                  <YAxis {...CHART_AXIS_STYLES} />
+                  <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} cursor={CHART_CURSOR_STYLES} />
                   <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="income" fill="url(#finIncomeGrad)" radius={[6, 6, 0, 0]} name="Income" />
-                  <Bar dataKey="expense" fill="url(#finExpenseGrad)" radius={[6, 6, 0, 0]} name="Expenses" />
+                  <Bar dataKey="income" fill="url(#fin-income)" radius={[7, 7, 2, 2]} name="Income" />
+                  <Bar dataKey="expense" fill="url(#fin-expense)" radius={[7, 7, 2, 2]} name="Expenses" />
                 </BarChart>
               </ResponsiveContainer>
             </div>

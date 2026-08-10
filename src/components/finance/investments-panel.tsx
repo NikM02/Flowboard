@@ -10,7 +10,10 @@ import {
   Plus, Trash2, Pencil, Download,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
-import { ChartTooltip } from "@/components/charts/chart-components"
+import {
+  ChartTooltip, ChartGradients, ChartGlow,
+  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+} from "@/components/charts/chart-components"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -148,30 +151,26 @@ function OverviewTab() {
       {/* Charts */}
       <div className="grid gap-5 lg:grid-cols-2">
         {/* Allocation donut */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="card-modern glass rounded-3xl p-5">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Allocation</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Where your money is</p>
           <div className="mt-4 h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <defs>
-                  <filter id="investPieShadow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
-                  </filter>
-                </defs>
+                <ChartGlow id="inv-pie-glow" />
                 <Pie
                   data={allocationData}
                   cx="50%"
                   cy="50%"
                   innerRadius={65}
                   outerRadius={95}
-                  paddingAngle={4}
+                  paddingAngle={5}
+                  cornerRadius={8}
                   dataKey="value"
                   stroke="none"
-                  filter="url(#investPieShadow)"
                 >
                   {allocationData.map((d, i) => (
-                    <Cell key={i} fill={d.color} fillOpacity={0.85} />
+                    <Cell key={i} fill={d.color} style={{ filter: "url(#inv-pie-glow)" }} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip formatter={(v) => fmt(Number(v))} />} />
@@ -186,28 +185,19 @@ function OverviewTab() {
         </motion.div>
 
         {/* Invested vs Current bar */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="card-modern glass rounded-3xl p-5">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Invested vs Current</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Portfolio comparison</p>
           <div className="mt-4 h-[260px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
-                <defs>
-                  <linearGradient id="investedGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#94a3b8" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#94a3b8" stopOpacity={0.5} />
-                  </linearGradient>
-                  <linearGradient id="currentGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.9} />
-                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0.5} />
-                  </linearGradient>
-                </defs>
-                <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#737373" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                <Tooltip content={<ChartTooltip formatter={(v) => fmt(Number(v))} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
+                <ChartGradients ids={["inv-invested", "inv-current"]} />
+                <XAxis dataKey="name" {...CHART_AXIS_STYLES} />
+                <YAxis {...CHART_AXIS_STYLES} />
+                <Tooltip content={<ChartTooltip formatter={(v) => fmt(Number(v))} />} cursor={CHART_CURSOR_STYLES} />
                 <Legend iconType="circle" iconSize={8} formatter={(value: string) => <span className="text-xs text-neutral-600 dark:text-neutral-400">{value}</span>} />
-                <Bar dataKey="invested" fill="url(#investedGrad)" radius={[6, 6, 0, 0]} barSize={20} name="Invested" />
-                <Bar dataKey="current" fill="url(#currentGrad)" radius={[6, 6, 0, 0]} barSize={20} name="Current" />
+                <Bar dataKey="invested" fill="url(#inv-invested)" radius={[8, 8, 2, 2]} barSize={20} name="Invested" />
+                <Bar dataKey="current" fill="url(#inv-current)" radius={[8, 8, 2, 2]} barSize={20} name="Current" />
               </BarChart>
             </ResponsiveContainer>
           </div>

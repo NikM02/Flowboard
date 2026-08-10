@@ -14,7 +14,10 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
 } from "recharts"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { ChartTooltip } from "@/components/charts/chart-components"
+import {
+  ChartTooltip, ChartGradients, ChartGlow,
+  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+} from "@/components/charts/chart-components"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
@@ -32,9 +35,10 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.3 }}
       className={cn(
-        "rounded-2xl border border-neutral-200/60 bg-white p-4 sm:p-5 dark:border-neutral-800/60 dark:bg-neutral-900",
+        "card-modern card-hover glass animate-fade-in relative overflow-hidden rounded-2xl p-4 sm:p-5",
         className
       )}
+      style={{ animationDelay: `${delay * 1000}ms` }}
     >
       {children}
     </motion.div>
@@ -43,9 +47,11 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
 
 function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: typeof Compass; label: string; color?: string }) {
   return (
-    <div className="flex items-center gap-2 mb-3">
-      <Icon className={cn("h-4 w-4", color)} />
-      <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{label}</h3>
+    <div className="mb-3 flex items-center gap-2">
+      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10">
+        <Icon className={cn("h-3.5 w-3.5", color)} />
+      </div>
+      <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{label}</h3>
     </div>
   )
 }
@@ -424,23 +430,14 @@ function FinanceSection() {
       {monthlyData.length > 0 && (
         <div className="h-32 mb-3">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyData} barGap={3}>
-              <defs>
-                <linearGradient id="gradIncome" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10b981" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="#10b981" stopOpacity={0.5} />
-                </linearGradient>
-                <linearGradient id="gradExpense" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ef4444" stopOpacity={0.9} />
-                  <stop offset="100%" stopColor="#ef4444" stopOpacity={0.5} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" strokeOpacity={0.3} vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
+            <BarChart data={monthlyData} barGap={4}>
+              <ChartGradients ids={["dash-income", "dash-expense"]} />
+              <CartesianGrid {...CHART_GRID_STYLES} />
+              <XAxis dataKey="month" {...CHART_AXIS_STYLES} />
               <YAxis hide />
-              <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString("en-IN")}`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
-              <Bar dataKey="income" fill="url(#gradIncome)" radius={[6, 6, 0, 0]} barSize={14} name="Income" />
-              <Bar dataKey="expense" fill="url(#gradExpense)" radius={[6, 6, 0, 0]} barSize={14} name="Expense" />
+              <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString("en-IN")}`} />} cursor={CHART_CURSOR_STYLES} />
+              <Bar dataKey="income" fill="url(#dash-income)" radius={[6, 6, 2, 2]} barSize={14} name="Income" />
+              <Bar dataKey="expense" fill="url(#dash-expense)" radius={[6, 6, 2, 2]} barSize={14} name="Expense" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -506,24 +503,20 @@ function InvestmentsSection() {
           <div className="relative h-14 w-14 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <defs>
-                  <filter id="shadowPie" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="1" stdDeviation="2" floodOpacity="0.15" />
-                  </filter>
-                </defs>
+                <ChartGlow id="dash-alloc-glow" />
                 <Pie
                   data={allocationData}
                   cx="50%"
                   cy="50%"
                   innerRadius={16}
-                  outerRadius={24}
+                  outerRadius={25}
                   dataKey="value"
                   stroke="none"
-                  paddingAngle={3}
-                  filter="url(#shadowPie)"
+                  paddingAngle={4}
+                  cornerRadius={4}
                 >
                   {allocationData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} fillOpacity={0.9} />
+                    <Cell key={i} fill={entry.color} style={{ filter: "url(#dash-alloc-glow)" }} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString("en-IN")}`} />} />

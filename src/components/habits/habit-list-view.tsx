@@ -82,7 +82,7 @@ function HabitCard({
   const today = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="group rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-950">
+    <div className="group card-modern card-hover glass rounded-2xl p-4">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{habit.name}</h4>
@@ -184,7 +184,7 @@ function HabitListItem({
   const doneToday = habit.records.some((r) => r.date === today && r.completed)
 
   return (
-    <div className="group rounded-2xl border border-neutral-200/60 bg-white p-3 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-950">
+    <div className="group card-modern card-hover glass rounded-2xl p-3">
       <div className="flex items-center gap-3">
         <button
           onClick={() => toggleDay(habit.id, today)}

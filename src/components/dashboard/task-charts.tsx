@@ -1,30 +1,17 @@
 "use client"
 
 import { useMemo } from "react"
-import { motion } from "framer-motion"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend,
   AreaChart, Area, CartesianGrid,
 } from "recharts"
 import { useTaskStore } from "@/store/use-task-store"
-import { ChartTooltip, ChartLegend } from "@/components/charts/chart-components"
-
-const COLORS = ["#3b82f6", "#10b981", "#f97316", "#a855f7", "#ef4444", "#06b6d4", "#eab308", "#ec4899"]
-
-function ChartCard({ title, children, delay = 0 }: { title: string; children: React.ReactNode; delay?: number }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay, duration: 0.3 }}
-      className="rounded-2xl border border-neutral-200/60 bg-white p-4 sm:p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
-    >
-      <h3 className="mb-4 text-sm font-semibold text-neutral-700 dark:text-neutral-300">{title}</h3>
-      {children}
-    </motion.div>
-  )
-}
+import {
+  ChartTooltip, ChartLegend, ChartCard, ChartGradients, ChartGlow,
+  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+  CHART_PALETTE,
+} from "@/components/charts/chart-components"
 
 export function TaskCharts() {
   const tasks = useTaskStore((s) => s.tasks)
@@ -34,8 +21,8 @@ export function TaskCharts() {
     const completed = tasks.filter((t) => t.completed).length
     const active = total - completed
     return [
-      { name: "Active", value: active, color: "#f97316" },
-      { name: "Completed", value: completed, color: "#10b981" },
+      { name: "Active", value: active, color: "#fb923c" },
+      { name: "Completed", value: completed, color: "#34d399" },
     ].filter((d) => d.value > 0)
   }, [tasks])
 
@@ -61,7 +48,7 @@ export function TaskCharts() {
       completed: s.completed,
       active: s.active,
       avgProgress: s.avgProgress,
-      fill: COLORS[i % COLORS.length],
+      fill: CHART_PALETTE[i % CHART_PALETTE.length],
     }))
   }, [tasks])
 
@@ -69,9 +56,9 @@ export function TaskCharts() {
     const pp: Record<string, number> = {}
     for (const t of tasks) pp[t.priority] = (pp[t.priority] || 0) + 1
     return [
-      { name: "High", count: pp.high || 0, color: "#ef4444" },
-      { name: "Medium", count: pp.medium || 0, color: "#f97316" },
-      { name: "Low", count: pp.low || 0, color: "#3b82f6" },
+      { name: "High", count: pp.high || 0, color: "#f87171" },
+      { name: "Medium", count: pp.medium || 0, color: "#fb923c" },
+      { name: "Low", count: pp.low || 0, color: "#60a5fa" },
     ]
   }, [tasks])
 
@@ -97,67 +84,58 @@ export function TaskCharts() {
 
   if (tasks.length === 0) return null
 
+  const totalTasks = statusData.reduce((s, d) => s + d.value, 0)
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {/* Status Pie */}
+      {/* Status Donut */}
       {statusData.length > 0 && (
-        <ChartCard title="Status Breakdown" delay={0}>
-          <div className="flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={200}>
+        <ChartCard title="Status Breakdown" subtitle={`${totalTasks} total tasks`} delay={0}>
+          <div className="relative flex items-center justify-center">
+            <ResponsiveContainer width="100%" height={210}>
               <PieChart>
-                <defs>
-                  <filter id="shadowPie" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="3" floodOpacity="0.15" />
-                  </filter>
-                </defs>
+                <ChartGlow id="tc-status-glow" />
                 <Pie
                   data={statusData}
                   cx="50%"
                   cy="50%"
-                  innerRadius={50}
-                  outerRadius={80}
-                  paddingAngle={4}
+                  innerRadius={58}
+                  outerRadius={86}
+                  paddingAngle={5}
+                  cornerRadius={8}
                   dataKey="value"
                   stroke="none"
-                  filter="url(#shadowPie)"
                 >
                   {statusData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} fillOpacity={0.9} />
+                    <Cell key={i} fill={entry.color} style={{ filter: "url(#tc-status-glow)" }} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip formatter={(v) => String(v)} />} />
               </PieChart>
             </ResponsiveContainer>
-          </div>
-          <div className="mt-3 flex justify-center gap-5">
-            {statusData.map((d) => (
-              <div key={d.name} className="flex items-center gap-1.5 text-xs text-neutral-600 dark:text-neutral-400">
-                <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: d.color }} />
-                {d.name}: <span className="font-semibold">{d.value}</span>
-              </div>
-            ))}
+            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+              <span className="text-2xl font-black tracking-tight text-neutral-900 dark:text-neutral-50">
+                {totalTasks}
+              </span>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
+                tasks
+              </span>
+            </div>
           </div>
         </ChartCard>
       )}
 
-      {/* Priority Bar */}
-      <ChartCard title="Priority Distribution" delay={0.05}>
-        <ResponsiveContainer width="100%" height={200}>
-          <BarChart data={priorityData} barSize={36} barGap={4}>
-            <defs>
+      {/* Priority Bars */}
+      <ChartCard title="Priority Distribution" subtitle="Workload by urgency" delay={60}>
+        <ResponsiveContainer width="100%" height={210}>
+          <BarChart data={priorityData} barSize={38} barGap={6}>
+            <ChartGradients ids={["tc-pri-0", "tc-pri-1", "tc-pri-2"]} />
+            <XAxis dataKey="name" {...CHART_AXIS_STYLES} />
+            <YAxis {...CHART_AXIS_STYLES} allowDecimals={false} />
+            <Tooltip content={<ChartTooltip formatter={(v) => `${v} tasks`} />} cursor={CHART_CURSOR_STYLES} />
+            <Bar dataKey="count" radius={[10, 10, 3, 3]}>
               {priorityData.map((entry, i) => (
-                <linearGradient key={i} id={`priorityGrad${i}`} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor={entry.color} stopOpacity={0.95} />
-                  <stop offset="100%" stopColor={entry.color} stopOpacity={0.55} />
-                </linearGradient>
-              ))}
-            </defs>
-            <XAxis dataKey="name" tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} allowDecimals={false} />
-            <Tooltip content={<ChartTooltip formatter={(v) => `${v} tasks`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
-            <Bar dataKey="count" radius={[8, 8, 0, 0]}>
-              {priorityData.map((entry, i) => (
-                <Cell key={i} fill={`url(#priorityGrad${i})`} />
+                <Cell key={i} fill={`url(#tc-pri-${i})`} style={{ filter: `drop-shadow(0 4px 8px ${entry.color}33)` }} />
               ))}
             </Bar>
           </BarChart>
@@ -166,72 +144,52 @@ export function TaskCharts() {
 
       {/* Project Progress */}
       {projectData.length > 0 && (
-        <ChartCard title="Project Progress" delay={0.1}>
-          <ResponsiveContainer width="100%" height={200}>
-            <BarChart data={projectData} barSize={20} layout="vertical">
-              <defs>
-                <linearGradient id="projectGrad" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.6} />
-                  <stop offset="100%" stopColor="#3b82f6" stopOpacity={1} />
-                </linearGradient>
-              </defs>
-              <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-              <YAxis
-                type="category"
-                dataKey="name"
-                tick={{ fontSize: 10, fill: "#a3a3a3" }}
-                axisLine={false}
-                tickLine={false}
-                width={80}
-              />
-              <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
-              <Bar dataKey="avgProgress" radius={[0, 8, 8, 0]} fill="url(#projectGrad)" />
+        <ChartCard title="Project Progress" subtitle="Average completion by project" delay={120}>
+          <ResponsiveContainer width="100%" height={210}>
+            <BarChart data={projectData} barSize={16} layout="vertical">
+              <ChartGradients ids={["tc-proj-0"]} />
+              <XAxis type="number" domain={[0, 100]} {...CHART_AXIS_STYLES} />
+              <YAxis type="category" dataKey="name" {...CHART_AXIS_STYLES} width={80} />
+              <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={CHART_CURSOR_STYLES} />
+              <Bar dataKey="avgProgress" radius={[0, 9, 9, 0]} fill="url(#tc-proj-0)" barSize={16} />
             </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       )}
 
-      {/* Timeline Area Chart */}
+      {/* Timeline Area */}
       {timelineData.length > 1 && (
         <div className="sm:col-span-2 lg:col-span-3">
-          <ChartCard title="Task Timeline" delay={0.15}>
-            <ResponsiveContainer width="100%" height={240}>
+          <ChartCard title="Task Timeline" subtitle="Cumulative workload over time" delay={180}>
+            <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={timelineData}>
-                <defs>
-                  <linearGradient id="gradTotal" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#3b82f6" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#3b82f6" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="gradCompleted" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10b981" stopOpacity={0.35} />
-                    <stop offset="100%" stopColor="#10b981" stopOpacity={0} />
-                  </linearGradient>
-                  <filter id="areaShadow">
-                    <feDropShadow dx="0" dy="1" stdDeviation="1" floodOpacity="0.1" />
-                  </filter>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" strokeOpacity={0.3} vertical={false} />
-                <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: "#a3a3a3" }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <ChartGradients ids={["tc-area-total", "tc-area-done"]} />
+                <CartesianGrid {...CHART_GRID_STYLES} />
+                <XAxis dataKey="date" {...CHART_AXIS_STYLES} />
+                <YAxis {...CHART_AXIS_STYLES} allowDecimals={false} />
                 <Tooltip content={<ChartTooltip />} />
                 <Legend content={<ChartLegend />} />
                 <Area
                   type="monotone"
                   dataKey="total"
-                  stroke="#3b82f6"
-                  fill="url(#gradTotal)"
+                  stroke="#60a5fa"
                   strokeWidth={2.5}
+                  fill="url(#tc-area-total)"
                   name="Total Tasks"
-                  filter="url(#areaShadow)"
+                  dot={false}
+                  activeDot={{ r: 5, strokeWidth: 0, fill: "#60a5fa" }}
+                  style={{ filter: "drop-shadow(0 0 6px #60a5fa55)" }}
                 />
                 <Area
                   type="monotone"
                   dataKey="completed"
-                  stroke="#10b981"
-                  fill="url(#gradCompleted)"
+                  stroke="#34d399"
                   strokeWidth={2.5}
+                  fill="url(#tc-area-done)"
                   name="Completed"
-                  filter="url(#areaShadow)"
+                  dot={false}
+                  activeDot={{ r: 5, strokeWidth: 0, fill: "#34d399" }}
+                  style={{ filter: "drop-shadow(0 0 6px #34d39955)" }}
                 />
               </AreaChart>
             </ResponsiveContainer>

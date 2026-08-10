@@ -29,7 +29,7 @@ export function Header({
         <div className="flex h-14 items-center px-4 lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2.5">
             <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
-            <span className="text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">
+            <span className="text-base font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
               Nexus
             </span>
           </Link>

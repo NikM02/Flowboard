@@ -11,7 +11,10 @@ import {
   Plus, Trash2, Pencil, Download, Sparkles, ArrowUp, ArrowDown, Minus,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
-import { ChartTooltip } from "@/components/charts/chart-components"
+import {
+  ChartTooltip, ChartGlow,
+  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+} from "@/components/charts/chart-components"
 import { format, startOfMonth, endOfMonth, subMonths, startOfQuarter, endOfQuarter, subQuarters, startOfYear, endOfYear, subYears, parseISO } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -264,18 +267,19 @@ function SimulatorTab() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
+          className="card-modern glass rounded-3xl p-5"
         >
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Growth Radar</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current vs Previous period</p>
           <div className="mt-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="72%">
-                <PolarGrid stroke="#e5e7eb" strokeOpacity={0.5} />
-                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#737373" }} />
+                <ChartGlow id="future-radar-glow" />
+                <PolarGrid stroke="#a3a3a3" strokeOpacity={0.25} />
+                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#a3a3a3" }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.15} strokeWidth={1.5} strokeDasharray="4 4" />
-                <Radar name="Current" dataKey="current" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} strokeWidth={2} />
+                <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.12} strokeWidth={1.5} strokeDasharray="4 4" />
+                <Radar name="Current" dataKey="current" stroke="#818cf8" fill="#818cf8" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
               </RadarChart>
             </ResponsiveContainer>
@@ -287,7 +291,7 @@ function SimulatorTab() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
+          className="card-modern glass rounded-3xl p-5"
         >
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Category Comparison</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current period breakdown</p>
@@ -297,17 +301,17 @@ function SimulatorTab() {
                 <defs>
                   {barData.map((entry, i) => (
                     <linearGradient key={i} id={`futureBarGrad${i}`} x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.5} />
-                      <stop offset="100%" stopColor={entry.color} stopOpacity={0.9} />
+                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={entry.color} stopOpacity={0.95} />
                     </linearGradient>
                   ))}
                 </defs>
-                <XAxis type="number" domain={[0, 100]} tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                <YAxis type="category" dataKey="name" width={70} tick={{ fontSize: 11, fill: "#737373" }} axisLine={false} tickLine={false} />
-                <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={{ fill: "rgba(0,0,0,0.03)" }} />
-                <Bar dataKey="current" radius={[0, 8, 8, 0]} barSize={18} name="Current">
+                <XAxis type="number" domain={[0, 100]} {...CHART_AXIS_STYLES} />
+                <YAxis type="category" dataKey="name" width={70} {...CHART_AXIS_STYLES} />
+                <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={CHART_CURSOR_STYLES} />
+                <Bar dataKey="current" radius={[0, 9, 9, 0]} barSize={18} name="Current">
                   {barData.map((entry, i) => (
-                    <Cell key={i} fill={`url(#futureBarGrad${i})`} />
+                    <Cell key={i} fill={`url(#futureBarGrad${i})`} style={{ filter: `drop-shadow(0 4px 8px ${entry.color}33)` }} />
                   ))}
                 </Bar>
               </BarChart>

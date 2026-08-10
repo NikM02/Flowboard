@@ -61,7 +61,7 @@ export function HabitTrackerSection() {
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-1.5 overflow-x-auto rounded-2xl bg-neutral-100/80 p-1.5 dark:bg-neutral-800/40">
+      <div className="flex gap-1.5 overflow-x-auto rounded-2xl bg-neutral-100/80 p-1.5 shadow-inner dark:bg-neutral-800/40">
         {tabs.map((t) => (
           <button
             key={t.key}

@@ -114,7 +114,7 @@ function PillarCard({
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative rounded-2xl border border-neutral-200/80 bg-white p-5 transition-all hover:shadow-md dark:border-neutral-800/80 dark:bg-neutral-900"
+      className="card-modern card-hover glass group relative rounded-2xl p-5"
     >
       <div className="absolute right-3 top-3 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
         <button onClick={onEdit} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
@@ -124,10 +124,10 @@ function PillarCard({
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-50 dark:from-neutral-800 dark:to-neutral-800/50">
-        <IconDisplay name={pillar.icon} className="h-5 w-5 text-neutral-700 dark:text-neutral-300" />
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/15 to-violet-500/10 shadow-inner">
+        <IconDisplay name={pillar.icon} className="h-5 w-5 text-indigo-500 dark:text-indigo-300" />
       </div>
-      <h3 className="mt-3.5 text-[15px] font-semibold text-neutral-900 dark:text-neutral-50">{pillar.title}</h3>
+      <h3 className="mt-3.5 text-[15px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{pillar.title}</h3>
       {pillar.description && (
         <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 dark:text-neutral-400 line-clamp-3">{pillar.description}</p>
       )}

@@ -92,12 +92,12 @@ function ContentCard({
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group rounded-xl border bg-white p-4 transition-all dark:bg-neutral-900",
+        "card-modern group rounded-xl p-4",
         isDragOverlay
-          ? "shadow-2xl ring-2 ring-neutral-300 dark:ring-neutral-600 rotate-2"
+          ? "shadow-2xl ring-2 ring-indigo-300/60 dark:ring-indigo-500/40 rotate-2"
           : isDragging
-            ? "opacity-40 border-neutral-300 dark:border-neutral-700"
-            : "border-neutral-200/60 hover:shadow-md dark:border-neutral-800/60"
+            ? "opacity-40 border border-neutral-300 dark:border-neutral-700"
+            : "glass"
       )}
     >
       <div className="flex items-start gap-2">
@@ -266,7 +266,7 @@ function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: Cont
             layout
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="group flex items-center gap-3 rounded-xl border border-neutral-200/60 bg-white p-3 transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900"
+            className="group flex items-center gap-3 card-modern card-hover glass rounded-xl p-3"
           >
             <span className="text-xl">{item.emoji}</span>
             <div className="min-w-0 flex-1">

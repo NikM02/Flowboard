@@ -40,65 +40,43 @@ export function Sidebar({
   const isMobile = useMediaQuery("(max-width: 768px)")
   const pathname = usePathname()
 
+  const navLinkClass = (href: string) =>
+    cn(
+      "group relative flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
+      pathname === href
+        ? "bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-600 dark:text-indigo-300"
+        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
+    )
+
   const content = (
     <div className="flex h-full flex-col gap-1 p-4">
       <Link href="/dashboard" className="flex items-center gap-3 px-3 pb-6 pt-2">
         <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
-        <span className="text-lg font-semibold tracking-tight">Nexus</span>
+        <span className="text-lg font-bold tracking-tight">
+          Nexus
+          <span className="ml-1.5 bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-transparent">·</span>
+        </span>
       </Link>
 
       <div className="space-y-1">
-        <Link
-          href="/dashboard"
-          className={cn(
-            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-            pathname === "/dashboard"
-              ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-          )}
-        >
+        <Link href="/dashboard" className={navLinkClass("/dashboard")}>
           <LayoutDashboard className="h-4 w-4" />
           Dashboard
         </Link>
 
-        <Link
-          href="/north-star"
-          className={cn(
-            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-            pathname === "/north-star"
-              ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-          )}
-        >
+        <Link href="/north-star" className={navLinkClass("/north-star")}>
           <Compass className="h-4 w-4" />
           North Star
         </Link>
 
         {navItems.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className={cn(
-              "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-              pathname === item.href
-                ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-                : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-            )}
-          >
+          <Link key={item.href} href={item.href} className={navLinkClass(item.href)}>
             <item.icon className="h-4 w-4 shrink-0" />
             {item.label}
           </Link>
         ))}
 
-        <Link
-          href="/content-hub"
-          className={cn(
-            "flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200",
-            pathname === "/content-hub"
-              ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-800 dark:text-neutral-50"
-              : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
-          )}
-        >
+        <Link href="/content-hub" className={navLinkClass("/content-hub")}>
           <BookOpen className="h-4 w-4" />
           Content Hub
         </Link>
@@ -123,7 +101,7 @@ export function Sidebar({
               animate={{ x: 0 }}
               exit={{ x: "-100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-xl dark:bg-neutral-950"
+              className="fixed inset-y-0 left-0 z-50 w-72 glass shadow-2xl shadow-indigo-950/30"
             >
               <button
                 onClick={onClose}
@@ -140,7 +118,7 @@ export function Sidebar({
   }
 
   return (
-    <aside className="sticky top-0 hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-neutral-200/60 bg-white md:block dark:border-neutral-800/60 dark:bg-neutral-950">
+    <aside className="glass sticky top-0 hidden h-screen w-64 shrink-0 overflow-y-auto border-r border-neutral-200/60 md:block dark:border-neutral-800/60">
       {content}
     </aside>
   )

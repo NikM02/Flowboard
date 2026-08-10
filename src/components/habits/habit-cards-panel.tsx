@@ -42,7 +42,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="group relative rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-950"
+      className="group relative card-modern card-hover glass rounded-2xl p-4"
     >
       <div className="flex items-start gap-3">
         <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colors.bg} dark:bg-opacity-20`}>

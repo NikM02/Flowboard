@@ -41,10 +41,10 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.03, duration: 0.25 }}
       className={cn(
-        "group relative rounded-2xl border bg-white p-5 transition-all hover:shadow-md dark:bg-neutral-900",
+        "card-modern card-hover group relative rounded-2xl p-5",
         task.completed
-          ? "border-green-200/60 dark:border-green-900/20"
-          : "border-neutral-200/60 dark:border-neutral-800/60"
+          ? "border border-green-200/60 dark:border-green-900/20"
+          : "glass"
       )}
     >
       {/* Top row: title + actions */}

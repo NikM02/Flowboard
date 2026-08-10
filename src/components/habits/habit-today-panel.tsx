@@ -24,7 +24,7 @@ export function HabitTodayPanel() {
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-        className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+        className="card-modern glass rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Today&apos;s Progress</span>
@@ -58,7 +58,7 @@ export function HabitTodayPanel() {
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }}
-        className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-950"
+        className="card-modern glass rounded-2xl p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">Challenge Progress</span>
