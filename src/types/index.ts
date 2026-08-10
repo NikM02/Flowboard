@@ -222,35 +222,3 @@ export type ContentItem = {
   createdAt: number
   archivedAt?: number
 }
-
-export type MindmapNodeType = "idea" | "sticky" | "task" | "title"
-
-export type MindmapNode = {
-  id: string
-  type: MindmapNodeType
-  title: string
-  notes: string
-  x: number
-  y: number
-  w: number
-  h: number
-  color: string
-  checked?: boolean
-}
-
-export type MindmapEdge = {
-  id: string
-  from: string
-  to: string
-  label: string
-}
-
-export type MindmapBoard = {
-  id: string
-  title: string
-  archived: boolean
-  createdAt: number
-  updatedAt: number
-  nodes: MindmapNode[]
-  edges: MindmapEdge[]
-}

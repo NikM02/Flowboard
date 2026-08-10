@@ -4,7 +4,7 @@ import { useState } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  LayoutDashboard, ListTodo, Wallet, Plus, X, Workflow,
+  LayoutDashboard, ListTodo, Wallet, Plus, X,
   Compass, Heart, GraduationCap, TrendingUp, Sparkles, BookOpen,
 } from "lucide-react"
 import { ThemePicker } from "@/components/dashboard/theme-picker"
@@ -18,7 +18,6 @@ const primaryItems = [
 
 const moreItems = [
   { href: "/north-star", label: "North Star", icon: Compass },
-  { href: "/mindmap", label: "Brainstorm", icon: Workflow },
   { href: "/habits", label: "Health", icon: Heart },
   { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/investments", label: "Investments", icon: TrendingUp },
