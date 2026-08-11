@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { getCalendarTokens, setCalendarTokens } from "@/lib/integrations"
+import { getCalendarTokens, setCalendarTokens, type CalendarTokens } from "@/lib/integrations"
+import { getCalendarCookie, setCalendarCookie } from "@/lib/integration-cookies"
 import { refreshAccessToken, syncTaskEvent } from "@/lib/calendar"
 import type { Task } from "@/types"
 
@@ -10,11 +11,12 @@ export async function POST(req: NextRequest) {
 
     if (!task?.id) return NextResponse.json({ error: "Missing task" }, { status: 400 })
 
+    let tokens: CalendarTokens | null | undefined = await getCalendarCookie()
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    if (!tokens && user) tokens = await getCalendarTokens(user.id)
 
-    let tokens = await getCalendarTokens(user.id)
     if (!tokens?.refreshToken) {
       return NextResponse.json({ error: "Google Calendar not connected" }, { status: 400 })
     }
@@ -24,7 +26,8 @@ export async function POST(req: NextRequest) {
       const refreshed = await refreshAccessToken(tokens.refreshToken)
       if (!refreshed) return NextResponse.json({ error: "Calendar token expired — reconnect" }, { status: 401 })
       tokens = { ...tokens, accessToken: refreshed.accessToken, expiresAt: refreshed.expiresAt }
-      await setCalendarTokens(user.id, tokens)
+      setCalendarCookie(tokens)
+      if (user) await setCalendarTokens(user.id, tokens)
     }
 
     const ok = await syncTaskEvent(tokens.accessToken, { action, task })

@@ -2,15 +2,12 @@ import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { exchangeCodeForTokens } from "@/lib/calendar"
 import { setCalendarTokens } from "@/lib/integrations"
+import { setCalendarCookie } from "@/lib/integration-cookies"
 
 export async function GET(req: NextRequest) {
   const site = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"
 
   try {
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.redirect(`${site}/dashboard?calendar=error`)
-
     const code = req.nextUrl.searchParams.get("code")
     const error = req.nextUrl.searchParams.get("error")
 
@@ -23,7 +20,12 @@ export async function GET(req: NextRequest) {
       return NextResponse.redirect(`${site}/dashboard?calendar=error`)
     }
 
-    await setCalendarTokens(user.id, tokens)
+    setCalendarCookie(tokens)
+
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) await setCalendarTokens(user.id, tokens)
+
     return NextResponse.redirect(`${site}/dashboard?calendar=connected`)
   } catch {
     return NextResponse.redirect(`${site}/dashboard?calendar=error`)

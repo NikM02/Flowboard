@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import { setEmailSettings } from "@/lib/integrations"
+import { setEmailCookie } from "@/lib/integration-cookies"
 import { sendEmail } from "@/lib/email"
 
 export async function POST(req: NextRequest) {
@@ -10,10 +11,6 @@ export async function POST(req: NextRequest) {
     if (!smtpUser || !appPassword) {
       return NextResponse.json({ error: "Missing Gmail address or app password" }, { status: 400 })
     }
-
-    const supabase = await createClient()
-    const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
 
     const settings = {
       smtpUser,
@@ -30,9 +27,20 @@ export async function POST(req: NextRequest) {
       "Your email notifications are now active. You'll get a mail whenever something new happens in Nexus."
     )
 
-    const saved = await setEmailSettings(user.id, settings)
+    if (!testOk) {
+      return NextResponse.json(
+        { error: "Could not send test mail — check the app password (16-character app password, not your Gmail login password)" },
+        { status: 500 }
+      )
+    }
 
-    return NextResponse.json({ ok: saved, testSent: testOk })
+    setEmailCookie(settings)
+
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) await setEmailSettings(user.id, settings)
+
+    return NextResponse.json({ ok: true, testSent: testOk })
   } catch {
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }

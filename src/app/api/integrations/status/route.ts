@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
-import { getEmailSettings, getCalendarTokens } from "@/lib/integrations"
+import { getEmailSettings, getCalendarTokens, type EmailSettings, type CalendarTokens } from "@/lib/integrations"
+import { getEmailCookie, getCalendarCookie } from "@/lib/integration-cookies"
 
 export async function GET() {
   try {
+    let email: EmailSettings | null | undefined = await getEmailCookie()
+    let calendar: CalendarTokens | null | undefined = await getCalendarCookie()
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
-
-    const email = await getEmailSettings(user.id)
-    const calendar = await getCalendarTokens(user.id)
+    if (user) {
+      if (!email) email = await getEmailSettings(user.id)
+      if (!calendar) calendar = await getCalendarTokens(user.id)
+    }
 
     return NextResponse.json({
       email: email
