@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   Dialog,
   DialogContent,
@@ -12,8 +13,14 @@ import { Button } from "@/components/ui/button"
 import { useTaskStore } from "@/store/use-task-store"
 
 export function CompleteTaskDialog() {
+  const router = useRouter()
   const { tasks, completePendingId, confirmComplete, cancelComplete } = useTaskStore()
   const task = tasks.find((t) => t.id === completePendingId)
+
+  const handleConfirm = () => {
+    confirmComplete()
+    router.push("/tasks?view=archive")
+  }
 
   return (
     <Dialog open={!!completePendingId} onOpenChange={(open) => { if (!open) cancelComplete() }}>
@@ -36,7 +43,7 @@ export function CompleteTaskDialog() {
             Cancel
           </Button>
           <Button
-            onClick={confirmComplete}
+            onClick={handleConfirm}
             className="gap-2"
           >
             Mark as done

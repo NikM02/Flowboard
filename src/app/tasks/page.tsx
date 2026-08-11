@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useState, useCallback, Suspense } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Download, Trash2, Plus, Archive, ListTodo, LayoutGrid, List,
@@ -200,17 +201,28 @@ function Dot() {
 }
 
 export default function TasksPage() {
-  const [view, setView] = useState<ViewMode>("tasks")
+  return (
+    <Suspense fallback={null}>
+      <TasksPageContent />
+    </Suspense>
+  )
+}
+
+function TasksPageContent() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const viewParam = searchParams.get("view")
+  const view: ViewMode = viewParam === "projects" ? "projects" : viewParam === "archive" ? "archive" : "tasks"
   const [taskViewMode, setTaskViewMode] = useState<"card" | "list">("card")
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
   const { setFilterStatus, clearCompleted, setIsCreateModalOpen, projectFilter, setProjectFilter, getProjects } = useTaskStore()
   const projects = getProjects()
 
   const handleViewChange = useCallback((v: ViewMode) => {
-    setView(v)
+    router.replace(v === "tasks" ? "/tasks" : `/tasks?view=${v}`, { scroll: false })
     if (v === "archive") setFilterStatus("completed")
     else if (v === "tasks") setFilterStatus("active")
-  }, [setFilterStatus])
+  }, [router, setFilterStatus])
 
   const titles: Record<ViewMode, { title: string; sub: string }> = {
     tasks: { title: "Projects & Tasks", sub: "Manage and track your tasks" },

@@ -129,15 +129,16 @@ function ListRow({ task, index }: { task: Task; index: number }) {
 }
 
 export function TaskListView({ archive }: { archive?: boolean }) {
-  const { getFilteredTasks } = useTaskStore()
-  const tasks = getFilteredTasks()
+  const tasks = useTaskStore((s) => s.tasks)
+  const getFilteredTasks = useTaskStore((s) => s.getFilteredTasks)
+  const filtered = archive ? tasks.filter((t) => t.completed) : getFilteredTasks()
 
-  if (tasks.length === 0) return <EmptyState archive={archive} />
+  if (filtered.length === 0) return <EmptyState archive={archive} />
 
   return (
     <div className="space-y-2">
       <AnimatePresence mode="popLayout">
-        {tasks.map((task, index) => (
+        {filtered.map((task, index) => (
           <ListRow key={task.id} task={task} index={index} />
         ))}
       </AnimatePresence>
