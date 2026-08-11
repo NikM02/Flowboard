@@ -32,7 +32,7 @@ const tabs: { key: InvestmentTab; label: string; icon: typeof TrendingUp }[] = [
   { key: "archive", label: "Archive", icon: Download },
 ]
 
-const COLORS = ["#3b82f6", "#10b981", "#a855f7", "#f97316", "#ef4444", "#06b6d4"]
+const COLORS = ["#1da1f2", "#10b981", "#2f6ee0", "#f97316", "#ef4444", "#06b6d4"]
 
 function fmt(n: number) {
   return `₹${n.toLocaleString("en-IN")}`

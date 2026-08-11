@@ -4,35 +4,35 @@ import { cn } from "@/lib/shadcn-utils"
 
 /* ── Modern gradient palette (from → to) ─────────────── */
 export const CHART_GRADIENTS: [string, string][] = [
-  ["#60a5fa", "#2563eb"],
+  ["#1da1f2", "#0e8be0"],
   ["#34d399", "#059669"],
   ["#fb923c", "#ea580c"],
-  ["#c084fc", "#7c3aed"],
+  ["#4d94f0", "#2f6ee0"],
   ["#f87171", "#dc2626"],
   ["#22d3ee", "#0891b2"],
-  ["#f472b6", "#db2777"],
-  ["#818cf8", "#4f46e5"],
+  ["#67e8f9", "#06b6d4"],
+  ["#3db8f5", "#0a72ba"],
 ]
 
 export const CHART_COLORS = {
-  blue: "#3b82f6",
+  blue: "#1da1f2",
   green: "#10b981",
   orange: "#f97316",
-  purple: "#a855f7",
+  purple: "#2f6ee0",
   red: "#ef4444",
   cyan: "#06b6d4",
   yellow: "#eab308",
-  pink: "#ec4899",
+  pink: "#22d3ee",
   slate: "#94a3b8",
   emerald: "#34d399",
   rose: "#f43f5e",
-  indigo: "#6366f1",
+  indigo: "#1da1f2",
 } as const
 
 export const CHART_PALETTE = [
-  "#60a5fa", "#34d399", "#fb923c", "#c084fc",
-  "#f87171", "#22d3ee", "#f472b6", "#818cf8",
-  "#fbbf24", "#2dd4bf", "#a3a3a3", "#e879f9",
+  "#1da1f2", "#34d399", "#fb923c", "#2f6ee0",
+  "#f87171", "#22d3ee", "#0ea5e9", "#0e8be0",
+  "#fbbf24", "#2dd4bf", "#a3a3a3", "#4d94f0",
 ]
 
 /* ── Chart theme tokens ─────────────────────────────── */
@@ -49,7 +49,7 @@ export const CHART_AXIS_STYLES = {
   tickLine: false,
 } as const
 
-export const CHART_CURSOR_STYLES = { fill: "rgba(99, 102, 241, 0.06)" }
+export const CHART_CURSOR_STYLES = { fill: "rgba(29, 161, 242, 0.06)" }
 
 /* ── SVG defs: linear gradients for fills ───────────── */
 export function ChartGradients({ ids }: { ids: string[] }) {
@@ -231,7 +231,7 @@ interface SparklineProps {
 
 export function Sparkline({
   data,
-  color = "#818cf8",
+  color = "#1da1f2",
   width = 88,
   height = 30,
   strokeWidth = 2,
@@ -296,7 +296,7 @@ export function RadialGauge({
   value,
   size = 120,
   stroke = 11,
-  color = ["#818cf8", "#c084fc"],
+  color = ["#1da1f2", "#0e8be0"],
   trackOpacity = 0.12,
   label,
   sublabel,
@@ -370,7 +370,7 @@ interface GradientIconTileProps {
   className?: string
 }
 
-export function GradientIconTile({ icon: Icon, color = "#818cf8", className }: GradientIconTileProps) {
+export function GradientIconTile({ icon: Icon, color = "#1da1f2", className }: GradientIconTileProps) {
   return (
     <div
       className={cn("flex h-9 w-9 items-center justify-center rounded-xl", className)}

@@ -53,7 +53,7 @@ const categoryColors: Record<ExpenseCategory, string> = {
   other: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 }
 
-const PIE_COLORS = ["#f97316", "#3b82f6", "#a855f7", "#06b6d4", "#ec4899", "#ef4444", "#10b981", "#6366f1", "#737373"]
+const PIE_COLORS = ["#f97316", "#1da1f2", "#2f6ee0", "#06b6d4", "#22d3ee", "#ef4444", "#10b981", "#0e8be0", "#737373"]
 
 const incomeSources: { value: IncomeSource; label: string }[] = [
   { value: "job", label: "Job" },

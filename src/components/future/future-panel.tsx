@@ -37,9 +37,9 @@ const tabs: { key: "simulator" | "archive"; label: string; icon: typeof Target }
 ]
 
 const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string }> = {
-  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500", hex: "#3b82f6" },
+  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500", hex: "#1da1f2" },
   habits: { label: "Habits", icon: Target, color: "bg-orange-500", hex: "#f97316" },
-  skills: { label: "Skills", icon: Sparkles, color: "bg-purple-500", hex: "#a855f7" },
+  skills: { label: "Skills", icon: Sparkles, color: "bg-purple-500", hex: "#1da1f2" },
   dopamine: { label: "Wellness", icon: Brain, color: "bg-emerald-500", hex: "#10b981" },
   finance: { label: "Finance", icon: Wallet, color: "bg-rose-500", hex: "#f43f5e" },
 }
@@ -279,7 +279,7 @@ function SimulatorTab() {
                 <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#a3a3a3" }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.12} strokeWidth={1.5} strokeDasharray="4 4" />
-                <Radar name="Current" dataKey="current" stroke="#818cf8" fill="#818cf8" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
+                <Radar name="Current" dataKey="current" stroke="#1da1f2" fill="#1da1f2" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
               </RadarChart>
             </ResponsiveContainer>

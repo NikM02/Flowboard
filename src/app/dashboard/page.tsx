@@ -572,8 +572,8 @@ function InvestmentsSection() {
     const tp = ti > 0 ? Math.round((tg / ti) * 100) : 0
 
     const alloc = [
-      { name: "Stocks", value: stockCur, color: "#3b82f6" },
-      { name: "Mutual Funds", value: mfCur, color: "#a855f7" },
+      { name: "Stocks", value: stockCur, color: "#1da1f2" },
+      { name: "Mutual Funds", value: mfCur, color: "#2f6ee0" },
       { name: "SIPs", value: sipCur, color: "#10b981" },
     ].filter((d) => d.value > 0)
 

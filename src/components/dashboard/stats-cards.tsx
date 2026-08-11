@@ -7,10 +7,10 @@ import { useTaskStore } from "@/store/use-task-store"
 import { Sparkline, RadialGauge, GradientIconTile } from "@/components/charts/chart-components"
 
 const statConfigs = [
-  { key: "total", icon: ListTodo, label: "Total", color: "#60a5fa", gauge: ["#60a5fa", "#2563eb"] },
+  { key: "total", icon: ListTodo, label: "Total", color: "#1da1f2", gauge: ["#1da1f2", "#0e8be0"] },
   { key: "active", icon: Circle, label: "Active", color: "#fb923c", gauge: ["#fb923c", "#ea580c"] },
   { key: "completed", icon: CheckCircle2, label: "Done", color: "#34d399", gauge: ["#34d399", "#059669"] },
-  { key: "progress", icon: TrendingUp, label: "Progress", color: "#c084fc", gauge: ["#818cf8", "#c084fc"] },
+  { key: "progress", icon: TrendingUp, label: "Progress", color: "#2f6ee0", gauge: ["#1da1f2", "#0e8be0"] },
 ]
 
 function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {

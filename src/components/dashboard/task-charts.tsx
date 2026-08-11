@@ -58,7 +58,7 @@ export function TaskCharts() {
     return [
       { name: "High", count: pp.high || 0, color: "#f87171" },
       { name: "Medium", count: pp.medium || 0, color: "#fb923c" },
-      { name: "Low", count: pp.low || 0, color: "#60a5fa" },
+      { name: "Low", count: pp.low || 0, color: "#1da1f2" },
     ]
   }, [tasks])
 
@@ -172,13 +172,13 @@ export function TaskCharts() {
                 <Area
                   type="monotone"
                   dataKey="total"
-                  stroke="#60a5fa"
+                  stroke="#1da1f2"
                   strokeWidth={2.5}
                   fill="url(#tc-area-total)"
                   name="Total Tasks"
                   dot={false}
-                  activeDot={{ r: 5, strokeWidth: 0, fill: "#60a5fa" }}
-                  style={{ filter: "drop-shadow(0 0 6px #60a5fa55)" }}
+                  activeDot={{ r: 5, strokeWidth: 0, fill: "#1da1f2" }}
+                  style={{ filter: "drop-shadow(0 0 6px #1da1f255)" }}
                 />
                 <Area
                   type="monotone"

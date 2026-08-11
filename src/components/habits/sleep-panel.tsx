@@ -233,7 +233,7 @@ export function SleepPanel() {
                     }
                     cursor={CHART_CURSOR_STYLES}
                   />
-                  <ReferenceLine y={8} stroke="#6366f1" strokeDasharray="4 4" strokeOpacity={0.5} />
+                  <ReferenceLine y={8} stroke="#1da1f2" strokeDasharray="4 4" strokeOpacity={0.5} />
                   <Bar dataKey="hours" radius={[5, 5, 2, 2]} barSize={14}>
                     {chartData.map((d, i) => (
                       <Cell
