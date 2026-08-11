@@ -16,12 +16,12 @@ const priorityConfig: Record<Priority, { label: string; variant: "low" | "medium
 }
 
 function ListRow({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask, requestComplete } = useTaskStore()
   const priority = priorityConfig[task.priority]
 
   const handleToggleComplete = () => {
     if (task.completed) updateTask(task.id, { completed: false })
-    else updateTask(task.id, { completed: true, progress: 100 })
+    else requestComplete(task.id)
   }
 
   return (

@@ -11,6 +11,7 @@ import { LoginScreen } from "@/components/dashboard/login-screen"
 import { CreateTaskModal } from "@/components/dashboard/create-task-modal"
 import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
+import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
 import { ThemePicker } from "@/components/dashboard/theme-picker"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
@@ -173,6 +174,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <CreateTaskModal />
           <EditTaskSheet />
           <DeleteConfirmDialog />
+          <CompleteTaskDialog />
 
           <GlobalSearch
             open={searchOpen}

@@ -18,7 +18,7 @@ const priorityConfig = {
 }
 
 export function TaskCard({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask, requestComplete } = useTaskStore()
   const [expanded, setExpanded] = useState(false)
 
   const priority = priorityConfig[task.priority]
@@ -29,7 +29,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
     const step = 25
     let next = Math.round(task.progress / step) * step + delta
     next = Math.max(0, Math.min(100, next))
-    if (next >= 100) updateTask(task.id, { progress: 100, completed: true })
+    if (next >= 100) requestComplete(task.id)
     else updateTask(task.id, { progress: next, completed: false })
   }
 

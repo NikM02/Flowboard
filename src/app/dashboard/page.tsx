@@ -185,6 +185,7 @@ function MissionSection() {
 function HighPriorityTasks() {
   const tasks = useTaskStore((s) => s.tasks)
   const updateTask = useTaskStore((s) => s.updateTask)
+  const requestComplete = useTaskStore((s) => s.requestComplete)
   const [expanded, setExpanded] = useState<string | null>(null)
 
   const highTasks = useMemo(
@@ -193,14 +194,14 @@ function HighPriorityTasks() {
   )
 
   const handleComplete = (t: Task) => {
-    updateTask(t.id, { completed: true, progress: 100 })
+    requestComplete(t.id)
   }
 
   const adjustProgress = (t: Task, delta: number) => {
     const step = 25
     let next = Math.round(t.progress / step) * step + delta
     next = Math.max(0, Math.min(100, next))
-    if (next >= 100) updateTask(t.id, { progress: 100, completed: true })
+    if (next >= 100) requestComplete(t.id)
     else updateTask(t.id, { progress: next, completed: false })
   }
 

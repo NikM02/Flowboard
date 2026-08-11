@@ -14,6 +14,7 @@ type TaskStore = {
   isCreateModalOpen: boolean
   isEditSheetOpen: boolean
   isDeleteDialogOpen: boolean
+  completePendingId: string | null
 
   setViewMode: (mode: ViewMode) => void
   setFilterStatus: (status: FilterStatus) => void
@@ -24,6 +25,9 @@ type TaskStore = {
   setIsCreateModalOpen: (open: boolean) => void
   setIsEditSheetOpen: (open: boolean) => void
   setIsDeleteDialogOpen: (open: boolean) => void
+  requestComplete: (id: string) => void
+  confirmComplete: () => void
+  cancelComplete: () => void
 
   addTask: (task: Omit<Task, "id" | "completed" | "progress" | "createdAt">) => void
   updateTask: (id: string, updates: Partial<Task>) => void
@@ -54,6 +58,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   isCreateModalOpen: false,
   isEditSheetOpen: false,
   isDeleteDialogOpen: false,
+  completePendingId: null,
 
   setViewMode: (mode) => set({ viewMode: mode }),
   setFilterStatus: (status) => set({ filterStatus: status }),
@@ -64,6 +69,18 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   setIsCreateModalOpen: (open) => set({ isCreateModalOpen: open }),
   setIsEditSheetOpen: (open) => set({ isEditSheetOpen: open }),
   setIsDeleteDialogOpen: (open) => set({ isDeleteDialogOpen: open }),
+  requestComplete: (id) => set({ completePendingId: id }),
+  confirmComplete: () => {
+    const id = get().completePendingId
+    if (!id) return
+    set((state) => ({
+      completePendingId: null,
+      tasks: state.tasks.map((task) =>
+        task.id === id ? { ...task, completed: true, progress: 100 } : task
+      ),
+    }))
+  },
+  cancelComplete: () => set({ completePendingId: null }),
 
   addTask: (task) => {
     const newTask: Task = {
