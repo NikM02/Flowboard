@@ -18,6 +18,8 @@ import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
 import { usePushNotifications } from "@/hooks/use-push-notifications"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { useThemeStore } from "@/store/use-theme-store"
+import { useEmailStore } from "@/store/use-email-store"
+import { useCalendarStore } from "@/store/use-calendar-store"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -39,6 +41,12 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   useNotificationGenerator()
   useIntegrationWatcher(hydrated)
   const { permission, requestPermission } = usePushNotifications()
+
+  useEffect(() => {
+    if (!authenticated) return
+    useEmailStore.getState().load()
+    useCalendarStore.getState().load()
+  }, [authenticated])
 
   // Check session on mount
   useEffect(() => {

@@ -1,5 +1,27 @@
 import { create } from "zustand"
 
+const CACHE_KEY = "nexus-calendar-cache"
+
+function readCache(): string | null {
+  try {
+    return localStorage.getItem(CACHE_KEY)
+  } catch {
+    return null
+  }
+}
+
+function writeCache(email: string) {
+  try {
+    localStorage.setItem(CACHE_KEY, email)
+  } catch {}
+}
+
+function clearCache() {
+  try {
+    localStorage.removeItem(CACHE_KEY)
+  } catch {}
+}
+
 type CalendarStore = {
   connected: boolean
   email: string
@@ -11,8 +33,8 @@ type CalendarStore = {
 }
 
 export const useCalendarStore = create<CalendarStore>((set) => ({
-  connected: false,
-  email: "",
+  connected: !!readCache(),
+  email: readCache() ?? "",
   checking: false,
   error: null,
 
@@ -21,10 +43,13 @@ export const useCalendarStore = create<CalendarStore>((set) => ({
       const res = await fetch("/api/integrations/status", { cache: "no-store" })
       if (!res.ok) return
       const data = await res.json()
-      set({
-        connected: data.calendar?.connected ?? false,
-        email: data.calendar?.email ?? "",
-      })
+      if (data.calendar?.connected) {
+        writeCache(data.calendar.email)
+        set({ connected: true, email: data.calendar.email })
+      } else {
+        clearCache()
+        set({ connected: false, email: "" })
+      }
     } catch {}
   },
 
@@ -48,6 +73,7 @@ export const useCalendarStore = create<CalendarStore>((set) => ({
     try {
       await fetch("/api/calendar/disconnect", { method: "POST" })
     } catch {}
+    clearCache()
     set({ connected: false, email: "", error: null })
   },
 }))
