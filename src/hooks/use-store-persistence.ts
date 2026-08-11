@@ -138,6 +138,7 @@ function applyData(d: AppData) {
 
 export function useSupabasePersistence() {
   const [loading, setLoading] = useState(true)
+  const [hydrated, setHydrated] = useState(false)
   const loadedRef = useRef(false)
   const dirtyRef = useRef(false)
   const hydratedRef = useRef(false)
@@ -235,12 +236,14 @@ export function useSupabasePersistence() {
             loadedRef.current = true
             dirtyRef.current = false
             setLoading(false)
+            setHydrated(true)
           })
       } else {
         hydratedRef.current = true
         loadFromLocal()
         loadedRef.current = true
         setLoading(false)
+        setHydrated(true)
       }
     })
 
@@ -268,7 +271,7 @@ export function useSupabasePersistence() {
     return () => unsubs.forEach((u) => u())
   }, [scheduleSave])
 
-  return { loading }
+  return { loading, hydrated }
 }
 
 export function clearLocalData() {

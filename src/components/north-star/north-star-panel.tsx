@@ -124,7 +124,7 @@ function PillarCard({
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/15 to-violet-500/10 shadow-inner">
+      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/15 to-cyan-400/10 shadow-inner">
         <IconDisplay name={pillar.icon} className="h-5 w-5 text-indigo-500 dark:text-indigo-300" />
       </div>
       <h3 className="mt-3.5 text-[15px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{pillar.title}</h3>

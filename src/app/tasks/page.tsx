@@ -28,7 +28,7 @@ import type { Task } from "@/types"
 type ViewMode = "tasks" | "projects" | "archive"
 
 const PROJECT_COLORS = [
-  "from-indigo-500 to-violet-500",
+  "from-indigo-500 to-cyan-400",
   "from-blue-500 to-cyan-500",
   "from-emerald-500 to-teal-500",
   "from-amber-500 to-orange-500",

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useCallback, useState } from "react"
 import { useTaskStore } from "@/store/use-task-store"
 import { useTelegramStore } from "@/store/use-telegram-store"
-import { sendTelegramMessage, formatTaskMessage, formatDueSoonMessage } from "@/lib/telegram"
+import { sendTelegramMessage } from "@/lib/telegram"
 
 const SENT_KEY = "nexus-push-sent"
 const TG_SENT_KEY = "nexus-tg-sent"
@@ -33,7 +33,7 @@ function sendBrowserNotification(title: string, body: string, tag: string) {
   try {
     const n = new Notification(title, {
       body,
-      icon: "/N.ico",
+      icon: "/favicon-512.png",
       tag,
       requireInteraction: false,
       silent: false,
@@ -43,6 +43,30 @@ function sendBrowserNotification(title: string, body: string, tag: string) {
   } catch {
     return false
   }
+}
+
+function escapeHtml(text: string): string {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+}
+
+async function sendToEmail(title: string, body: string, tag: string, category: "new" | "update" | "due") {
+  if (isSent(TG_SENT_KEY, `mail-${tag}`)) return
+  try {
+    const res = await fetch("/api/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        subject: title,
+        bodyHtml: `<p style="margin:4px 0;">${escapeHtml(body)}</p>`,
+        category,
+      }),
+    })
+    if (res.ok) markSent(TG_SENT_KEY, `mail-${tag}`)
+  } catch {}
 }
 
 async function sendToTelegram(title: string, body: string, tag: string) {
@@ -113,6 +137,14 @@ export function usePushNotifications() {
             tag
           )
 
+          // Email notification
+          await sendToEmail(
+            `\u23f0 Reminder: ${task.title}`,
+            task.description || (task.dueDate ? `Due ${task.dueDate}` : "Task reminder"),
+            tag,
+            "due"
+          )
+
           setLastFired(`Reminder: ${task.title}`)
         }
       } catch {}
@@ -143,6 +175,14 @@ export function usePushNotifications() {
             `\ud83d\udd3a Due soon: ${task.title}`,
             "Due in less than an hour!",
             tag
+          )
+
+          // Email notification
+          await sendToEmail(
+            `\ud83d\udd3a Due soon: ${task.title}`,
+            "Due in less than an hour!",
+            tag,
+            "due"
           )
 
           setLastFired(`Due soon: ${task.title}`)

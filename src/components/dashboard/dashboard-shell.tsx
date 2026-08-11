@@ -14,6 +14,7 @@ import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialo
 import { ThemePicker } from "@/components/dashboard/theme-picker"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
+import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
 import { usePushNotifications } from "@/hooks/use-push-notifications"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { useThemeStore } from "@/store/use-theme-store"
@@ -33,10 +34,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   })
   const router = useRouter()
   const { colorTheme } = useThemeStore()
+  const { loading: dataLoading, hydrated } = useSupabasePersistence()
 
   useNotificationGenerator()
+  useIntegrationWatcher(hydrated)
   const { permission, requestPermission } = usePushNotifications()
-  const { loading: dataLoading } = useSupabasePersistence()
 
   // Check session on mount
   useEffect(() => {
@@ -45,7 +47,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         const { createClient } = await import("@/lib/supabase/client")
         const client = createClient()
         const { data: { session } } = await client.auth.getSession()
-        setAuthenticated(true) // TEMP: bypass login while debugging
+        setAuthenticated(!!session)
       } catch {
         setAuthenticated(false)
       }

@@ -17,11 +17,11 @@ export const metadata: Metadata = {
   description: "Your personal command center for tasks, projects, habits, and growth",
   icons: {
     icon: [
-      { url: "/N.ico", type: "image/x-icon" },
-      { url: "/Nexus.png", type: "image/png", sizes: "192x192" },
-      { url: "/Nexus.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon-512.png", type: "image/png", sizes: "512x512" },
     ],
-    apple: [{ url: "/Nexus.png", sizes: "180x180", type: "image/png" }],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
   },
 }
 

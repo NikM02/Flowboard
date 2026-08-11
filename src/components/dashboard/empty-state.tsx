@@ -15,7 +15,7 @@ export function EmptyState({ archive }: { archive?: boolean }) {
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", damping: 15 }}
-        className="relative mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/15 to-violet-500/10 shadow-inner"
+        className="relative mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500/15 to-cyan-400/10 shadow-inner"
       >
         <ClipboardList className="h-8 w-8 text-indigo-400 dark:text-indigo-300" />
       </motion.div>

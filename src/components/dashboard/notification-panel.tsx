@@ -25,15 +25,15 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "relative flex h-9 w-9 items-center justify-center rounded-xl border transition-all duration-200",
+          "relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200",
           open
-            ? "border-indigo-200 bg-indigo-50 text-indigo-600 dark:border-indigo-500/30 dark:bg-indigo-500/10 dark:text-indigo-300"
-            : "border-neutral-200 bg-white text-neutral-500 shadow-sm hover:border-indigo-200 hover:text-indigo-600 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:text-indigo-300"
+            ? "bg-neutral-100 text-indigo-600 dark:bg-neutral-800 dark:text-indigo-300"
+            : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
         )}
       >
-        <Bell className={cn("h-4 w-4", open && "animate-pulse-glow")} />
+        <Bell className={cn("h-[18px] w-[18px]", open && "animate-pulse-glow")} />
         {unreadCount > 0 && (
-          <span className="absolute -right-1 -top-1 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-r from-rose-500 to-orange-500 px-1 text-[9px] font-bold text-white leading-none shadow-md shadow-rose-500/30">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400 px-1 text-[9px] font-bold text-white leading-none shadow-md shadow-indigo-500/40">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}

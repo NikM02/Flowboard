@@ -60,7 +60,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
             transition={{ delay: 0.2, type: "spring", damping: 18, stiffness: 200 }}
             className="flex justify-center mb-5"
           >
-            <Image src="/Nexus.png" alt="Logo" width={96} height={96} className="object-contain" />
+            <Image src="/nexus-logo.png" alt="Logo" width={96} height={96} className="rounded-[10px] object-contain" />
           </motion.div>
           <motion.h1
             initial={{ opacity: 0, y: 10 }}

@@ -49,7 +49,7 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
 function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: typeof Compass; label: string; color?: string }) {
   return (
     <div className="mb-3 flex items-center gap-2">
-      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10">
+      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500/10">
         <Icon className={cn("h-3.5 w-3.5", color)} />
       </div>
       <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{label}</h3>
@@ -99,47 +99,48 @@ function DashboardHero() {
   ]
 
   return (
-    <div className="card-modern relative overflow-hidden rounded-3xl glass p-6 sm:p-8">
-      <div className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gradient-to-br from-indigo-400/30 to-violet-400/30 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-10 h-48 w-48 rounded-full bg-gradient-to-br from-fuchsia-400/20 to-emerald-400/20 blur-3xl" />
-      <div className="relative">
-        <p className="text-sm font-semibold text-indigo-500 dark:text-indigo-300">
-          {greeting}
-        </p>
-        <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-4xl">
-          <span className="bg-gradient-to-r from-neutral-900 via-neutral-700 to-indigo-600 bg-clip-text text-transparent dark:from-white dark:via-neutral-300 dark:to-indigo-400">
-            Dashboard
-          </span>
-        </h1>
-        <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
-          {format(new Date(), "EEEE, MMMM d")}
-        </p>
-
-        <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-4">
-          {stats.map((s) => (
-            <div
-              key={s.label}
-              className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900"
-            >
-              <div
-                className={cn(
-                  "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
-                  s.tile
-                )}
-              >
-                <s.icon className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-[11px] text-neutral-500 dark:text-neutral-400 sm:truncate">
-                  {s.label}
-                </p>
-                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-50 sm:truncate sm:text-base">
-                  {s.value}
-                </p>
-              </div>
-            </div>
-          ))}
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
+            <span className="text-gradient">{greeting}</span>
+          </h1>
+          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
+            {format(new Date(), "EEEE, d MMMM yyyy")}
+          </p>
         </div>
+        <Link
+          href="/tasks"
+          className="inline-flex h-9 items-center gap-2 rounded-full bg-gradient-to-r from-[#1da1f2] to-[#22d3ee] px-4 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:shadow-lg hover:shadow-indigo-500/40"
+        >
+          <Plus className="h-4 w-4" /> New task
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+        {stats.map((s) => (
+          <div
+            key={s.label}
+            className="card-modern glass flex items-center gap-3 rounded-2xl p-4"
+          >
+            <div
+              className={cn(
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl",
+                s.tile
+              )}
+            >
+              <s.icon className="h-4 w-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+                {s.label}
+              </p>
+              <p className="truncate text-lg font-extrabold tracking-tight text-neutral-900 dark:text-neutral-50">
+                {s.value}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
@@ -152,23 +153,25 @@ function MissionSection() {
   return (
     <Card
       delay={0}
-      className="relative overflow-hidden border border-indigo-500/20 bg-gradient-to-br from-indigo-500/10 via-white to-violet-500/10 dark:from-indigo-500/15 dark:via-neutral-900/60 dark:to-violet-500/15"
+      className="relative overflow-hidden border-indigo-500/30"
     >
-      <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-gradient-to-br from-indigo-400/30 to-fuchsia-400/30 blur-2xl" />
-      <div className="relative flex items-start gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-500 shadow-lg shadow-indigo-500/30">
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#1da1f2] to-[#22d3ee]" />
+      <div className="relative flex items-start gap-3 pl-2">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1da1f2] to-[#22d3ee] shadow-lg shadow-indigo-500/30">
           <Compass className="h-5 w-5 text-white" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="mb-1 text-[11px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-300">
-            Mission
-          </p>
+          <div className="mb-1 flex items-center gap-1.5">
+            <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-300">
+              Mission
+            </span>
+          </div>
           {mission ? (
             <p className="line-clamp-2 text-sm font-medium leading-relaxed text-neutral-700 dark:text-neutral-300 sm:text-[15px]">
               &ldquo;{mission}&rdquo;
             </p>
           ) : (
-            <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300">
+            <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-indigo-500 dark:hover:text-indigo-300">
               Set your mission in North Star →
             </Link>
           )}
@@ -364,7 +367,7 @@ function HabitsChallengesSection() {
 
   return (
     <Card delay={0.1}>
-      <CardHeader icon={Heart} label="Health Today" color="text-rose-500" />
+      <CardHeader icon={Heart} label="Health Today" color="text-emerald-500" />
 
       {habits.length > 0 && (
         <div className="mb-3">
@@ -807,19 +810,19 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="space-y-4 sm:space-y-5"
+        className="mx-auto w-full max-w-6xl space-y-6"
       >
         <DashboardHero />
 
         <MissionSection />
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-5">
           <HighPriorityTasks />
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
           <SleepSection />
-          <div className="lg:col-span-2">
+          <div className="md:col-span-2">
             <ContentSection />
           </div>
         </div>

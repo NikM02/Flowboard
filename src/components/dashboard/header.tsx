@@ -7,6 +7,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { NotificationBell } from "./notification-panel"
 import { TelegramSettings } from "./telegram-settings"
+import { IntegrationsPanel } from "./integrations-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 
 export function Header({
@@ -28,14 +29,9 @@ export function Header({
       >
         <div className="flex h-14 items-center px-4 lg:px-6">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-xl shadow-sm" />
-            <span className="flex items-baseline gap-1.5">
-              <span className="bg-gradient-to-r from-neutral-900 to-neutral-600 bg-clip-text text-base font-bold tracking-tight text-transparent dark:from-white dark:to-neutral-400">
-                Nexus
-              </span>
-              <span className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-                My Journey
-              </span>
+            <Image src="/nexus-logo.png" alt="Logo" width={32} height={32} className="rounded-[10px]" />
+            <span className="bg-gradient-to-r from-[#1da1f2] to-[#22d3ee] bg-clip-text text-lg font-extrabold tracking-tight text-transparent">
+              Nexus
             </span>
           </Link>
 
@@ -46,7 +42,7 @@ export function Header({
             >
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400 transition-colors group-hover:text-indigo-500" />
-                <div className="group flex h-9 cursor-text items-center rounded-xl border border-neutral-200 bg-neutral-50 pl-9 pr-2.5 text-xs text-neutral-400 shadow-sm transition-all hover:border-indigo-200 hover:bg-white hover:shadow-md hover:shadow-indigo-500/5 focus-within:border-indigo-300 focus-within:bg-white focus-within:shadow-md focus-within:shadow-indigo-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/70">
+                <div className="group flex h-9 cursor-text items-center rounded-full border border-neutral-200 bg-neutral-50 pl-9 pr-2.5 text-xs text-neutral-400 shadow-sm transition-all hover:border-indigo-200 hover:bg-white hover:shadow-md hover:shadow-indigo-500/5 focus-within:border-indigo-300 focus-within:bg-white focus-within:shadow-md focus-within:shadow-indigo-500/10 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:bg-neutral-900/70">
                   <span>Search across all sections...</span>
                   <kbd className="ml-auto hidden rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-neutral-500 shadow-sm dark:border-neutral-700 dark:bg-neutral-800 dark:text-neutral-400 md:inline-block">
                     {"\u2318K"}
@@ -57,27 +53,29 @@ export function Header({
 
             <button
               onClick={onSearchOpen}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-500 shadow-sm transition-all hover:border-indigo-200 hover:text-indigo-600 sm:hidden dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 sm:hidden dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
             >
-              <Search className="h-4 w-4" />
+              <Search className="h-[18px] w-[18px]" />
             </button>
 
             <button
               onClick={() => setTgOpen(!tgOpen)}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-500 shadow-sm transition-all hover:border-sky-200 hover:text-sky-500 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:text-sky-400"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
               title="Telegram Settings"
             >
-              <Send className="h-4 w-4" />
+              <Send className="h-[18px] w-[18px]" />
             </button>
+
+            <IntegrationsPanel />
 
             <NotificationBell />
 
             <button
               onClick={onLogout}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-neutral-200 bg-white text-neutral-500 shadow-sm transition-all hover:border-rose-200 hover:bg-rose-50 hover:text-rose-500 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:border-neutral-700 dark:hover:bg-transparent dark:hover:text-rose-400"
+              className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
               title="Logout"
             >
-              <LogOut className="h-4 w-4" />
+              <LogOut className="h-[18px] w-[18px]" />
             </button>
           </div>
         </div>

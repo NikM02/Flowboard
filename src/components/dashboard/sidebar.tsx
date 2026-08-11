@@ -49,11 +49,11 @@ export function Sidebar({
 
   const navLinkClass = (href: string) =>
     cn(
-      "group relative flex w-full items-center rounded-xl text-sm font-medium transition-all duration-200",
+      "group relative flex w-full items-center rounded-full text-sm font-medium transition-all duration-200",
       isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
       pathname === href
-        ? "bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-600 dark:text-indigo-300"
-        : "text-neutral-500 hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50"
+        ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
+        : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/60 dark:hover:text-neutral-50"
     )
 
   const labelClass = cn(
@@ -70,15 +70,14 @@ export function Sidebar({
           isCollapsed ? "justify-center px-0" : "gap-3"
         )}
       >
-        <Image src="/Nexus.png" alt="Logo" width={32} height={32} className="rounded-lg" />
+        <Image src="/nexus-logo.png" alt="Logo" width={32} height={32} className="rounded-[10px]" />
         <span
           className={cn(
-            "flex items-baseline gap-1.5 whitespace-nowrap",
+            "bg-gradient-to-r from-[#1da1f2] to-[#22d3ee] bg-clip-text text-lg font-extrabold tracking-tight text-transparent whitespace-nowrap",
             isCollapsed && "hidden"
           )}
         >
-          <span className="text-lg font-bold tracking-tight">Nexus</span>
-          <span className="bg-gradient-to-r from-indigo-400 to-fuchsia-400 bg-clip-text text-[10px] font-semibold uppercase tracking-widest text-transparent">My Journey</span>
+          Nexus
         </span>
       </Link>
 
