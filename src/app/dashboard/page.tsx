@@ -115,7 +115,7 @@ function DashboardHero() {
           {format(new Date(), "EEEE, MMMM d")}
         </p>
 
-        <div className="mt-6 grid grid-cols-3 gap-2.5 sm:gap-4">
+        <div className="mt-6 grid grid-cols-1 gap-2.5 sm:grid-cols-3 sm:gap-4">
           {stats.map((s) => (
             <div
               key={s.label}
@@ -130,10 +130,10 @@ function DashboardHero() {
                 <s.icon className="h-4 w-4" />
               </div>
               <div className="min-w-0">
-                <p className="truncate text-[11px] text-neutral-500 dark:text-neutral-400">
+                <p className="text-[11px] text-neutral-500 dark:text-neutral-400 sm:truncate">
                   {s.label}
                 </p>
-                <p className="truncate text-sm font-bold text-neutral-900 dark:text-neutral-50 sm:text-base">
+                <p className="text-sm font-bold text-neutral-900 dark:text-neutral-50 sm:truncate sm:text-base">
                   {s.value}
                 </p>
               </div>
