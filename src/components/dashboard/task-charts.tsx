@@ -110,7 +110,7 @@ export function CategoryPieChart() {
   const data = useMemo(() => {
     const counts: Record<string, number> = {}
     tasks.forEach((t) => {
-      const cat = t.category || "Uncategorized"
+      const cat = t.project || "Uncategorized"
       counts[cat] = (counts[cat] || 0) + 1
     })
     return Object.entries(counts)
@@ -166,7 +166,7 @@ export function PriorityBarChart() {
 
   const data = useMemo(() => {
     const counts: Record<string, number> = { urgent: 0, high: 0, medium: 0, low: 0 }
-    tasks.filter((t) => t.status !== "completed").forEach((t) => {
+    tasks.filter((t) => !t.completed).forEach((t) => {
       const p = (t.priority || "medium").toLowerCase()
       if (p in counts) counts[p]++
     })
