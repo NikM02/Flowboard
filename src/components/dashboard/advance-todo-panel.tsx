@@ -108,11 +108,11 @@ export function AdvanceTodoPanel() {
                 {/* Checkbox */}
                 <button
                   onClick={() => toggleTodo(todo.id)}
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded border transition-all ${
-                    todo.completed
-                      ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-100 dark:bg-neutral-100 dark:text-neutral-900"
-                      : "border-neutral-300 hover:border-neutral-500 dark:border-neutral-600 dark:hover:border-neutral-400"
-                  }`}
+                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border transition-all ${
+                     todo.completed
+                       ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900"
+                       : "border-neutral-300 hover:border-neutral-500 dark:border-neutral-600 dark:hover:border-neutral-400"
+                   }`}
                 >
                   {todo.completed && <Check className="h-3 w-3" />}
                 </button>

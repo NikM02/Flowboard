@@ -13,7 +13,7 @@ function wrap(subject: string, bodyHtml: string): string {
   return `
     <div style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f6f8fa;padding:24px;">
       <div style="max-width:520px;margin:0 auto;background:#ffffff;border-radius:16px;border:1px solid #e5e7eb;overflow:hidden;">
-        <div style="background:linear-gradient(90deg,#1da1f2,#22d3ee);padding:16px 24px;">
+        <div style="background:linear-gradient(90deg,#525252,#a3a3a3);padding:16px 24px;">
           <span style="color:#ffffff;font-weight:800;font-size:16px;">Nexus</span>
         </div>
         <div style="padding:20px 24px;">

@@ -1,29 +1,20 @@
 import { create } from "zustand"
 
-export type ColorTheme = "dark" | "light" | "ocean" | "aurora" | "sunset"
+export type ColorTheme = "dark" | "light"
 
 type ThemeStore = {
   colorTheme: ColorTheme
   setColorTheme: (theme: ColorTheme) => void
 }
 
-// v2: design refresh made white the default. The key is versioned so devices
-// that previously saved "dark" under the old key get the new light default
-// once, instead of the stale choice overriding the redesign forever.
-const THEME_KEY = "nexus-color-theme-v2"
+const THEME_KEY = "nexus-color-theme-v3"
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement
-  root.classList.remove("dark", "theme-ocean", "theme-aurora", "theme-sunset")
+  root.classList.remove("dark")
 
   if (theme === "dark") {
     root.classList.add("dark")
-  } else if (theme === "ocean") {
-    root.classList.add("dark", "theme-ocean")
-  } else if (theme === "aurora") {
-    root.classList.add("theme-aurora")
-  } else if (theme === "sunset") {
-    root.classList.add("dark", "theme-sunset")
   }
 
   try { localStorage.setItem(THEME_KEY, theme) } catch {}
@@ -32,7 +23,7 @@ function applyTheme(theme: ColorTheme) {
 function getInitialTheme(): ColorTheme {
   try {
     const stored = localStorage.getItem(THEME_KEY) as ColorTheme | null
-    if (stored && ["dark", "light", "ocean", "aurora", "sunset"].includes(stored)) return stored
+    if (stored && ["dark", "light"].includes(stored)) return stored
   } catch {}
   return "light"
 }

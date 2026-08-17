@@ -40,7 +40,7 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
               <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase">
                 {format(d, "EEE")}
               </span>
-              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-neutral-700 dark:text-neutral-300">
+              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] text-xs font-bold text-neutral-700 dark:text-neutral-300">
                 {format(d, "d")}
               </span>
             </div>
@@ -117,7 +117,7 @@ function HabitWeekRow({
                 "flex items-center justify-center rounded-lg border-2 transition-all",
                 "h-9 w-9",
                 isDone
-                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
+                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                   : isFuture
                   ? "bg-neutral-50 border-neutral-100 text-neutral-200 cursor-default dark:bg-neutral-900 dark:border-neutral-800"
                   : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"

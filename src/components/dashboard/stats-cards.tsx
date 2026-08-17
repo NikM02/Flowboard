@@ -4,13 +4,13 @@ import { useEffect, useState, useMemo } from "react"
 import { motion } from "framer-motion"
 import { ListTodo, CheckCircle2, Circle, TrendingUp } from "lucide-react"
 import { useTaskStore } from "@/store/use-task-store"
-import { Sparkline, RadialGauge, GradientIconTile } from "@/components/charts/chart-components"
+import { Sparkline, RadialGauge } from "@/components/charts/chart-components"
 
 const statConfigs = [
-  { key: "total", icon: ListTodo, label: "Total", color: "#1da1f2", gauge: ["#1da1f2", "#0e8be0"] },
-  { key: "active", icon: Circle, label: "Active", color: "#fb923c", gauge: ["#fb923c", "#ea580c"] },
-  { key: "completed", icon: CheckCircle2, label: "Done", color: "#34d399", gauge: ["#34d399", "#059669"] },
-  { key: "progress", icon: TrendingUp, label: "Progress", color: "#2f6ee0", gauge: ["#1da1f2", "#0e8be0"] },
+  { key: "total", icon: ListTodo, label: "Total", color: "#262626", gauge: ["#262626", "#404040"] },
+  { key: "active", icon: Circle, label: "Active", color: "#525252", gauge: ["#525252", "#737373"] },
+  { key: "completed", icon: CheckCircle2, label: "Done", color: "#404040", gauge: ["#404040", "#525252"] },
+  { key: "progress", icon: TrendingUp, label: "Progress", color: "#171717", gauge: ["#171717", "#262626"] },
 ]
 
 function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
@@ -30,7 +30,7 @@ function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
   }, [value])
 
   return (
-    <span className="text-[26px] font-black tracking-tight text-neutral-900 tabular-nums dark:text-neutral-50">
+    <span className="text-[26px] font-black tracking-tight text-neutral-900 tabular-nums dark:text-white">
       {displayed}{suffix}
     </span>
   )
@@ -71,55 +71,38 @@ export function StatsCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.07, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className="card-modern card-hover glass relative overflow-hidden rounded-2xl p-4"
+            className="relative overflow-hidden rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/50 dark:bg-neutral-900"
           >
-            <div
-              className="glow-blob -right-8 -top-8 h-24 w-24 animate-pulse-glow"
-              style={{ background: `radial-gradient(circle, ${config.color}26, transparent 70%)` }}
-            />
             <div className="relative flex items-center justify-between">
-              <GradientIconTile icon={config.icon} color={config.color} />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
-                {config.label}
-              </span>
-            </div>
-
-            <div className="relative mt-3 flex items-end justify-between gap-2">
-              <div className="min-w-0">
+              <div className="flex flex-col gap-1">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{config.label}</p>
                 <AnimatedNumber
-                  value={values[config.key] ?? 0}
-                  suffix={isProgress ? "%" : ""}
+                  value={values[config.key]}
+                  suffix={isProgress ? "%" : undefined}
                 />
-                {!isProgress && (
-                  <Sparkline data={trend} color={config.color} width={72} height={24} className="mt-1.5 opacity-80" />
-                )}
               </div>
-              {isProgress && (
-                <RadialGauge
-                  value={stats.progress}
-                  size={76}
-                  stroke={8}
-                  color={config.gauge as [string, string]}
-                  sublabel="done"
-                  className="shrink-0"
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                <config.icon className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+              </div>
+            </div>
+            <div className="mt-2">
+              {isProgress ? (
+                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 rounded-full bg-neutral-900 dark:bg-white"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${stats.progress}%` }}
+                    transition={{ duration: 1, delay: 0.3 }}
+                  />
+                </div>
+              ) : (
+                <Sparkline
+                  data={trend}
+                  height={32}
+                  color={config.color}
                 />
               )}
             </div>
-
-            {isProgress && (
-              <div className="relative mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-200/70 dark:bg-neutral-800">
-                <motion.div
-                  initial={{ width: 0 }}
-                  animate={{ width: `${stats.progress}%` }}
-                  transition={{ duration: 0.8, delay: 0.3 }}
-                  className="h-full rounded-full"
-                  style={{
-                    background: `linear-gradient(90deg, ${config.gauge[0]}, ${config.gauge[1]})`,
-                    boxShadow: `0 0 8px ${config.color}88`,
-                  }}
-                />
-              </div>
-            )}
           </motion.div>
         )
       })}

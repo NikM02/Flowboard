@@ -114,7 +114,7 @@ export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "i
         className="flex w-full items-center gap-3"
       >
         <div className={cn(
-          "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+          "flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px]",
           connected ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-neutral-100 dark:bg-neutral-800"
         )}>
           <Send className={cn("h-4.5 w-4.5", connected ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />

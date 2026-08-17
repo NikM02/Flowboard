@@ -5,17 +5,9 @@ import { usePathname } from "next/navigation"
 import Image from "next/image"
 import Link from "next/link"
 import {
-  ListTodo,
-  X,
-  Heart,
-  GraduationCap,
-  Wallet,
-  Sparkles,
-  TrendingUp,
-  LayoutDashboard,
-  BookOpen,
-  Compass,
-  ChevronsLeft,
+  ListTodo, X, Heart, GraduationCap, Wallet, Sparkles,
+  TrendingUp, LayoutDashboard, BookOpen, Compass, ChevronsLeft,
+  Settings, CalendarClock,
 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
@@ -23,10 +15,10 @@ import { cn } from "@/lib/shadcn-utils"
 const navItems = [
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/habits", label: "Health", icon: Heart },
-  { href: "/skills", label: "Skill Enhancement", icon: GraduationCap },
+  { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/finance", label: "Finance", icon: Wallet },
   { href: "/investments", label: "Investments", icon: TrendingUp },
-  { href: "/future", label: "Future Self", icon: Sparkles },
+  { href: "/future", label: "Future", icon: Sparkles },
 ]
 
 export function Sidebar({
@@ -44,36 +36,32 @@ export function Sidebar({
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const pathname = usePathname()
-
   const isCollapsed = !isMobile && collapsed
 
   const navLinkClass = (href: string) =>
     cn(
-      "group relative flex w-full items-center rounded-full text-sm font-medium transition-all duration-200",
+      "group relative flex w-full items-center rounded-[10px] text-sm font-medium transition-all duration-200",
       isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
       pathname === href
-        ? "bg-indigo-50 font-semibold text-indigo-700 dark:bg-indigo-500/10 dark:text-indigo-300"
-        : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/60 dark:hover:text-neutral-50"
+        ? "bg-neutral-100 font-semibold text-neutral-900 dark:bg-neutral-800 dark:text-white"
+        : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
     )
 
-  const labelClass = cn(
-    "truncate",
-    isCollapsed && "sr-only"
-  )
+  const labelClass = cn("truncate", isCollapsed && "sr-only")
 
   const content = (
     <>
       <Link
         href="/dashboard"
         className={cn(
-          "flex items-center px-3 pb-6 pt-2",
-          isCollapsed ? "justify-center px-0" : "gap-3"
+          "flex items-center pb-6 pt-1",
+          isCollapsed ? "justify-center px-0" : "gap-3 px-1"
         )}
       >
-        <Image src="/nexus-logo.png" alt="Logo" width={32} height={32} className="rounded-[10px]" />
+        <Image src="/nexus-logo.png" alt="Logo" width={28} height={28} className="rounded-[10px]" />
         <span
           className={cn(
-            "bg-gradient-to-r from-[#1da1f2] to-[#22d3ee] bg-clip-text text-lg font-extrabold tracking-tight text-transparent whitespace-nowrap",
+            "text-base font-extrabold tracking-tight text-neutral-900 dark:text-white whitespace-nowrap transition-all",
             isCollapsed && "hidden"
           )}
         >
@@ -81,7 +69,7 @@ export function Sidebar({
         </span>
       </Link>
 
-      <div className="space-y-1">
+      <div className="space-y-0.5">
         <Link href="/dashboard" className={navLinkClass("/dashboard")} title="Dashboard">
           <LayoutDashboard className="h-4 w-4 shrink-0" />
           <span className={labelClass}>Dashboard</span>
@@ -90,6 +78,11 @@ export function Sidebar({
         <Link href="/north-star" className={navLinkClass("/north-star")} title="North Star">
           <Compass className="h-4 w-4 shrink-0" />
           <span className={labelClass}>North Star</span>
+        </Link>
+
+        <Link href="/routine" className={navLinkClass("/routine")} title="Routine">
+          <CalendarClock className="h-4 w-4 shrink-0" />
+          <span className={labelClass}>Routine</span>
         </Link>
 
         {navItems.map((item) => (
@@ -116,23 +109,25 @@ export function Sidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-neutral-950/50"
+              className="fixed inset-0 z-40 bg-neutral-950/60 backdrop-blur-sm"
               onClick={onClose}
             />
             <motion.aside
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 glass shadow-2xl shadow-indigo-950/30"
+              initial={{ x: "-100%", opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: "-100%", opacity: 0 }}
+              transition={{ type: "spring", damping: 30, stiffness: 300 }}
+              className="fixed inset-y-0 left-0 z-50 w-72 border-r border-neutral-200/50 bg-white/95 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/95"
             >
-              <button
-                onClick={onClose}
-                className="absolute right-4 top-4 rounded-lg p-1 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <div className="flex h-full flex-col gap-1 p-4">{content}</div>
+              <div className="flex h-full flex-col gap-1 p-4">
+                <button
+                  onClick={onClose}
+                  className="absolute right-4 top-4 rounded-[10px] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                {content}
+              </div>
             </motion.aside>
           </>
         )}
@@ -141,21 +136,21 @@ export function Sidebar({
   }
 
   return (
-    <aside
-      className={cn(
-        "glass sticky top-0 hidden h-screen shrink-0 overflow-y-auto border-r border-neutral-200/60 transition-[width] duration-300 ease-in-out md:block dark:border-neutral-800/60",
-        isCollapsed ? "w-[76px]" : "w-64"
-      )}
+    <motion.aside
+      initial={false}
+      animate={{ width: isCollapsed ? 72 : 256 }}
+      transition={{ type: "spring", damping: 25, stiffness: 200 }}
+      className="hidden md:flex h-screen shrink-0 flex-col border-r border-neutral-200/50 bg-white dark:border-neutral-800/50 dark:bg-neutral-950"
     >
       <div className={cn("flex h-full flex-col gap-1", isCollapsed ? "p-3" : "p-4")}>
         {content}
 
-        <div className="mt-auto border-t border-neutral-200/60 pt-2 dark:border-neutral-800/60">
+        <div className="mt-auto space-y-0.5 border-t border-neutral-100 pt-2 dark:border-neutral-800">
           <button
             onClick={onToggleCollapse}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             className={cn(
-              "flex w-full items-center rounded-xl text-sm font-medium text-neutral-500 transition-all hover:bg-neutral-50 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800/50 dark:hover:text-neutral-50",
+              "flex w-full items-center rounded-[10px] text-sm font-medium text-neutral-400 transition-all hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-500 dark:hover:bg-neutral-800 dark:hover:text-neutral-50",
               isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5"
             )}
           >
@@ -164,6 +159,6 @@ export function Sidebar({
           </button>
         </div>
       </div>
-    </aside>
+    </motion.aside>
   )
 }

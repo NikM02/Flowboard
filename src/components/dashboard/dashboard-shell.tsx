@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { useRouter } from "next/navigation"
 import { Loader2, Bell, BellOff, BellRing } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
@@ -35,7 +34,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     } catch {}
     return true
   })
-  const router = useRouter()
   const { colorTheme } = useThemeStore()
   const { loading: dataLoading, hydrated } = useSupabasePersistence()
 
@@ -49,9 +47,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     useCalendarStore.getState().load()
   }, [authenticated])
 
-  // Check session on mount
   useEffect(() => {
-    const checkSession = async () => {
+    const checkAuth = async () => {
       try {
         const { createClient } = await import("@/lib/supabase/client")
         const client = createClient()
@@ -62,17 +59,13 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       }
       setAuthChecked(true)
     }
-    checkSession()
+    checkAuth()
   }, [])
 
-  // Apply theme class on mount
   useEffect(() => {
     const root = document.documentElement
-    root.classList.remove("dark", "theme-ocean", "theme-aurora", "theme-sunset")
+    root.classList.remove("dark")
     if (colorTheme === "dark") root.classList.add("dark")
-    else if (colorTheme === "ocean") { root.classList.add("dark", "theme-ocean") }
-    else if (colorTheme === "aurora") { root.classList.add("theme-aurora") }
-    else if (colorTheme === "sunset") { root.classList.add("dark", "theme-sunset") }
   }, [colorTheme])
 
   useEffect(() => {
@@ -109,79 +102,95 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
+  if (!authChecked) {
+    return (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 rounded-[10px] bg-neutral-900 dark:bg-white" />
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
+            <p className="text-sm font-medium text-neutral-500">Loading...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  if (!authenticated) {
+    return <LoginScreen onAuth={handleAuth} />
+  }
+
+  if (dataLoading) {
+    return (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
+        <div className="flex flex-col items-center gap-4">
+          <div className="h-10 w-10 rounded-[10px] bg-neutral-900 dark:bg-white" />
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
+            <p className="text-sm font-medium text-neutral-500">Syncing data...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <>
-      {!authChecked && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
-            <p className="text-sm text-neutral-500">Loading Nexus...</p>
+    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
+      <Sidebar
+        open={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+        onLogout={handleLogout}
+        collapsed={sidebarCollapsed}
+        onToggleCollapse={toggleSidebarCollapsed}
+      />
+
+      <div className="flex min-w-0 flex-1 flex-col">
+        <Header
+          onSearchOpen={() => setSearchOpen(true)}
+          onLogout={handleLogout}
+          onMenuToggle={() => setSidebarOpen(true)}
+          sidebarCollapsed={sidebarCollapsed}
+        />
+
+        <main className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+            {children}
           </div>
+        </main>
+      </div>
+
+      <BottomNav />
+
+      <div className="fixed bottom-6 right-4 z-30 hidden md:block">
+        <ThemePicker variant="desktop" />
+      </div>
+
+      {permission === "default" && (
+        <button
+          onClick={requestPermission}
+          className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
+        >
+          <BellRing className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Enable Notifications</span>
+        </button>
+      )}
+
+      {permission === "denied" && (
+        <div className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] bg-neutral-100 px-4 py-2.5 text-xs font-medium text-neutral-500 shadow-lg dark:bg-neutral-800 dark:text-neutral-400 md:bottom-6 md:right-20">
+          <BellOff className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Notifications blocked</span>
         </div>
       )}
-      {authChecked && !authenticated && <LoginScreen onAuth={handleAuth} />}
-      {authChecked && authenticated && dataLoading && (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-neutral-50 dark:bg-neutral-950">
-          <div className="flex flex-col items-center gap-3">
-            <Loader2 className="h-8 w-8 animate-spin text-neutral-400" />
-            <p className="text-sm text-neutral-500">Loading your data...</p>
-          </div>
-        </div>
-      )}
-      {authChecked && authenticated && !dataLoading && (
-        <div className="flex min-h-screen bg-neutral-50 dark:bg-neutral-950">
-          <Sidebar
-            open={sidebarOpen}
-            onClose={() => setSidebarOpen(false)}
-            onLogout={handleLogout}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={toggleSidebarCollapsed}
-          />
 
-          <div className="flex min-w-0 flex-1 flex-col pb-16 md:pb-0">
-            <Header onSearchOpen={() => setSearchOpen(true)} onLogout={handleLogout} />
+      <CreateTaskModal />
+      <EditTaskSheet />
+      <DeleteConfirmDialog />
+      <CompleteTaskDialog />
 
-            <main className="flex-1 space-y-6 p-4 lg:p-6 xl:p-8">
-              {children}
-            </main>
-          </div>
-
-          <BottomNav />
-
-          {/* Theme picker - desktop */}
-          <div className="fixed bottom-6 right-4 z-30 hidden md:block">
-            <ThemePicker variant="desktop" />
-          </div>
-
-          {/* Notification permission button */}
-          {permission === "default" && (
-            <button
-              onClick={requestPermission}
-              className="fixed bottom-20 right-4 z-30 flex items-center gap-1.5 rounded-full bg-amber-500 px-3 py-2 text-xs font-medium text-white shadow-lg transition-all hover:bg-amber-600 hover:shadow-xl md:bottom-6 md:right-20"
-            >
-              <BellRing className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Enable Notifications</span>
-            </button>
-          )}
-
-          {permission === "denied" && (
-            <div className="fixed bottom-20 right-4 z-30 flex items-center gap-1.5 rounded-full bg-neutral-800 px-3 py-2 text-xs font-medium text-neutral-400 shadow-lg md:bottom-6 md:right-20">
-              <BellOff className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Notifications blocked</span>
-            </div>
-          )}
-
-          <CreateTaskModal />
-          <EditTaskSheet />
-          <DeleteConfirmDialog />
-          <CompleteTaskDialog />
-
-          <GlobalSearch
-            open={searchOpen}
-            onClose={() => setSearchOpen(false)}
-          />
-        </div>
-      )}
-    </>
+      <GlobalSearch
+        open={searchOpen}
+        onClose={() => setSearchOpen(false)}
+      />
+    </div>
   )
 }

@@ -38,7 +38,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3 min-w-0">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
             <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           </div>
           <div className="min-w-0">
@@ -50,11 +50,11 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <button onClick={() => onEdit(challenge)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300 transition-colors">
-            <Edit3 className="h-3.5 w-3.5" />
+          <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors">
+            <Edit3 className="h-4 w-4" />
           </button>
-          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
-            <Trash2 className="h-3.5 w-3.5" />
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30 transition-colors">
+            <Trash2 className="h-4 w-4" />
           </button>
           {allDone && (
             <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
@@ -127,7 +127,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
                 "flex items-center justify-center rounded-lg border-2 font-semibold text-[10px] sm:text-xs transition-all relative",
                 total === 21 ? "h-[30px] sm:h-[34px]" : "h-[26px] sm:h-[30px]",
                 d.completed
-                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
+                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                   : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
                 isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
               )}
@@ -161,7 +161,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
       className="card-modern card-hover glass rounded-xl p-3"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
           <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         </div>
 
@@ -187,7 +187,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
                   "flex items-center justify-center rounded border transition-all shrink-0",
                   "h-6 w-6 text-[10px] font-medium",
                   d.completed
-                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
+                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                     : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-500",
                   isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
                 )}
@@ -222,16 +222,16 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
         </button>
 
         <div className="flex gap-0.5 shrink-0">
-          <button onClick={() => onEdit(challenge)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
-            <Edit3 className="h-3.5 w-3.5" />
+          <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+            <Edit3 className="h-4 w-4" />
           </button>
           {allDone ? (
-            <Button size="sm" className="h-7 gap-1 text-xs rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
-              <Check className="h-3 w-3" />Done
+            <Button size="sm" className="h-10 gap-1 text-xs rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
+              <Check className="h-4 w-4" />Done
             </Button>
           ) : (
-            <button onClick={() => deleteChallenge(challenge.id)} className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
-              <Trash2 className="h-3.5 w-3.5" />
+            <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
+              <Trash2 className="h-4 w-4" />
             </button>
           )}
         </div>

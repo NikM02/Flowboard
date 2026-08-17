@@ -205,8 +205,8 @@ export function GlobalSearch({
                           : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
                       }`}
                     >
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                        <r.icon className="h-3.5 w-3.5 text-neutral-500" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                        <r.icon className="h-4 w-4 text-neutral-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-neutral-900 truncate dark:text-neutral-100">

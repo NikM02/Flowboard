@@ -229,8 +229,8 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
       )}
     >
       <div className="mb-3 flex items-center gap-2 px-1">
-        <div className={cn("flex h-6 w-6 items-center justify-center rounded-lg", col.bg)}>
-          <Icon className={cn("h-3.5 w-3.5", col.color)} />
+        <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800", col.bg)}>
+          <Icon className={cn("h-4 w-4", col.color)} />
         </div>
         <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{col.label}</span>
         <span className="ml-auto rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
@@ -411,7 +411,7 @@ function ContentDialog({
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-lg border text-lg transition-all",
                     emoji === e
-                      ? "border-neutral-900 bg-neutral-100 dark:border-neutral-50 dark:bg-neutral-800 scale-110"
+                      ? "border-neutral-900 bg-neutral-100 dark:border-neutral-200 dark:bg-neutral-800 scale-110"
                       : "border-transparent hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
                   )}
                 >

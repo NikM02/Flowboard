@@ -45,7 +45,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
       className="group relative card-modern card-hover glass rounded-2xl p-4"
     >
       <div className="flex items-start gap-3">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colors.bg} dark:bg-opacity-20`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${colors.bg} dark:bg-opacity-20`}>
           <Icon className={`h-5 w-5 ${colors.text}`} />
         </div>
         <div className="flex-1 min-w-0">

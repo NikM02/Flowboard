@@ -42,18 +42,18 @@ const expenseCategories: { value: ExpenseCategory; label: string }[] = [
 ]
 
 const categoryColors: Record<ExpenseCategory, string> = {
-  food: "bg-orange-100 text-orange-600 dark:bg-orange-900/30 dark:text-orange-400",
-  transport: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-  housing: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
-  utilities: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-400",
-  entertainment: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-400",
-  healthcare: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
-  shopping: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-400",
-  education: "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-400",
+  food: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  transport: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  housing: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  utilities: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  entertainment: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  healthcare: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  shopping: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  education: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
   other: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 }
 
-const PIE_COLORS = ["#f97316", "#1da1f2", "#2f6ee0", "#06b6d4", "#22d3ee", "#ef4444", "#10b981", "#0e8be0", "#737373"]
+const PIE_COLORS = ["#a3a3a3", "#525252", "#737373", "#d4d4d4", "#a3a3a3", "#171717", "#404040", "#525252", "#737373"]
 
 const incomeSources: { value: IncomeSource; label: string }[] = [
   { value: "job", label: "Job" },
@@ -65,11 +65,11 @@ const incomeSources: { value: IncomeSource; label: string }[] = [
 ]
 
 const incomeColors: Record<IncomeSource, string> = {
-  job: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-  youtube: "bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400",
-  digital: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-  website: "bg-purple-100 text-purple-600 dark:bg-purple-900/30 dark:text-purple-400",
-  freelance: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400",
+  job: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  youtube: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  digital: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  website: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
+  freelance: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
   other: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
 }
 
@@ -120,17 +120,17 @@ function OverviewTab() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-2xl border border-green-200 bg-green-50 p-5 dark:border-green-900 dark:bg-green-950/30">
-          <p className="text-xs text-green-600 dark:text-green-400">Total Income</p>
-          <p className="text-2xl font-bold text-green-600">₹{totalIncome.toLocaleString()}</p>
+        <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-5 dark:border-emerald-900 dark:bg-emerald-950/30">
+          <p className="text-xs text-emerald-600 dark:text-emerald-400">Total Income</p>
+          <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">₹{totalIncome.toLocaleString()}</p>
         </div>
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-950/30">
+        <div className="rounded-[14px] border border-red-200 bg-red-50 p-5 dark:border-red-900 dark:bg-red-950/30">
           <p className="text-xs text-red-500">Total Expenses</p>
           <p className="text-2xl font-bold text-red-500">₹{totalExpenses.toLocaleString()}</p>
         </div>
-        <div className={cn("rounded-2xl border p-5", net >= 0 ? "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30")}>
+        <div className={cn("rounded-[14px] border p-5", net >= 0 ? "border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30" : "border-red-200 bg-red-50 dark:border-red-900 dark:bg-red-950/30")}>
           <p className="text-xs text-neutral-500">Net Cash Flow</p>
-          <p className={cn("text-2xl font-bold", net >= 0 ? "text-green-600" : "text-red-500")}>
+          <p className={cn("text-2xl font-bold", net >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500")}>
             ₹{net.toLocaleString()}
           </p>
         </div>
@@ -138,8 +138,8 @@ function OverviewTab() {
 
       {categoryData.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="card-modern glass rounded-2xl p-5">
-            <h3 className="mb-4 font-semibold text-neutral-900 dark:text-neutral-50">Expense Breakdown</h3>
+          <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5 dark:border-neutral-800/50 dark:bg-neutral-900">
+            <h3 className="mb-4 font-semibold text-neutral-900 dark:text-white">Expense Breakdown</h3>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
                 <ChartGlow id="fin-pie-glow" />
@@ -165,18 +165,17 @@ function OverviewTab() {
           </div>
 
           {monthlyData.length > 0 && (
-            <div className="card-modern glass rounded-2xl p-5">
-              <h3 className="mb-4 font-semibold text-neutral-900 dark:text-neutral-50">Monthly Trend</h3>
+            <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5 dark:border-neutral-800/50 dark:bg-neutral-900">
+              <h3 className="mb-4 font-semibold text-neutral-900 dark:text-white">Monthly Trend</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={monthlyData}>
-                  <ChartGradients ids={["fin-income", "fin-expense"]} />
                   <CartesianGrid {...CHART_GRID_STYLES} />
                   <XAxis dataKey="month" {...CHART_AXIS_STYLES} />
                   <YAxis {...CHART_AXIS_STYLES} />
                   <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} cursor={CHART_CURSOR_STYLES} />
                   <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="income" fill="url(#fin-income)" radius={[7, 7, 2, 2]} name="Income" />
-                  <Bar dataKey="expense" fill="url(#fin-expense)" radius={[7, 7, 2, 2]} name="Expenses" />
+                  <Bar dataKey="income" fill="#16a34a" radius={[7, 7, 2, 2]} name="Income" />
+                  <Bar dataKey="expense" fill="#ef4444" radius={[7, 7, 2, 2]} name="Expenses" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -185,7 +184,7 @@ function OverviewTab() {
       )}
 
       {categoryData.length === 0 && monthlyData.length === 0 && (
-        <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-16 dark:border-neutral-800">
+        <div className="flex flex-col items-center justify-center rounded-[14px] border-2 border-dashed border-neutral-200 py-16 dark:border-neutral-800">
           <Wallet className="mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600" />
           <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No data yet</p>
           <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">Add income or expenses to see charts</p>
@@ -235,7 +234,7 @@ function IncomeTab() {
       ) : (
         <div className="space-y-2">
           {incomes.map((inc) => (
-            <div key={inc.id} className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
+            <div key={inc.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
               <div className="flex items-center gap-3 min-w-0">
                 <span className={cn("shrink-0 rounded-lg px-2 py-1 text-xs font-medium", incomeColors[inc.source])}>
                   {inc.source}
@@ -246,11 +245,11 @@ function IncomeTab() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-sm font-semibold text-green-600">₹{inc.amount.toLocaleString()}</span>
+                <span className="text-sm font-semibold text-emerald-600 dark:text-emerald-400">₹{inc.amount.toLocaleString()}</span>
                 <button onClick={() => openEdit(inc)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => deleteIncome(inc.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
+                <button onClick={() => deleteIncome(inc.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -258,9 +257,9 @@ function IncomeTab() {
           ))}
         </div>
       )}
-      <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900 dark:bg-green-950/30">
-        <p className="text-xs text-green-600 dark:text-green-400">Total Income</p>
-        <p className="text-2xl font-bold text-green-600">₹{totalIncome.toLocaleString()}</p>
+      <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-4 dark:border-emerald-900 dark:bg-emerald-950/30">
+        <p className="text-xs text-emerald-600 dark:text-emerald-400">Total Income</p>
+        <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">₹{totalIncome.toLocaleString()}</p>
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -373,7 +372,7 @@ function ExpensesTab() {
       ) : (
         <div className="space-y-2">
           {expenses.map((e) => (
-            <div key={e.id} className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
+            <div key={e.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
               <div className="flex items-center gap-3 min-w-0">
                 <span className={cn("shrink-0 rounded-lg px-2 py-1 text-xs font-medium", categoryColors[e.category])}>
                   {e.category}
@@ -384,11 +383,11 @@ function ExpensesTab() {
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">₹{e.amount.toLocaleString()}</span>
+                <span className="text-sm font-semibold text-red-500">₹{e.amount.toLocaleString()}</span>
                 <button onClick={() => openEdit(e)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => deleteExpense(e.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
+                <button onClick={() => deleteExpense(e.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -396,9 +395,9 @@ function ExpensesTab() {
           ))}
         </div>
       )}
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
-        <p className="text-xs text-neutral-500">Total Expenses</p>
-        <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">₹{totalExpenses.toLocaleString()}</p>
+      <div className="rounded-[14px] border border-red-200 bg-red-50 p-4 dark:border-red-900 dark:bg-red-950/30">
+        <p className="text-xs text-red-500">Total Expenses</p>
+        <p className="text-2xl font-bold text-red-500">₹{totalExpenses.toLocaleString()}</p>
       </div>
 
       <Dialog open={createOpen} onOpenChange={setCreateOpen}>
@@ -496,7 +495,7 @@ function BudgetTab() {
             const pct = bgt.limit ? Math.round((spent / bgt.limit) * 100) : 0
             const cat = expenseCategories.find((c) => c.value === bgt.category)
             return (
-              <div key={bgt.id} className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+              <div key={bgt.id} className="rounded-[14px] border border-neutral-200/50 bg-white p-4 dark:border-neutral-800/50 dark:bg-neutral-900">
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <span className={cn("rounded-lg px-2 py-1 text-xs font-medium", categoryColors[bgt.category])}>
@@ -505,17 +504,17 @@ function BudgetTab() {
                     <span className="text-xs text-neutral-400">{bgt.month}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className={cn("text-sm font-semibold", pct > 100 ? "text-red-500" : "text-neutral-900 dark:text-neutral-50")}>
+                    <span className={cn("text-sm font-semibold", pct > 100 ? "text-red-500" : "text-neutral-900 dark:text-white")}>
                       ₹{spent.toLocaleString()} / ₹{bgt.limit.toLocaleString()}
                     </span>
-                    <button onClick={() => deleteBudget(bgt.id)} className="rounded-lg p-1 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
+                    <button onClick={() => deleteBudget(bgt.id)} className="rounded-lg p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
                 </div>
                 <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
-                    className={cn("absolute inset-y-0 left-0 rounded-full", pct > 100 ? "bg-red-500" : pct > 80 ? "bg-amber-500" : "bg-green-500")}
+                    className={cn("absolute inset-y-0 left-0 rounded-full", pct > 100 ? "bg-red-500" : pct > 80 ? "bg-amber-500" : "bg-emerald-500")}
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(pct, 100)}%` }}
                     transition={{ duration: 0.4 }}
@@ -528,7 +527,7 @@ function BudgetTab() {
         </div>
       )}
 
-      <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-[14px] border border-neutral-200/50 bg-white p-4 dark:border-neutral-800/50 dark:bg-neutral-900">
         <p className="text-xs text-neutral-500 mb-2">Set budget limit</p>
         <div className="flex flex-wrap gap-2">
           <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory })}>

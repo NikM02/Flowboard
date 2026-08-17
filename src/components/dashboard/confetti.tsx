@@ -4,8 +4,8 @@ import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 
 const colors = [
-  "#22c55e", "#1da1f2", "#f59e0b", "#ef4444", "#2f6ee0",
-  "#ec4899", "#14b8a6", "#f97316", "#06b6d4", "#84cc16",
+  "#000000", "#171717", "#262626", "#404040", "#525252",
+  "#737373", "#a3a3a3", "#d4d4d4", "#e5e5e5", "#fafafa",
 ]
 
 function randomBetween(a: number, b: number) {

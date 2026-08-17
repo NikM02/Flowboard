@@ -91,10 +91,10 @@ function HabitCard({
           )}
         </div>
         <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
-          <button onClick={() => onEdit?.(habit)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+          <button onClick={() => onEdit?.(habit)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
+          <button onClick={() => deleteHabit(habit.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -126,9 +126,9 @@ function HabitCard({
               <span className="text-[10px] font-medium text-neutral-400 uppercase">{dayLabels[i]}</span>
               <div
                 className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-lg border-2 transition-all",
+                  "flex h-7 w-7 items-center justify-center rounded-[10px] border-2 transition-all",
                   done
-                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
+                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                     : "bg-white border-neutral-200 dark:bg-neutral-950 dark:border-neutral-700"
                 )}
               >
@@ -192,7 +192,7 @@ function HabitListItem({
             "flex items-center justify-center rounded-xl border-2 transition-all shrink-0",
             "h-10 w-10",
             doneToday
-              ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-50 dark:border-neutral-50 dark:text-neutral-900"
+              ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
               : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
           )}
         >
@@ -240,10 +240,10 @@ function HabitListItem({
         </div>
 
         <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
-          <button onClick={() => onEdit?.(habit)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+          <button onClick={() => onEdit?.(habit)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30">
+          <button onClick={() => deleteHabit(habit.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>

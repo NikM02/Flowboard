@@ -1,201 +1,226 @@
 "use client"
 
 import { useMemo } from "react"
+import { motion } from "framer-motion"
 import {
-  PieChart, Pie, Cell, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, Tooltip, Legend,
-  AreaChart, Area, CartesianGrid,
+  BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, AreaChart, Area, CartesianGrid,
 } from "recharts"
 import { useTaskStore } from "@/store/use-task-store"
-import {
-  ChartTooltip, ChartLegend, ChartCard, ChartGradients, ChartGlow,
-  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
-  CHART_PALETTE,
-} from "@/components/charts/chart-components"
+import { format, subDays } from "date-fns"
 
-export function TaskCharts() {
+const COLORS = ["#262626", "#525252", "#737373", "#a3a3a3", "#d4d4d4"]
+
+function ChartTooltip({ active, payload, label }: any) {
+  if (!active || !payload?.length) return null
+  return (
+    <div className="rounded-[10px] border border-neutral-200 bg-white px-3 py-2 text-xs shadow-lg dark:border-neutral-800 dark:bg-neutral-900">
+      {label && <p className="mb-1 font-medium text-neutral-900 dark:text-white">{label}</p>}
+      {payload.map((entry: any, i: number) => (
+        <p key={i} className="text-neutral-600 dark:text-neutral-400">
+          {entry.name}: <span className="font-semibold text-neutral-900 dark:text-white">{entry.value}</span>
+        </p>
+      ))}
+    </div>
+  )
+}
+
+export function TaskCompletionChart() {
   const tasks = useTaskStore((s) => s.tasks)
 
-  const statusData = useMemo(() => {
-    const total = tasks.length
-    const completed = tasks.filter((t) => t.completed).length
-    const active = total - completed
-    return [
-      { name: "Active", value: active, color: "#fb923c" },
-      { name: "Completed", value: completed, color: "#34d399" },
-    ].filter((d) => d.value > 0)
-  }, [tasks])
-
-  const projectData = useMemo(() => {
-    const stats: Record<string, { total: number; completed: number; active: number; avgProgress: number }> = {}
-    for (const task of tasks) {
-      const p = task.project || "Uncategorized"
-      if (!stats[p]) stats[p] = { total: 0, completed: 0, active: 0, avgProgress: 0 }
-      stats[p].total++
-      if (task.completed) stats[p].completed++
-      else stats[p].active++
-    }
-    for (const key of Object.keys(stats)) {
-      const projectTasks = tasks.filter((t) => (t.project || "Uncategorized") === key)
-      stats[key].avgProgress = projectTasks.length > 0
-        ? Math.round(projectTasks.reduce((sum, t) => sum + t.progress, 0) / projectTasks.length)
-        : 0
-    }
-    return Object.entries(stats).map(([name, s], i) => ({
-      name: name.length > 12 ? name.slice(0, 12) + "..." : name,
-      fullName: name,
-      total: s.total,
-      completed: s.completed,
-      active: s.active,
-      avgProgress: s.avgProgress,
-      fill: CHART_PALETTE[i % CHART_PALETTE.length],
-    }))
-  }, [tasks])
-
-  const priorityData = useMemo(() => {
-    const pp: Record<string, number> = {}
-    for (const t of tasks) pp[t.priority] = (pp[t.priority] || 0) + 1
-    return [
-      { name: "High", count: pp.high || 0, color: "#f87171" },
-      { name: "Medium", count: pp.medium || 0, color: "#fb923c" },
-      { name: "Low", count: pp.low || 0, color: "#1da1f2" },
-    ]
-  }, [tasks])
-
-  const timelineData = useMemo(() => {
-    const sorted = [...tasks].sort((a, b) => a.dueDate.localeCompare(b.dueDate))
-    const dateMap: Record<string, { total: number; completed: number }> = {}
-    for (const t of sorted) {
-      const d = t.dueDate
-      if (!dateMap[d]) dateMap[d] = { total: 0, completed: 0 }
-      dateMap[d].total++
-      if (t.completed) dateMap[d].completed++
-    }
-    let cumulative = 0
-    return Object.entries(dateMap).slice(0, 10).map(([date, v]) => {
-      cumulative += v.total
+  const data = useMemo(() => {
+    const days = 14
+    return Array.from({ length: days }, (_, i) => {
+      const date = subDays(new Date(), days - 1 - i)
+      const dayStart = date.setHours(0, 0, 0, 0)
+      const dayEnd = date.setHours(23, 59, 59, 999)
       return {
-        date: date.slice(5),
-        total: cumulative,
-        completed: v.completed,
+        date: format(date, "MMM d"),
+        completed: tasks.filter((t) => {
+          const c = t.completedAt || t.updatedAt
+          return t.status === "completed" && c >= dayStart && c <= dayEnd
+        }).length,
+        created: tasks.filter((t) => {
+          const c = t.createdAt
+          return c >= dayStart && c <= dayEnd
+        }).length,
       }
     })
   }, [tasks])
 
-  if (tasks.length === 0) return null
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-5 shadow-sm dark:border-neutral-800/50 dark:bg-neutral-900"
+    >
+      <h3 className="mb-4 text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Task Activity</h3>
+      <ResponsiveContainer width="100%" height={220}>
+        <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+          <defs>
+            <linearGradient id="completedGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#262626" stopOpacity={0.15} />
+              <stop offset="95%" stopColor="#262626" stopOpacity={0} />
+            </linearGradient>
+            <linearGradient id="createdGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="5%" stopColor="#737373" stopOpacity={0.15} />
+              <stop offset="95%" stopColor="#737373" stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
+          <XAxis
+            dataKey="date"
+            tick={{ fontSize: 10, fill: "#a3a3a3" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 10, fill: "#a3a3a3" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <Tooltip content={<ChartTooltip />} />
+          <Area
+            type="monotone"
+            dataKey="completed"
+            stroke="#262626"
+            strokeWidth={2}
+            fill="url(#completedGrad)"
+            name="Completed"
+          />
+          <Area
+            type="monotone"
+            dataKey="created"
+            stroke="#737373"
+            strokeWidth={1.5}
+            strokeDasharray="4 4"
+            fill="url(#createdGrad)"
+            name="Created"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </motion.div>
+  )
+}
 
-  const totalTasks = statusData.reduce((s, d) => s + d.value, 0)
+export function CategoryPieChart() {
+  const tasks = useTaskStore((s) => s.tasks)
+
+  const data = useMemo(() => {
+    const counts: Record<string, number> = {}
+    tasks.forEach((t) => {
+      const cat = t.category || "Uncategorized"
+      counts[cat] = (counts[cat] || 0) + 1
+    })
+    return Object.entries(counts)
+      .map(([name, value]) => ({ name, value }))
+      .sort((a, b) => b.value - a.value)
+  }, [tasks])
+
+  if (!data.length) return null
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-      {/* Status Donut */}
-      {statusData.length > 0 && (
-        <ChartCard title="Status Breakdown" subtitle={`${totalTasks} total tasks`} delay={0}>
-          <div className="relative flex items-center justify-center">
-            <ResponsiveContainer width="100%" height={210}>
-              <PieChart>
-                <ChartGlow id="tc-status-glow" />
-                <Pie
-                  data={statusData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={58}
-                  outerRadius={86}
-                  paddingAngle={5}
-                  cornerRadius={8}
-                  dataKey="value"
-                  stroke="none"
-                >
-                  {statusData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} style={{ filter: "url(#tc-status-glow)" }} />
-                  ))}
-                </Pie>
-                <Tooltip content={<ChartTooltip formatter={(v) => String(v)} />} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-              <span className="text-2xl font-black tracking-tight text-neutral-900 dark:text-neutral-50">
-                {totalTasks}
-              </span>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">
-                tasks
-              </span>
-            </div>
-          </div>
-        </ChartCard>
-      )}
-
-      {/* Priority Bars */}
-      <ChartCard title="Priority Distribution" subtitle="Workload by urgency" delay={60}>
-        <ResponsiveContainer width="100%" height={210}>
-          <BarChart data={priorityData} barSize={38} barGap={6}>
-            <ChartGradients ids={["tc-pri-0", "tc-pri-1", "tc-pri-2"]} />
-            <XAxis dataKey="name" {...CHART_AXIS_STYLES} />
-            <YAxis {...CHART_AXIS_STYLES} allowDecimals={false} />
-            <Tooltip content={<ChartTooltip formatter={(v) => `${v} tasks`} />} cursor={CHART_CURSOR_STYLES} />
-            <Bar dataKey="count" radius={[10, 10, 3, 3]}>
-              {priorityData.map((entry, i) => (
-                <Cell key={i} fill={`url(#tc-pri-${i})`} style={{ filter: `drop-shadow(0 4px 8px ${entry.color}33)` }} />
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.4 }}
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-5 shadow-sm dark:border-neutral-800/50 dark:bg-neutral-900"
+    >
+      <h3 className="mb-4 text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Categories</h3>
+      <div className="flex items-center gap-4">
+        <ResponsiveContainer width={120} height={120}>
+          <PieChart>
+            <Pie
+              data={data}
+              cx="50%"
+              cy="50%"
+              innerRadius={32}
+              outerRadius={52}
+              paddingAngle={3}
+              dataKey="value"
+              strokeWidth={0}
+            >
+              {data.map((_, i) => (
+                <Cell key={i} fill={COLORS[i % COLORS.length]} />
               ))}
-            </Bar>
-          </BarChart>
+            </Pie>
+          </PieChart>
         </ResponsiveContainer>
-      </ChartCard>
-
-      {/* Project Progress */}
-      {projectData.length > 0 && (
-        <ChartCard title="Project Progress" subtitle="Average completion by project" delay={120}>
-          <ResponsiveContainer width="100%" height={210}>
-            <BarChart data={projectData} barSize={16} layout="vertical">
-              <ChartGradients ids={["tc-proj-0"]} />
-              <XAxis type="number" domain={[0, 100]} {...CHART_AXIS_STYLES} />
-              <YAxis type="category" dataKey="name" {...CHART_AXIS_STYLES} width={80} />
-              <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={CHART_CURSOR_STYLES} />
-              <Bar dataKey="avgProgress" radius={[0, 9, 9, 0]} fill="url(#tc-proj-0)" barSize={16} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      )}
-
-      {/* Timeline Area */}
-      {timelineData.length > 1 && (
-        <div className="sm:col-span-2 lg:col-span-3">
-          <ChartCard title="Task Timeline" subtitle="Cumulative workload over time" delay={180}>
-            <ResponsiveContainer width="100%" height={250}>
-              <AreaChart data={timelineData}>
-                <ChartGradients ids={["tc-area-total", "tc-area-done"]} />
-                <CartesianGrid {...CHART_GRID_STYLES} />
-                <XAxis dataKey="date" {...CHART_AXIS_STYLES} />
-                <YAxis {...CHART_AXIS_STYLES} allowDecimals={false} />
-                <Tooltip content={<ChartTooltip />} />
-                <Legend content={<ChartLegend />} />
-                <Area
-                  type="monotone"
-                  dataKey="total"
-                  stroke="#1da1f2"
-                  strokeWidth={2.5}
-                  fill="url(#tc-area-total)"
-                  name="Total Tasks"
-                  dot={false}
-                  activeDot={{ r: 5, strokeWidth: 0, fill: "#1da1f2" }}
-                  style={{ filter: "drop-shadow(0 0 6px #1da1f255)" }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="completed"
-                  stroke="#34d399"
-                  strokeWidth={2.5}
-                  fill="url(#tc-area-done)"
-                  name="Completed"
-                  dot={false}
-                  activeDot={{ r: 5, strokeWidth: 0, fill: "#34d399" }}
-                  style={{ filter: "drop-shadow(0 0 6px #34d39955)" }}
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </ChartCard>
+        <div className="flex flex-col gap-1.5">
+          {data.slice(0, 4).map((item, i) => (
+            <div key={item.name} className="flex items-center gap-2">
+              <div className="h-2.5 w-2.5 rounded-full" style={{ background: COLORS[i % COLORS.length] }} />
+              <span className="text-xs text-neutral-600 dark:text-neutral-400">{item.name}</span>
+              <span className="text-xs font-semibold text-neutral-900 dark:text-white">{item.value}</span>
+            </div>
+          ))}
         </div>
-      )}
+      </div>
+    </motion.div>
+  )
+}
+
+export function PriorityBarChart() {
+  const tasks = useTaskStore((s) => s.tasks)
+
+  const data = useMemo(() => {
+    const counts: Record<string, number> = { urgent: 0, high: 0, medium: 0, low: 0 }
+    tasks.filter((t) => t.status !== "completed").forEach((t) => {
+      const p = (t.priority || "medium").toLowerCase()
+      if (p in counts) counts[p]++
+    })
+    return Object.entries(counts).map(([name, count]) => ({
+      name: name.charAt(0).toUpperCase() + name.slice(1),
+      count,
+    }))
+  }, [tasks])
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.5 }}
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-5 shadow-sm dark:border-neutral-800/50 dark:bg-neutral-900"
+    >
+      <h3 className="mb-4 text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Priority Distribution</h3>
+      <ResponsiveContainer width="100%" height={180}>
+        <BarChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
+          <XAxis
+            dataKey="name"
+            tick={{ fontSize: 10, fill: "#a3a3a3" }}
+            axisLine={false}
+            tickLine={false}
+          />
+          <YAxis
+            tick={{ fontSize: 10, fill: "#a3a3a3" }}
+            axisLine={false}
+            tickLine={false}
+            allowDecimals={false}
+          />
+          <Tooltip content={<ChartTooltip />} />
+          <Bar
+            dataKey="count"
+            name="Tasks"
+            radius={[4, 4, 0, 0]}
+            maxBarSize={40}
+          >
+            {data.map((_, i) => (
+              <Cell key={i} fill={COLORS[i]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    </motion.div>
+  )
+}
+
+export function TaskCharts() {
+  return (
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+      <TaskCompletionChart />
+      <CategoryPieChart />
+      <PriorityBarChart />
     </div>
   )
 }

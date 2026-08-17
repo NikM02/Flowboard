@@ -129,7 +129,7 @@ export function CalendarTab() {
                           key={task.id}
                           title={task.title}
                           className="text-[7px] sm:text-[9px] leading-tight truncate text-neutral-600 dark:text-neutral-400 border-l-2 pl-1"
-                          style={{ borderLeftColor: task.priority === "high" ? "#ef4444" : task.priority === "medium" ? "#f59e0b" : "#1da1f2" }}
+                          style={{ borderLeftColor: task.priority === "high" ? "#171717" : task.priority === "medium" ? "#737373" : "#525252" }}
                         >
                           {task.title}
                         </div>

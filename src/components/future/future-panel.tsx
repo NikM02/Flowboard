@@ -37,11 +37,11 @@ const tabs: { key: "simulator" | "archive"; label: string; icon: typeof Target }
 ]
 
 const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string }> = {
-  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500", hex: "#1da1f2" },
-  habits: { label: "Habits", icon: Target, color: "bg-orange-500", hex: "#f97316" },
-  skills: { label: "Skills", icon: Sparkles, color: "bg-purple-500", hex: "#1da1f2" },
-  dopamine: { label: "Wellness", icon: Brain, color: "bg-emerald-500", hex: "#10b981" },
-  finance: { label: "Finance", icon: Wallet, color: "bg-rose-500", hex: "#f43f5e" },
+  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-neutral-700", hex: "#404040" },
+  habits: { label: "Habits", icon: Target, color: "bg-neutral-500", hex: "#737373" },
+  skills: { label: "Skills", icon: Sparkles, color: "bg-neutral-600", hex: "#525252" },
+  dopamine: { label: "Wellness", icon: Brain, color: "bg-neutral-400", hex: "#a3a3a3" },
+  finance: { label: "Finance", icon: Wallet, color: "bg-neutral-800", hex: "#262626" },
 }
 
 type PeriodMetrics = Record<GrowthCategory, { value: number; label: string }>
@@ -279,7 +279,7 @@ function SimulatorTab() {
                 <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#a3a3a3" }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
                 <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.12} strokeWidth={1.5} strokeDasharray="4 4" />
-                <Radar name="Current" dataKey="current" stroke="#1da1f2" fill="#1da1f2" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
+                <Radar name="Current" dataKey="current" stroke="#404040" fill="#404040" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
               </RadarChart>
             </ResponsiveContainer>
@@ -337,7 +337,7 @@ function SimulatorTab() {
               className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
             >
               <div className="flex items-center gap-2">
-                <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${cfg.hex}15` }}>
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
                   <Icon className="h-4 w-4" style={{ color: cfg.hex }} />
                 </div>
                 <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{cfg.label}</span>
@@ -543,7 +543,7 @@ function ArchiveTab() {
               const catCfg = categoryConfig[g.category]
               return (
                 <div key={g.id} className="flex items-center gap-3 rounded-xl border border-neutral-200/60 p-3 dark:border-neutral-800/60">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-xl" style={{ backgroundColor: `${catCfg.hex}15` }}>
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
                     <catCfg.icon className="h-4 w-4" style={{ color: catCfg.hex }} />
                   </div>
                   <div className="flex-1 min-w-0">

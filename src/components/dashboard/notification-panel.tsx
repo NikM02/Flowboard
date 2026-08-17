@@ -25,15 +25,15 @@ export function NotificationBell() {
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "relative flex h-9 w-9 items-center justify-center rounded-full transition-colors duration-200",
+          "relative flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors duration-200",
           open
             ? "bg-neutral-100 text-indigo-600 dark:bg-neutral-800 dark:text-indigo-300"
-            : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+            : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
         )}
       >
-        <Bell className={cn("h-[18px] w-[18px]", open && "animate-pulse-glow")} />
+        <Bell className={cn("h-4 w-4", open && "animate-pulse-glow")} />
         {unreadCount > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-gradient-to-r from-indigo-500 to-cyan-400 px-1 text-[9px] font-bold text-white leading-none shadow-md shadow-indigo-500/40">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-neutral-900 px-1 text-[9px] font-bold text-white leading-none shadow-md dark:bg-white dark:text-neutral-900">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         )}
@@ -88,8 +88,8 @@ export function NotificationBell() {
                     }`}
                   >
                     <div className="mt-0.5">
-                      <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
-                        <CheckCircle2 className="h-3.5 w-3.5 text-neutral-500" />
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                        <CheckCircle2 className="h-4 w-4 text-neutral-500" />
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">

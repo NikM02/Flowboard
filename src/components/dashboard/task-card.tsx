@@ -4,12 +4,15 @@ import { motion } from "framer-motion"
 import {
   Calendar, Edit3, Trash2, CheckCircle2, Circle,
   ChevronDown, ChevronRight, Plus, Minus, FolderKanban,
+  CalendarClock,
 } from "lucide-react"
 import type { Task } from "@/types"
 import { useTaskStore } from "@/store/use-task-store"
+import { useRoutineStore } from "@/store/use-routine-store"
 import { formatDate } from "@/lib/utils"
 import { useState } from "react"
 import { cn } from "@/lib/shadcn-utils"
+import { format } from "date-fns"
 
 const priorityConfig = {
   high: { label: "High", variant: "high" as const, color: "text-red-500", bg: "bg-red-50 dark:bg-red-950/20", border: "border-red-200 dark:border-red-900/30" },
@@ -19,6 +22,7 @@ const priorityConfig = {
 
 export function TaskCard({ task, index }: { task: Task; index: number }) {
   const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask, requestComplete } = useTaskStore()
+  const addTaskToRoutine = useRoutineStore((s) => s.addTaskToRoutine)
   const [expanded, setExpanded] = useState(false)
 
   const priority = priorityConfig[task.priority]
@@ -74,14 +78,24 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
         </div>
         <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
           <button
+            onClick={() => {
+              const date = task.dueDate || format(new Date(), "yyyy-MM-dd")
+              addTaskToRoutine(date, task.id, task.title, 9, 10)
+            }}
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
+            title="Add to Routine"
+          >
+            <CalendarClock className="h-3.5 w-3.5" />
+          </button>
+          <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -115,7 +129,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(-25)}
               disabled={task.progress <= 0}
-              className="flex h-5 w-5 items-center justify-center rounded-md border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
             >
               <Minus className="h-3 w-3" />
             </button>
@@ -123,7 +137,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(25)}
               disabled={task.progress >= 100}
-              className="flex h-5 w-5 items-center justify-center rounded-md border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
+              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 dark:border-neutral-700 dark:hover:bg-neutral-800"
             >
               <Plus className="h-3 w-3" />
             </button>

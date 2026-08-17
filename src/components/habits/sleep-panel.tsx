@@ -25,7 +25,7 @@ const QUALITY_LABELS = ["", "Poor", "Fair", "Okay", "Good", "Great"]
 function StatChip({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Moon }) {
   return (
     <div className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-500 dark:text-indigo-300">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
         <Icon className="h-4 w-4" />
       </div>
       <div className="min-w-0">
@@ -195,8 +195,8 @@ export function SleepPanel() {
 
       {entries.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 dark:border-neutral-700">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10">
-            <Moon className="h-6 w-6 text-indigo-500" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <Moon className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No sleep logged yet.</p>
           <Button variant="outline" onClick={openCreate}>Log your first night</Button>
@@ -205,9 +205,9 @@ export function SleepPanel() {
         <>
           <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10">
-                  <Moon className="h-3.5 w-3.5 text-indigo-500" />
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                  <Moon className="h-4 w-4 text-indigo-500" />
                 </div>
                 <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
                   Last 14 Nights
@@ -233,12 +233,12 @@ export function SleepPanel() {
                     }
                     cursor={CHART_CURSOR_STYLES}
                   />
-                  <ReferenceLine y={8} stroke="#1da1f2" strokeDasharray="4 4" strokeOpacity={0.5} />
+                  <ReferenceLine y={8} stroke="#525252" strokeDasharray="4 4" strokeOpacity={0.5} />
                   <Bar dataKey="hours" radius={[5, 5, 2, 2]} barSize={14}>
                     {chartData.map((d, i) => (
                       <Cell
                         key={i}
-                        fill={d.has ? (d.hours >= 8 ? "url(#sleep-hours)" : "#f59e0b") : "#e5e7eb"}
+                        fill={d.has ? (d.hours >= 8 ? "url(#sleep-hours)" : "#737373") : "#e5e7eb"}
                       />
                     ))}
                   </Bar>
@@ -248,9 +248,9 @@ export function SleepPanel() {
           </div>
 
           <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="mb-3 flex items-center gap-2">
-              <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10">
-                <MoonStar className="h-3.5 w-3.5 text-indigo-500" />
+            <div className="mb-3 flex items-center gap-2.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                <MoonStar className="h-4 w-4 text-indigo-500" />
               </div>
               <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
                 Sleep History

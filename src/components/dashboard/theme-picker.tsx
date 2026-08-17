@@ -2,16 +2,13 @@
 
 import { useState, useRef, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Sun, Moon, Droplets, Sparkles, Flame, Check, X } from "lucide-react"
+import { Sun, Moon, Check, X } from "lucide-react"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 import { cn } from "@/lib/shadcn-utils"
 
 const themes: { key: ColorTheme; label: string; icon: typeof Sun; gradient: string }[] = [
-  { key: "dark", label: "Midnight", icon: Moon, gradient: "linear-gradient(135deg, #171717, #0a0a0a)" },
-  { key: "light", label: "Cloud", icon: Sun, gradient: "linear-gradient(135deg, #ffffff, #f5f5f5)" },
-  { key: "ocean", label: "Ocean", icon: Droplets, gradient: "linear-gradient(135deg, #061828, #0a2848, #0d3060)" },
-  { key: "aurora", label: "Aurora", icon: Sparkles, gradient: "linear-gradient(135deg, #e8e0f8, #d8e8f8, #e0f0ee, #f8e8f0)" },
-  { key: "sunset", label: "Sunset", icon: Flame, gradient: "linear-gradient(135deg, #1e0e08, #2a1810, #3a2018)" },
+  { key: "light", label: "Light", icon: Sun, gradient: "linear-gradient(135deg, #ffffff, #f5f5f5)" },
+  { key: "dark", label: "Dark", icon: Moon, gradient: "linear-gradient(135deg, #171717, #0a0a0a)" },
 ]
 
 export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mobile" }) {
@@ -70,7 +67,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                     <X className="h-4 w-4" />
                   </button>
                 </div>
-                <div className="grid grid-cols-5 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {themes.map((t) => {
                     const Icon = t.icon
                     const isActive = colorTheme === t.key
@@ -83,14 +80,14 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                         <div
                           className={cn(
                             "relative h-10 w-10 rounded-xl shadow-md transition-all",
-                            isActive && "ring-2 ring-emerald-500 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900"
+                            isActive && "ring-2 ring-neutral-900 dark:ring-neutral-100 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900"
                           )}
                           style={{ background: t.gradient }}
                         >
                           <Icon className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow-sm" />
                           {isActive && (
-                            <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500">
-                              <Check className="h-2.5 w-2.5 text-white" />
+                            <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 dark:bg-neutral-100">
+                              <Check className="h-2.5 w-2.5 text-white dark:text-neutral-900" />
                             </div>
                           )}
                         </div>
@@ -111,7 +108,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300"
+        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300"
         title="Change theme"
       >
         <div
@@ -127,7 +124,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="absolute bottom-14 right-0 z-50 w-52 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
+            className="absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">
@@ -148,7 +145,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                     <div
                       className={cn(
                         "h-7 w-7 shrink-0 rounded-lg shadow-md transition-all",
-                        isActive && "ring-2 ring-emerald-500 ring-offset-1 ring-offset-white dark:ring-offset-neutral-900"
+                        isActive && "ring-2 ring-neutral-900 dark:ring-neutral-100 ring-offset-1 ring-offset-white dark:ring-offset-neutral-900"
                       )}
                       style={{ background: t.gradient }}
                     >
@@ -157,7 +154,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                       </div>
                     </div>
                     <span className="text-xs font-medium text-neutral-900 dark:text-neutral-50">{t.label}</span>
-                    {isActive && <Check className="ml-auto h-3.5 w-3.5 text-emerald-500" />}
+                    {isActive && <Check className="ml-auto h-3.5 w-3.5 text-neutral-900 dark:text-neutral-100" />}
                   </button>
                 )
               })}

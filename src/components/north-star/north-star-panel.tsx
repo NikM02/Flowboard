@@ -124,8 +124,8 @@ function PillarCard({
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500/15 to-cyan-400/10 shadow-inner">
-        <IconDisplay name={pillar.icon} className="h-5 w-5 text-indigo-500 dark:text-indigo-300" />
+      <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-inner">
+        <IconDisplay name={pillar.icon} className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
       </div>
       <h3 className="mt-3.5 text-[15px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{pillar.title}</h3>
       {pillar.description && (
@@ -189,9 +189,9 @@ function PillarDialog({
                       key={key}
                       onClick={() => setIcon(key)}
                       className={cn(
-                        "flex h-9 w-9 items-center justify-center rounded-xl border transition-all",
+                        "flex h-10 w-10 items-center justify-center rounded-[10px] border transition-all",
                         icon === key
-                          ? "border-neutral-900 bg-neutral-900 text-white shadow-sm dark:border-neutral-50 dark:bg-neutral-50 dark:text-neutral-900"
+                          ? "border-neutral-900 bg-neutral-900 text-white shadow-sm dark:border-neutral-200 dark:bg-neutral-200 dark:text-neutral-900"
                           : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:text-neutral-400 dark:hover:border-neutral-600 dark:hover:bg-neutral-800"
                       )}
                     >
@@ -255,13 +255,13 @@ export function NorthStarPanel() {
 
       {/* Vision — full-width hero */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-        <div className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-gradient-to-br from-neutral-50 via-white to-neutral-100/50 p-6 sm:p-8 dark:border-neutral-800/60 dark:from-neutral-900 dark:via-neutral-900 dark:to-neutral-900/80">
+        <div className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8 dark:border-neutral-800/60 dark:bg-neutral-900">
           {/* decorative dot grid */}
           <div className="pointer-events-none absolute inset-0 opacity-[0.035] dark:opacity-[0.05]" style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
           <div className="relative">
             <div className="flex items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-neutral-900 shadow-sm dark:bg-neutral-50">
-                <Eye className="h-5 w-5 text-white dark:text-neutral-900" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                <Eye className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
               </div>
               <div>
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-400 dark:text-neutral-500">Vision</h2>
@@ -283,13 +283,13 @@ export function NorthStarPanel() {
       {/* Mission & Identity — side by side */}
       <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }}>
-          <div className="flex h-full flex-col rounded-3xl border border-blue-200/50 bg-gradient-to-br from-blue-50/50 via-white to-white p-6 dark:border-blue-900/30 dark:from-blue-950/20 dark:via-neutral-900 dark:to-neutral-900">
+          <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-500 shadow-sm dark:bg-blue-600">
-                <Target className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                <Target className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
               </div>
               <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-blue-600/80 dark:text-blue-400/80">Mission</h2>
+                <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Mission</h2>
                 <p className="text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Your purpose</p>
               </div>
             </div>
@@ -305,13 +305,13 @@ export function NorthStarPanel() {
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.14 }}>
-          <div className="flex h-full flex-col rounded-3xl border border-purple-200/50 bg-gradient-to-br from-purple-50/50 via-white to-white p-6 dark:border-purple-900/30 dark:from-purple-950/20 dark:via-neutral-900 dark:to-neutral-900">
+          <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-500 shadow-sm dark:bg-purple-600">
-                <Shield className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                <Shield className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
               </div>
               <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-purple-600/80 dark:text-purple-400/80">Identity</h2>
+                <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Identity</h2>
                 <p className="text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Who you are</p>
               </div>
             </div>
@@ -332,8 +332,8 @@ export function NorthStarPanel() {
         <div className="rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8 dark:border-neutral-800/60 dark:bg-neutral-900">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-400 to-orange-400 shadow-sm">
-                <Gem className="h-5 w-5 text-white" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+                <Gem className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
               </div>
               <div>
                 <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Core Pillars</h2>
@@ -347,7 +347,9 @@ export function NorthStarPanel() {
 
           {pillars.length === 0 ? (
             <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-12 dark:border-neutral-800">
-              <Gem className="mb-3 h-9 w-9 text-neutral-300 dark:text-neutral-600" />
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                <Gem className="h-4 w-4 text-neutral-400 dark:text-neutral-500" />
+              </div>
               <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No pillars yet</p>
               <p className="mt-1 text-xs text-neutral-400 dark:text-neutral-500">Add the core principles that guide everything</p>
               <Button variant="outline" size="sm" className="mt-4 gap-1.5" onClick={() => setPillarDialog({ open: true })}>

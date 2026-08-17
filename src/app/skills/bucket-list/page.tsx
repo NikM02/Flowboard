@@ -197,13 +197,13 @@ function WishCard({
               <>
                 <button
                   onClick={onEdit}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => deleteItem(item.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -231,13 +231,13 @@ function WishCard({
               <>
                 <button
                   onClick={onEdit}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
+                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={() => deleteItem(item.id)}
-                  className="flex h-7 w-7 items-center justify-center rounded-full bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
+                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>

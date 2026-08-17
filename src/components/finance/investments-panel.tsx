@@ -32,7 +32,7 @@ const tabs: { key: InvestmentTab; label: string; icon: typeof TrendingUp }[] = [
   { key: "archive", label: "Archive", icon: Download },
 ]
 
-const COLORS = ["#1da1f2", "#10b981", "#2f6ee0", "#f97316", "#ef4444", "#06b6d4"]
+const COLORS = ["#525252", "#404040", "#737373", "#a3a3a3", "#171717", "#d4d4d4"]
 
 function fmt(n: number) {
   return `₹${n.toLocaleString("en-IN")}`
@@ -104,8 +104,8 @@ function OverviewTab() {
       <div className="grid gap-4 sm:grid-cols-3">
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
-              <Wallet className="h-4.5 w-4.5 text-neutral-600 dark:text-neutral-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+              <Wallet className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </div>
             <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Invested</span>
           </div>
@@ -114,8 +114,8 @@ function OverviewTab() {
 
         <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-100 dark:bg-blue-900/30">
-              <TrendingUp className="h-4.5 w-4.5 text-blue-600 dark:text-blue-400" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+              <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
             <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Current Value</span>
           </div>
@@ -134,8 +134,8 @@ function OverviewTab() {
           )}
         >
           <div className="flex items-center gap-2.5">
-            <div className={cn("flex h-9 w-9 items-center justify-center rounded-xl", totalGain >= 0 ? "bg-green-100 dark:bg-green-900/30" : "bg-red-100 dark:bg-red-900/30")}>
-              {totalGain >= 0 ? <TrendingUp className="h-4.5 w-4.5 text-green-600 dark:text-green-400" /> : <TrendingDown className="h-4.5 w-4.5 text-red-600 dark:text-red-400" />}
+            <div className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800")}>
+              {totalGain >= 0 ? <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" /> : <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />}
             </div>
             <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Total Gain/Loss</span>
           </div>
@@ -219,8 +219,8 @@ function OverviewTab() {
               className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
             >
               <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ backgroundColor: `${sec.color}15` }}>
-                  <Icon className="h-4.5 w-4.5" style={{ color: sec.color }} />
+                <div className="flex h-9 w-9 items-center justify-center rounded-[10px]" style={{ backgroundColor: `${sec.color}15` }}>
+                  <Icon className="h-4 w-4" style={{ color: sec.color }} />
                 </div>
                 <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{sec.label}</span>
               </div>

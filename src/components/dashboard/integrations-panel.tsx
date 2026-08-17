@@ -87,10 +87,10 @@ export function IntegrationsPanel() {
     <>
       <button
         onClick={() => setOpen(true)}
-        className="flex h-9 w-9 items-center justify-center rounded-full text-neutral-500 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
+        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
         title="Integrations"
       >
-        <Plug className="h-[18px] w-[18px]" />
+        <Plug className="h-4 w-4" />
       </button>
 
       <AnimatePresence>
@@ -111,15 +111,15 @@ export function IntegrationsPanel() {
               className="fixed right-0 top-0 z-50 h-full w-full max-w-sm overflow-y-auto border-l border-neutral-200 bg-white p-5 shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
             >
               <div className="mb-5 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-500/10">
-                    <Plug className="h-3.5 w-3.5 text-indigo-500" />
+                <div className="flex items-center gap-2.5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                    <Plug className="h-4 w-4 text-indigo-500" />
                   </div>
                   <h2 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-neutral-50">Integrations</h2>
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="flex h-7 w-7 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                  className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
                 >
                   <XCircle className="h-4 w-4" />
                 </button>
@@ -137,10 +137,10 @@ export function IntegrationsPanel() {
                 <section className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]",
                       email.configured ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-neutral-100 dark:bg-neutral-800"
                     )}>
-                      <Mail className={cn("h-4.5 w-4.5", email.configured ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />
+                      <Mail className={cn("h-4 w-4", email.configured ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />
                     </div>
                     <div className="flex-1 text-left">
                       <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Email notifications</p>
@@ -182,7 +182,7 @@ export function IntegrationsPanel() {
                         <div className="flex gap-2 pt-1">
                           <button
                             onClick={handleEmailTest}
-                            className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-900 text-xs font-medium text-white hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-200"
+                            className="flex h-8 flex-1 items-center justify-center gap-1.5 rounded-lg border border-neutral-200 bg-white text-xs font-medium text-neutral-900 hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200"
                           >
                             <Mail className="h-3 w-3" /> Test email
                           </button>
@@ -267,10 +267,10 @@ export function IntegrationsPanel() {
                 <section className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
                   <div className="flex items-center gap-3">
                     <div className={cn(
-                      "flex h-9 w-9 shrink-0 items-center justify-center rounded-xl",
+                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]",
                       calendar.connected ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-neutral-100 dark:bg-neutral-800"
                     )}>
-                      <CalendarDays className={cn("h-4.5 w-4.5", calendar.connected ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />
+                      <CalendarDays className={cn("h-4 w-4", calendar.connected ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />
                     </div>
                     <div className="flex-1 text-left">
                       <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Google Calendar</p>

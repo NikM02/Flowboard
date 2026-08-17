@@ -197,7 +197,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-500/10 text-indigo-500 dark:text-indigo-300">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
               <SourceIcon className="h-4 w-4" />
             </div>
             <div>

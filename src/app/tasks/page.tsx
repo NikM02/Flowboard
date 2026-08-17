@@ -29,12 +29,12 @@ import type { Task } from "@/types"
 type ViewMode = "tasks" | "projects" | "archive"
 
 const PROJECT_COLORS = [
-  "from-indigo-500 to-cyan-400",
-  "from-blue-500 to-cyan-500",
-  "from-emerald-500 to-teal-500",
-  "from-amber-500 to-orange-500",
-  "from-rose-500 to-pink-500",
-  "from-fuchsia-500 to-purple-500",
+  "bg-neutral-900",
+  "bg-neutral-700",
+  "bg-neutral-500",
+  "bg-neutral-400",
+  "bg-neutral-600",
+  "bg-neutral-800",
 ]
 
 function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
@@ -111,8 +111,8 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
 
       {projectNames.length === 0 && uncategorizedTasks.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 dark:border-neutral-700">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10">
-            <FolderKanban className="h-6 w-6 text-indigo-500" />
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <FolderKanban className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No projects yet.</p>
           <Button variant="outline" onClick={() => setNewOpen(true)}>Create your first project</Button>
@@ -140,7 +140,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br text-white shadow-sm", color)}>
+                    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400", color)}>
                       <FolderKanban className="h-4 w-4" />
                     </div>
                     <div>
@@ -373,7 +373,7 @@ function TasksPageContent() {
                     className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
                   >
                     <span className="flex items-center gap-2.5">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
                         <BarChart3 className="h-4 w-4 text-indigo-500" />
                       </span>
                       <span>

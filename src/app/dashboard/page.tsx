@@ -11,13 +11,9 @@ import {
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, Legend,
+  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import {
-  ChartTooltip, ChartGradients, ChartGlow,
-  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
-} from "@/components/charts/chart-components"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
@@ -36,7 +32,7 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.3 }}
       className={cn(
-        "card-modern card-hover glass animate-fade-in relative overflow-hidden rounded-2xl p-4 sm:p-5",
+        "relative overflow-hidden rounded-[14px] bg-white dark:bg-neutral-900 p-4 sm:p-5",
         className
       )}
       style={{ animationDelay: `${delay * 1000}ms` }}
@@ -48,9 +44,9 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
 
 function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: typeof Compass; label: string; color?: string }) {
   return (
-    <div className="mb-3 flex items-center gap-2">
-      <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500/10">
-        <Icon className={cn("h-3.5 w-3.5", color)} />
+    <div className="mb-3 flex items-center gap-2.5">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+        <Icon className={cn("h-4 w-4", color)} />
       </div>
       <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{label}</h3>
     </div>
@@ -82,19 +78,19 @@ function DashboardHero() {
       label: "Tasks due today",
       value: String(dueToday),
       icon: ListTodo,
-      tile: "bg-indigo-500/10 text-indigo-500 dark:text-indigo-300",
+      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
     },
     {
       label: "Best habit streak",
       value: bestStreak > 0 ? `${bestStreak}d` : "—",
       icon: Flame,
-      tile: "bg-amber-500/10 text-amber-500 dark:text-amber-300",
+      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
     },
     {
       label: "Net cash flow",
       value: `₹${net.toLocaleString("en-IN")}`,
       icon: Wallet,
-      tile: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300",
+      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
     },
   ]
 
@@ -103,29 +99,23 @@ function DashboardHero() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-            <span className="text-gradient">{greeting}</span>
+            <span className="text-neutral-900 dark:text-white">{greeting}</span>
           </h1>
           <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
             {format(new Date(), "EEEE, d MMMM yyyy")}
           </p>
         </div>
-        <Link
-          href="/tasks"
-          className="inline-flex h-9 items-center gap-2 rounded-full bg-gradient-to-r from-[#1da1f2] to-[#22d3ee] px-4 text-sm font-semibold text-white shadow-md shadow-indigo-500/30 transition-all hover:shadow-lg hover:shadow-indigo-500/40"
-        >
-          <Plus className="h-4 w-4" /> New task
-        </Link>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {stats.map((s) => (
           <div
             key={s.label}
-            className="card-modern glass flex items-center gap-3 rounded-2xl p-4"
+            className="flex items-center gap-3 rounded-[14px] bg-white dark:bg-neutral-900 p-4"
           >
             <div
               className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl",
+                "flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]",
                 s.tile
               )}
             >
@@ -151,32 +141,16 @@ function MissionSection() {
   const mission = useNorthStarStore((s) => s.mission)
 
   return (
-    <Card
-      delay={0}
-      className="relative overflow-hidden border-indigo-500/30"
-    >
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-1 bg-gradient-to-b from-[#1da1f2] to-[#22d3ee]" />
-      <div className="relative flex items-start gap-3 pl-2">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1da1f2] to-[#22d3ee] shadow-lg shadow-indigo-500/30">
-          <Compass className="h-5 w-5 text-white" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <div className="mb-1 flex items-center gap-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-widest text-indigo-500 dark:text-indigo-300">
-              Mission
-            </span>
-          </div>
-          {mission ? (
-            <p className="line-clamp-2 text-sm font-medium leading-relaxed text-neutral-700 dark:text-neutral-300 sm:text-[15px]">
-              &ldquo;{mission}&rdquo;
-            </p>
-          ) : (
-            <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-indigo-500 dark:hover:text-indigo-300">
-              Set your mission in North Star →
-            </Link>
-          )}
-        </div>
-      </div>
+    <Card delay={0}>
+      {mission ? (
+        <p className="text-sm font-medium text-neutral-600 dark:text-neutral-400 sm:text-[15px]">
+          &ldquo;{mission}&rdquo;
+        </p>
+      ) : (
+        <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300">
+          Set your mission in North Star →
+        </Link>
+      )}
     </Card>
   )
 }
@@ -226,15 +200,27 @@ function HighPriorityTasks() {
   }
 
   return (
-    <Card delay={0.05}>
-      <CardHeader icon={AlertTriangle} label="High Priority" color="text-red-500" />
+    <Card delay={0.05} className="overflow-visible">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <AlertTriangle className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          </div>
+          <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">High Priority</h3>
+        </div>
+        {highTasks.length > 0 && (
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white dark:bg-white dark:text-neutral-900">
+            {highTasks.length}
+          </span>
+        )}
+      </div>
       {highTasks.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-6 text-neutral-400">
-          <CheckCircle2 className="h-8 w-8 text-emerald-400" />
+        <div className="flex flex-col items-center gap-2 py-8 text-neutral-400">
+          <CheckCircle2 className="h-7 w-7" />
           <p className="text-xs">All clear! No high priority tasks.</p>
         </div>
       ) : (
-        <div className="space-y-1.5">
+        <div className="space-y-2">
           <AnimatePresence>
             {highTasks.map((t) => {
               const isExpanded = expanded === t.id
@@ -242,17 +228,26 @@ function HighPriorityTasks() {
                 <motion.div
                   key={t.id}
                   layout
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 8, height: 0 }}
-                  className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900 overflow-hidden"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -8, height: 0 }}
+                  className="rounded-[12px] bg-white dark:bg-neutral-900 overflow-hidden"
                 >
                   <div className="flex items-center gap-2.5 px-3 py-2.5">
                     <button onClick={() => handleComplete(t)} className="shrink-0">
-                      <Circle className="h-4 w-4 text-red-400 hover:text-emerald-500 transition-colors" />
+                      <div className={cn(
+                        "flex h-4 w-4 items-center justify-center rounded-[10px] border transition-all",
+                        t.completed
+                          ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900"
+                          : "border-neutral-300 dark:border-neutral-600"
+                      )}>
+                        {t.completed && <Check className="h-2.5 w-2.5" />}
+                      </div>
                     </button>
                     <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setExpanded(isExpanded ? null : t.id)}>
-                      <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-50">{t.title}</p>
+                      <p className={cn("text-sm font-medium truncate", t.completed ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-900 dark:text-neutral-50")}>
+                        {t.title}
+                      </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         {t.project && <span className="text-[10px] text-neutral-400">{t.project}</span>}
                         {t.dueDate && (
@@ -266,9 +261,9 @@ function HighPriorityTasks() {
                       <button
                         onClick={() => toggleReminder(t)}
                         className={cn(
-                          "flex h-5 w-5 items-center justify-center rounded-md transition-all",
+                          "flex h-5 w-5 items-center justify-center rounded-[10px] transition-all",
                           t.reminder
-                            ? "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-400"
+                            ? "bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300"
                             : "border border-neutral-200 text-neutral-400 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700"
                         )}
                         title={t.reminder ? "Reminder set" : "Remind me 1h before due"}
@@ -276,12 +271,12 @@ function HighPriorityTasks() {
                         {t.reminder ? <Bell className="h-3 w-3" /> : <BellOff className="h-3 w-3" />}
                       </button>
                       <button onClick={() => adjustProgress(t, -25)} disabled={t.progress <= 0}
-                        className="flex h-5 w-5 items-center justify-center rounded-md border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
+                        className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
                         <Minus className="h-3 w-3" />
                       </button>
                       <span className="min-w-[28px] text-center text-[10px] font-bold text-neutral-600 dark:text-neutral-400">{t.progress}%</span>
                       <button onClick={() => adjustProgress(t, 25)} disabled={t.progress >= 100}
-                        className="flex h-5 w-5 items-center justify-center rounded-md border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
+                        className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
                         <Plus className="h-3 w-3" />
                       </button>
                     </div>
@@ -292,7 +287,7 @@ function HighPriorityTasks() {
 
                   <div className="h-0.5 w-full bg-neutral-100 dark:bg-neutral-800">
                     <motion.div
-                      className={cn("h-full rounded-full", t.progress >= 100 ? "bg-emerald-500" : t.progress >= 50 ? "bg-blue-500" : "bg-red-500")}
+                      className="h-full bg-neutral-900 dark:bg-white"
                       animate={{ width: `${t.progress}%` }}
                       transition={{ duration: 0.3 }}
                     />
@@ -316,10 +311,10 @@ function HighPriorityTasks() {
                                 const pct = newSubs.length > 0 ? Math.round((done / newSubs.length) * 100) : 0
                                 updateTask(t.id, { subtasks: newSubs, progress: pct, completed: pct >= 100 })
                               }}
-                              className="flex w-full items-center gap-2 rounded-lg px-2 py-1 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                              className="flex w-full items-center gap-2 rounded-[10px] px-2 py-1 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
                             >
                               {sub.completed ? (
-                                <CheckCircle2 className="h-3 w-3 shrink-0 text-emerald-500" />
+                                <Check className="h-3 w-3 shrink-0 text-neutral-600 dark:text-neutral-300" />
                               ) : (
                                 <Circle className="h-3 w-3 shrink-0 text-neutral-300 dark:text-neutral-600" />
                               )}
@@ -367,22 +362,31 @@ function HabitsChallengesSection() {
   }, [activeChallenges, today])
 
   return (
-    <Card delay={0.1}>
-      <CardHeader icon={Heart} label="Health Today" color="text-emerald-500" />
+    <Card delay={0.1} className="overflow-visible">
+      <div className="mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <Heart className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          </div>
+          <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Health</h3>
+          <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{format(new Date(), "MMM d, yyyy")}</span>
+        </div>
+        <div className="flex items-center gap-2">
+          {bestStreak > 0 && (
+            <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-400 dark:text-neutral-500">
+              <Flame className="h-3 w-3" /> {bestStreak}d
+            </span>
+          )}
+          {habits.length > 0 && (
+            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white dark:bg-white dark:text-neutral-900">
+              {todayCompleted}/{habits.length}
+            </span>
+          )}
+        </div>
+      </div>
 
       {habits.length > 0 && (
         <div className="mb-3">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Habits</span>
-            <div className="flex items-center gap-2 text-[10px] text-neutral-400">
-              <span>{todayCompleted}/{habits.length} done</span>
-              {bestStreak > 0 && (
-                <span className="flex items-center gap-0.5">
-                  <Flame className="h-2.5 w-2.5 text-amber-500" /> {bestStreak}d
-                </span>
-              )}
-            </div>
-          </div>
           <div className="grid grid-cols-2 gap-1.5">
             {habits.slice(0, 6).map((h) => {
               const done = h.records.find((r) => r.date === today)?.completed ?? false
@@ -391,19 +395,19 @@ function HabitsChallengesSection() {
                   key={h.id}
                   onClick={() => toggleDay(h.id, today)}
                   className={cn(
-                    "flex items-center gap-2 rounded-xl px-2.5 py-2 text-left transition-all",
+                    "flex items-center gap-2 rounded-[10px] px-2.5 py-2 text-left transition-all",
                     done
-                      ? "border border-emerald-200/60 bg-emerald-500/10 dark:border-emerald-900/30"
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
                       : "border border-neutral-200 bg-white hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800"
                   )}
                 >
                   <div className={cn(
-                    "flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all",
-                    done ? "bg-emerald-500 text-white" : "border border-neutral-300 dark:border-neutral-600"
+                    "flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] transition-all",
+                    done ? "bg-white text-neutral-900 dark:bg-neutral-900 dark:text-white" : "border border-neutral-300 dark:border-neutral-600"
                   )}>
-                    {done && <Check className="h-3 w-3" />}
+                    {done && <Check className="h-2.5 w-2.5" />}
                   </div>
-                  <span className={cn("text-xs font-medium truncate", done ? "text-emerald-700 dark:text-emerald-400" : "text-neutral-700 dark:text-neutral-300")}>
+                  <span className={cn("text-[11px] font-medium truncate", done ? "text-white dark:text-neutral-900" : "text-neutral-700 dark:text-neutral-300")}>
                     {h.name}
                   </span>
                 </button>
@@ -418,40 +422,32 @@ function HabitsChallengesSection() {
         </div>
       )}
 
-      {todayChallengeDays.length > 0 && (
+      {activeChallenges.length > 0 && (
         <div>
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Active Challenges</span>
-          </div>
           <div className="space-y-1.5">
             {todayChallengeDays.map(({ challenge: c, todayDay }) => {
               const progress = getProgress(c.id)
               const isTodayDone = todayDay?.completed ?? false
               return (
-                <div key={c.id} className="flex items-center gap-2.5 rounded-xl border border-neutral-200 bg-white px-3 py-2 dark:border-neutral-800 dark:bg-neutral-900">
-                  <button
-                    onClick={() => {
-                      if (todayDay) toggleDayC(c.id, todayDay.day)
-                    }}
-                    disabled={!todayDay}
-                    className={cn(
-                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all",
-                      isTodayDone ? "bg-purple-500 text-white" : "border border-neutral-300 dark:border-neutral-600",
-                      !todayDay && "opacity-30"
-                    )}
-                  >
-                    {isTodayDone && <Check className="h-3 w-3" />}
-                  </button>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <Trophy className="h-3 w-3 text-purple-500 shrink-0" />
-                      <span className="text-xs font-medium text-neutral-700 truncate dark:text-neutral-300">{c.title}</span>
-                    </div>
-                    <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
-                      <div className="h-full rounded-full bg-purple-500 transition-all" style={{ width: `${progress}%` }} />
-                    </div>
+                <div key={c.id} className="rounded-[10px] bg-white px-3 py-2.5 dark:bg-neutral-900">
+                  <div className="flex items-center gap-2.5">
+                    <button
+                      onClick={() => { if (todayDay) toggleDayC(c.id, todayDay.day) }}
+                      disabled={!todayDay}
+                      className={cn(
+                        "flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border transition-all",
+                        isTodayDone ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900" : "border-neutral-300 dark:border-neutral-600",
+                        !todayDay && "opacity-30"
+                      )}
+                    >
+                      {isTodayDone && <Check className="h-2.5 w-2.5" />}
+                    </button>
+                    <span className="text-xs font-medium text-neutral-700 truncate dark:text-neutral-300 flex-1">{c.title}</span>
+                    <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 shrink-0">{progress}%</span>
                   </div>
-                  <span className="text-[10px] font-bold text-neutral-400 shrink-0">{progress}%</span>
+                  <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div className="h-full bg-neutral-900 dark:bg-white transition-all" style={{ width: `${progress}%` }} />
+                  </div>
                 </div>
               )
             })}
@@ -460,9 +456,9 @@ function HabitsChallengesSection() {
       )}
 
       {habits.length === 0 && challenges.length === 0 && (
-        <Link href="/habits" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
-          <Zap className="h-8 w-8" />
-          <p className="text-xs">Start tracking your health</p>
+        <Link href="/habits" className="flex flex-col items-center gap-2 py-8 text-neutral-400">
+          <Zap className="h-7 w-7" />
+          <p className="text-xs">Start tracking health</p>
         </Link>
       )}
     </Card>
@@ -504,22 +500,22 @@ function FinanceSection() {
 
   return (
     <Card delay={0.15}>
-      <CardHeader icon={Wallet} label="Cash Flow" color="text-emerald-500" />
+      <CardHeader icon={Wallet} label="Cash Flow" color="text-neutral-600 dark:text-neutral-300" />
       <div className="flex items-baseline gap-2 mb-1">
-        <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-emerald-600 dark:text-emerald-400" : "text-red-500")}>
+        <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
           {isPositive ? "+" : ""}₹{net.toLocaleString("en-IN")}
         </span>
       </div>
       <div className="flex gap-4 mb-4 text-xs">
         <div className="flex items-center gap-1.5">
-          <div className="flex h-5 w-5 items-center justify-center rounded-md bg-emerald-100 dark:bg-emerald-900/30">
-            <ArrowUpRight className="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <ArrowUpRight className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
           </div>
           <span className="text-neutral-500">₹{totalIncome.toLocaleString("en-IN")}</span>
         </div>
         <div className="flex items-center gap-1.5">
-          <div className="flex h-5 w-5 items-center justify-center rounded-md bg-red-100 dark:bg-red-900/30">
-            <ArrowDownRight className="h-3 w-3 text-red-600 dark:text-red-400" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+            <ArrowDownRight className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
           </div>
           <span className="text-neutral-500">₹{totalExpenses.toLocaleString("en-IN")}</span>
         </div>
@@ -529,11 +525,20 @@ function FinanceSection() {
         <div className="h-32 mb-3">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} barGap={4}>
-              <ChartGradients ids={["dash-income", "dash-expense"]} />
-              <CartesianGrid {...CHART_GRID_STYLES} />
-              <XAxis dataKey="month" {...CHART_AXIS_STYLES} />
+              <defs>
+                <linearGradient id="dash-income" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#262626" />
+                  <stop offset="100%" stopColor="#525252" />
+                </linearGradient>
+                <linearGradient id="dash-expense" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#a3a3a3" />
+                  <stop offset="100%" stopColor="#d4d4d4" />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
+              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
               <YAxis hide />
-              <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString("en-IN")}`} />} cursor={CHART_CURSOR_STYLES} />
+              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
               <Bar dataKey="income" fill="url(#dash-income)" radius={[6, 6, 2, 2]} barSize={14} name="Income" />
               <Bar dataKey="expense" fill="url(#dash-expense)" radius={[6, 6, 2, 2]} barSize={14} name="Expense" />
             </BarChart>
@@ -547,7 +552,7 @@ function FinanceSection() {
           {recentExpenses.map((e) => (
             <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
               <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{e.description}</span>
-              <span className="text-xs font-medium text-red-500 shrink-0 ml-2">-₹{e.amount.toLocaleString("en-IN")}</span>
+              <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400 shrink-0 ml-2">-₹{e.amount.toLocaleString("en-IN")}</span>
             </div>
           ))}
         </div>
@@ -576,9 +581,9 @@ function InvestmentsSection() {
     const tp = ti > 0 ? Math.round((tg / ti) * 100) : 0
 
     const alloc = [
-      { name: "Stocks", value: stockCur, color: "#1da1f2" },
-      { name: "Mutual Funds", value: mfCur, color: "#2f6ee0" },
-      { name: "SIPs", value: sipCur, color: "#10b981" },
+      { name: "Stocks", value: stockCur, color: "#404040" },
+      { name: "Mutual Funds", value: mfCur, color: "#737373" },
+      { name: "SIPs", value: sipCur, color: "#a3a3a3" },
     ].filter((d) => d.value > 0)
 
     return { totalCurrent: tc, totalGain: tg, totalGainPct: tp, allocationData: alloc }
@@ -595,13 +600,21 @@ function InvestmentsSection() {
 
   return (
     <Card delay={0.2}>
-      <CardHeader icon={TrendingUp} label="Investments" color="text-blue-500" />
+      <CardHeader icon={TrendingUp} label="Investments" color="text-neutral-600 dark:text-neutral-300" />
       <div className="flex items-center gap-3 mb-3">
         {allocationData.length > 0 && (
           <div className="relative h-14 w-14 shrink-0">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <ChartGlow id="dash-alloc-glow" />
+                <defs>
+                  <filter id="dash-alloc-glow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feGaussianBlur stdDeviation="2" result="blur" />
+                    <feMerge>
+                      <feMergeNode in="blur" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                </defs>
                 <Pie
                   data={allocationData}
                   cx="50%"
@@ -617,13 +630,13 @@ function InvestmentsSection() {
                     <Cell key={i} fill={entry.color} style={{ filter: "url(#dash-alloc-glow)" }} />
                   ))}
                 </Pie>
-                <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString("en-IN")}`} />} />
+                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         )}
         <div>
-          <span className={cn("text-xl font-bold tracking-tight", isGain ? "text-emerald-600 dark:text-emerald-400" : "text-red-500")}>
+          <span className={cn("text-xl font-bold tracking-tight", isGain ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
             {isGain ? "+" : ""}₹{totalGain.toLocaleString("en-IN")}
           </span>
           <p className="text-[11px] text-neutral-400">
@@ -649,7 +662,7 @@ function InvestmentsSection() {
           {topStocks.map((s) => (
             <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
               <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{s.name}</span>
-              <span className={cn("text-xs font-medium shrink-0 ml-2", s.gain >= 0 ? "text-emerald-500" : "text-red-500")}>
+              <span className={cn("text-xs font-medium shrink-0 ml-2", s.gain >= 0 ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
                 {s.gain >= 0 ? "+" : ""}{s.pct}%
               </span>
             </div>
@@ -671,15 +684,15 @@ function ContentSection() {
   )
 
   const statusColors: Record<string, { bg: string; text: string; next: string }> = {
-    ideas: { bg: "bg-yellow-100 dark:bg-yellow-900/30", text: "text-yellow-700 dark:text-yellow-400", next: "scripts" },
-    scripts: { bg: "bg-blue-100 dark:bg-blue-900/30", text: "text-blue-700 dark:text-blue-400", next: "filming" },
-    filming: { bg: "bg-purple-100 dark:bg-purple-900/30", text: "text-purple-700 dark:text-purple-400", next: "editing" },
-    editing: { bg: "bg-orange-100 dark:bg-orange-900/30", text: "text-orange-700 dark:text-orange-400", next: "published" },
+    ideas: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "scripts" },
+    scripts: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "filming" },
+    filming: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "editing" },
+    editing: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "published" },
   }
 
   return (
     <Card delay={0.25}>
-      <CardHeader icon={BookOpen} label="Content Pipeline" color="text-violet-500" />
+      <CardHeader icon={BookOpen} label="Content Pipeline" color="text-neutral-600 dark:text-neutral-300" />
       {activeItems.length === 0 ? (
         <Link href="/content-hub" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
           <BookOpen className="h-8 w-8" />
@@ -695,7 +708,7 @@ function ContentSection() {
             const nextStatus = sc?.next
 
             return (
-              <div key={item.id} className="rounded-xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
+              <div key={item.id} className="rounded-xl bg-white p-3 dark:bg-neutral-900">
                 <div className="flex items-center gap-2.5">
                   <span className="text-lg shrink-0">{item.emoji}</span>
                   <div className="min-w-0 flex-1">
@@ -712,7 +725,7 @@ function ContentSection() {
                   {nextStatus && (
                     <button
                       onClick={() => moveItem(item.id, nextStatus as "ideas" | "scripts" | "filming" | "editing" | "published")}
-                      className="shrink-0 rounded-lg bg-neutral-900 px-2 py-1 text-[10px] font-medium text-white transition-colors hover:bg-neutral-800 dark:bg-neutral-50 dark:text-neutral-900 dark:hover:bg-neutral-200"
+                      className="shrink-0 rounded-lg border border-neutral-200 bg-white px-2 py-1 text-[10px] font-medium text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200"
                     >
                       Move →
                     </button>
@@ -721,7 +734,7 @@ function ContentSection() {
                 {total > 0 && (
                   <div className="mt-2 flex items-center gap-2">
                     <div className="h-1 flex-1 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
-                      <div className="h-full rounded-full bg-violet-500 transition-all" style={{ width: `${pct}%` }} />
+                      <div className="h-full rounded-full bg-neutral-900 dark:bg-white transition-all" style={{ width: `${pct}%` }} />
                     </div>
                     <span className="text-[10px] font-medium text-neutral-400">{done}/{total}</span>
                   </div>
@@ -758,7 +771,7 @@ function SleepSection() {
 
   return (
     <Card delay={0.3}>
-      <CardHeader icon={Moon} label="Sleep" color="text-indigo-500" />
+      <CardHeader icon={Moon} label="Sleep" color="text-neutral-600 dark:text-neutral-300" />
       {entries.length === 0 ? (
         <Link href="/habits" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
           <MoonStar className="h-8 w-8" />
@@ -781,18 +794,23 @@ function SleepSection() {
             )}
             <div className="shrink-0 text-right">
               <p className="text-[11px] text-neutral-400">Avg (30d)</p>
-              <p className="text-lg font-bold tracking-tight text-indigo-600 dark:text-indigo-300">{stats.avgHours}h</p>
+              <p className="text-lg font-bold tracking-tight text-neutral-900 dark:text-white">{stats.avgHours}h</p>
               <p className="text-[11px] text-neutral-400">{stats.totalNights} nights</p>
             </div>
           </div>
           <div className="h-24">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData} margin={{ top: 4, right: 4, left: -26, bottom: 0 }}>
-                <ChartGradients ids={["dash-sleep"]} />
-                <CartesianGrid {...CHART_GRID_STYLES} />
-                <XAxis dataKey="day" {...CHART_AXIS_STYLES} />
-                <YAxis {...CHART_AXIS_STYLES} />
-                <Tooltip content={<ChartTooltip formatter={(v) => `${v}h`} />} cursor={CHART_CURSOR_STYLES} />
+                <defs>
+                  <linearGradient id="dash-sleep" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#262626" />
+                    <stop offset="100%" stopColor="#525252" />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
+                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
                 <Bar dataKey="hours" fill="url(#dash-sleep)" radius={[5, 5, 2, 2]} barSize={14} name="Sleep" />
               </BarChart>
             </ResponsiveContainer>
