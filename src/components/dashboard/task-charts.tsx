@@ -37,8 +37,8 @@ export function TaskCompletionChart() {
       return {
         date: format(date, "MMM d"),
         completed: tasks.filter((t) => {
-          const c = t.completedAt || t.updatedAt
-          return t.status === "completed" && c >= dayStart && c <= dayEnd
+          const c = t.createdAt
+          return t.completed && c >= dayStart && c <= dayEnd
         }).length,
         created: tasks.filter((t) => {
           const c = t.createdAt
