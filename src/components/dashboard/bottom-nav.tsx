@@ -7,20 +7,19 @@ import {
   LayoutDashboard, ListTodo, Wallet, Plus, X,
   Compass, Heart, GraduationCap, TrendingUp, Sparkles, BookOpen, CalendarClock,
 } from "lucide-react"
-import { ThemePicker } from "@/components/dashboard/theme-picker"
 import { cn } from "@/lib/shadcn-utils"
 
 const primaryItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/routine", label: "Routine", icon: CalendarClock },
+  { href: "/finance", label: "Finance", icon: Wallet },
 ]
 
 const moreItems = [
   { href: "/north-star", label: "North Star", icon: Compass },
   { href: "/habits", label: "Health", icon: Heart },
   { href: "/skills", label: "Skills", icon: GraduationCap },
-  { href: "/finance", label: "Finance", icon: Wallet },
   { href: "/investments", label: "Investments", icon: TrendingUp },
   { href: "/future", label: "Future", icon: Sparkles },
   { href: "/content-hub", label: "Content", icon: BookOpen },
@@ -107,8 +106,6 @@ export function BottomNav() {
               </button>
             )
           })}
-
-          <ThemePicker variant="mobile" />
 
           <button
             onClick={() => setOpen(!open)}

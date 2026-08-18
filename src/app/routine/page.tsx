@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useMemo, useRef, useCallback } from "react"
+import { useState, useEffect, useMemo, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { format, addDays, isToday, isSameDay } from "date-fns"
 import {
@@ -97,92 +97,19 @@ function TimeGrid({
   onToggle,
   onDelete,
   onEdit,
-  onDragCreate,
 }: {
   events: RoutineEvent[]
   onToggle: (id: string) => void
   onDelete: (id: string) => void
   onEdit: (event: RoutineEvent) => void
-  onDragCreate: (startHour: number, endHour: number) => void
 }) {
   const gridRef = useRef<HTMLDivElement>(null)
-  const [dragging, setDragging] = useState(false)
-  const [dragStart, setDragStart] = useState<number | null>(null)
-  const [dragEnd, setDragEnd] = useState<number | null>(null)
-
-  const getHourFromY = useCallback((y: number) => {
-    if (!gridRef.current) return 0
-    const rect = gridRef.current.getBoundingClientRect()
-    const relativeY = y - rect.top + gridRef.current.scrollTop
-    return Math.max(0, Math.min(23, Math.floor(relativeY / HOUR_HEIGHT)))
-  }, [])
-
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest("[data-event]")) return
-    const hour = getHourFromY(e.clientY)
-    setDragging(true)
-    setDragStart(hour)
-    setDragEnd(hour)
-  }, [getHourFromY])
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!dragging) return
-    const hour = getHourFromY(e.clientY)
-    setDragEnd(hour)
-  }, [dragging, getHourFromY])
-
-  const handleMouseUp = useCallback(() => {
-    if (!dragging || dragStart === null || dragEnd === null) {
-      setDragging(false)
-      return
-    }
-    const start = Math.min(dragStart, dragEnd)
-    const end = Math.max(dragStart, dragEnd) + 1
-    if (start < end) {
-      onDragCreate(start, end)
-    }
-    setDragging(false)
-    setDragStart(null)
-    setDragEnd(null)
-  }, [dragging, dragStart, dragEnd, onDragCreate])
-
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    if ((e.target as HTMLElement).closest("[data-event]")) return
-    const hour = getHourFromY(e.touches[0].clientY)
-    setDragging(true)
-    setDragStart(hour)
-    setDragEnd(hour)
-  }, [getHourFromY])
-
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (!dragging) return
-    const hour = getHourFromY(e.touches[0].clientY)
-    setDragEnd(hour)
-  }, [dragging, getHourFromY])
-
-  const handleTouchEnd = useCallback(() => {
-    handleMouseUp()
-  }, [handleMouseUp])
-
-  const dragPreview = useMemo(() => {
-    if (!dragging || dragStart === null || dragEnd === null) return null
-    const start = Math.min(dragStart, dragEnd)
-    const end = Math.max(dragStart, dragEnd) + 1
-    return { start, end, height: (end - start) * HOUR_HEIGHT }
-  }, [dragging, dragStart, dragEnd])
 
   return (
     <div
       ref={gridRef}
       className="relative overflow-y-auto rounded-[14px] border border-neutral-200/50 bg-white dark:border-neutral-800/50 dark:bg-neutral-900"
       style={{ height: 24 * HOUR_HEIGHT }}
-      onMouseDown={handleMouseDown}
-      onMouseMove={handleMouseMove}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
     >
       {HOURS.map((hour) => {
         const isNow = new Date().getHours() === hour
@@ -271,19 +198,6 @@ function TimeGrid({
           </motion.div>
         )
       })}
-
-      {dragPreview && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="absolute left-20 right-3 rounded-[10px] border-2 border-dashed border-neutral-400 bg-neutral-100/80 dark:border-neutral-600 dark:bg-neutral-800/80"
-          style={{ top: dragPreview.start * HOUR_HEIGHT, height: dragPreview.height }}
-        >
-          <div className="flex h-full items-center justify-center text-xs font-medium text-neutral-500 dark:text-neutral-400">
-            {dragPreview.end - dragPreview.start}h block
-          </div>
-        </motion.div>
-      )}
     </div>
   )
 }
@@ -329,7 +243,8 @@ function EventDialog({
         setEndHour(String(defaultEnd ?? 10))
       }
     }
-  }, [open, event, defaultStart, defaultEnd])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const handleSave = () => {
     if (!title.trim()) return
@@ -510,12 +425,6 @@ export default function RoutinePage() {
 
   useEffect(() => { archiveOldEvents() }, [archiveOldEvents])
 
-  const handleDragCreate = (startHour: number, endHour: number) => {
-    setEditEvent(null)
-    setAddSlot({ start: startHour, end: endHour })
-    setDialogOpen(true)
-  }
-
   const handleAddNew = () => {
     setEditEvent(null)
     setAddSlot({ start: 9, end: 10 })
@@ -547,7 +456,7 @@ export default function RoutinePage() {
               Routine
             </h1>
             <p className="text-xs text-neutral-500 dark:text-neutral-400">
-              {totalCount > 0 ? `${completedCount}/${totalCount} completed` : "Add events or drag on the time grid"}
+              {totalCount > 0 ? `${completedCount}/${totalCount} completed` : "Plan your day"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -586,7 +495,6 @@ export default function RoutinePage() {
           onToggle={toggleComplete}
           onDelete={handleDelete}
           onEdit={handleEditEvent}
-          onDragCreate={handleDragCreate}
         />
 
         <EventDialog

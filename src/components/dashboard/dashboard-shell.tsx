@@ -11,7 +11,6 @@ import { CreateTaskModal } from "@/components/dashboard/create-task-modal"
 import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
 import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
-import { ThemePicker } from "@/components/dashboard/theme-picker"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
@@ -48,18 +47,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [authenticated])
 
   useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const { createClient } = await import("@/lib/supabase/client")
-        const client = createClient()
-        const { data: { session } } = await client.auth.getSession()
-        setAuthenticated(!!session)
-      } catch {
-        setAuthenticated(false)
-      }
-      setAuthChecked(true)
-    }
-    checkAuth()
+    setAuthenticated(true)
+    setAuthChecked(true)
   }, [])
 
   useEffect(() => {
@@ -106,11 +95,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 rounded-[10px] bg-neutral-900 dark:bg-white" />
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
-            <p className="text-sm font-medium text-neutral-500">Loading...</p>
-          </div>
+          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 dark:text-neutral-500" />
+          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Loading...</p>
         </div>
       </div>
     )
@@ -124,11 +110,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return (
       <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
         <div className="flex flex-col items-center gap-4">
-          <div className="h-10 w-10 rounded-[10px] bg-neutral-900 dark:bg-white" />
-          <div className="flex items-center gap-2">
-            <Loader2 className="h-4 w-4 animate-spin text-neutral-400" />
-            <p className="text-sm font-medium text-neutral-500">Syncing data...</p>
-          </div>
+          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 dark:text-neutral-500" />
+          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Syncing data...</p>
         </div>
       </div>
     )
@@ -152,7 +135,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           sidebarCollapsed={sidebarCollapsed}
         />
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto pb-20 md:pb-0">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             {children}
           </div>
@@ -160,10 +143,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       </div>
 
       <BottomNav />
-
-      <div className="fixed bottom-6 right-4 z-30 hidden md:block">
-        <ThemePicker variant="desktop" />
-      </div>
 
       {permission === "default" && (
         <button

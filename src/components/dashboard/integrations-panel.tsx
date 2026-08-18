@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Plug, Mail, CalendarDays, CheckCircle2, XCircle, Loader2,
@@ -93,6 +94,7 @@ export function IntegrationsPanel() {
         <Plug className="h-4 w-4" />
       </button>
 
+      {createPortal(
       <AnimatePresence>
         {open && (
           <>
@@ -100,7 +102,7 @@ export function IntegrationsPanel() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-neutral-950/50"
+              className="fixed inset-0 z-[80] bg-neutral-950/50"
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -108,7 +110,7 @@ export function IntegrationsPanel() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 h-full w-full max-w-sm overflow-y-auto border-l border-neutral-200 bg-white p-5 shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
+              className="fixed right-0 top-0 z-[90] h-full w-full max-w-sm overflow-y-auto border-l border-neutral-200 bg-white p-5 shadow-2xl dark:border-neutral-800 dark:bg-neutral-900"
             >
               <div className="mb-5 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -335,7 +337,9 @@ export function IntegrationsPanel() {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </>
   )
 }

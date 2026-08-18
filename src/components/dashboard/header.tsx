@@ -1,12 +1,14 @@
 "use client"
 
 import { useState } from "react"
+import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, LogOut, Send, X, Menu } from "lucide-react"
+import { Search, Send, X, Menu, Sun, Moon, LogOut } from "lucide-react"
 import { NotificationBell } from "./notification-panel"
 import { TelegramSettings } from "./telegram-settings"
 import { IntegrationsPanel } from "./integrations-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
+import { useThemeStore } from "@/store/use-theme-store"
 
 export function Header({
   onSearchOpen,
@@ -21,13 +23,14 @@ export function Header({
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [tgOpen, setTgOpen] = useState(false)
+  const { colorTheme, setColorTheme } = useThemeStore()
 
   return (
     <>
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-30 border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-950/80"
+        className="sticky top-0 z-[60] border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-950/80"
       >
         <div className="flex h-14 items-center px-4 lg:px-6">
           {isMobile && (
@@ -71,6 +74,14 @@ export function Header({
             <NotificationBell />
 
             <button
+              onClick={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+              title="Toggle theme"
+            >
+              {colorTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            </button>
+
+            <button
               onClick={onLogout}
               className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
               title="Logout"
@@ -81,6 +92,7 @@ export function Header({
         </div>
       </motion.header>
 
+      {createPortal(
       <AnimatePresence>
         {tgOpen && (
           <>
@@ -88,7 +100,7 @@ export function Header({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-neutral-950/60 backdrop-blur-sm"
+              className="fixed inset-0 z-[80] bg-neutral-950/60 backdrop-blur-sm"
               onClick={() => setTgOpen(false)}
             />
             <motion.div
@@ -96,7 +108,7 @@ export function Header({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed right-0 top-0 z-50 h-full w-full max-w-sm border-l border-neutral-200/50 bg-white/95 backdrop-blur-xl p-5 shadow-2xl dark:border-neutral-800/50 dark:bg-neutral-900/95"
+              className="fixed right-0 top-0 z-[90] h-full w-full max-w-sm border-l border-neutral-200/50 bg-white/95 backdrop-blur-xl p-5 shadow-2xl dark:border-neutral-800/50 dark:bg-neutral-900/95"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -126,7 +138,9 @@ export function Header({
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </>
   )
 }
