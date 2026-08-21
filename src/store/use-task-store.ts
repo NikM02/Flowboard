@@ -50,7 +50,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   projects: [],
   viewMode: "card",
-  filterStatus: "all",
+  filterStatus: "active",
   sortBy: "createdAt",
   searchQuery: "",
   projectFilter: "all",
@@ -172,7 +172,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }
 
     if (projectFilter !== "all") {
-      filtered = filtered.filter((t) => t.project === projectFilter)
+      filtered = filtered.filter(
+        (t) => (t.project.trim() || "Uncategorized") === projectFilter
+      )
     }
 
     if (searchQuery) {
@@ -207,7 +209,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
 
   getProjects: () => {
     const { tasks, projects } = get()
-    const derived = tasks.map((t) => t.project).filter(Boolean)
+    const derived = tasks
+      .map((t) => t.project.trim() || "Uncategorized")
+      .filter((p) => p !== "Uncategorized")
     return [...new Set([...projects, ...derived])].sort()
   },
 
@@ -224,14 +228,14 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     const { tasks } = get()
     const stats: Record<string, { total: number; completed: number; active: number; avgProgress: number }> = {}
     for (const task of tasks) {
-      const p = task.project || "Uncategorized"
+      const p = task.project.trim() || "Uncategorized"
       if (!stats[p]) stats[p] = { total: 0, completed: 0, active: 0, avgProgress: 0 }
       stats[p].total++
       if (task.completed) stats[p].completed++
       else stats[p].active++
     }
     for (const key of Object.keys(stats)) {
-      const projectTasks = tasks.filter((t) => (t.project || "Uncategorized") === key)
+      const projectTasks = tasks.filter((t) => (t.project.trim() || "Uncategorized") === key)
       stats[key].avgProgress = projectTasks.length > 0
         ? Math.round(projectTasks.reduce((sum, t) => sum + t.progress, 0) / projectTasks.length)
         : 0

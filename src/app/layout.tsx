@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "Nexus - My Journey",
+  title: "Vault - My Journey",
   description: "Your personal command center for tasks, projects, habits, and growth",
   icons: {
     icon: [
@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      className={`dark ${geistSans.variable} ${geistMono.variable} antialiased`}
       suppressHydrationWarning
     >
       <body>{children}</body>

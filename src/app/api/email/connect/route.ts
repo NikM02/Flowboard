@@ -23,8 +23,8 @@ export async function POST(req: NextRequest) {
 
     const testOk = await sendEmail(
       settings,
-      "Nexus connected",
-      "Your email notifications are now active. You'll get a mail whenever something new happens in Nexus."
+      "Vault connected",
+      "Your email notifications are now active. You'll get a mail whenever something new happens in Vault."
     )
 
     if (!testOk) {

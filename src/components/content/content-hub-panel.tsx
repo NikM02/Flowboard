@@ -529,14 +529,6 @@ export function ContentHubPanel() {
         )}
       </AnimatePresence>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-            Content Hub
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            Manage your content pipeline from idea to publish
-          </p>
-        </div>
         <Button onClick={() => { setEditItem(null); setDialogOpen(true) }} className="gap-2 self-start">
           <Plus className="h-4 w-4" /> New Content
         </Button>

@@ -21,29 +21,49 @@ export type Integrations = {
   calendar?: CalendarTokens
 }
 
+// Stored under a dedicated row key so the client data-sync (which replaces
+// the main user row wholesale) can never wipe integration credentials.
+const integKey = (userId: string) => `integrations:${userId}`
+
 async function getIntegrations(userId: string): Promise<Integrations> {
   const supabase = createServiceClient()
   const { data } = await supabase
     .from("user_data")
     .select("data")
-    .eq("user_id", userId)
+    .eq("user_id", integKey(userId))
     .single()
-  const blob = (data?.data as Record<string, unknown> | undefined) ?? {}
-  return (blob.integrations as Integrations) ?? {}
+  const existing = (data?.data as Integrations | undefined) ?? null
+  if (existing) return existing
+
+  // One-time migration from legacy location (nested in main user row)
+  try {
+    const { data: legacyRow } = await supabase
+      .from("user_data")
+      .select("data")
+      .eq("user_id", userId)
+      .single()
+    const blob = (legacyRow?.data as Record<string, unknown> | undefined) ?? {}
+    const legacy = (blob.integrations as Integrations | undefined) ?? {}
+    if (legacy.email || legacy.calendar) {
+      await saveIntegrations(userId, legacy)
+      delete (blob as any).integrations
+      await supabase.from("user_data").upsert(
+        { user_id: userId, data: blob as any },
+        { onConflict: "user_id" }
+      )
+    }
+    return legacy
+  } catch {
+    return {}
+  }
 }
 
 async function saveIntegrations(userId: string, integrations: Integrations): Promise<boolean> {
   const supabase = createServiceClient()
-  const { data } = await supabase
-    .from("user_data")
-    .select("data")
-    .eq("user_id", userId)
-    .single()
-  const blob = (data?.data as Record<string, unknown> | undefined) ?? {}
   const { error } = await supabase
     .from("user_data")
     .upsert(
-      { user_id: userId, data: { ...blob, integrations } },
+      { user_id: integKey(userId), data: integrations as any },
       { onConflict: "user_id" }
     )
   return !error

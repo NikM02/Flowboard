@@ -570,14 +570,6 @@ export function FuturePanel() {
 
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-          Future Self
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Track your growth across all areas of life
-        </p>
-      </div>
 
       <div className="mb-6 flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 overflow-x-auto">
         {tabs.map((t) => {

@@ -30,3 +30,17 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Internal error" }, { status: 500 })
   }
 }
+
+export async function DELETE() {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) {
+      return NextResponse.json({ error: "Not authenticated" }, { status: 401 })
+    }
+    await supabase.from("telegram_connections").delete().eq("user_id", user.id)
+    return NextResponse.json({ ok: true })
+  } catch {
+    return NextResponse.json({ error: "Internal error" }, { status: 500 })
+  }
+}

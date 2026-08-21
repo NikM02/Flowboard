@@ -2,13 +2,30 @@
 
 import { useState } from "react"
 import { createPortal } from "react-dom"
+import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Send, X, Menu, Sun, Moon, LogOut } from "lucide-react"
+import { Search, Send, X, Menu, Sun, Moon, LogOut, MoreVertical, Plug, ChevronRight } from "lucide-react"
+import { cn } from "@/lib/shadcn-utils"
 import { NotificationBell } from "./notification-panel"
 import { TelegramSettings } from "./telegram-settings"
 import { IntegrationsPanel } from "./integrations-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useThemeStore } from "@/store/use-theme-store"
+import { usePageTitleStore } from "@/store/use-page-title-store"
+
+const PAGE_TITLES: Record<string, string> = {
+  "/dashboard": "Dashboard",
+  "/tasks": "Tasks",
+  "/routine": "Routine",
+  "/habits": "Health",
+  "/north-star": "North Star",
+  "/future": "Future Self",
+  "/finance": "Finance",
+  "/investments": "Investments",
+  "/skills": "Skills",
+  "/skills/bucket-list": "Bucket List",
+  "/content-hub": "Content Hub",
+}
 
 export function Header({
   onSearchOpen,
@@ -23,7 +40,17 @@ export function Header({
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [tgOpen, setTgOpen] = useState(false)
+  const [intOpen, setIntOpen] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { colorTheme, setColorTheme } = useThemeStore()
+  const pathname = usePathname()
+  const { override } = usePageTitleStore()
+  const pageTitle = override ?? PAGE_TITLES[pathname] ?? ""
+
+  const openMobilePanel = (fn: () => void) => {
+    setMobileMenuOpen(false)
+    fn()
+  }
 
   return (
     <>
@@ -41,6 +68,21 @@ export function Header({
               <Menu className="h-4 w-4" />
             </button>
           )}
+
+          <AnimatePresence mode="wait" initial={false}>
+            {pageTitle && (
+              <motion.h1
+                key={pageTitle}
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 6 }}
+                transition={{ duration: 0.18 }}
+                className="text-base font-bold tracking-tight text-neutral-900 dark:text-white sm:text-lg"
+              >
+                {pageTitle}
+              </motion.h1>
+            )}
+          </AnimatePresence>
 
           <div className="ml-auto flex items-center gap-1">
             <button
@@ -61,21 +103,83 @@ export function Header({
               <Search className="h-4 w-4" />
             </button>
 
+            {/* Mobile: Telegram / Integrations / Theme grouped in one dropdown */}
+            {isMobile && (
+              <div className="relative">
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className={cn(
+                    "flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors",
+                    mobileMenuOpen
+                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                      : "bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+                  )}
+                  title="More options"
+                >
+                  <MoreVertical className="h-4 w-4" />
+                </button>
+                <AnimatePresence>
+                  {mobileMenuOpen && (
+                    <>
+                      <div className="fixed inset-0 z-[65]" onClick={() => setMobileMenuOpen(false)} />
+                      <motion.div
+                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
+                        transition={{ duration: 0.15 }}
+                        className="absolute right-0 top-full z-[66] mt-2 w-52 overflow-hidden rounded-xl border border-neutral-200 bg-white p-1 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
+                      >
+                        <button
+                          onClick={() => openMobilePanel(() => setTgOpen(true))}
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                        >
+                          <Send className="h-4 w-4 shrink-0 text-neutral-500 dark:text-neutral-400" />
+                          Telegram
+                          <ChevronRight className="ml-auto h-3.5 w-3.5 text-neutral-300 dark:text-neutral-600" />
+                        </button>
+                        <button
+                          onClick={() => openMobilePanel(() => setIntOpen(true))}
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                        >
+                          <Plug className="h-4 w-4 shrink-0 text-indigo-500" />
+                          Integrations
+                          <ChevronRight className="ml-auto h-3.5 w-3.5 text-neutral-300 dark:text-neutral-600" />
+                        </button>
+                        <div className="my-1 h-px bg-neutral-100 dark:bg-neutral-800" />
+                        <button
+                          onClick={() => openMobilePanel(() => setColorTheme(colorTheme === "dark" ? "light" : "dark"))}
+                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
+                        >
+                          {colorTheme === "dark" ? (
+                            <Sun className="h-4 w-4 shrink-0 text-amber-400" />
+                          ) : (
+                            <Moon className="h-4 w-4 shrink-0 text-indigo-400" />
+                          )}
+                          {colorTheme === "dark" ? "Light mode" : "Dark mode"}
+                        </button>
+                      </motion.div>
+                    </>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
             <button
               onClick={() => setTgOpen(!tgOpen)}
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+              className="hidden md:flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
               title="Telegram Settings"
             >
               <Send className="h-4 w-4" />
             </button>
 
-            <IntegrationsPanel />
+            {!isMobile && <IntegrationsPanel />}
+            {isMobile && <IntegrationsPanel open={intOpen} onOpenChange={setIntOpen} />}
 
             <NotificationBell />
 
             <button
               onClick={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+              className="hidden md:flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
               title="Toggle theme"
             >
               {colorTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}

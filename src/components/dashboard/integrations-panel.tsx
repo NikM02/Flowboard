@@ -4,11 +4,10 @@ import { useEffect, useState } from "react"
 import { createPortal } from "react-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Plug, Mail, CalendarDays, CheckCircle2, XCircle, Loader2,
-  Unlink, ExternalLink, ShieldCheck,
+  Plug, Mail, CheckCircle2, XCircle, Loader2,
+  Unlink, ShieldCheck,
 } from "lucide-react"
 import { useEmailStore } from "@/store/use-email-store"
-import { useCalendarStore } from "@/store/use-calendar-store"
 import { cn } from "@/lib/shadcn-utils"
 
 function Toggle({
@@ -52,16 +51,26 @@ function Step({ children }: { children: React.ReactNode }) {
   return <li className="flex gap-2 text-[11px] leading-relaxed text-neutral-500 dark:text-neutral-400">{children}</li>
 }
 
-export function IntegrationsPanel() {
+export function IntegrationsPanel({
+  open: controlledOpen,
+  onOpenChange,
+}: {
+  open?: boolean
+  onOpenChange?: (v: boolean) => void
+}) {
   const email = useEmailStore()
-  const calendar = useCalendarStore()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const isControlled = controlledOpen !== undefined
+  const open = isControlled ? controlledOpen : internalOpen
+  const setOpen = (v: boolean) => {
+    if (!isControlled) setInternalOpen(v)
+    onOpenChange?.(v)
+  }
   const [notice, setNotice] = useState("")
 
   useEffect(() => {
     if (open) {
       email.load()
-      calendar.load()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
@@ -78,7 +87,7 @@ export function IntegrationsPanel() {
     const res = await fetch("/api/email/send", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ subject: "Test from Nexus", bodyHtml: "This is a test email from Nexus. All working!", category: "test" }),
+      body: JSON.stringify({ subject: "Test from Vault", bodyHtml: "This is a test email from Vault. All working!", category: "test" }),
     })
     setNotice(res.ok ? "Test email sent!" : "Test failed — check your app password.")
     setTimeout(() => setNotice(""), 6000)
@@ -86,13 +95,15 @@ export function IntegrationsPanel() {
 
   return (
     <>
-      <button
-        onClick={() => setOpen(true)}
-        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
-        title="Integrations"
-      >
-        <Plug className="h-4 w-4" />
-      </button>
+      {!isControlled && (
+        <button
+          onClick={() => setOpen(true)}
+          className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+          title="Integrations"
+        >
+          <Plug className="h-4 w-4" />
+        </button>
+      )}
 
       {createPortal(
       <AnimatePresence>
@@ -260,75 +271,6 @@ export function IntegrationsPanel() {
                           {email.connecting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Mail className="h-3.5 w-3.5" />}
                           Connect email
                         </button>
-                      </>
-                    )}
-                  </div>
-                </section>
-
-                {/* ── Google Calendar ── */}
-                <section className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]",
-                      calendar.connected ? "bg-emerald-100 dark:bg-emerald-900/30" : "bg-neutral-100 dark:bg-neutral-800"
-                    )}>
-                      <CalendarDays className={cn("h-4 w-4", calendar.connected ? "text-emerald-600 dark:text-emerald-400" : "text-neutral-500")} />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Google Calendar</p>
-                      <p className="text-[11px] text-neutral-400">
-                        {calendar.connected ? `Synced as ${calendar.email}` : "Tasks with due dates appear there"}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 space-y-3">
-                    {calendar.connected ? (
-                      <>
-                        <div className="flex items-center gap-2 rounded-xl bg-emerald-50 px-3 py-2 dark:bg-emerald-900/20">
-                          <CheckCircle2 className="h-4 w-4 text-emerald-500" />
-                          <span className="text-xs font-medium text-emerald-700 dark:text-emerald-400">
-                            Connected — {calendar.email}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-neutral-400">
-                          Tasks with a due date are kept in sync automatically. Completing a task removes its event.
-                        </p>
-                        <button
-                          onClick={async () => { await calendar.disconnect(); setNotice("Calendar disconnected") }}
-                          className="flex h-8 w-full items-center justify-center gap-1.5 rounded-lg border border-red-200 text-xs text-red-500 hover:bg-red-50 dark:border-red-900/30 dark:hover:bg-red-900/20"
-                        >
-                          <Unlink className="h-3 w-3" /> Disconnect
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          onClick={calendar.connect}
-                          disabled={calendar.checking}
-                          className="flex h-8 w-full items-center justify-center gap-1.5 rounded-lg bg-indigo-500 text-xs font-medium text-white hover:bg-indigo-600 disabled:opacity-50"
-                        >
-                          {calendar.checking ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <CalendarDays className="h-3.5 w-3.5" />}
-                          Connect Google Calendar
-                        </button>
-                        {calendar.error && (
-                          <div className="flex items-center gap-1.5 rounded-lg bg-amber-50 px-2.5 py-1.5 text-xs text-amber-700 dark:bg-amber-900/20 dark:text-amber-400">
-                            <XCircle className="h-3.5 w-3.5 shrink-0" />
-                            {calendar.error}
-                          </div>
-                        )}
-                        <details className="rounded-xl bg-neutral-50 p-3 dark:bg-neutral-900">
-                          <summary className="flex cursor-pointer items-center gap-1.5 text-[11px] font-medium text-neutral-500">
-                            <ExternalLink className="h-3 w-3" /> One-time setup: Google Cloud (free)
-                          </summary>
-                          <ol className="mt-2 space-y-1.5">
-                            <Step>1. Go to console.cloud.google.com → create a project</Step>
-                            <Step>2. Enable &quot;Google Calendar API&quot;</Step>
-                            <Step>3. Create OAuth client ID &rarr; &quot;Web application&quot;</Step>
-                            <Step>4. Add redirect URI: <span className="font-mono text-neutral-700 dark:text-neutral-300">{`${typeof window !== "undefined" ? window.location.origin : ""}/api/calendar/oauth/callback`}</span></Step>
-                            <Step>5. Copy the Client ID & Secret into your server env as GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET</Step>
-                          </ol>
-                        </details>
                       </>
                     )}
                   </div>

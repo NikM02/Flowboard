@@ -1,18 +1,23 @@
 import { createServiceClient } from "@/lib/supabase/service"
 
-interface UserData {
-  tasks?: { id: string; title: string; description?: string; completed: boolean; priority: string; dueDate: string; project?: string; reminder?: string; createdAt?: number }[]
+export interface UserData {
+  tasks?: { id: string; title: string; description?: string; completed: boolean; priority: "high" | "medium" | "low"; dueDate: string; project?: string; reminder?: string; createdAt?: number }[]
+  projects?: string[]
   habits?: { id: string; name: string; records?: { date: string; completed: boolean }[]; streak?: number }[]
-  incomes?: { id: string; amount: number; source: string; date: string }[]
-  expenses?: { id: string; amount: number; category: string; date: string; description?: string }[]
-  sips?: { id: string; name: string; amount: number; status?: string }[]
-  stocks?: { id: string; name: string; invested: number; currentValue: number }[]
-  mutualFunds?: { id: string; name: string; invested: number; currentValue: number }[]
-  futureGoals?: { id: string; title: string; targetAmount: number; currentValue: number; deadline: string }[]
-  contentItems?: { id: string; title: string; status: string; deadline: string; subtasks?: { completed: boolean }[] }[]
-  northStar?: { vision: string; mission: string; identity: string; pillars?: { title: string; icon: string }[] }
-  bucketListItems?: { id: string; title: string; completed: boolean; expectedDate: string }[]
+  challenges?: { id: string; title: string; description: string; type: "21" | "30" | "90"; days: { day: number; date: string; completed: boolean; note: string }[]; startDate: string; endDate: string; joined: boolean; createdAt?: number }[]
+  skills?: { id: string; name: string; source: "book" | "course" | "youtube" | "person"; sourceDetail: string; startDate: string; endDate: string; progress: number; completed: boolean; notes: string }[]
+  incomes?: { id: string; source: "job" | "youtube" | "digital" | "website" | "freelance" | "other"; amount: number; date: string; description?: string }[]
+  expenses?: { id: string; category: "food" | "transport" | "housing" | "utilities" | "entertainment" | "healthcare" | "shopping" | "education" | "other"; amount: number; date: string; description?: string }[]
+  budgets?: { id: string; category: string; limit: number; month: string }[]
+  sips?: { id: string; name: string; amount: number; startDate?: string; endDate?: string | null; frequency: "monthly" | "quarterly"; expectedReturn?: number; investedAmount?: number; currentValue?: number }[]
+  stocks?: { id: string; name: string; ticker?: string; buyPrice: number; quantity: number; currentPrice?: number; sector?: string; invested?: number; currentValue?: number }[]
+  mutualFunds?: { id: string; name: string; fundHouse?: string; nav: number; units: number; investedAmount?: number; currentValue?: number; invested?: number }[]
+  futureGoals?: { id: string; title: string; category: "tasks" | "habits" | "skills" | "dopamine" | "finance"; targetValue: number; currentValue: number; period?: "monthly" | "quarterly" | "yearly"; periodKey?: string; completed?: boolean }[]
+  contentItems?: { id: string; emoji?: string; title: string; description?: string; deadline: string; status: "ideas" | "scripts" | "filming" | "editing" | "published"; subtasks?: { id: string; title: string; completed: boolean }[] }[]
+  northStar?: { vision: string; mission: string; identity?: string; pillars?: { title: string; icon: string }[] }
+  bucketListItems?: { id: string; title: string; description?: string; expectedDate: string; timeframe?: string; completed: boolean }[]
   advanceTodos?: { id: string; title: string; completed: boolean; date: string; createdAt?: number }[]
+  sleepEntries?: { id: string; date: string; bedtime: string; wakeTime: string; hours: number; quality: number; notes?: string }[]
 }
 
 export async function getUserIdForChatId(chatId: string): Promise<string | null> {

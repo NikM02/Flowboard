@@ -7,7 +7,7 @@ import {
   MessageSquare, Settings, ChevronDown, ChevronUp, ExternalLink,
 } from "lucide-react"
 import { useTelegramStore } from "@/store/use-telegram-store"
-import { sendTelegramMessage, verifyBotToken } from "@/lib/telegram"
+import { sendTelegramMessage, verifyBotToken, setWebhook, setBotCommands } from "@/lib/telegram"
 import { cn } from "@/lib/shadcn-utils"
 
 export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "inline" }) {
@@ -37,7 +37,7 @@ export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "i
         return
       }
 
-      const sent = await sendTelegramMessage(token, chat, `\u2705 <b>Nexus connected!</b>\nBot: ${name}\n\nYou'll receive reminders here.`)
+      const sent = await sendTelegramMessage(token, chat, `\u2705 <b>Vault connected!</b>\nBot: ${name}\n\nYou'll receive reminders here.`)
       if (!sent) {
         setError("Can't send to this chat ID. Message the bot first, then enter your chat ID.")
         setLoading(false)
@@ -55,6 +55,13 @@ export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "i
         })
       } catch {}
 
+      // Self-heal: (re)point the webhook at THIS deployment and register the
+      // command menu, so the bot survives redeploys and stale registrations.
+      try {
+        await setWebhook(token, `${window.location.origin}/api/telegram/webhook`)
+        await setBotCommands(token)
+      } catch {}
+
       setCredentials(token, chat)
       setConnected(true, name)
       setSuccess(`Connected to ${name}!`)
@@ -65,13 +72,17 @@ export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "i
     setLoading(false)
   }
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
     disconnect()
     setToken("")
     setChat("")
     setSuccess("")
     setError("")
     setExpanded(true)
+    // Remove the server-side chat mapping so the bot stops replying here
+    try {
+      await fetch("/api/telegram/connect", { method: "DELETE" })
+    } catch {}
   }
 
   const handleTestMessage = async () => {

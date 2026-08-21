@@ -16,8 +16,11 @@ import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 
-const STORAGE_KEY = "flowboard-data"
-const META_KEY = "flowboard-meta"
+const STORAGE_KEY = "flowboard-data-v2"
+const META_KEY = "flowboard-meta-v2"
+// Old un-versioned keys — purged on boot so stale local backups can never
+// resurrect deleted data on this or another device.
+const LEGACY_KEYS = ["flowboard-data", "flowboard-meta"]
 
 type AppData = {
   tasks: unknown[]
@@ -136,6 +139,39 @@ function applyData(d: AppData) {
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
 }
 
+// Applies cloud data EXACTLY — including empty collections. Used when
+// Supabase is the newer source so deletes made on one device propagate
+// to every other device (the merge version above would skip empties).
+function applyDataReplace(d: AppData) {
+  useTaskStore.setState({ tasks: (d.tasks ?? []) as any })
+  useTaskStore.setState({ projects: (d.projects ?? []) as any })
+  useSleepStore.setState({ entries: (d.sleepEntries ?? []) as any })
+  useHabitStore.setState({ habits: (d.habits ?? []) as any })
+  useChallengeStore.setState({ challenges: (d.challenges ?? []) as any })
+  useDopamineStore.setState({ entries: (d.dopamine ?? []) as any })
+  useSkillStore.setState({ skills: (d.skills ?? []) as any })
+  useFinanceStore.setState({
+    incomes: (d.incomes ?? []) as any,
+    expenses: (d.expenses ?? []) as any,
+    budgets: (d.budgets ?? []) as any,
+    sips: (d.sips ?? []) as any,
+    stocks: (d.stocks ?? []) as any,
+    mutualFunds: (d.mutualFunds ?? []) as any,
+  })
+  useFutureStore.setState({ goals: (d.futureGoals ?? []) as any })
+  useContentStore.setState({ items: (d.contentItems ?? []) as any })
+  const ns = d.northStar
+  useNorthStarStore.setState({
+    vision: ns?.vision ?? "",
+    mission: ns?.mission ?? "",
+    identity: ns?.identity ?? "",
+    pillars: (ns?.pillars ?? []) as any,
+  })
+  useBucketListStore.setState({ items: (d.bucketListItems ?? []) as any })
+  useAdvanceTodoStore.setState({ todos: (d.advanceTodos ?? []) as any })
+  if (d.colorTheme) useThemeStore.setState({ colorTheme: d.colorTheme })
+}
+
 export function useSupabasePersistence() {
   const [loading, setLoading] = useState(true)
   const [hydrated, setHydrated] = useState(false)
@@ -150,8 +186,21 @@ export function useSupabasePersistence() {
     if (!uid) return
     try {
       const client = createClient()
+      // Read-modify-write so any server-managed keys living alongside our
+      // collections (legacy "integrations", etc.) survive the upload.
+      const { data: row } = await client
+        .from("user_data")
+        .select("data")
+        .eq("user_id", uid)
+        .single()
+      const prev = (row?.data as Record<string, unknown> | undefined) ?? {}
+      const owned = new Set(Object.keys(data))
+      const foreign: Record<string, unknown> = {}
+      for (const k of Object.keys(prev)) {
+        if (!owned.has(k)) foreign[k] = prev[k]
+      }
       await client.from("user_data").upsert(
-        { user_id: uid, data: data as any, updated_at: new Date().toISOString() },
+        { user_id: uid, data: { ...foreign, ...data } as any, updated_at: new Date().toISOString() },
         { onConflict: "user_id" }
       )
     } catch {}
@@ -198,6 +247,13 @@ export function useSupabasePersistence() {
 
     client.auth.getSession().then(({ data: { session } }) => {
       if (hydratedRef.current) return
+
+      // Remove old un-versioned local backups so stale data can never
+      // re-enter the stores (or be pushed back up to Supabase).
+      try {
+        LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
+      } catch {}
+
       if (session?.user) {
         userIdRef.current = session.user.id
         client
@@ -209,28 +265,28 @@ export function useSupabasePersistence() {
             if (hydratedRef.current) return
             hydratedRef.current = true
 
-            // Prefer the newer source between Supabase and the local backup.
-            // The local backup can be newer when the Supabase write lagged
-            // behind or the page was closed before the debounced save fired.
             const localMeta = readLocalMeta()
             const supabaseTs = data?.updated_at
               ? new Date(data.updated_at).getTime()
               : -1
             const localBelongs =
               !localMeta?.userId || localMeta.userId === session.user.id
+            const localUsable = !!localMeta && localBelongs
             const localIsNewer =
-              !!localMeta &&
-              localBelongs &&
-              localMeta.savedAt > supabaseTs + 5000
+              localUsable && localMeta.savedAt > supabaseTs + 5000
 
-            // Always restore the local backup first. applyData merges with a
-            // non-empty preference, so real content survives even when
-            // Supabase was overwritten with empty values (e.g. by an old
-            // hydration re-save). When Supabase is the newer source it is
-            // applied afterwards so it wins ties for array fields.
-            loadFromLocal()
-            if (data?.data && !localIsNewer) {
-              applyData(data.data as AppData)
+            if (localUsable && localIsNewer) {
+              // Local backup is the newest copy — restore it. The next
+              // change will push it back up to Supabase.
+              loadFromLocal()
+            } else if (data?.data) {
+              // Cloud is the source of truth — apply exactly, including
+              // empty collections, so deletions made on any device show
+              // up everywhere.
+              applyDataReplace(data.data as AppData)
+            } else if (localBelongs) {
+              // No cloud row yet — fall back to this device's backup.
+              loadFromLocal()
             }
 
             loadedRef.current = true

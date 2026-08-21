@@ -39,10 +39,11 @@ function generateId(): string {
 }
 
 const PASTEL_COLORS = [
-  "#fce4ec", "#f3e5f5", "#e8eaf6", "#e3f2fd", "#e0f7fa",
-  "#e8f5e9", "#f1f8e9", "#fffde7", "#fff8e1", "#fff3e0",
-  "#fbe9e7", "#f9ebea", "#eaf2f8", "#f0f3f4", "#fdf2e9",
-  "#ebf5fb", "#f5eef8", "#e9f7ef", "#fef9e7", "#fdedec",
+  "#ffe1e6", "#fce7f3", "#fae8ff", "#e4daff",
+  "#ddd6fe", "#c7d2fe", "#dbeafe", "#e0f2fe",
+  "#cff2fe", "#ccfbf1", "#d1fae5", "#dcfce7",
+  "#ecfccb", "#fef9c3", "#fef3c7", "#ffedd5",
+  "#fed7aa", "#ffe4e6", "#fbcfe8", "#e0e7ff",
 ]
 
 export function getRandomPastelColor(): string {

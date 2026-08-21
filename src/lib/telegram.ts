@@ -1,10 +1,19 @@
 const TELEGRAM_API = "https://api.telegram.org"
 
+export type InlineButton = { text: string; url?: string; callback_data?: string }
+export type InlineKeyboard = InlineButton[][]
+
+type ReplyMarkup =
+  | InlineKeyboard
+  | { force_reply: boolean; input_field_placeholder?: string }
+  | { [key: string]: unknown }
+
 export async function sendTelegramMessage(
   botToken: string,
   chatId: string,
   text: string,
-  parseMode: "HTML" | "Markdown" = "HTML"
+  parseMode: "HTML" | "Markdown" = "HTML",
+  replyMarkup?: ReplyMarkup
 ): Promise<boolean> {
   try {
     const res = await fetch(`${TELEGRAM_API}/bot${botToken}/sendMessage`, {
@@ -15,10 +24,77 @@ export async function sendTelegramMessage(
         text,
         parse_mode: parseMode,
         disable_web_page_preview: true,
+        ...(replyMarkup ? { reply_markup: replyMarkup } : {}),
       }),
     })
     const data = await res.json()
     return data.ok === true
+  } catch {
+    return false
+  }
+}
+
+export async function answerCallbackQuery(botToken: string, callbackQueryId: string, text?: string): Promise<boolean> {
+  try {
+    await fetch(`${TELEGRAM_API}/bot${botToken}/answerCallbackQuery`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ callback_query_id: callbackQueryId, ...(text ? { text } : {}) }),
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function editMessageText(
+  botToken: string,
+  chatId: string,
+  messageId: number,
+  text: string
+): Promise<boolean> {
+  try {
+    await fetch(`${TELEGRAM_API}/bot${botToken}/editMessageText`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        text,
+        parse_mode: "HTML",
+      }),
+    })
+    return true
+  } catch {
+    return false
+  }
+}
+
+export async function setBotCommands(botToken: string): Promise<boolean> {
+  try {
+    const commands = [
+      { command: "menu", description: "Open any page of the app" },
+      { command: "tasks", description: "View active tasks" },
+      { command: "addtask", description: "Create a task (guided)" },
+      { command: "habits", description: "Today's habits" },
+      { command: "addhabit", description: "Create a habit" },
+      { command: "finance", description: "Income vs expenses" },
+      { command: "addexpense", description: "Log an expense (guided)" },
+      { command: "addincome", description: "Log income (guided)" },
+      { command: "invest", description: "Portfolio summary" },
+      { command: "goals", description: "Future goals" },
+      { command: "content", description: "Content pipeline" },
+      { command: "bucket", description: "Bucket list" },
+      { command: "skills", description: "Skill progress" },
+      { command: "today", description: "Today's todos" },
+      { command: "help", description: "All commands" },
+    ]
+    await fetch(`${TELEGRAM_API}/bot${botToken}/setMyCommands`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ commands }),
+    })
+    return true
   } catch {
     return false
   }

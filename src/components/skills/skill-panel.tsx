@@ -318,14 +318,6 @@ export function SkillPanel() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-            Skill Enhancement
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            Track skills you're learning from books, courses, YouTube, and people
-          </p>
-        </div>
         <div className="flex items-center gap-2 self-start">
           <Link href="/skills/bucket-list">
             <Button variant="outline" className="gap-2">

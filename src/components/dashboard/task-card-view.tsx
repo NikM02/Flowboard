@@ -7,7 +7,7 @@ import { EmptyState } from "./empty-state"
 
 export function TaskCardView() {
   const { getFilteredTasks } = useTaskStore()
-  const tasks = getFilteredTasks()
+  const tasks = getFilteredTasks().filter((t) => !t.completed)
 
   if (tasks.length === 0) {
     return <EmptyState />

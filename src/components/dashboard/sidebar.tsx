@@ -58,14 +58,14 @@ export function Sidebar({
           isCollapsed ? "justify-center px-0" : "gap-3 px-1"
         )}
       >
-        <Image src="/nexus-logo.png" alt="Logo" width={28} height={28} className="rounded-[10px]" />
+        <Image src="/Vault.png" alt="Vault logo" width={28} height={28} className="rounded-[10px]" />
         <span
           className={cn(
             "text-base font-extrabold tracking-tight text-neutral-900 dark:text-white whitespace-nowrap transition-all",
             isCollapsed && "hidden"
           )}
         >
-          Nexus
+          Vault
         </span>
       </Link>
 

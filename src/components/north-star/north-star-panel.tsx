@@ -4,7 +4,7 @@ import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Pencil, Plus, Trash2, Check, X,
-  Compass, Target, Shield, Gem, Star, Heart, Zap,
+  Compass, Target, Gem, Star, Heart, Zap,
   Mountain, Flame, Eye, Lightbulb, Users, Rocket, Crown, Swords,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
@@ -16,7 +16,7 @@ import type { Pillar } from "@/store/use-north-star-store"
 
 const iconMap: Record<string, typeof Star> = {
   Star, Heart, Zap, Mountain, Flame, Eye, Lightbulb,
-  Users, Rocket, Crown, Swords, Gem, Target, Shield, Compass,
+  Users, Rocket, Crown, Swords, Gem, Target, Compass,
 }
 const iconOptions = Object.keys(iconMap)
 
@@ -234,8 +234,8 @@ function PillarDialog({
 
 export function NorthStarPanel() {
   const {
-    vision, mission, identity, pillars,
-    setVision, setMission, setIdentity,
+    vision, mission, pillars,
+    setVision, setMission,
     addPillar, updatePillar, deletePillar,
   } = useNorthStarStore()
 
@@ -243,16 +243,6 @@ export function NorthStarPanel() {
 
   return (
     <div className="space-y-8">
-      {/* Page header */}
-      <div>
-        <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-          North Star
-        </h1>
-        <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-          Your guiding principles and foundational identity
-        </p>
-      </div>
-
       {/* Vision — full-width hero */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
         <div className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8 dark:border-neutral-800/60 dark:bg-neutral-900">
@@ -280,52 +270,28 @@ export function NorthStarPanel() {
         </div>
       </motion.div>
 
-      {/* Mission & Identity — side by side */}
-      <div className="grid gap-4 sm:grid-cols-2 sm:gap-5">
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }}>
-          <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
-                <Target className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
-              </div>
-              <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Mission</h2>
-                <p className="text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Your purpose</p>
-              </div>
+      {/* Mission */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }}>
+        <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
+              <Target className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </div>
-            <div className="mt-5 flex-1">
-              <InlineEditText
-                value={mission}
-                onSave={setMission}
-                multiline
-                placeholder="How you bring your vision to life..."
-              />
+            <div>
+              <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Mission</h2>
+              <p className="text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Your purpose</p>
             </div>
           </div>
-        </motion.div>
-
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.14 }}>
-          <div className="flex h-full flex-col rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 shadow-sm">
-                <Shield className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
-              </div>
-              <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-600 dark:text-neutral-400">Identity</h2>
-                <p className="text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Who you are</p>
-              </div>
-            </div>
-            <div className="mt-5 flex-1">
-              <InlineEditText
-                value={identity}
-                onSave={setIdentity}
-                multiline
-                placeholder="Who you are at your core..."
-              />
-            </div>
+          <div className="mt-5">
+            <InlineEditText
+              value={mission}
+              onSave={setMission}
+              multiline
+              placeholder="How you bring your vision to life..."
+            />
           </div>
-        </motion.div>
-      </div>
+        </div>
+      </motion.div>
 
       {/* Core Pillars */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }}>

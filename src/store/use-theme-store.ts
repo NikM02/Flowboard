@@ -7,7 +7,7 @@ type ThemeStore = {
   setColorTheme: (theme: ColorTheme) => void
 }
 
-const THEME_KEY = "nexus-color-theme-v3"
+const THEME_KEY = "vault-color-theme-v1"
 
 function applyTheme(theme: ColorTheme) {
   const root = document.documentElement
@@ -25,7 +25,7 @@ function getInitialTheme(): ColorTheme {
     const stored = localStorage.getItem(THEME_KEY) as ColorTheme | null
     if (stored && ["dark", "light"].includes(stored)) return stored
   } catch {}
-  return "light"
+  return "dark"
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({

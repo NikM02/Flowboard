@@ -47,8 +47,21 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }, [authenticated])
 
   useEffect(() => {
-    setAuthenticated(true)
-    setAuthChecked(true)
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase/client")
+        const client = createClient()
+        const { data } = await client.auth.getSession()
+        if (!cancelled) setAuthenticated(!!data.session)
+      } catch {
+        if (!cancelled) setAuthenticated(false)
+      }
+      if (!cancelled) setAuthChecked(true)
+    })()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
   useEffect(() => {

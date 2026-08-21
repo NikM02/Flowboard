@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useCallback, Suspense } from "react"
+import { useState, useCallback, Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
@@ -23,6 +23,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { useTaskStore } from "@/store/use-task-store"
+import { usePageTitleStore } from "@/store/use-page-title-store"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
 
@@ -94,7 +95,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
   ]
 
   const openProject = (name: string) => {
-    setProjectFilter(name === "Uncategorized" ? "" : name)
+    setProjectFilter(name)
     onOpenProject()
   }
 
@@ -224,11 +225,11 @@ function TasksPageContent() {
     else if (v === "tasks") setFilterStatus("active")
   }, [router, setFilterStatus])
 
-  const titles: Record<ViewMode, { title: string; sub: string }> = {
-    tasks: { title: "Projects & Tasks", sub: "Manage and track your tasks" },
-    projects: { title: "Projects", sub: "Organize tasks into projects" },
-    archive: { title: "Archive", sub: "Completed tasks" },
-  }
+  const { setPageTitle } = usePageTitleStore()
+  useEffect(() => {
+    setPageTitle(view === "projects" ? "Projects" : view === "archive" ? "Archive" : "Tasks")
+    return () => setPageTitle(null)
+  }, [view, setPageTitle])
 
   return (
     <DashboardShell>
@@ -238,23 +239,9 @@ function TasksPageContent() {
         transition={{ duration: 0.3 }}
         className="space-y-6"
       >
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-              {titles[view].title}
-            </h1>
-            <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-              {titles[view].sub}
-            </p>
-          </div>
-          {view === "tasks" && (
-            <Button onClick={() => setIsCreateModalOpen(true)} className="gap-2 self-start rounded-xl">
-              <Plus className="h-4 w-4" /> New Task
-            </Button>
-          )}
-          {view === "archive" && (
-            <div className="flex gap-2 self-start">
+        {/* Archive actions */}
+        {view === "archive" && (
+          <div className="flex gap-2 self-start">
               <Button
                 variant="outline"
                 size="sm"
@@ -281,9 +268,8 @@ function TasksPageContent() {
               <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
                 <Trash2 className="h-3.5 w-3.5" /> Clear
               </Button>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
 
         {/* View tabs */}
         <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
@@ -349,6 +335,9 @@ function TasksPageContent() {
               </button>
             </div>
             <Filters />
+            <Button onClick={() => setIsCreateModalOpen(true)} className="ml-auto gap-2 rounded-xl">
+              <Plus className="h-4 w-4" /> New Task
+            </Button>
           </div>
         )}
 

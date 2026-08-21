@@ -61,10 +61,6 @@ function DashboardHero() {
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
-  const hour = new Date().getHours()
-  const greeting =
-    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening"
-
   const dueToday = tasks.filter(
     (t) => !t.completed && t.dueDate === format(new Date(), "yyyy-MM-dd")
   ).length
@@ -96,17 +92,6 @@ function DashboardHero() {
 
   return (
     <div className="space-y-5">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-            <span className="text-neutral-900 dark:text-white">{greeting}</span>
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">
-            {format(new Date(), "EEEE, d MMMM yyyy")}
-          </p>
-        </div>
-      </div>
-
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         {stats.map((s) => (
           <div

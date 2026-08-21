@@ -131,7 +131,9 @@ function ListRow({ task, index }: { task: Task; index: number }) {
 export function TaskListView({ archive }: { archive?: boolean }) {
   const tasks = useTaskStore((s) => s.tasks)
   const getFilteredTasks = useTaskStore((s) => s.getFilteredTasks)
-  const filtered = archive ? tasks.filter((t) => t.completed) : getFilteredTasks()
+  const filtered = archive
+    ? tasks.filter((t) => t.completed)
+    : getFilteredTasks().filter((t) => !t.completed)
 
   if (filtered.length === 0) return <EmptyState archive={archive} />
 

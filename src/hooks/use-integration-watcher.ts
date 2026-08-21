@@ -21,7 +21,7 @@ function line(text: string): string {
   return `<p style="margin:4px 0;">${escapeHtml(text)}</p>`
 }
 
-async function sendNexusEmail(subject: string, body: string, category: "new" | "update" | "due") {
+async function sendVaultEmail(subject: string, body: string, category: "new" | "update" | "due") {
   try {
     await fetch("/api/email/send", {
       method: "POST",
@@ -69,7 +69,7 @@ export function useIntegrationWatcher(hydrated: boolean) {
 
         if (!prevT) {
           // New task
-          sendNexusEmail(
+          sendVaultEmail(
             `\u2705 New task: ${t.title}`,
             line(`\ud83d\udccb ${t.title}`) +
               (t.description ? line(t.description) : "") +
@@ -79,7 +79,7 @@ export function useIntegrationWatcher(hydrated: boolean) {
           syncTaskEvent("upsert", taskEventPayload(t))
         } else if (t.completed && !prevT.completed) {
           // Completed
-          sendNexusEmail(`\u2709 Task completed: ${t.title}`, line(`\u2714 ${t.title}`), "update")
+          sendVaultEmail(`\u2709 Task completed: ${t.title}`, line(`\u2714 ${t.title}`), "update")
           syncTaskEvent("delete", taskEventPayload(t))
         } else if (t.dueDate !== prevT.dueDate) {
           // Due date changed
@@ -103,12 +103,12 @@ export function useIntegrationWatcher(hydrated: boolean) {
       for (const h of habits) {
         const prevH = prevHabits.find((p) => p.id === h.id)
         if (!prevH) {
-          sendNexusEmail(`\u2764\ufe0f New habit: ${h.name}`, line(`\ud83c\udfc3 ${h.name}`), "new")
+          sendVaultEmail(`\u2764\ufe0f New habit: ${h.name}`, line(`\ud83c\udfc3 ${h.name}`), "new")
         } else {
           const newDone = h.records.filter((r) => r.completed).length
           const prevDone = prevH.records.filter((r) => r.completed).length
           if (newDone > prevDone) {
-            sendNexusEmail(`\u2705 Habit checked: ${h.name}`, line(`\u2705 ${h.name} \u2014 day done`), "update")
+            sendVaultEmail(`\u2705 Habit checked: ${h.name}`, line(`\u2705 ${h.name} \u2014 day done`), "update")
           }
         }
       }
@@ -121,12 +121,12 @@ export function useIntegrationWatcher(hydrated: boolean) {
 
       for (const i of incomes) {
         if (!prevIncomes.find((p) => p.id === i.id)) {
-          sendNexusEmail(`\ud83d\udcb0 New income: \u20b9${i.amount.toLocaleString("en-IN")}`, line(`${i.source} on ${i.date}`), "new")
+          sendVaultEmail(`\ud83d\udcb0 New income: \u20b9${i.amount.toLocaleString("en-IN")}`, line(`${i.source} on ${i.date}`), "new")
         }
       }
       for (const e of expenses) {
         if (!prevExpenses.find((p) => p.id === e.id)) {
-          sendNexusEmail(`\ud83d\udcb0 New expense: \u20b9${e.amount.toLocaleString("en-IN")}`, line(`${e.description || e.category} on ${e.date}`), "new")
+          sendVaultEmail(`\ud83d\udcb0 New expense: \u20b9${e.amount.toLocaleString("en-IN")}`, line(`${e.description || e.category} on ${e.date}`), "new")
         }
       }
     })
