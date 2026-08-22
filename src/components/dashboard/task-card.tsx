@@ -106,7 +106,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       <div className="mt-3 flex items-center gap-3 text-[11px] text-neutral-400 dark:text-neutral-500">
         {task.dueDate && (
           <span className="flex items-center gap-1">
-            <Calendar className="h-3 w-3" /> {formatDate(task.dueDate)}
+            <Calendar className="h-3 w-3" /> {formatDate(task.dueDate, task.dueTime)}
           </span>
         )}
         {totalSubs > 0 && (

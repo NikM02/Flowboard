@@ -36,9 +36,11 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
   const [project, setProject] = useState(task?.project ?? "")
   const [priority, setPriority] = useState<Priority>(task?.priority ?? "medium")
   const [dueDate, setDueDate] = useState(task?.dueDate ?? "")
+  const [dueTime, setDueTime] = useState(task?.dueTime ?? "")
   const [reminderMins, setReminderMins] = useState<number | null>(() => {
     if (!task?.reminder || !task?.dueDate) return null
-    const diff = new Date(task.dueDate).getTime() - new Date(task.reminder).getTime()
+    const dueMs = new Date(task.dueTime ? `${task.dueDate}T${task.dueTime}` : task.dueDate).getTime()
+    const diff = dueMs - new Date(task.reminder).getTime()
     if (diff <= 0) return null
     const mins = Math.round(diff / 60000)
     if (mins <= 15) return 15
@@ -56,7 +58,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
 
     let reminder: string | null = null
     if (reminderMins && dueDate) {
-      const d = new Date(dueDate)
+      const d = new Date(dueTime ? `${dueDate}T${dueTime}` : dueDate)
       const r = new Date(d.getTime() - reminderMins * 60000)
       if (r > new Date()) reminder = r.toISOString()
     }
@@ -67,6 +69,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
       project: project.trim() || "Uncategorized",
       priority,
       dueDate,
+      dueTime: dueTime || undefined,
       reminder,
     })
 
@@ -117,7 +120,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
         </datalist>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="space-y-2">
           <Label htmlFor="edit-task-priority">Priority</Label>
           <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
@@ -138,6 +141,16 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
             type="date"
             value={dueDate}
             onChange={(e) => setDueDate(e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-dueTime">Due Time</Label>
+          <Input
+            id="edit-dueTime"
+            type="time"
+            step={900}
+            value={dueTime}
+            onChange={(e) => setDueTime(e.target.value)}
           />
         </div>
       </div>

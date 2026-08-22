@@ -15,6 +15,7 @@ export type Task = {
   progress: number
   priority: Priority
   dueDate: string
+  dueTime?: string
   reminder: string | null
   subtasks: Subtask[]
   createdAt: number

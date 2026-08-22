@@ -29,7 +29,7 @@ type TaskStore = {
   confirmComplete: () => void
   cancelComplete: () => void
 
-  addTask: (task: Omit<Task, "id" | "completed" | "progress" | "createdAt">) => void
+  addTask: (task: Omit<Task, "id" | "completed" | "progress" | "createdAt">) => string
   updateTask: (id: string, updates: Partial<Task>) => void
   deleteTask: (id: string) => void
   toggleSubtask: (taskId: string, subtaskId: string) => void
@@ -91,6 +91,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
       createdAt: Date.now(),
     }
     set((state) => ({ tasks: [newTask, ...state.tasks] }))
+    return newTask.id
   },
 
   updateTask: (id, updates) => {

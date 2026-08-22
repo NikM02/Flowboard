@@ -19,12 +19,13 @@ export function isAllSubtasksComplete(subtasks: { completed: boolean }[]): boole
   return subtasks.length > 0 && subtasks.every((s) => s.completed)
 }
 
-export function formatDate(date: string): string {
+export function formatDate(date: string, time?: string): string {
   if (!date) return "No date"
-  const d = new Date(date)
-  return d.toLocaleDateString("en-US", {
+  const d = new Date(time ? `${date}T${time}` : date)
+  const base = d.toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
     year: "numeric",
   })
+  return time ? `${base} · ${time}` : base
 }

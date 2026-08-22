@@ -104,7 +104,8 @@ function ContentCard({
         <button
           {...attributes}
           {...listeners}
-          className="mt-0.5 shrink-0 cursor-grab touch-none rounded p-0.5 text-neutral-300 opacity-0 transition-opacity group-hover:opacity-100 hover:text-neutral-500 dark:text-neutral-600 dark:hover:text-neutral-400"
+          className="mt-0.5 shrink-0 cursor-grab touch-none rounded p-0.5 text-neutral-400 transition-colors hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+          aria-label="Drag to move"
         >
           <GripVertical className="h-4 w-4" />
         </button>
@@ -115,12 +116,12 @@ function ContentCard({
             <p className="mt-0.5 text-xs text-neutral-500 dark:text-neutral-400 line-clamp-2">{item.description}</p>
           )}
         </div>
-        <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-          <button onClick={onEdit} className="rounded p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
-            <Pencil className="h-3 w-3" />
+        <div className="flex gap-0.5">
+          <button onClick={onEdit} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100">
+            <Pencil className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteItem(item.id)} className="rounded p-1 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
-            <Trash2 className="h-3 w-3" />
+          <button onClick={() => deleteItem(item.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400">
+            <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>
@@ -222,30 +223,30 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
   return (
     <div
       className={cn(
-        "flex flex-col rounded-2xl border p-3 transition-colors",
+        "flex max-h-[calc(100vh-230px)] w-[280px] shrink-0 snap-start flex-col rounded-2xl border transition-all sm:w-[300px]",
         isOver
-          ? "border-neutral-400 bg-neutral-100/50 dark:border-neutral-500 dark:bg-neutral-800/30"
-          : "border-neutral-200/60 bg-neutral-50/50 dark:border-neutral-800/60 dark:bg-neutral-900/30"
+          ? "border-neutral-400 bg-neutral-100/70 ring-2 ring-neutral-300/50 dark:border-neutral-500 dark:bg-neutral-800/40 dark:ring-neutral-600/30"
+          : "border-neutral-200/70 bg-white/60 backdrop-blur-sm dark:border-neutral-800/80 dark:bg-neutral-900/40"
       )}
     >
-      <div className="mb-3 flex items-center gap-2 px-1">
-        <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800", col.bg)}>
+      <div className="flex items-center gap-2.5 border-b border-neutral-200/60 px-4 py-3.5 dark:border-neutral-800/60">
+        <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", col.bg)}>
           <Icon className={cn("h-4 w-4", col.color)} />
         </div>
         <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{col.label}</span>
-        <span className="ml-auto rounded-full bg-neutral-200 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-700 dark:text-neutral-400">
+        <span className="ml-auto flex h-5 min-w-5 items-center justify-center rounded-full bg-neutral-200/80 px-1.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-700/80 dark:text-neutral-300">
           {items.length}
         </span>
       </div>
-      <div ref={setNodeRef} className="min-h-[100px] flex-1 space-y-2.5">
+      <div ref={setNodeRef} className="min-h-[120px] flex-1 space-y-2.5 overflow-y-auto p-3">
         <AnimatePresence mode="popLayout">
           {items.map((item) => (
             <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
           ))}
         </AnimatePresence>
         {items.length === 0 && (
-          <div className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-neutral-200 py-8 dark:border-neutral-800">
-            <p className="text-xs text-neutral-400">Drop items here</p>
+          <div className={cn("flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-10 transition-colors", isOver ? "border-neutral-400 bg-neutral-100/50 dark:border-neutral-500 dark:bg-neutral-800/20" : "border-neutral-200 dark:border-neutral-800")}>
+            <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop items here</p>
           </div>
         )}
       </div>
@@ -298,11 +299,11 @@ function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: Cont
                   />
                 </div>
               </div>
-              <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                <button onClick={() => onEdit(item)} className="rounded p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
+              <div className="flex gap-0.5">
+                <button onClick={() => onEdit(item)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100">
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => useContentStore.getState().deleteItem(item.id)} className="rounded p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
+                <button onClick={() => useContentStore.getState().deleteItem(item.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -574,7 +575,7 @@ export function ContentHubPanel() {
             <ArchiveTab />
           ) : view === "board" ? (
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              <div className="kanban-scroll -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-4">
                 {columns.filter((c) => c.key !== "published").map((col) => (
                   <KanbanColumn
                     key={col.key}
@@ -591,7 +592,7 @@ export function ContentHubPanel() {
               </div>
               <DragOverlay>
                 {activeItem && (
-                  <div className="w-[320px]">
+                  <div className="w-[272px]">
                     <ContentCard item={activeItem} isDragOverlay onEdit={() => {}} />
                   </div>
                 )}

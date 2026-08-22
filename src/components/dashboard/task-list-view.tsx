@@ -82,7 +82,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       {/* Due date — hidden on mobile */}
       <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
         <Calendar className="h-3 w-3 shrink-0" />
-        <span className="truncate">{formatDate(task.dueDate)}</span>
+        <span className="truncate">{formatDate(task.dueDate, task.dueTime)}</span>
       </div>
 
       {/* Progress — hidden on mobile */}
@@ -105,7 +105,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       {/* Mobile meta */}
       <div className="flex items-center gap-3 text-[11px] text-neutral-400 sm:hidden">
         <span className={cn("rounded-full px-1.5 py-0.5 font-semibold", priority.bg, priority.color)}>{priority.label}</span>
-        {task.dueDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{formatDate(task.dueDate)}</span>}
+        {task.dueDate && <span className="flex items-center gap-1"><Calendar className="h-3 w-3" />{formatDate(task.dueDate, task.dueTime)}</span>}
         <span>{task.progress}%</span>
       </div>
 
