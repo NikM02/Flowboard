@@ -16,7 +16,7 @@ export type PushSubscriptionRow = {
 const PUSH_KEY = "pushSubscriptions"
 
 export function getVapidSubscriber() {
-  const publicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY
+  const publicKey = process.env.VAPID_PUBLIC_KEY
   const privateKey = process.env.VAPID_PRIVATE_KEY
   const email = process.env.VAPID_EMAIL || "vault@flowboard.app"
   if (!publicKey || !privateKey) return null

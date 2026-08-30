@@ -92,7 +92,7 @@ export function usePwaPush() {
     }
     if (permission !== "granted") return false
 
-    const vapidKey = getVapidPublicKey()
+    const vapidKey = await getVapidPublicKey()
     if (!vapidKey) {
       // No VAPID configured — fall back to foreground-only notifications.
       return false
