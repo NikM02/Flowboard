@@ -62,7 +62,7 @@ function menuKeyboard(req: NextRequest): InlineKeyboard {
   const base = appUrl(req)
   const b = (text: string, path: string) => ({ text, url: `${base}${path}` })
   return [
-    [b("📋 Dashboard", "/dashboard"), b("✅ Tasks", "/tasks"), b("🗓 Routine", "/routine")],
+    [b("📋 Dashboard", "/dashboard"), b("✅ Tasks", "/tasks")],
     [b("❤️ Health", "/habits"), b("⭐ North Star", "/north-star"), b("🔮 Future Self", "/future")],
     [b("💰 Finance", "/finance"), b("📈 Investments", "/investments")],
     [b("🎓 Skills", "/skills"), b("🏆 Bucket List", "/skills/bucket-list"), b("📱 Content Hub", "/content-hub")],

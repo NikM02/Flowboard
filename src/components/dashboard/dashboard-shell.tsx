@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
-import { Loader2, Bell, BellOff, BellRing } from "lucide-react"
+import { Loader2, Bell, BellOff, BellRing, Download } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { BottomNav } from "@/components/dashboard/bottom-nav"
@@ -13,8 +13,10 @@ import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialo
 import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
+import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
 import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
 import { usePushNotifications } from "@/hooks/use-push-notifications"
+import { usePwaPush } from "@/hooks/use-pwa-push"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { useThemeStore } from "@/store/use-theme-store"
 import { useEmailStore } from "@/store/use-email-store"
@@ -37,8 +39,46 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { loading: dataLoading, hydrated } = useSupabasePersistence()
 
   useNotificationGenerator()
+  useReminderScheduler()
   useIntegrationWatcher(hydrated)
-  const { permission, requestPermission } = usePushNotifications()
+  const { permission } = usePushNotifications()
+  const { supported: pwaSupported, subscribed: pushSubscribed, enable: enablePush } = usePwaPush()
+
+  // Install prompt for Android / desktop Chrome (and iOS home-screen hint).
+  const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
+  const [isIOS, setIsIOS] = useState(false)
+  const [installed, setInstalled] = useState(false)
+  const [showInstallTip, setShowInstallTip] = useState(false)
+
+  useEffect(() => {
+    if (/iphone|ipad|ipod/i.test(navigator.userAgent) && !("standalone" in navigator)) {
+      setIsIOS(true)
+    }
+    const onPrompt = (e: Event) => {
+      e.preventDefault()
+      setInstallPrompt(e as BeforeInstallPromptEvent)
+    }
+    const onInstalled = () => {
+      setInstalled(true)
+      setInstallPrompt(null)
+    }
+    window.addEventListener("beforeinstallprompt", onPrompt)
+    window.addEventListener("appinstalled", onInstalled)
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onPrompt)
+      window.removeEventListener("appinstalled", onInstalled)
+    }
+  }, [])
+
+  const handlePromptInstall = useCallback(async () => {
+    if (installPrompt) {
+      installPrompt.prompt()
+      await installPrompt.userChoice
+      setInstallPrompt(null)
+    } else {
+      setShowInstallTip(true)
+    }
+  }, [installPrompt])
 
   useEffect(() => {
     if (!authenticated) return
@@ -159,11 +199,21 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       {permission === "default" && (
         <button
-          onClick={requestPermission}
+          onClick={() => void enablePush()}
           className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
         >
           <BellRing className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Enable Notifications</span>
+        </button>
+      )}
+
+      {permission === "granted" && pwaSupported && !pushSubscribed && !installed && (
+        <button
+          onClick={() => void enablePush()}
+          className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
+        >
+          <BellRing className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">Turn on Mobile Alerts</span>
         </button>
       )}
 
@@ -172,6 +222,29 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           <BellOff className="h-3.5 w-3.5" />
           <span className="hidden sm:inline">Notifications blocked</span>
         </div>
+      )}
+
+      {(installPrompt || isIOS) && !installed && (
+        <button
+          onClick={() => void handlePromptInstall()}
+          className="fixed bottom-36 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-20 md:right-20"
+        >
+          <Download className="h-3.5 w-3.5" />
+          <span className="hidden sm:inline">
+            {installPrompt ? "Install app" : "Add to Home Screen"}
+          </span>
+        </button>
+      )}
+
+      {showInstallTip && (
+        <button
+          onClick={() => setShowInstallTip(false)}
+          className="fixed bottom-36 right-4 z-40 max-w-[320px] rounded-[12px] border border-neutral-200 bg-white px-4 py-3 text-left text-xs leading-relaxed text-neutral-900 shadow-2xl dark:border-neutral-800 dark:bg-neutral-950 dark:text-white md:bottom-20 md:right-20"
+        >
+          On your phone open the Share menu, then tap{" "}
+          <span className="font-semibold">Add to Home Screen</span> to install Vault.
+          Installed apps get normal notifications even when closed.
+        </button>
       )}
 
       <CreateTaskModal />

@@ -12,7 +12,6 @@ import { cn } from "@/lib/shadcn-utils"
 const primaryItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/tasks", label: "Tasks", icon: ListTodo },
-  { href: "/routine", label: "Routine", icon: CalendarClock },
   { href: "/finance", label: "Finance", icon: Wallet },
 ]
 

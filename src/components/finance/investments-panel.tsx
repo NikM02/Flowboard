@@ -6,8 +6,8 @@ import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend,
 } from "recharts"
 import {
-  TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3,
-  Plus, Trash2, Pencil, Download,
+  TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3, LayoutDashboard,
+  Plus, Trash2, Pencil, Download, ArrowUpRight, ArrowDownRight, Sparkles, Coins,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
@@ -18,14 +18,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+} from "@/components/ui/dialog"
+import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { useFinanceStore } from "@/store/use-finance-store"
+import type { SIP, Stock, MutualFund } from "@/types"
 
-type InvestmentTab = "overview" | "sips" | "stocks" | "funds" | "archive"
+type InvestmentTab = "dashboard" | "sips" | "stocks" | "funds" | "archive"
 
 const tabs: { key: InvestmentTab; label: string; icon: typeof TrendingUp }[] = [
-  { key: "overview", label: "Overview", icon: TrendingUp },
+  { key: "dashboard", label: "Dashboard", icon: LayoutDashboard },
   { key: "sips", label: "SIPs", icon: PiggyBank },
   { key: "stocks", label: "Stocks", icon: BarChart3 },
   { key: "funds", label: "Mutual Funds", icon: Wallet },
@@ -33,6 +37,8 @@ const tabs: { key: InvestmentTab; label: string; icon: typeof TrendingUp }[] = [
 ]
 
 const COLORS = ["#525252", "#404040", "#737373", "#a3a3a3", "#171717", "#d4d4d4"]
+const SECTORS = ["Technology", "Banking / Financial", "Energy", "Automobile", "Pharma", "Consumer", "Infrastructure", "Metals", "FMCG", "IT Services"]
+const FUND_HOUSES = ["HDFC", "SBI", "ICICI Prudential", "Nippon India", "Kotak", "Axis", "UTI", "Aditya Birla", "Motilal Oswal", "Tata", "Parag Parikh", "Mirae"]
 
 function fmt(n: number) {
   return `₹${n.toLocaleString("en-IN")}`
@@ -42,9 +48,33 @@ function fmtPct(n: number) {
   return `${n >= 0 ? "+" : ""}${n}%`
 }
 
-// ─── Overview ─────────────────────────────────────────────
+function AssetCardHeader({ label, icon: Icon, action }: { label: string; icon: typeof Wallet; action: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
+          <Icon className="h-3.5 w-3.5 text-neutral-600 dark:text-neutral-400" />
+        </div>
+        <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">{label}</h3>
+      </div>
+      {action}
+    </div>
+  )
+}
 
-function OverviewTab() {
+function EmptyState({ icon: Icon, title, onAdd }: { icon: typeof Wallet; title: string; onAdd: () => void }) {
+  return (
+    <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-14 dark:border-neutral-800">
+      <Icon className="mb-3 h-9 w-9 text-neutral-300 dark:text-neutral-600" />
+      <p className="text-sm text-neutral-500 dark:text-neutral-400">{title}</p>
+      <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={onAdd}><Plus className="h-3.5 w-3.5" /> Add first</Button>
+    </div>
+  )
+}
+
+// ─── Dashboard (visual overview) ──────────────────────────
+
+function DashboardTab() {
   const { sips, stocks, mutualFunds } = useFinanceStore()
 
   const sipInvested = sips.reduce((s, i) => s + i.investedAmount, 0)
@@ -58,6 +88,7 @@ function OverviewTab() {
   const totalCurrent = sipCurrent + stockCurrent + mfCurrent
   const totalGain = totalCurrent - totalInvested
   const totalGainPct = totalInvested > 0 ? Math.round((totalGain / totalInvested) * 100) : 0
+  const assetCount = sips.length + stocks.length + mutualFunds.length
 
   const hasData = totalInvested > 0
 
@@ -79,21 +110,24 @@ function OverviewTab() {
     [sipInvested, sipCurrent, stockInvested, stockCurrent, mfInvested, mfCurrent]
   )
 
-  const sectorData = useMemo(() =>
-    [
-      { label: "SIPs", invested: sipInvested, current: sipCurrent, color: COLORS[0], icon: PiggyBank },
-      { label: "Stocks", invested: stockInvested, current: stockCurrent, color: COLORS[1], icon: BarChart3 },
-      { label: "Mutual Funds", invested: mfInvested, current: mfCurrent, color: COLORS[2], icon: Wallet },
-    ].filter((s) => s.invested > 0),
-    [sipInvested, sipCurrent, stockInvested, stockCurrent, mfInvested, mfCurrent]
-  )
+  const holdings = useMemo(() => {
+    const list: { name: string; type: string; invested: number; current: number; pct: number }[] = [
+      ...sips.map((s) => ({ name: s.name, type: "SIP", invested: s.investedAmount, current: s.currentValue, pct: s.investedAmount > 0 ? Math.round(((s.currentValue - s.investedAmount) / s.investedAmount) * 100) : 0 })),
+      ...stocks.map((s) => { const invested = s.buyPrice * s.quantity; const current = s.currentPrice * s.quantity; return { name: s.ticker ? s.ticker.toUpperCase() : s.name, type: "Stock", invested, current, pct: invested > 0 ? Math.round(((current - invested) / invested) * 100) : 0 } }),
+      ...mutualFunds.map((m) => ({ name: m.name, type: "Fund", invested: m.investedAmount, current: m.currentValue, pct: m.investedAmount > 0 ? Math.round(((m.currentValue - m.investedAmount) / m.investedAmount) * 100) : 0 })),
+    ]
+    return list.sort((a, b) => b.pct - a.pct)
+  }, [sips, stocks, mutualFunds])
+
+  const leaders = holdings.slice(0, 3)
+  const laggards = [...holdings].reverse().slice(0, 3)
 
   if (!hasData) {
     return (
-      <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800">
+      <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-20 text-center dark:border-neutral-800">
         <Wallet className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
         <p className="text-base font-medium text-neutral-500 dark:text-neutral-400">No investments yet</p>
-        <p className="mt-1.5 text-sm text-neutral-400 dark:text-neutral-500">Add SIPs, stocks, or mutual funds to see your portfolio</p>
+        <p className="mt-1.5 max-w-xs text-sm text-neutral-400 dark:text-neutral-500">Add SIPs, stocks, or mutual funds and your portfolio visuals will appear here.</p>
       </div>
     )
   }
@@ -101,25 +135,27 @@ function OverviewTab() {
   return (
     <div className="space-y-5">
       {/* Hero stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 dark:bg-neutral-800">
               <Wallet className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
             </div>
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Invested</span>
+            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Invested</span>
           </div>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{fmt(totalInvested)}</p>
+          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-2xl">{fmt(totalInvested)}</p>
+          <p className="text-[10px] text-neutral-400">{assetCount} active holding{assetCount === 1 ? "" : "s"}</p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 dark:bg-blue-950/30">
               <TrendingUp className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Current Value</span>
+            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Current Value</span>
           </div>
-          <p className="mt-3 text-2xl font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{fmt(totalCurrent)}</p>
+          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50 sm:text-2xl">{fmt(totalCurrent)}</p>
+          <p className="text-[10px] text-neutral-400">Your money today</p>
         </motion.div>
 
         <motion.div
@@ -127,68 +163,90 @@ function OverviewTab() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className={cn(
-            "rounded-3xl border p-5",
+            "rounded-2xl border p-4",
             totalGain >= 0
               ? "border-green-200/60 bg-gradient-to-br from-green-50 to-emerald-50/30 dark:border-green-900/30 dark:from-green-950/20 dark:to-emerald-950/10"
               : "border-red-200/60 bg-gradient-to-br from-red-50 to-rose-50/30 dark:border-red-900/30 dark:from-red-950/20 dark:to-rose-950/10"
           )}
         >
-          <div className="flex items-center gap-2.5">
-            <div className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800")}>
+          <div className="flex items-center gap-2">
+            <div className={cn("flex h-8 w-8 items-center justify-center rounded-lg", totalGain >= 0 ? "bg-green-100 dark:bg-green-950/40" : "bg-red-100 dark:bg-red-950/40")}>
               {totalGain >= 0 ? <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" /> : <TrendingDown className="h-4 w-4 text-red-600 dark:text-red-400" />}
             </div>
-            <span className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Total Gain/Loss</span>
+            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Total P&L</span>
           </div>
-          <p className={cn("mt-3 text-2xl font-bold tracking-tight", totalGain >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400")}>
+          <p className={cn("mt-2.5 text-lg font-bold tracking-tight sm:text-2xl", totalGain >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500 dark:text-red-400")}>
             {totalGain >= 0 ? "+" : ""}{fmt(totalGain)}
           </p>
-          <p className={cn("mt-0.5 text-sm font-medium", totalGain >= 0 ? "text-green-600/70" : "text-red-500/70")}>
-            {fmtPct(totalGainPct)}
-          </p>
+          <p className={cn("text-[10px] font-semibold", totalGain >= 0 ? "text-green-600/70" : "text-red-500/70")}>{fmtPct(totalGainPct)} overall</p>
+        </motion.div>
+
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <div className="flex items-center gap-2">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-950/30">
+              <Sparkles className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+            </div>
+            <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">Return %</span>
+          </div>
+          <p className={cn("mt-2.5 text-lg font-bold tracking-tight sm:text-2xl", totalGainPct >= 0 ? "text-neutral-900 dark:text-neutral-50" : "text-red-500")}>{fmtPct(totalGainPct)}</p>
+          <p className="text-[10px] text-neutral-400">Across portfolio</p>
         </motion.div>
       </div>
 
+      {/* Allocation stack bar */}
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <h3 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Allocation by class</h3>
+        <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+          {allocationData.map((d, i) => (
+            <motion.div
+              key={d.name}
+              initial={{ width: 0 }}
+              animate={{ width: `${(d.value / totalInvested) * 100}%` }}
+              transition={{ delay: 0.3 + i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+              style={{ backgroundColor: d.color }}
+              className="h-full first:rounded-l-full last:rounded-r-full"
+            />
+          ))}
+        </div>
+        <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1">
+          {allocationData.map((d) => (
+            <span key={d.name} className="flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+              <span className="h-2 w-2 rounded-full" style={{ backgroundColor: d.color }} />
+              {d.name} · {Math.round((d.value / totalInvested) * 100)}%
+            </span>
+          ))}
+        </div>
+      </motion.div>
+
       {/* Charts */}
-      <div className="grid gap-5 lg:grid-cols-2">
-        {/* Allocation donut */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="card-modern glass rounded-3xl p-5">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Allocation</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Where your money is</p>
-          <div className="mt-4 h-[260px]">
+          <div className="mt-3 h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <ChartGlow id="inv-pie-glow" />
                 <Pie
                   data={allocationData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={65}
-                  outerRadius={95}
-                  paddingAngle={5}
-                  cornerRadius={8}
-                  dataKey="value"
-                  stroke="none"
+                  cx="50%" cy="50%" innerRadius={62} outerRadius={90}
+                  paddingAngle={5} cornerRadius={8} dataKey="value" stroke="none"
                 >
                   {allocationData.map((d, i) => (
                     <Cell key={i} fill={d.color} style={{ filter: "url(#inv-pie-glow)" }} />
                   ))}
                 </Pie>
                 <Tooltip content={<ChartTooltip formatter={(v) => fmt(Number(v))} />} />
-                <Legend
-                  iconType="circle"
-                  iconSize={8}
-                  formatter={(value: string) => <span className="text-xs text-neutral-600 dark:text-neutral-400">{value}</span>}
-                />
+                <Legend iconType="circle" iconSize={8} formatter={(value: string) => <span className="text-xs text-neutral-600 dark:text-neutral-400">{value}</span>} />
               </PieChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
 
-        {/* Invested vs Current bar */}
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.17 }} className="card-modern glass rounded-3xl p-5">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Invested vs Current</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Portfolio comparison</p>
-          <div className="mt-4 h-[260px]">
+          <div className="mt-3 h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
                 <ChartGradients ids={["inv-invested", "inv-current"]} />
@@ -196,48 +254,104 @@ function OverviewTab() {
                 <YAxis {...CHART_AXIS_STYLES} />
                 <Tooltip content={<ChartTooltip formatter={(v) => fmt(Number(v))} />} cursor={CHART_CURSOR_STYLES} />
                 <Legend iconType="circle" iconSize={8} formatter={(value: string) => <span className="text-xs text-neutral-600 dark:text-neutral-400">{value}</span>} />
-                <Bar dataKey="invested" fill="url(#inv-invested)" radius={[8, 8, 2, 2]} barSize={20} name="Invested" />
-                <Bar dataKey="current" fill="url(#inv-current)" radius={[8, 8, 2, 2]} barSize={20} name="Current" />
+                <Bar dataKey="invested" fill="url(#inv-invested)" radius={[8, 8, 2, 2]} barSize={18} name="Invested" />
+                <Bar dataKey="current" fill="url(#inv-current)" radius={[8, 8, 2, 2]} barSize={18} name="Current" />
               </BarChart>
             </ResponsiveContainer>
           </div>
         </motion.div>
       </div>
 
-      {/* Sector breakdown cards */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        {sectorData.map((sec, i) => {
+      {/* Leaders & laggards */}
+      {holdings.length > 0 && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+            <div className="flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-green-600 dark:text-green-400" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Top Performers</h3>
+            </div>
+            <div className="mt-3 space-y-2">
+              {leaders.map((h) => (
+                <div key={h.name + h.type} className="flex items-center gap-3 rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/60">
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
+                    {h.pct >= 0 ? "▲" : "▼"}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{h.name}</p>
+                    <p className="text-[10px] text-neutral-400">{h.type} · {fmt(h.invested)}</p>
+                  </div>
+                  <span className={cn("flex items-center gap-0.5 text-sm font-bold", h.pct >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500")}>
+                    {h.pct >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                    {fmtPct(h.pct)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+            <div className="flex items-center gap-2">
+              <TrendingDown className="h-4 w-4 text-red-500 dark:text-red-400" />
+              <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Needs Attention</h3>
+            </div>
+            <div className="mt-3 space-y-2">
+              {laggards.map((h) => (
+                <div key={h.name + h.type + h.pct} className="flex items-center gap-3 rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/60">
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
+                    {h.pct >= 0 ? "▲" : "▼"}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{h.name}</p>
+                    <p className="text-[10px] text-neutral-400">{h.type} · {fmt(h.invested)}</p>
+                  </div>
+                  <span className={cn("flex items-center gap-0.5 text-sm font-bold", h.pct >= 0 ? "text-green-600 dark:text-green-400" : "text-red-500")}>
+                    {h.pct >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                    {fmtPct(h.pct)}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      )}
+
+      {/* Per-class breakdown */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        {[
+          { label: "SIPs", invested: sipInvested, current: sipCurrent, color: COLORS[0], icon: PiggyBank },
+          { label: "Stocks", invested: stockInvested, current: stockCurrent, color: COLORS[1], icon: BarChart3 },
+          { label: "Mutual Funds", invested: mfInvested, current: mfCurrent, color: COLORS[2], icon: Wallet },
+        ].filter((s) => s.invested > 0).map((sec, i) => {
           const gain = sec.current - sec.invested
           const pct = sec.invested > 0 ? Math.round((gain / sec.invested) * 100) : 0
           const Icon = sec.icon
+          const max = Math.max(sec.invested, sec.current) || 1
           return (
             <motion.div
               key={sec.label}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.05 }}
-              className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900"
+              transition={{ delay: 0.4 + i * 0.05 }}
+              className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
             >
-              <div className="flex items-center gap-2.5">
-                <div className="flex h-9 w-9 items-center justify-center rounded-[10px]" style={{ backgroundColor: `${sec.color}15` }}>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ backgroundColor: `${sec.color}15` }}>
                   <Icon className="h-4 w-4" style={{ color: sec.color }} />
                 </div>
                 <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{sec.label}</span>
+                <span className={cn("ml-auto text-xs font-bold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</span>
               </div>
-              <div className="mt-4 space-y-2 text-sm">
-                <div className="flex justify-between">
+              <div className="mt-3 space-y-1.5 text-sm">
+                <div className="flex justify-between text-xs">
                   <span className="text-neutral-500 dark:text-neutral-400">Invested</span>
                   <span className="font-medium text-neutral-900 dark:text-neutral-50">{fmt(sec.invested)}</span>
                 </div>
-                <div className="flex justify-between">
+                <div className="flex justify-between text-xs">
                   <span className="text-neutral-500 dark:text-neutral-400">Current</span>
                   <span className="font-medium text-neutral-900 dark:text-neutral-50">{fmt(sec.current)}</span>
                 </div>
-                <div className="border-t border-neutral-100 dark:border-neutral-800 pt-2 flex justify-between">
-                  <span className="text-neutral-500 dark:text-neutral-400">Gain/Loss</span>
-                  <span className={cn("font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>
-                    {gain >= 0 ? "+" : ""}{fmt(gain)} ({fmtPct(pct)})
-                  </span>
+                <div className="mt-2 flex h-1.5 w-full gap-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                  <motion.div initial={{ width: 0 }} animate={{ width: `${(sec.invested / max) * 100}%` }} transition={{ delay: 0.55 + i * 0.05, duration: 0.5 }} className="h-full rounded-full" style={{ backgroundColor: sec.color }} />
                 </div>
               </div>
             </motion.div>
@@ -257,14 +371,12 @@ function SipsTab() {
   const [form, setForm] = useState({ name: "", amount: 0, startDate: "", endDate: "" as string | null, frequency: "monthly" as "monthly" | "quarterly", expectedReturn: 0, investedAmount: 0, currentValue: 0 })
 
   const reset = () => setForm({ name: "", amount: 0, startDate: "", endDate: "", frequency: "monthly", expectedReturn: 0, investedAmount: 0, currentValue: 0 })
-
   const openCreate = () => { reset(); setEditId(null); setDialogOpen(true) }
   const openEdit = (s: typeof sips[0]) => {
     setEditId(s.id)
     setForm({ name: s.name, amount: s.amount, startDate: s.startDate, endDate: s.endDate, frequency: s.frequency, expectedReturn: s.expectedReturn, investedAmount: s.investedAmount, currentValue: s.currentValue })
     setDialogOpen(true)
   }
-
   const handleSave = () => {
     if (!form.name || !form.amount) return
     if (editId) updateSIP(editId, { ...form, endDate: form.endDate || null })
@@ -274,38 +386,38 @@ function SipsTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">SIPs ({sips.length})</h3>
-        <Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add SIP</Button>
-      </div>
+      <AssetCardHeader
+        label={`SIPs (${sips.length})`}
+        icon={PiggyBank}
+        action={<Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add SIP</Button>}
+      />
 
       {sips.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-14 dark:border-neutral-800">
-          <PiggyBank className="mb-3 h-9 w-9 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">No SIPs yet</p>
-          <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add first SIP</Button>
-        </div>
+        <EmptyState icon={PiggyBank} title="No SIPs yet" onAdd={openCreate} />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {sips.map((s, i) => {
             const gain = s.currentValue - s.investedAmount
             const pct = s.investedAmount > 0 ? Math.round((gain / s.investedAmount) * 100) : 0
+            const monthsElapsed = s.startDate ? Math.max(0, Math.floor((Date.now() - new Date(s.startDate).getTime()) / 2592000000)) : 0
+            const expected = s.investedAmount * Math.pow(1 + (s.expectedReturn || 0) / 100 / 12, monthsElapsed)
             return (
               <motion.div
                 key={s.id}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-none"
               >
+                <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{s.name}</h4>
-                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{fmt(s.amount)}/{s.frequency} &middot; Since {s.startDate}</p>
+                    <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{s.name}</h4>
+                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{fmt(s.amount)}/{s.frequency} · Since {s.startDate || "—"}</p>
                   </div>
-                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button onClick={() => openEdit(s)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteSIP(s.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"><Trash2 className="h-3.5 w-3.5" /></button>
+                  <div className="flex gap-1">
+                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteSIP(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -322,42 +434,94 @@ function SipsTab() {
                     <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
+                {s.expectedReturn > 0 && monthsElapsed > 0 && (
+                  <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">
+                    Projected at {s.expectedReturn}% p.a. · {fmt(expected)}
+                  </p>
+                )}
               </motion.div>
             )
           })}
         </div>
       )}
 
-      {/* Dialog */}
-      <AnimatePresence>
-        {dialogOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onClick={() => setDialogOpen(false)}>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{editId ? "Edit" : "Add"} SIP</h3>
-              <div className="mt-5 space-y-3">
-                <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Name</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. HDFC Mid-Cap" autoFocus /></div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Amount (₹)</Label><Input className="mt-1.5" type="number" value={form.amount || ""} onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Frequency</Label><Select value={form.frequency} onValueChange={(v) => setForm({ ...form, frequency: v as "monthly" | "quarterly" })}><SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger><SelectContent><SelectItem value="monthly">Monthly</SelectItem><SelectItem value="quarterly">Quarterly</SelectItem></SelectContent></Select></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Start</Label><Input className="mt-1.5" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">End (opt.)</Label><Input className="mt-1.5" type="date" value={form.endDate || ""} onChange={(e) => setForm({ ...form, endDate: e.target.value })} /></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Invested (₹)</Label><Input className="mt-1.5" type="number" value={form.investedAmount || ""} onChange={(e) => setForm({ ...form, investedAmount: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Current (₹)</Label><Input className="mt-1.5" type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: Number(e.target.value) })} /></div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button size="sm" disabled={!form.name || !form.amount} onClick={handleSave}>{editId ? "Save" : "Add SIP"}</Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <SipForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
+  )
+}
+
+function SipForm({ open, editId, form, setForm, onClose, onSave }: {
+  open: boolean; editId: string | null
+  form: { name: string; amount: number; startDate: string; endDate: string | null; frequency: "monthly" | "quarterly"; expectedReturn: number; investedAmount: number; currentValue: number }
+  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+}) {
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-violet-50 dark:bg-violet-950/30">
+              <PiggyBank className="h-4 w-4 text-violet-600 dark:text-violet-400" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg">{editId ? "Edit SIP" : "New SIP"}</DialogTitle>
+              <DialogDescription>Your recurring investment plan</DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+        <div className="space-y-4 pt-2">
+          <div className="space-y-1.5">
+            <Label htmlFor="sip-name">Fund / Plan name *</Label>
+            <Input id="sip-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. HDFC Mid-Cap Opportunities" autoFocus />
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-amount">Amount (₹) *</Label>
+              <Input id="sip-amount" type="number" value={form.amount || ""} onChange={(e) => setForm({ ...form, amount: Number(e.target.value) })} placeholder="5000" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-freq">Frequency</Label>
+              <Select value={form.frequency} onValueChange={(v) => setForm({ ...form, frequency: v as "monthly" | "quarterly" })}>
+                <SelectTrigger id="sip-freq"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="monthly">Monthly</SelectItem>
+                  <SelectItem value="quarterly">Quarterly</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-start">Start date</Label>
+              <Input id="sip-start" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-end">End date (optional)</Label>
+              <Input id="sip-end" type="date" value={form.endDate || ""} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+            </div>
+          </div>
+          <div className="relative grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-invested">Invested so far (₹)</Label>
+              <Input id="sip-invested" type="number" value={form.investedAmount || ""} onChange={(e) => setForm({ ...form, investedAmount: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="sip-current">Current value (₹)</Label>
+              <Input id="sip-current" type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: Number(e.target.value) })} />
+            </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="sip-return">Expected return (% p.a.)</Label>
+            <Input id="sip-return" type="number" value={form.expectedReturn || ""} onChange={(e) => setForm({ ...form, expectedReturn: Number(e.target.value) })} placeholder="12" />
+            <p className="text-[11px] text-neutral-400">Used for the projection shown on your card</p>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+            <Button size="sm" disabled={!form.name || !form.amount} onClick={onSave}>{editId ? "Save Changes" : "Add SIP"}</Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -376,7 +540,6 @@ function StocksTab() {
     setForm({ name: s.name, ticker: s.ticker, buyPrice: s.buyPrice, quantity: s.quantity, currentPrice: s.currentPrice, sector: s.sector })
     setDialogOpen(true)
   }
-
   const handleSave = () => {
     if (!form.name || !form.ticker || !form.buyPrice || !form.quantity) return
     if (editId) updateStock(editId, form)
@@ -386,17 +549,14 @@ function StocksTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">Stocks ({stocks.length})</h3>
-        <Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add Stock</Button>
-      </div>
+      <AssetCardHeader
+        label={`Stocks (${stocks.length})`}
+        icon={BarChart3}
+        action={<Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add Stock</Button>}
+      />
 
       {stocks.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-14 dark:border-neutral-800">
-          <BarChart3 className="mb-3 h-9 w-9 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">No stocks yet</p>
-          <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add first stock</Button>
-        </div>
+        <EmptyState icon={BarChart3} title="No stocks yet" onAdd={openCreate} />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {stocks.map((s, i) => {
@@ -410,19 +570,22 @@ function StocksTab() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-none"
               >
+                <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{s.name}</h4>
-                      <span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-semibold text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400">{s.ticker.toUpperCase()}</span>
+                  <div className="flex min-w-0 items-center gap-2">
+                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
+                      {s.ticker ? s.ticker.slice(0, 4).toUpperCase() : "—"}
                     </div>
-                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{s.sector || "N/A"} &middot; {s.quantity} shares</p>
+                    <div className="min-w-0">
+                      <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{s.name}</h4>
+                      <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{s.ticker.toUpperCase()} · {s.quantity} shares</p>
+                    </div>
                   </div>
-                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button onClick={() => openEdit(s)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteStock(s.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"><Trash2 className="h-3.5 w-3.5" /></button>
+                  <div className="flex gap-1">
+                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteStock(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -439,40 +602,84 @@ function StocksTab() {
                     <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
+                {s.sector && <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>}
               </motion.div>
             )
           })}
         </div>
       )}
 
-      <AnimatePresence>
-        {dialogOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onClick={() => setDialogOpen(false)}>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{editId ? "Edit" : "Add"} Stock</h3>
-              <div className="mt-5 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Name</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Reliance" autoFocus /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Ticker</Label><Input className="mt-1.5" value={form.ticker} onChange={(e) => setForm({ ...form, ticker: e.target.value })} placeholder="RELIANCE" /></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Buy Price (₹)</Label><Input className="mt-1.5" type="number" value={form.buyPrice || ""} onChange={(e) => setForm({ ...form, buyPrice: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Quantity</Label><Input className="mt-1.5" type="number" value={form.quantity || ""} onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })} /></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Current Price (₹)</Label><Input className="mt-1.5" type="number" value={form.currentPrice || ""} onChange={(e) => setForm({ ...form, currentPrice: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Sector</Label><Input className="mt-1.5" value={form.sector} onChange={(e) => setForm({ ...form, sector: e.target.value })} placeholder="Technology" /></div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button size="sm" disabled={!form.name || !form.ticker || !form.buyPrice || !form.quantity} onClick={handleSave}>{editId ? "Save" : "Add Stock"}</Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <StockForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
+  )
+}
+
+function StockForm({ open, editId, form, setForm, onClose, onSave }: {
+  open: boolean; editId: string | null
+  form: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string }
+  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+}) {
+  const invested = form.buyPrice * form.quantity
+  const gainPct = invested > 0 ? Math.round(((form.currentPrice * form.quantity - invested) / invested) * 100) : 0
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 dark:bg-blue-950/30">
+              <BarChart3 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg">{editId ? "Edit Stock" : "New Stock"}</DialogTitle>
+              <DialogDescription>Track an equity position</DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+        <div className="space-y-4 pt-2">
+          {!editId && form.buyPrice > 0 && form.quantity > 0 && (
+            <div className={cn("rounded-xl px-4 py-2.5 text-xs font-semibold", gainPct >= 0 ? "bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-400" : "bg-red-50 text-red-600 dark:bg-red-950/30 dark:text-red-400")}>
+              Current live P&L estimate: {fmtPct(gainPct)} ({fmt(invested)} → {fmt(form.currentPrice * form.quantity)})
+            </div>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="st-name">Company *</Label>
+              <Input id="st-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Reliance Industries" autoFocus />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="st-ticker">Ticker *</Label>
+              <Input id="st-ticker" value={form.ticker} onChange={(e) => setForm({ ...form, ticker: e.target.value.toUpperCase() })} placeholder="RELIANCE" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="st-buy">Buy price (₹) *</Label>
+              <Input id="st-buy" type="number" value={form.buyPrice || ""} onChange={(e) => setForm({ ...form, buyPrice: Number(e.target.value) })} placeholder="1240.50" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="st-qty">Quantity *</Label>
+              <Input id="st-qty" type="number" value={form.quantity || ""} onChange={(e) => setForm({ ...form, quantity: Number(e.target.value) })} placeholder="10" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="st-cur">Current price (₹)</Label>
+              <Input id="st-cur" type="number" value={form.currentPrice || ""} onChange={(e) => setForm({ ...form, currentPrice: Number(e.target.value) })} placeholder="1280.00" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="st-sector">Sector</Label>
+              <Input id="st-sector" list="sector-suggestions" value={form.sector} onChange={(e) => setForm({ ...form, sector: e.target.value })} placeholder="Technology" />
+              <datalist id="sector-suggestions">{SECTORS.map((s) => <option key={s} value={s} />)}</datalist>
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+            <Button size="sm" disabled={!form.name || !form.ticker || !form.buyPrice || !form.quantity} onClick={onSave}>{editId ? "Save Changes" : "Add Stock"}</Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -491,7 +698,6 @@ function FundsTab() {
     setForm({ name: m.name, fundHouse: m.fundHouse, nav: m.nav, units: m.units, investedAmount: m.investedAmount, currentValue: m.currentValue })
     setDialogOpen(true)
   }
-
   const handleSave = () => {
     if (!form.name || !form.nav || !form.units) return
     if (editId) updateMutualFund(editId, form)
@@ -501,17 +707,14 @@ function FundsTab() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">Mutual Funds ({mutualFunds.length})</h3>
-        <Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add Fund</Button>
-      </div>
+      <AssetCardHeader
+        label={`Mutual Funds (${mutualFunds.length})`}
+        icon={Wallet}
+        action={<Button size="sm" className="gap-1.5 rounded-xl" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add Fund</Button>}
+      />
 
       {mutualFunds.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-14 dark:border-neutral-800">
-          <Wallet className="mb-3 h-9 w-9 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-sm text-neutral-500 dark:text-neutral-400">No mutual funds yet</p>
-          <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={openCreate}><Plus className="h-3.5 w-3.5" /> Add first fund</Button>
-        </div>
+        <EmptyState icon={Wallet} title="No mutual funds yet" onAdd={openCreate} />
       ) : (
         <div className="grid gap-3 sm:grid-cols-2">
           {mutualFunds.map((mf, i) => {
@@ -523,16 +726,17 @@ function FundsTab() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-none"
               >
+                <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{mf.name}</h4>
-                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{mf.fundHouse} &middot; {mf.units} units @ ₹{mf.nav}</p>
+                    <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{mf.name}</h4>
+                    <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{mf.fundHouse} · {mf.units} units @ ₹{mf.nav.toLocaleString("en-IN")}</p>
                   </div>
-                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button onClick={() => openEdit(mf)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteMutualFund(mf.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"><Trash2 className="h-3.5 w-3.5" /></button>
+                  <div className="flex gap-1">
+                    <button onClick={() => openEdit(mf)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteMutualFund(mf.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -555,34 +759,82 @@ function FundsTab() {
         </div>
       )}
 
-      <AnimatePresence>
-        {dialogOpen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm" onClick={() => setDialogOpen(false)}>
-            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} onClick={(e) => e.stopPropagation()} className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{editId ? "Edit" : "Add"} Mutual Fund</h3>
-              <div className="mt-5 space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Fund Name</Label><Input className="mt-1.5" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Mid-Cap Fund" autoFocus /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Fund House</Label><Input className="mt-1.5" value={form.fundHouse} onChange={(e) => setForm({ ...form, fundHouse: e.target.value })} placeholder="HDFC" /></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">NAV (₹)</Label><Input className="mt-1.5" type="number" value={form.nav || ""} onChange={(e) => setForm({ ...form, nav: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Units</Label><Input className="mt-1.5" type="number" value={form.units || ""} onChange={(e) => setForm({ ...form, units: Number(e.target.value) })} /></div>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Invested (₹)</Label><Input className="mt-1.5" type="number" value={form.investedAmount || ""} onChange={(e) => setForm({ ...form, investedAmount: Number(e.target.value) })} /></div>
-                  <div><Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Current (₹)</Label><Input className="mt-1.5" type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: Number(e.target.value) })} /></div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>Cancel</Button>
-                <Button size="sm" disabled={!form.name || !form.nav || !form.units} onClick={handleSave}>{editId ? "Save" : "Add Fund"}</Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <FundForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
+  )
+}
+
+function FundForm({ open, editId, form, setForm, onClose, onSave }: {
+  open: boolean; editId: string | null
+  form: { name: string; fundHouse: string; nav: number; units: number; investedAmount: number; currentValue: number }
+  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+}) {
+  const implied = form.nav * form.units
+
+  const applyImplied = () => {
+    if (!editId && implied > 0 && form.investedAmount === 0) {
+      setForm({ ...form, investedAmount: implied, currentValue: implied })
+    }
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-lg">
+        <DialogHeader>
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-50 dark:bg-emerald-950/30">
+              <Coins className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div>
+              <DialogTitle className="text-lg">{editId ? "Edit Fund" : "New Mutual Fund"}</DialogTitle>
+              <DialogDescription>Track a fund holding</DialogDescription>
+            </div>
+          </div>
+        </DialogHeader>
+        <div className="space-y-4 pt-2">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-name">Fund name *</Label>
+              <Input id="mf-name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="Mid-Cap Opportunities" autoFocus />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-house">Fund house</Label>
+              <Input id="mf-house" list="fund-house-suggestions" value={form.fundHouse} onChange={(e) => setForm({ ...form, fundHouse: e.target.value })} placeholder="HDFC" />
+              <datalist id="fund-house-suggestions">{FUND_HOUSES.map((h) => <option key={h} value={h} />)}</datalist>
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-nav">NAV (₹) *</Label>
+              <Input id="mf-nav" type="number" value={form.nav || ""} onChange={(e) => { setForm({ ...form, nav: Number(e.target.value) }); applyImplied() }} placeholder="42.35" />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-units">Units *</Label>
+              <Input id="mf-units" type="number" value={form.units || ""} onChange={(e) => { setForm({ ...form, units: Number(e.target.value) }); applyImplied() }} placeholder="250.5" />
+            </div>
+          </div>
+          {!editId && implied > 0 && (
+            <p className="rounded-xl bg-neutral-50 px-3 py-2 text-[11px] text-neutral-500 dark:bg-neutral-800/60 dark:text-neutral-400">
+              Value at current NAV: <span className="font-semibold">{fmt(implied)}</span> — filled in below automatically.
+            </p>
+          )}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-invested">Invested (₹)</Label>
+              <Input id="mf-invested" type="number" value={form.investedAmount || ""} onChange={(e) => setForm({ ...form, investedAmount: Number(e.target.value) })} />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="mf-current">Current (₹)</Label>
+              <Input id="mf-current" type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: Number(e.target.value) })} />
+            </div>
+          </div>
+          <div className="flex justify-end gap-2 pt-1">
+            <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
+            <Button size="sm" disabled={!form.name || !form.nav || !form.units} onClick={onSave}>{editId ? "Save Changes" : "Add Fund"}</Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -617,15 +869,15 @@ function ArchiveTab() {
           <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No investments to archive</p>
         </div>
       ) : (
-        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900 space-y-4">
+        <div className="space-y-4 rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           {sips.length > 0 && (
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-2">SIPs ({sips.length})</h4>
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">SIPs ({sips.length})</h4>
               <div className="space-y-1.5">
                 {sips.map((s) => (
                   <div key={s.id} className="flex items-center justify-between rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/50">
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-50">{s.name}</span>
-                    <span className="text-xs text-neutral-500">{fmt(s.investedAmount)} &rarr; {fmt(s.currentValue)}</span>
+                    <span className="text-xs text-neutral-500">{fmt(s.investedAmount)} → {fmt(s.currentValue)}</span>
                   </div>
                 ))}
               </div>
@@ -633,12 +885,12 @@ function ArchiveTab() {
           )}
           {stocks.length > 0 && (
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-2">Stocks ({stocks.length})</h4>
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Stocks ({stocks.length})</h4>
               <div className="space-y-1.5">
                 {stocks.map((s) => (
                   <div key={s.id} className="flex items-center justify-between rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/50">
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-50">{s.name} <span className="text-[10px] text-neutral-400">{s.ticker.toUpperCase()}</span></span>
-                    <span className="text-xs text-neutral-500">{fmt(s.buyPrice * s.quantity)} &rarr; {fmt(s.currentPrice * s.quantity)}</span>
+                    <span className="text-xs text-neutral-500">{fmt(s.buyPrice * s.quantity)} → {fmt(s.currentPrice * s.quantity)}</span>
                   </div>
                 ))}
               </div>
@@ -646,12 +898,12 @@ function ArchiveTab() {
           )}
           {mutualFunds.length > 0 && (
             <div>
-              <h4 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-2">Mutual Funds ({mutualFunds.length})</h4>
+              <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Mutual Funds ({mutualFunds.length})</h4>
               <div className="space-y-1.5">
                 {mutualFunds.map((mf) => (
                   <div key={mf.id} className="flex items-center justify-between rounded-xl bg-neutral-50 px-3 py-2 dark:bg-neutral-800/50">
                     <span className="text-sm font-medium text-neutral-900 dark:text-neutral-50">{mf.name}</span>
-                    <span className="text-xs text-neutral-500">{fmt(mf.investedAmount)} &rarr; {fmt(mf.currentValue)}</span>
+                    <span className="text-xs text-neutral-500">{fmt(mf.investedAmount)} → {fmt(mf.currentValue)}</span>
                   </div>
                 ))}
               </div>
@@ -666,7 +918,7 @@ function ArchiveTab() {
 // ─── Main ─────────────────────────────────────────────────
 
 export function InvestmentsPanel() {
-  const [tab, setTab] = useState<InvestmentTab>("overview")
+  const [tab, setTab] = useState<InvestmentTab>("dashboard")
 
   return (
     <div>
@@ -678,7 +930,7 @@ export function InvestmentsPanel() {
               key={t.key}
               onClick={() => setTab(t.key)}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-2.5 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-all whitespace-nowrap shrink-0",
+                "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-all sm:px-3 sm:text-sm",
                 tab === t.key ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50" : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
               )}
             >
@@ -690,7 +942,7 @@ export function InvestmentsPanel() {
 
       <AnimatePresence mode="wait">
         <motion.div key={tab} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} transition={{ duration: 0.2 }}>
-          {tab === "overview" && <OverviewTab />}
+          {tab === "dashboard" && <DashboardTab />}
           {tab === "sips" && <SipsTab />}
           {tab === "stocks" && <StocksTab />}
           {tab === "funds" && <FundsTab />}

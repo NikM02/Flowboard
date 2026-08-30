@@ -43,22 +43,40 @@ function WishDialog({
   open: boolean
   onOpenChange: (o: boolean) => void
   item?: BucketListItem
-  onSave: (data: { title: string; description: string; imageUrl: string; expectedDate: string; timeframe: string }) => void
+  onSave: (data: { title: string; description: string; imageUrl: string; expectedDate: string; timeframe: string; reminder?: string }) => void
 }) {
   const [title, setTitle] = useState(item?.title ?? "")
   const [description, setDescription] = useState(item?.description ?? "")
   const [imageUrl, setImageUrl] = useState(item?.imageUrl ?? "")
   const [expectedDate, setExpectedDate] = useState(item?.expectedDate ?? "")
   const [timeframe, setTimeframe] = useState(item?.timeframe ?? "6 months")
+  const [reminderDate, setReminderDate] = useState(() => {
+    if (!item?.reminder) return ""
+    const d = new Date(item.reminder)
+    if (isNaN(d.getTime())) return ""
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+  })
+  const [reminderTime, setReminderTime] = useState(() => {
+    if (!item?.reminder) return ""
+    const d = new Date(item.reminder)
+    if (isNaN(d.getTime())) return ""
+    return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`
+  })
 
   const handleSave = () => {
     if (!title.trim()) return
+    let reminder: string | undefined
+    if (reminderDate && reminderTime) {
+      const r = new Date(`${reminderDate}T${reminderTime}`)
+      if (r.getTime() > Date.now()) reminder = r.toISOString()
+    }
     onSave({
       title: title.trim(),
       description: description.trim(),
       imageUrl: imageUrl.trim(),
       expectedDate,
       timeframe,
+      reminder,
     })
     onOpenChange(false)
   }
@@ -140,6 +158,25 @@ function WishDialog({
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="wish-reminder-date">Reminder (optional)</Label>
+            <div className="grid grid-cols-2 gap-2">
+              <Input
+                id="wish-reminder-date"
+                type="date"
+                value={reminderDate}
+                onChange={(e) => setReminderDate(e.target.value)}
+              />
+              <Input
+                id="wish-reminder-time"
+                type="time"
+                step={300}
+                value={reminderTime}
+                onChange={(e) => setReminderTime(e.target.value)}
+              />
+            </div>
+            <p className="text-[11px] text-neutral-500">Get a nudge to keep chasing this dream — app + Telegram push.</p>
           </div>
           <Button className="w-full" onClick={handleSave} disabled={!title.trim()}>
             {item ? "Save Changes" : "Add to Bucket List"}

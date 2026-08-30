@@ -4,9 +4,9 @@ import { generateId } from "@/lib/utils"
 
 type AdvanceTodoStore = {
   todos: AdvanceTodo[]
-  addTodo: (title: string) => void
+  addTodo: (title: string, reminder?: string) => void
   toggleTodo: (id: string) => void
-  updateTodo: (id: string, title: string) => void
+  updateTodo: (id: string, data: string | { title?: string; reminder?: string }) => void
   deleteTodo: (id: string) => void
   getTodayTodos: () => AdvanceTodo[]
 }
@@ -19,12 +19,13 @@ function getTodayKey(): string {
 export const useAdvanceTodoStore = create<AdvanceTodoStore>((set, get) => ({
   todos: [],
 
-  addTodo: (title) => {
+  addTodo: (title, reminder) => {
     const todo: AdvanceTodo = {
       id: generateId(),
       title,
       completed: false,
       date: getTodayKey(),
+      reminder,
       createdAt: Date.now(),
     }
     set((s) => ({ todos: [todo, ...s.todos] }))
@@ -38,10 +39,10 @@ export const useAdvanceTodoStore = create<AdvanceTodoStore>((set, get) => ({
     }))
   },
 
-  updateTodo: (id, title) => {
+  updateTodo: (id, data) => {
     set((s) => ({
       todos: s.todos.map((t) =>
-        t.id === id ? { ...t, title } : t
+        t.id === id ? { ...t, ...(typeof data === "string" ? { title: data } : data) } : t
       ),
     }))
   },

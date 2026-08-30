@@ -21,7 +21,7 @@ export function NotificationBell() {
   }, [])
 
   return (
-    <div ref={ref} className="relative hidden sm:block">
+    <div ref={ref} className="relative block">
       <button
         onClick={() => setOpen((v) => !v)}
         className={cn(
@@ -47,7 +47,7 @@ export function NotificationBell() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -8, scale: 0.95 }}
               transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full mt-2 w-80 overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
+              className="absolute right-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900 sm:w-80"
             >
               <div className="flex items-center justify-between border-b border-neutral-200 px-4 py-3 dark:border-neutral-800">
                 <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-100">
@@ -81,11 +81,15 @@ export function NotificationBell() {
                   </div>
                 )}
                 {notifications.map((n) => (
-                  <div
+                  <button
                     key={n.id}
-                    className={`flex items-start gap-3 border-b border-neutral-100 px-4 py-3 transition-colors last:border-0 dark:border-neutral-800 ${
+                    onClick={() => {
+                      if (n.href) window.location.href = n.href
+                      else setOpen(false)
+                    }}
+                    className={`flex w-full items-start gap-3 border-b border-neutral-100 px-4 py-3 text-left transition-colors last:border-0 dark:border-neutral-800 ${
                       n.read ? "opacity-60" : "bg-neutral-50/50 dark:bg-neutral-800/30"
-                    }`}
+                    } ${n.href ? "hover:bg-neutral-100 dark:hover:bg-neutral-800/60" : ""}`}
                   >
                     <div className="mt-0.5">
                       <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
@@ -104,7 +108,7 @@ export function NotificationBell() {
                     {!n.read && (
                       <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />
                     )}
-                  </div>
+                  </button>
                 ))}
               </div>
             </motion.div>

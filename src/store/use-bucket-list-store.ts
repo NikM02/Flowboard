@@ -4,7 +4,7 @@ import type { BucketListItem } from "@/types"
 
 type BucketListStore = {
   items: BucketListItem[]
-  addItem: (data: { title: string; description: string; imageUrl: string; expectedDate: string; timeframe: string }) => void
+  addItem: (data: { title: string; description: string; imageUrl: string; expectedDate: string; timeframe: string; reminder?: string }) => void
   updateItem: (id: string, data: Partial<BucketListItem>) => void
   toggleComplete: (id: string) => void
   deleteItem: (id: string) => void

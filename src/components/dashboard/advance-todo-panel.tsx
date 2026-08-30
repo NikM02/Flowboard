@@ -16,14 +16,21 @@ export function AdvanceTodoPanel() {
   const progressPct = total > 0 ? Math.floor((completedCount / total) / 0.25) * 25 : 0
 
   const [newTitle, setNewTitle] = useState("")
+  const [newReminderTime, setNewReminderTime] = useState("")
   const [editingId, setEditingId] = useState<string | null>(null)
   const [editTitle, setEditTitle] = useState("")
 
   const handleAdd = () => {
     const trimmed = newTitle.trim()
     if (!trimmed) return
-    addTodo(trimmed)
+    let reminder: string | undefined
+    if (newReminderTime) {
+      const r = new Date(`${todayKey}T${newReminderTime}`)
+      reminder = r.getTime() > Date.now() ? r.toISOString() : undefined
+    }
+    addTodo(trimmed, reminder)
     setNewTitle("")
+    setNewReminderTime("")
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -80,6 +87,14 @@ export function AdvanceTodoPanel() {
           onKeyDown={handleKeyDown}
           placeholder="Add an advance todo..."
           className="flex-1 h-9 text-sm"
+        />
+        <Input
+          type="time"
+          step={300}
+          value={newReminderTime}
+          onChange={(e) => setNewReminderTime(e.target.value)}
+          className="w-28 h-9 text-xs"
+          title="Remind me at this time"
         />
         <Button onClick={handleAdd} size="sm" className="gap-1 h-9">
           <Plus className="h-4 w-4" />

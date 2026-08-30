@@ -4,7 +4,7 @@ import { generateId } from "@/lib/utils"
 
 type FutureStore = {
   goals: FutureGoal[]
-  addGoal: (data: { title: string; category: FutureGoal["category"]; targetValue: number; currentValue: number; period: GrowthPeriod; periodKey: string }) => void
+  addGoal: (data: { title: string; category: FutureGoal["category"]; targetValue: number; currentValue: number; period: GrowthPeriod; periodKey: string; reminder?: string }) => void
   updateGoal: (id: string, data: Partial<FutureGoal>) => void
   deleteGoal: (id: string) => void
   toggleGoalComplete: (id: string) => void

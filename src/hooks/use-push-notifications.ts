@@ -111,46 +111,8 @@ export function usePushNotifications() {
     const tasks = useTaskStore.getState().tasks
     const now = Date.now()
 
-    // Check explicit reminder notifications
-    for (const task of tasks) {
-      if (task.completed || !task.reminder) continue
-
-      const tag = `reminder-${task.id}`
-
-      try {
-        const reminderTime = new Date(task.reminder).getTime()
-        if (reminderTime <= now) {
-          // Browser notification
-          if (!isSent(SENT_KEY, tag)) {
-            const sent = sendBrowserNotification(
-              `Reminder: ${task.title}`,
-              task.description || (task.dueDate ? `Due ${task.dueDate}` : "Task reminder"),
-              tag
-            )
-            if (sent) markSent(SENT_KEY, tag)
-          }
-
-          // Telegram notification
-          await sendToTelegram(
-            `\u23f0 Reminder: ${task.title}`,
-            task.description || (task.dueDate ? `\ud83d\udcc5 Due ${task.dueDate}` : "Task reminder"),
-            tag
-          )
-
-          // Email notification
-          await sendToEmail(
-            `\u23f0 Reminder: ${task.title}`,
-            task.description || (task.dueDate ? `Due ${task.dueDate}` : "Task reminder"),
-            tag,
-            "due"
-          )
-
-          setLastFired(`Reminder: ${task.title}`)
-        }
-      } catch {}
-    }
-
-    // Check due-date "due soon" notifications (within 1 hour)
+    // Check due-date "due soon" notifications (within the next hour).
+    // Explicit reminder datetimes are handled by useReminderScheduler.
     for (const task of tasks) {
       if (task.completed || !task.dueDate) continue
 

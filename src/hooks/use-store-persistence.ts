@@ -15,6 +15,7 @@ import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
+import { useNotificationStore } from "@/store/use-notification-store"
 
 const STORAGE_KEY = "flowboard-data-v2"
 const META_KEY = "flowboard-meta-v2"
@@ -41,6 +42,7 @@ type AppData = {
   northStar: { vision: string; mission: string; identity: string; pillars: unknown[] }
   bucketListItems: unknown[]
   advanceTodos: unknown[]
+  notifications: unknown[]
   colorTheme: ColorTheme
 }
 
@@ -74,6 +76,7 @@ function collectData(): AppData {
     },
     bucketListItems: useBucketListStore.getState().items,
     advanceTodos: useAdvanceTodoStore.getState().todos,
+    notifications: useNotificationStore.getState().notifications,
     colorTheme: useThemeStore.getState().colorTheme,
   }
 }
@@ -137,6 +140,11 @@ function applyData(d: AppData) {
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
+  if (d.notifications?.length) {
+    useNotificationStore.setState({ notifications: d.notifications as any })
+    const unreadCount = (d.notifications as any[]).filter((n) => !n.read).length
+    useNotificationStore.setState({ unreadCount })
+  }
 }
 
 // Applies cloud data EXACTLY — including empty collections. Used when
@@ -169,6 +177,10 @@ function applyDataReplace(d: AppData) {
   })
   useBucketListStore.setState({ items: (d.bucketListItems ?? []) as any })
   useAdvanceTodoStore.setState({ todos: (d.advanceTodos ?? []) as any })
+  useNotificationStore.setState({
+    notifications: (d.notifications ?? []) as any,
+    unreadCount: (d.notifications ?? []).filter((n: any) => !n.read).length,
+  })
   if (d.colorTheme) useThemeStore.setState({ colorTheme: d.colorTheme })
 }
 
@@ -323,6 +335,7 @@ export function useSupabasePersistence() {
       useBucketListStore.subscribe(scheduleSave),
       useAdvanceTodoStore.subscribe(scheduleSave),
       useThemeStore.subscribe(scheduleSave),
+      useNotificationStore.subscribe(scheduleSave),
     ]
     return () => unsubs.forEach((u) => u())
   }, [scheduleSave])

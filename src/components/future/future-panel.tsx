@@ -137,6 +137,8 @@ function SimulatorTab() {
   const [goalDialogOpen, setGoalDialogOpen] = useState(false)
   const [editGoalId, setEditGoalId] = useState<string | null>(null)
   const [goalForm, setGoalForm] = useState({ title: "", category: "tasks" as GrowthCategory, targetValue: 0, currentValue: 0 })
+  const [goalReminderDate, setGoalReminderDate] = useState("")
+  const [goalReminderTime, setGoalReminderTime] = useState("")
 
   const goals = useFutureStore((s) => s.goals)
   const { addGoal, updateGoal, deleteGoal, toggleGoalComplete } = useFutureStore()
@@ -170,9 +172,16 @@ function SimulatorTab() {
 
   const handleGoalSubmit = () => {
     if (!goalForm.title.trim() || !goalForm.targetValue) return
-    if (editGoalId) updateGoal(editGoalId, goalForm)
-    else addGoal({ ...goalForm, period, periodKey: getPeriodKey(period, selectedDate) })
+    let reminder: string | undefined
+    if (goalReminderDate && goalReminderTime) {
+      const r = new Date(`${goalReminderDate}T${goalReminderTime}`)
+      if (r.getTime() > Date.now()) reminder = r.toISOString()
+    }
+    if (editGoalId) updateGoal(editGoalId, { ...goalForm, reminder })
+    else addGoal({ ...goalForm, period, periodKey: getPeriodKey(period, selectedDate), reminder })
     setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 })
+    setGoalReminderDate("")
+    setGoalReminderTime("")
     setEditGoalId(null)
     setGoalDialogOpen(false)
   }
@@ -180,6 +189,19 @@ function SimulatorTab() {
   const openGoalEdit = (g: FutureGoal) => {
     setEditGoalId(g.id)
     setGoalForm({ title: g.title, category: g.category, targetValue: g.targetValue, currentValue: g.currentValue })
+    if (g.reminder) {
+      const d = new Date(g.reminder)
+      if (!isNaN(d.getTime())) {
+        setGoalReminderDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`)
+        setGoalReminderTime(`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`)
+      } else {
+        setGoalReminderDate("")
+        setGoalReminderTime("")
+      }
+    } else {
+      setGoalReminderDate("")
+      setGoalReminderTime("")
+    }
     setGoalDialogOpen(true)
   }
 
@@ -487,6 +509,14 @@ function SimulatorTab() {
                 <div>
                   <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Target (%)</Label>
                   <Input className="mt-1.5" type="number" min={0} max={100} value={goalForm.targetValue || ""} onChange={(e) => setGoalForm({ ...goalForm, targetValue: Number(e.target.value) })} />
+                </div>
+                <div>
+                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Reminder (optional)</Label>
+                  <div className="mt-1.5 grid grid-cols-2 gap-2">
+                    <Input type="date" value={goalReminderDate} onChange={(e) => setGoalReminderDate(e.target.value)} />
+                    <Input type="time" step={300} value={goalReminderTime} onChange={(e) => setGoalReminderTime(e.target.value)} />
+                  </div>
+                  <p className="mt-1 text-[11px] text-neutral-500">Get an alert to check in on this goal — app + Telegram push.</p>
                 </div>
               </div>
               <div className="mt-6 flex justify-end gap-2">

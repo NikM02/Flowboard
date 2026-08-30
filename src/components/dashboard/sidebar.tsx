@@ -80,11 +80,6 @@ export function Sidebar({
           <span className={labelClass}>North Star</span>
         </Link>
 
-        <Link href="/routine" className={navLinkClass("/routine")} title="Routine">
-          <CalendarClock className="h-4 w-4 shrink-0" />
-          <span className={labelClass}>Routine</span>
-        </Link>
-
         {navItems.map((item) => (
           <Link key={item.href} href={item.href} className={navLinkClass(item.href)} title={item.label}>
             <item.icon className="h-4 w-4 shrink-0" />

@@ -51,7 +51,7 @@ export function TelegramSettings({ variant = "panel" }: { variant?: "panel" | "i
         await fetch("/api/telegram/connect", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ chatId: chat, botTokenHash: hashHex }),
+          body: JSON.stringify({ chatId: chat, botTokenHash: hashHex, botToken: token }),
         })
       } catch {}
 

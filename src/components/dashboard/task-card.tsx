@@ -4,11 +4,9 @@ import { motion } from "framer-motion"
 import {
   Calendar, Edit3, Trash2, CheckCircle2, Circle,
   ChevronDown, ChevronRight, Plus, Minus, FolderKanban,
-  CalendarClock,
 } from "lucide-react"
 import type { Task } from "@/types"
 import { useTaskStore } from "@/store/use-task-store"
-import { useRoutineStore } from "@/store/use-routine-store"
 import { formatDate } from "@/lib/utils"
 import { useState } from "react"
 import { cn } from "@/lib/shadcn-utils"
@@ -22,7 +20,6 @@ const priorityConfig = {
 
 export function TaskCard({ task, index }: { task: Task; index: number }) {
   const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask, requestComplete } = useTaskStore()
-  const addTaskToRoutine = useRoutineStore((s) => s.addTaskToRoutine)
   const [expanded, setExpanded] = useState(false)
 
   const priority = priorityConfig[task.priority]
@@ -77,16 +74,6 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
           )}
         </div>
         <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-          <button
-            onClick={() => {
-              const date = task.dueDate || format(new Date(), "yyyy-MM-dd")
-              addTaskToRoutine(date, task.id, task.title, 9, 10)
-            }}
-            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
-            title="Add to Routine"
-          >
-            <CalendarClock className="h-3.5 w-3.5" />
-          </button>
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
             className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"

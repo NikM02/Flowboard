@@ -18,6 +18,8 @@ export interface UserData {
   bucketListItems?: { id: string; title: string; description?: string; expectedDate: string; timeframe?: string; completed: boolean }[]
   advanceTodos?: { id: string; title: string; completed: boolean; date: string; createdAt?: number }[]
   sleepEntries?: { id: string; date: string; bedtime: string; wakeTime: string; hours: number; quality: number; notes?: string }[]
+  telegramToken?: string
+  reminderLog?: string[]
 }
 
 export async function getUserIdForChatId(chatId: string): Promise<string | null> {

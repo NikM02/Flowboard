@@ -15,6 +15,14 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Vault - My Journey",
   description: "Your personal command center for tasks, projects, habits, and growth",
+  manifest: "/manifest.webmanifest",
+  appleWebApp: {
+    capable: true,
+    title: "Vault",
+    statusBarStyle: "black-translucent",
+  },
+  applicationName: "Vault",
+  themeColor: "#0a0a0a",
   icons: {
     icon: [
       { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },

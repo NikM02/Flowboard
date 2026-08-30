@@ -6,6 +6,7 @@ export type Notification = {
   description: string
   time: number
   read: boolean
+  href?: string
 }
 
 let counter = 0

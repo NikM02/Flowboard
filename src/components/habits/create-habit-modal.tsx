@@ -27,6 +27,7 @@ export function CreateHabitModal() {
   const [frequency, setFrequency] = useState<"daily" | "weekly">("daily")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
+  const [reminderTime, setReminderTime] = useState("")
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -39,6 +40,7 @@ export function CreateHabitModal() {
       frequency,
       startDate: startDate || undefined,
       endDate: endDate || undefined,
+      reminderTime: reminderTime || undefined,
     })
     setName("")
     setDescription("")
@@ -46,6 +48,7 @@ export function CreateHabitModal() {
     setFrequency("daily")
     setStartDate("")
     setEndDate("")
+    setReminderTime("")
     setIsCreateModalOpen(false)
   }
 
@@ -104,6 +107,17 @@ export function CreateHabitModal() {
               <Label htmlFor="habit-end">End Date</Label>
               <Input id="habit-end" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="habit-reminder">Daily Reminder (optional)</Label>
+            <Input
+              id="habit-reminder"
+              type="time"
+              step={300}
+              value={reminderTime}
+              onChange={(e) => setReminderTime(e.target.value)}
+            />
+            <p className="text-[11px] text-neutral-500">Get notified at this time every day to do this habit.</p>
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={() => setIsCreateModalOpen(false)}>Cancel</Button>

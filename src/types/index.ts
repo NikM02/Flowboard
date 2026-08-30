@@ -42,6 +42,7 @@ export type Habit = {
   frequency: "daily" | "weekly"
   startDate?: string
   endDate?: string
+  reminderTime?: string
   records: DailyRecord[]
   createdAt: number
 }
@@ -180,6 +181,7 @@ export type AdvanceTodo = {
   title: string
   completed: boolean
   date: string
+  reminder?: string
   createdAt: number
 }
 
@@ -194,6 +196,7 @@ export type FutureGoal = {
   period: GrowthPeriod
   periodKey: string
   completed: boolean
+  reminder?: string
   createdAt: number
 }
 
@@ -207,6 +210,7 @@ export type BucketListItem = {
   expectedDate: string
   timeframe: string
   completed: boolean
+  reminder?: string
   createdAt: number
 }
 
@@ -220,6 +224,7 @@ export type ContentItem = {
   deadline: string
   status: ContentStatus
   subtasks: { id: string; title: string; completed: boolean }[]
+  reminder?: string
   createdAt: number
   archivedAt?: number
 }

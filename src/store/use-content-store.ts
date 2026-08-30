@@ -4,7 +4,7 @@ import type { ContentItem, ContentStatus } from "@/types"
 
 type ContentStore = {
   items: ContentItem[]
-  addItem: (data: { emoji: string; title: string; description: string; deadline: string; status: ContentStatus }) => void
+  addItem: (data: { emoji: string; title: string; description: string; deadline: string; status: ContentStatus; reminder?: string }) => void
   updateItem: (id: string, data: Partial<ContentItem>) => void
   moveItem: (id: string, status: ContentStatus) => void
   reorderItems: (status: ContentStatus, ids: string[]) => void
