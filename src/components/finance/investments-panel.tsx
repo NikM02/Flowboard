@@ -8,7 +8,7 @@ import {
 import {
   TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3, LayoutDashboard,
   Plus, Trash2, Pencil, Download, ArrowUpRight, ArrowDownRight, Sparkles, Coins,
-  Check, X,
+  Check, X, Clock3,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
@@ -566,14 +566,14 @@ function StocksTab() {
             const gain = current - invested
             const pct = invested > 0 ? Math.round((gain / invested) * 100) : 0
 
-            const start = s.startDate ? new Date(s.startDate + "T00:00:00").getTime() : 0
+            const start = s.startDate ? new Date(s.startDate + "T00:00:00").getTime() : s.createdAt || 0
             const end = s.endDate ? new Date(s.endDate + "T23:59:59").getTime() : 0
             const now = Date.now()
-            const hasTimeline = start > 0 && end > 0 && end > start
+            const hasTimeline = end > 0 && end > start
             const elapsed = hasTimeline ? Math.max(0, Math.min(1, (now - start) / (end - start))) : 0
             const isDue = hasTimeline && now >= end
             const isPaid = s.paid
-            const fmtDate = (d: string) => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—")
+            const fmtDate = (d: string) => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"))
 
             return (
               <motion.div
@@ -650,7 +650,20 @@ function StocksTab() {
                   </div>
                 )}
 
-                {s.sector && !hasTimeline && <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>}
+                {!hasTimeline && (
+                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-dashed border-neutral-200 px-3 py-2 dark:border-neutral-800">
+                    <span className="flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
+                      <Clock3 className="h-3 w-3" />
+                      {s.sector ? `No timeline — ${s.sector}` : "No timeline set"}
+                    </span>
+                    <button
+                      onClick={() => openEdit(s)}
+                      className="text-[10px] font-semibold text-neutral-500 underline-offset-2 hover:underline dark:text-neutral-400"
+                    >
+                      Set closure date
+                    </button>
+                  </div>
+                )}
               </motion.div>
             )
           })}
