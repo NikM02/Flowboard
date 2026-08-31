@@ -287,7 +287,19 @@ export function useSupabasePersistence() {
             const localIsNewer =
               localUsable && localMeta.savedAt > supabaseTs + 5000
 
-            if (localUsable && localIsNewer) {
+            // A device-agnostic erase (Reset) writes clearedAt into the cloud
+            // row. If it's newer than this device's local backup, the local
+            // copy is stale leftover — drop it and start empty so the wipe
+            // propagates instead of being resurrected by a different device.
+            const cloudData = data?.data as AppData & { clearedAt?: number } | undefined
+            const clearedAt = typeof cloudData?.clearedAt === "number" ? cloudData.clearedAt : -1
+            const wipeIsNewer =
+              clearedAt > 0 && (!localMeta?.savedAt || clearedAt > localMeta.savedAt)
+
+            if (data?.data && wipeIsNewer) {
+              clearAllLocalStorage()
+              applyDataReplace(cloudData as AppData)
+            } else if (localUsable && localIsNewer) {
               // Local backup is the newest copy — restore it. The next
               // change will push it back up to Supabase.
               loadFromLocal()
