@@ -481,67 +481,123 @@ function BudgetTab() {
     setBudget(form)
   }
 
+  const rows = useMemo(
+    () =>
+      budgets.map((bgt) => {
+        const spent = expenses
+          .filter((e) => e.category === bgt.category && e.date.startsWith(bgt.month))
+          .reduce((s, e) => s + e.amount, 0)
+        const pct = bgt.limit ? Math.round((spent / bgt.limit) * 100) : 0
+        const remaining = bgt.limit - spent
+        const cat = expenseCategories.find((c) => c.value === bgt.category)
+        return { ...bgt, spent, pct, remaining, label: cat?.label || bgt.category }
+      }),
+    [budgets, expenses]
+  )
+
+  const totalBudget = rows.reduce((s, r) => s + r.limit, 0)
+  const totalSpent = rows.reduce((s, r) => s + r.spent, 0)
+  const totalRemaining = totalBudget - totalSpent
+  const totalPct = totalBudget ? Math.round((totalSpent / totalBudget) * 100) : 0
+
   return (
     <div className="space-y-4">
-      <h3 className="font-semibold text-neutral-900 dark:text-neutral-50">Monthly Budgets</h3>
+      {/* Summary */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <p className="text-[10px] font-medium text-neutral-400">Budgeted</p>
+          <p className="mt-0.5 truncate text-sm font-bold text-neutral-900 dark:text-neutral-50">₹{totalBudget.toLocaleString()}</p>
+        </div>
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <p className="text-[10px] font-medium text-neutral-400">Spent</p>
+          <p className="mt-0.5 truncate text-sm font-bold text-neutral-900 dark:text-neutral-50">₹{totalSpent.toLocaleString()}</p>
+        </div>
+        <div className={cn("rounded-2xl border p-3", totalRemaining >= 0 ? "border-neutral-200/60 bg-white dark:border-neutral-800/60 dark:bg-neutral-900" : "border-red-200/60 bg-red-50/60 dark:border-red-900/30 dark:bg-red-950/20")}>
+          <p className="text-[10px] font-medium text-neutral-400">Remaining</p>
+          <p className={cn("mt-0.5 truncate text-sm font-bold", totalRemaining >= 0 ? "text-neutral-900 dark:text-neutral-50" : "text-red-500")}>
+            {totalRemaining >= 0 ? "" : "-"}₹{Math.abs(totalRemaining).toLocaleString()}
+          </p>
+        </div>
+      </div>
+
+      {/* Overall progress */}
+      <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <div className="flex items-center justify-between text-xs">
+          <span className="font-medium text-neutral-500 dark:text-neutral-400">Overall used</span>
+          <span className={cn("font-bold", totalPct > 100 ? "text-red-500" : totalPct > 80 ? "text-amber-500" : "text-neutral-900 dark:text-neutral-50")}>{totalPct}%</span>
+        </div>
+        <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+          <motion.div
+            className={cn("h-full rounded-full", totalPct > 100 ? "bg-red-500" : totalPct > 80 ? "bg-amber-500" : "bg-emerald-500")}
+            initial={{ width: 0 }}
+            animate={{ width: `${Math.min(totalPct, 100)}%` }}
+            transition={{ duration: 0.4 }}
+          />
+        </div>
+      </div>
+
       {budgets.length === 0 ? (
-        <p className="text-sm text-neutral-400 py-8 text-center">No budgets set</p>
+        <p className="rounded-2xl border border-dashed border-neutral-200 py-8 text-center text-sm text-neutral-400 dark:border-neutral-800">
+          No budgets set yet — add your first below.
+        </p>
       ) : (
-        <div className="space-y-3">
-          {budgets.map((bgt) => {
-            const spent = expenses
-              .filter((e) => e.category === bgt.category && e.date.startsWith(bgt.month))
-              .reduce((s, e) => s + e.amount, 0)
-            const pct = bgt.limit ? Math.round((spent / bgt.limit) * 100) : 0
-            const cat = expenseCategories.find((c) => c.value === bgt.category)
-            return (
-              <div key={bgt.id} className="rounded-[14px] border border-neutral-200/50 bg-white p-4 dark:border-neutral-800/50 dark:bg-neutral-900">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-2">
-                    <span className={cn("rounded-lg px-2 py-1 text-xs font-medium", categoryColors[bgt.category])}>
-                      {cat?.label || bgt.category}
-                    </span>
-                    <span className="text-xs text-neutral-400">{bgt.month}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className={cn("text-sm font-semibold", pct > 100 ? "text-red-500" : "text-neutral-900 dark:text-white")}>
-                      ₹{spent.toLocaleString()} / ₹{bgt.limit.toLocaleString()}
-                    </span>
-                    <button onClick={() => deleteBudget(bgt.id)} className="rounded-lg p-1 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
+        <div className="space-y-2">
+          {rows.map((bgt) => (
+            <div key={bgt.id} className="group rounded-xl border border-neutral-200/50 bg-white p-2.5 dark:border-neutral-800/50 dark:bg-neutral-900">
+              <div className="flex items-center gap-2">
+                <span className={cn("shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold", categoryColors[bgt.category])}>
+                  {bgt.label}
+                </span>
+                <span className="text-[10px] text-neutral-400">{bgt.month}</span>
+                <div className="ml-auto flex items-center gap-1.5">
+                  <span className={cn("text-xs font-bold", bgt.pct > 100 ? "text-red-500" : "text-neutral-900 dark:text-neutral-50")}>
+                    ₹{bgt.spent.toLocaleString()}
+                    <span className="font-normal text-neutral-400"> / ₹{bgt.limit.toLocaleString()}</span>
+                  </span>
+                  <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                <div className="relative h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
-                    className={cn("absolute inset-y-0 left-0 rounded-full", pct > 100 ? "bg-red-500" : pct > 80 ? "bg-amber-500" : "bg-emerald-500")}
+                    className={cn("absolute inset-y-0 left-0 rounded-full", bgt.pct > 100 ? "bg-red-500" : bgt.pct > 80 ? "bg-amber-500" : "bg-emerald-500")}
                     initial={{ width: 0 }}
-                    animate={{ width: `${Math.min(pct, 100)}%` }}
+                    animate={{ width: `${Math.min(bgt.pct, 100)}%` }}
                     transition={{ duration: 0.4 }}
                   />
                 </div>
-                <p className="mt-1.5 text-xs text-neutral-400">{pct}% used</p>
+                <span className={cn("w-14 shrink-0 text-right text-[10px] font-semibold", bgt.pct > 100 ? "text-red-500" : bgt.pct > 80 ? "text-amber-500" : "text-neutral-400")}>
+                  {bgt.pct}%
+                </span>
               </div>
-            )
-          })}
+              <div className="mt-1 flex items-center justify-between text-[10px] text-neutral-400">
+                <span className={bgt.remaining >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-red-500"}>
+                  {bgt.remaining >= 0 ? `${bgt.pct > 100 ? "Over" : "Left"} ₹${Math.abs(bgt.remaining).toLocaleString()}` : `Over by ₹${Math.abs(bgt.remaining).toLocaleString()}`}
+                </span>
+                <span>{bgt.pct > 100 ? "Exceeded" : bgt.pct > 80 ? "Almost there" : "On track"}</span>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      <div className="rounded-[14px] border border-neutral-200/50 bg-white p-4 dark:border-neutral-800/50 dark:bg-neutral-900">
-        <p className="text-xs text-neutral-500 mb-2">Set budget limit</p>
+      <div className="rounded-xl border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
+        <p className="mb-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">Set / Update budget</p>
         <div className="flex flex-wrap gap-2">
           <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory })}>
-            <SelectTrigger className="h-8 flex-1 min-w-[100px] text-xs"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="h-8 flex-1 min-w-[110px] text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
               {expenseCategories.map((c) => (
                 <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
               ))}
             </SelectContent>
           </Select>
-          <Input type="number" placeholder="₹" className="h-8 w-24 text-xs" value={form.limit || ""} onChange={(e) => setForm({ ...form, limit: Number(e.target.value) })} />
-          <Input type="month" className="h-8 flex-1 min-w-[120px] text-xs" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
+          <Input type="number" placeholder="Limit ₹" className="h-8 w-28 text-xs" value={form.limit || ""} onChange={(e) => setForm({ ...form, limit: Number(e.target.value) })} />
+          <Input type="month" className="h-8 flex-1 min-w-[130px] text-xs" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
         </div>
-        <Button size="sm" className="mt-2 w-full h-8 text-xs" onClick={handleSetBudget} disabled={!form.limit || !form.month}>Set Budget</Button>
+        <Button size="sm" className="mt-2.5 h-8 w-full text-xs" onClick={handleSetBudget} disabled={!form.limit || !form.month}>Set Budget</Button>
       </div>
     </div>
   )
