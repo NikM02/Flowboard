@@ -346,4 +346,55 @@ export function useSupabasePersistence() {
 export function clearLocalData() {
   localStorage.removeItem(STORAGE_KEY)
   localStorage.removeItem(META_KEY)
+  LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
+}
+
+// All localStorage keys owned by the app across stores/hooks. A full reset
+// must clear these so stale backups/state can never resurrect or re-upload.
+const ALL_STORAGE_KEYS = [
+  STORAGE_KEY,
+  META_KEY,
+  ...LEGACY_KEYS,
+  "nexus-push-subscription",
+  "nexus-reminder-fired",
+  "nexus-push-sent",
+  "nexus-user-id",
+  "nexus-sidebar-collapsed",
+  "vault-color-theme-v1",
+]
+
+export const RESET_STORAGE_KEYS = ALL_STORAGE_KEYS
+
+// Wipe everything from memory + local storage. Cloud deletion is handled
+// separately by the caller (POST /api/reset) so nothing stale re-uploads.
+export function resetAllStores() {
+  const empty: AppData = {
+    tasks: [],
+    projects: [],
+    sleepEntries: [],
+    habits: [],
+    challenges: [],
+    dopamine: [],
+    skills: [],
+    incomes: [],
+    expenses: [],
+    budgets: [],
+    sips: [],
+    stocks: [],
+    mutualFunds: [],
+    futureGoals: [],
+    contentItems: [],
+    northStar: { vision: "", mission: "", identity: "", pillars: [] },
+    bucketListItems: [],
+    advanceTodos: [],
+    notifications: [],
+    colorTheme: "dark",
+  }
+  applyDataReplace(empty)
+}
+
+export function clearAllLocalStorage() {
+  try {
+    ALL_STORAGE_KEYS.forEach((k) => localStorage.removeItem(k))
+  } catch {}
 }

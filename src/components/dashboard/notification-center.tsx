@@ -5,12 +5,14 @@ import { motion, AnimatePresence } from "framer-motion"
 import { Bell, BellOff, CheckCheck, Trash2, CheckCircle2, BellRing, Zap, Info } from "lucide-react"
 import { useNotificationStore } from "@/store/use-notification-store"
 import { usePwaPush } from "@/hooks/use-pwa-push"
+import { resetAllStores, clearAllLocalStorage } from "@/hooks/use-store-persistence"
 import { cn } from "@/lib/shadcn-utils"
 import { format } from "date-fns"
 
 export function NotificationCenter() {
   const [open, setOpen] = useState(false)
   const [testing, setTesting] = useState(false)
+  const [confirmingReset, setConfirmingReset] = useState(false)
   const [statusMsg, setStatusMsg] = useState<string | null>(null)
   const ref = useRef<HTMLDivElement>(null)
   const { notifications, unreadCount, markAllRead, clear } = useNotificationStore()
@@ -71,6 +73,17 @@ export function NotificationCenter() {
         clearTimeout(t)
         setTesting(false)
       })
+  }, [])
+
+  const runReset = useCallback(async () => {
+    // Clear local first so nothing stale gets re-uploaded mid-delete.
+    clearAllLocalStorage()
+    resetAllStores()
+    setOpen(false)
+    try {
+      await fetch("/api/reset", { method: "POST" })
+    } catch {}
+    window.location.reload()
   }, [])
 
   return (
@@ -245,6 +258,39 @@ export function NotificationCenter() {
                     {!n.read && <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-blue-500" />}
                   </button>
                 ))}
+              </div>
+
+              {/* Danger zone */}
+              <div className="border-t border-neutral-200 p-3 dark:border-neutral-800">
+                {confirmingReset ? (
+                  <div className="rounded-xl bg-red-50 p-3 dark:bg-red-950/40">
+                    <p className="text-xs font-medium text-red-700 dark:text-red-300">
+                      Erase all data on this device and the cloud? This can't be undone.
+                    </p>
+                    <div className="mt-2.5 flex gap-2">
+                      <button
+                        onClick={() => setConfirmingReset(false)}
+                        className="flex-1 rounded-lg border border-neutral-200 px-3 py-2 text-xs font-semibold text-neutral-700 dark:border-neutral-700 dark:text-neutral-200"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={() => void runReset()}
+                        className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-xs font-semibold text-white hover:bg-red-500"
+                      >
+                        Erase everything
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setConfirmingReset(true)}
+                    className="flex w-full items-center justify-center gap-1.5 rounded-xl border border-neutral-200 px-3 py-2.5 text-xs font-semibold text-red-600 transition-colors hover:bg-red-50 dark:border-neutral-700 dark:text-red-400 dark:hover:bg-red-950/40"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    Erase all data &amp; reset sync
+                  </button>
+                )}
               </div>
             </motion.div>
           </>
