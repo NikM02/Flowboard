@@ -5,6 +5,9 @@ import { sendWebPushToUser, extractPushSubscriptions } from "@/lib/push"
 const WINDOW_MS = 3 * 60 * 1000 // fire reminders within ±3 minutes of their time
 
 function isAuthorized(req: NextRequest) {
+  // Vercel's scheduler sets the x-vercel-cron header on cron invocations; it is
+  // stripped from all client requests, so it's a reliable secret-free check.
+  if (req.headers.get("x-vercel-cron")) return true
   const secret = process.env.CRON_SECRET
   if (!secret) return process.env.NODE_ENV !== "production"
   const auth = req.headers.get("authorization") ?? ""
