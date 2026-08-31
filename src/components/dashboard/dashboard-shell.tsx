@@ -15,14 +15,11 @@ import { PwaInstallSheet } from "@/components/dashboard/pwa-install-sheet"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
-import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
 import { usePushNotifications } from "@/hooks/use-push-notifications"
 import { usePwaPush } from "@/hooks/use-pwa-push"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { setStoredUserId } from "@/lib/push-client"
 import { useThemeStore } from "@/store/use-theme-store"
-import { useEmailStore } from "@/store/use-email-store"
-import { useCalendarStore } from "@/store/use-calendar-store"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
@@ -38,11 +35,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return true
   })
   const { colorTheme } = useThemeStore()
-  const { loading: dataLoading, hydrated } = useSupabasePersistence()
+  const { loading: dataLoading } = useSupabasePersistence()
 
   useNotificationGenerator()
   useReminderScheduler()
-  useIntegrationWatcher(hydrated)
   const { permission } = usePushNotifications()
   const { supported: pwaSupported, subscribed: pushSubscribed, enable: enablePush } = usePwaPush()
 
@@ -113,12 +109,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       void enablePush()
     }
   }, [installed, permission, pushSubscribed, enablePush])
-
-  useEffect(() => {
-    if (!authenticated) return
-    useEmailStore.getState().load()
-    useCalendarStore.getState().load()
-  }, [authenticated])
 
   useEffect(() => {
     let cancelled = false

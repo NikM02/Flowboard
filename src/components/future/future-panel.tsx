@@ -516,7 +516,7 @@ function SimulatorTab() {
                     <Input type="date" value={goalReminderDate} onChange={(e) => setGoalReminderDate(e.target.value)} />
                     <Input type="time" step={300} value={goalReminderTime} onChange={(e) => setGoalReminderTime(e.target.value)} />
                   </div>
-                  <p className="mt-1 text-[11px] text-neutral-500">Get an alert to check in on this goal — app + Telegram push.</p>
+                  <p className="mt-1 text-[11px] text-neutral-500">Get an alert to check in on this goal — app push.</p>
                 </div>
               </div>
               <div className="mt-6 flex justify-end gap-2">

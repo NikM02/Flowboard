@@ -194,7 +194,7 @@ export function CreateTaskModal() {
               <p className={cn("text-xs font-semibold", wantReminder ? "text-indigo-700 dark:text-indigo-300" : "text-neutral-800 dark:text-neutral-200")}>
                 Remind me (notification)
               </p>
-              <p className="text-[10px] text-neutral-500">Get an alert at this time — app + Telegram push</p>
+              <p className="text-[10px] text-neutral-500">Get an alert at this time — app push</p>
             </div>
             <span className={cn("relative h-5 w-9 shrink-0 rounded-full transition-colors", wantReminder ? "bg-indigo-600" : "bg-neutral-300 dark:bg-neutral-700")}>
               <span className={cn("absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all", wantReminder ? "left-[18px]" : "left-0.5")} />

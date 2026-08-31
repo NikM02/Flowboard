@@ -545,7 +545,7 @@ function ContentDialog({
                 onChange={(e) => setReminderTime(e.target.value)}
               />
             </div>
-            <p className="text-[11px] text-neutral-500">Get an alert before this piece needs attention — app + Telegram push.</p>
+            <p className="text-[11px] text-neutral-500">Get an alert before this piece needs attention — app push.</p>
           </div>
 
           <Button className="w-full gap-2" onClick={handleSave} disabled={!title.trim()}>

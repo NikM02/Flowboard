@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createServiceClient } from "@/lib/supabase/service"
-import { sendTelegramMessage } from "@/lib/telegram"
 import { sendWebPushToUser, extractPushSubscriptions } from "@/lib/push"
 
 const WINDOW_MS = 3 * 60 * 1000 // fire reminders within ±3 minutes of their time
@@ -38,33 +37,22 @@ async function handle() {
   const errors: string[] = []
 
   try {
-    const { data: connections, error: connErr } = await supabase
-      .from("telegram_connections")
-      .select("chat_id, user_id")
+    const { data: rows, error: rowsErr } = await supabase
+      .from("user_data")
+      .select("user_id, data")
 
-    if (connErr || !connections) {
-      return NextResponse.json({ ok: true, note: "no connections" })
+    if (rowsErr || !rows) {
+      return NextResponse.json({ ok: true, note: "no users" })
     }
 
-    for (const conn of connections) {
-      const { data: row } = await supabase
-        .from("user_data")
-        .select("data")
-        .eq("user_id", conn.user_id)
-        .single()
-
-      const data = (row?.data ?? {}) as Record<string, any>
-      const token = data.telegramToken as string | undefined
-      if (!token) continue
-      const chatId = conn.chat_id as string
+    for (const row of rows) {
+      const data = (row.data ?? {}) as Record<string, any>
       const log = new Set((data.reminderLog as string[] | undefined) ?? [])
-      const fire: string[] = []
-      const messages: { title: string; description?: string; link?: string }[] = []
+      const fire: { key: string; title: string; description?: string; link?: string }[] = []
 
       const tryAdd = (key: string, title: string, description?: string, link?: string) => {
         if (log.has(key)) return
-        fire.push(key)
-        messages.push({ title, description, link })
+        fire.push({ key, title, description, link })
       }
 
       // Tasks with an explicit reminder time
@@ -114,8 +102,7 @@ async function handle() {
         if (!h.reminderTime || h.reminderTime !== nowHH) continue
         const key = `habit|${h.id}|${today}`
         if (log.has(key)) continue
-        fire.push(key)
-        messages.push({ title: `\u2764\ufe0f Time for: ${String(h.name)}`, description: "Daily habit reminder" })
+        fire.push({ key, title: `\u2764\ufe0f Time for: ${String(h.name)}`, description: "Daily habit reminder" })
       }
 
       const hrefFor = (key: string): string | undefined => {
@@ -133,31 +120,23 @@ async function handle() {
 
       const pushLoader = async () => extractPushSubscriptions(data)
 
-      for (let i = 0; i < fire.length; i++) {
-        const key = fire[i]
-        const m = messages[i]
+      for (const item of fire) {
+        const key = item.key
         if (log.has(key)) continue
 
-        let msg = m.title
-        if (m.description) msg += `\n${m.description}`
-        if (m.link) msg += `\n${m.link}`
-
-        const tgOk = await sendTelegramMessage(token, chatId, msg)
         const pushOk =
-          (await sendWebPushToUser(conn.user_id, {
-            title: m.title.replace(/^\S+\s/, ""),
-            body: m.description,
+          (await sendWebPushToUser(row.user_id, {
+            title: item.title.replace(/^\S+\s/, ""),
+            body: item.description,
             href: hrefFor(key),
             tag: `cron-${key}`,
             rmd: true,
             kind: key.split("|")[0],
             id: key.split("|")[1],
-            uid: conn.user_id,
+            uid: row.user_id,
           }, pushLoader)) > 0
 
-        // Log the reminder as fired when at least one channel delivered it,
-        // so it doesn't re-fire (and duplicate) on the next tick.
-        if (tgOk || pushOk) {
+        if (pushOk) {
           log.add(key)
           sent.push(key)
         } else {
@@ -166,10 +145,10 @@ async function handle() {
       }
 
       // Persist the log so reminders don't double-fire on the next tick.
-      if (sent.length > 0) {
+      if (fire.length > 0) {
         await supabase.from("user_data").upsert(
           {
-            user_id: conn.user_id,
+            user_id: row.user_id,
             data: { ...data, reminderLog: [...log].slice(-400) } as any,
             updated_at: new Date().toISOString(),
           },

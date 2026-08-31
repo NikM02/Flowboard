@@ -2,7 +2,6 @@
 
 import { useNotificationStore } from "@/store/use-notification-store"
 import { useToastStore } from "@/store/use-toast-store"
-import { sendToTelegram } from "@/hooks/use-push-notifications"
 import { isPushDeliveryActive } from "@/lib/push-client"
 
 let audioCtx: AudioContext | null = null
@@ -46,14 +45,13 @@ type NotifyOpts = {
   toast?: boolean
   sound?: boolean
   browser?: boolean
-  telegram?: boolean
   /** Reminder context — turns on the "Done / +5 min" buttons in the OS. */
   kind?: string
   id?: string
 }
 
 // Fire a notification across every channel at once:
-// in-app bell + toast + sound + browser notification + Telegram push.
+// in-app bell + toast + sound + browser notification.
 export function notify(title: string, description = "", opts?: NotifyOpts) {
   const tag = opts?.tag ?? `nf-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
 
@@ -98,9 +96,5 @@ export function notify(title: string, description = "", opts?: NotifyOpts) {
         } catch {}
       }
     }
-  }
-
-  if (opts?.telegram !== false) {
-    void sendToTelegram(title, description, tag).catch(() => {})
   }
 }

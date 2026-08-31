@@ -176,7 +176,7 @@ function WishDialog({
                 onChange={(e) => setReminderTime(e.target.value)}
               />
             </div>
-            <p className="text-[11px] text-neutral-500">Get a nudge to keep chasing this dream — app + Telegram push.</p>
+            <p className="text-[11px] text-neutral-500">Get a nudge to keep chasing this dream — app push.</p>
           </div>
           <Button className="w-full" onClick={handleSave} disabled={!title.trim()}>
             {item ? "Save Changes" : "Add to Bucket List"}

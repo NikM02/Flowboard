@@ -23,8 +23,7 @@ function persistFired(set: Set<string>) {
 }
 
 // Fires reminders at their exact time (bell + toast + sound + OS push).
-// Telegram is left to /api/reminder-cron so reminders never double-send.
-// A periodic catch-up poll also catches reminders whose time passed while the
+// The periodic catch-up poll also catches reminders whose time passed while the
 // tab was suspended/backgrounded on mobile. Fired keys persist so reminders
 // never double-fire across reloads.
 export function useReminderScheduler() {
@@ -57,7 +56,6 @@ export function useReminderScheduler() {
       notify(reminder.title, reminder.description || "", {
         tag: `rmd-${reminder.kind}`,
         href: reminder.href,
-        telegram: false,
         kind: reminder.kind,
         id: reminder.key.split("|")[1],
       })
@@ -84,7 +82,6 @@ export function useReminderScheduler() {
         markFired(reminder.key)
         notify(reminder.title, reminder.description || "", {
           href: reminder.href,
-          telegram: false,
           kind: reminder.kind,
           id: reminder.key.split("|")[1],
         })

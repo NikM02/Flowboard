@@ -2,11 +2,8 @@
 
 import { useEffect, useRef, useCallback, useState } from "react"
 import { useTaskStore } from "@/store/use-task-store"
-import { useTelegramStore } from "@/store/use-telegram-store"
-import { sendTelegramMessage } from "@/lib/telegram"
 
 const SENT_KEY = "nexus-push-sent"
-const TG_SENT_KEY = "nexus-tg-sent"
 
 function getSentSet(key: string): Set<string> {
   try {
@@ -43,41 +40,6 @@ function sendBrowserNotification(title: string, body: string, tag: string) {
   } catch {
     return false
   }
-}
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-}
-
-async function sendToEmail(title: string, body: string, tag: string, category: "new" | "update" | "due") {
-  if (isSent(TG_SENT_KEY, `mail-${tag}`)) return
-  try {
-    const res = await fetch("/api/email/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        subject: title,
-        bodyHtml: `<p style="margin:4px 0;">${escapeHtml(body)}</p>`,
-        category,
-      }),
-    })
-    if (res.ok) markSent(TG_SENT_KEY, `mail-${tag}`)
-  } catch {}
-}
-
-async function sendToTelegram(title: string, body: string, tag: string) {
-  const { botToken, chatId, connected } = useTelegramStore.getState()
-  if (!connected || !botToken || !chatId) return false
-  if (isSent(TG_SENT_KEY, tag)) return false
-
-  const message = `<b>${title}</b>\n${body}`
-  const ok = await sendTelegramMessage(botToken, chatId, message)
-  if (ok) markSent(TG_SENT_KEY, tag)
-  return ok
 }
 
 export type NotifPermission = "default" | "granted" | "denied" | "unsupported"
@@ -132,21 +94,6 @@ export function usePushNotifications() {
             if (sent) markSent(SENT_KEY, tag)
           }
 
-          // Telegram notification
-          await sendToTelegram(
-            `\ud83d\udd3a Due soon: ${task.title}`,
-            "Due in less than an hour!",
-            tag
-          )
-
-          // Email notification
-          await sendToEmail(
-            `\ud83d\udd3a Due soon: ${task.title}`,
-            "Due in less than an hour!",
-            tag,
-            "due"
-          )
-
           setLastFired(`Due soon: ${task.title}`)
         }
       } catch {}
@@ -175,5 +122,3 @@ export function usePushNotifications() {
 
   return { permission, requestPermission: requestAndTrackPermission, lastFired }
 }
-
-export { sendBrowserNotification, sendToTelegram }
