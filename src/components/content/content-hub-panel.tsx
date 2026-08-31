@@ -268,72 +268,41 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
   const isEmpty = items.length === 0
 
   const { setNodeRef, isOver } = useDroppable({ id: status })
-  const [collapsed, setCollapsed] = useState(isEmpty)
-
-  useEffect(() => {
-    if (!isEmpty && collapsed) setCollapsed(false)
-  }, [isEmpty, collapsed])
-
-  // Auto-expand when dragging over a collapsed empty column so drops still work.
-  useEffect(() => {
-    if (isOver && collapsed && isEmpty) setCollapsed(false)
-  }, [isOver, collapsed, isEmpty])
 
   return (
     <div
       ref={setNodeRef}
       className={cn(
-        "relative flex w-[80vw] snap-start flex-col overflow-hidden rounded-2xl border transition-all sm:w-[300px] md:w-[330px] lg:w-[340px]",
-        !collapsed && "max-h-[calc(100vh-260px)]",
+        "relative flex h-full w-[290px] shrink-0 snap-start flex-col overflow-hidden rounded-2xl border transition-all md:w-[320px]",
         isOver
           ? cn("border-neutral-300 ring-2 ring-neutral-300/60 dark:border-neutral-600 dark:ring-neutral-600/40", col.bg)
-          : cn("border-neutral-200/70 bg-neutral-50/60 backdrop-blur-sm dark:border-neutral-800/80 dark:bg-neutral-900/40")
+          : cn("border-neutral-200/70 bg-neutral-50/60 dark:border-neutral-800/80 dark:bg-neutral-900/40")
       )}
     >
-      {/* Column tint glow */}
-      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b to-transparent", col.glow)} />
-
-      <button
-        onClick={() => setCollapsed((v) => !v)}
-        title={collapsed ? "Expand column" : "Collapse column"}
-        className={cn(
-          "group relative z-10 flex w-full items-center gap-2.5 px-4 py-3.5 text-left transition-colors",
-          collapsed ? "border-b border-transparent hover:bg-white/40 dark:hover:bg-neutral-800/40" : "border-b border-neutral-200/70 bg-white/50 backdrop-blur-sm dark:border-neutral-800/70 dark:bg-neutral-900/50"
-        )}
-      >
-        <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", col.bg)}>
-          <Icon className={cn("h-4 w-4", col.color)} />
+      {/* Column header */}
+      <div className={cn("flex items-center gap-2.5 border-b px-4 py-3", isOver ? "border-transparent" : "border-neutral-200/70 dark:border-neutral-800/70")}>
+        <div className={cn("flex h-7 w-7 shrink-0 items-center justify-center rounded-lg", col.bg)}>
+          <Icon className={cn("h-3.5 w-3.5", col.color)} />
         </div>
         <span className="text-sm font-bold text-neutral-900 dark:text-neutral-50">{col.label}</span>
         <span className={cn("ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold text-white", col.dot)}>
           {items.length}
         </span>
-        <ChevronDown className={cn("h-4 w-4 text-neutral-400 transition-transform", !collapsed && "rotate-180")} />
-      </button>
+      </div>
 
-      <AnimatePresence>
-        {!collapsed && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-          >
-            <div className={cn("relative z-10 min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
-              <AnimatePresence mode="popLayout">
-                {items.map((item) => (
-                  <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
-                ))}
-              </AnimatePresence>
-              {isEmpty && (
-                <div className={cn("flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-12 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
-                  <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop items here</p>
-                </div>
-              )}
-            </div>
-          </motion.div>
+      {/* Column body */}
+      <div className={cn("min-h-0 flex-1 space-y-2.5 overflow-y-auto p-2.5 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
+        <AnimatePresence mode="popLayout">
+          {items.map((item) => (
+            <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
+          ))}
+        </AnimatePresence>
+        {isEmpty && (
+          <div className={cn("flex flex-col items-center justify-center rounded-xl border-2 border-dashed py-8 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
+            <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop here</p>
+          </div>
         )}
-      </AnimatePresence>
+      </div>
     </div>
   )
 }
@@ -436,76 +405,6 @@ function ListView({ items, onEdit, onMove }: { items: ContentItem[]; onEdit: (it
           </motion.div>
         )
       })}
-    </div>
-  )
-}
-
-function EmptyPipeline({ collapsed, onToggle, onAdd }: { collapsed: boolean; onToggle: () => void; onAdd: () => void }) {
-  return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/40">
-      <button
-        onClick={onToggle}
-        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40"
-      >
-        <div className="flex items-center gap-4">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 text-2xl shadow-sm dark:from-neutral-800 dark:to-neutral-900">
-            🎬
-          </div>
-          <div>
-            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-50">Start your pipeline</h3>
-            <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
-              No content ideas yet. Add your first piece to begin.
-            </p>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <span
-            onClick={(e) => { e.stopPropagation(); onAdd() }}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
-          >
-            <Plus className="h-4 w-4" /> New
-          </span>
-          {collapsed ? (
-            <ChevronDown className="h-5 w-5 text-neutral-400" />
-          ) : (
-            <ChevronUp className="h-5 w-5 text-neutral-400" />
-          )}
-        </div>
-      </button>
-
-      <AnimatePresence initial={false}>
-        {!collapsed && (
-          <motion.div
-            initial={{ height: 0, opacity: 0 }}
-            animate={{ height: "auto", opacity: 1 }}
-            exit={{ height: 0, opacity: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="overflow-hidden border-t border-neutral-200/60 dark:border-neutral-800/60"
-          >
-            <div className="grid gap-3 p-5 sm:grid-cols-3 lg:grid-cols-4">
-              {columns.filter((c) => c.key !== "published").map((col) => {
-                const Icon = col.icon
-                return (
-                  <div key={col.key} className="flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-                    <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", col.bg)}>
-                      <Icon className={cn("h-4 w-4", col.color)} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{col.label}</p>
-                      <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Empty — will appear here</p>
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
-            <div className="flex justify-center border-t border-neutral-200/60 px-5 py-4 dark:border-neutral-800/60">
-              <Button onClick={onAdd} className="gap-2">
-                <Plus className="h-4 w-4" /> Add your first idea
-              </Button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   )
 }
@@ -744,8 +643,6 @@ export function ContentHubPanel() {
   const [editItem, setEditItem] = useState<ContentItem | null>(null)
   const [activeItem, setActiveItem] = useState<ContentItem | null>(null)
   const [archivedNotice, setArchivedNotice] = useState<number | null>(null)
-  const [boardCollapsed, setBoardCollapsed] = useState(false)
-
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
   )
@@ -753,7 +650,6 @@ export function ContentHubPanel() {
   const published = useMemo(() => items.filter((i) => i.status === "published" && !i.archivedAt), [items])
   const archived = useMemo(() => items.filter((i) => i.status === "published" && i.archivedAt), [items])
   const nonArchived = useMemo(() => items.filter((i) => i.status !== "published" || !i.archivedAt), [items])
-  const isEmpty = nonArchived.length === 0
 
   useEffect(() => {
     const runAutoArchive = () => {
@@ -865,38 +761,30 @@ export function ContentHubPanel() {
           {view === "archive" ? (
             <ArchiveTab />
           ) : view === "board" ? (
-            isEmpty ? (
-              <EmptyPipeline
-                collapsed={boardCollapsed}
-                onToggle={() => setBoardCollapsed((v) => !v)}
-                onAdd={() => { setEditItem(null); setDialogOpen(true) }}
-              />
-            ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-                <div className="kanban-scroll -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-4 sm:gap-4">
-                  {columns.filter((c) => c.key !== "published").map((col) => (
-                    <KanbanColumn
-                      key={col.key}
-                      status={col.key}
-                      items={nonArchived.filter((i) => i.status === col.key)}
-                      onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
-                    />
-                  ))}
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+              <div className="kanban-scroll -mx-1 flex h-[calc(100vh-320px)] min-h-[280px] snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-4 sm:gap-3">
+                {columns.filter((c) => c.key !== "published").map((col) => (
                   <KanbanColumn
-                    status="published"
-                    items={published}
+                    key={col.key}
+                    status={col.key}
+                    items={nonArchived.filter((i) => i.status === col.key)}
                     onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
                   />
-                </div>
-                <DragOverlay>
-                  {activeItem && (
-                    <div className="w-[300px]">
-                      <ContentCard item={activeItem} isDragOverlay onEdit={() => {}} />
-                    </div>
-                  )}
-                </DragOverlay>
-              </DndContext>
-            )
+                ))}
+                <KanbanColumn
+                  status="published"
+                  items={published}
+                  onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
+                />
+              </div>
+              <DragOverlay>
+                {activeItem && (
+                  <div className="w-[300px]">
+                    <ContentCard item={activeItem} isDragOverlay onEdit={() => {}} />
+                  </div>
+                )}
+              </DragOverlay>
+            </DndContext>
           ) : (
             <ListView
               items={nonArchived}
