@@ -160,6 +160,9 @@ export type Stock = {
   quantity: number
   currentPrice: number
   sector: string
+  startDate: string
+  endDate: string
+  paid: boolean
   createdAt: number
 }
 

@@ -25,7 +25,7 @@ type FinanceStore = {
   updateSIP: (id: string, data: Partial<SIP>) => void
   deleteSIP: (id: string) => void
 
-  addStock: (data: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string }) => void
+  addStock: (data: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string; startDate?: string; endDate?: string; paid?: boolean }) => void
   updateStock: (id: string, data: Partial<Stock>) => void
   deleteStock: (id: string) => void
 
@@ -96,7 +96,7 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
   },
 
   addStock: (data) => {
-    const entry: Stock = { id: generateId(), ...data, createdAt: Date.now() }
+    const entry: Stock = { id: generateId(), ...data, startDate: data.startDate || "", endDate: data.endDate || "", paid: data.paid ?? false, createdAt: Date.now() }
     set((s) => ({ stocks: [entry, ...s.stocks] }))
   },
   updateStock: (id, data) => {

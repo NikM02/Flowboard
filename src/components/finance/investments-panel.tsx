@@ -8,6 +8,7 @@ import {
 import {
   TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3, LayoutDashboard,
   Plus, Trash2, Pencil, Download, ArrowUpRight, ArrowDownRight, Sparkles, Coins,
+  Check, X,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
@@ -531,13 +532,13 @@ function StocksTab() {
   const { stocks, addStock, updateStock, deleteStock } = useFinanceStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
-  const [form, setForm] = useState({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "" })
+  const [form, setForm] = useState({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "", startDate: "", endDate: "", paid: false })
 
-  const reset = () => setForm({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "" })
+  const reset = () => setForm({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "", startDate: "", endDate: "", paid: false })
   const openCreate = () => { reset(); setEditId(null); setDialogOpen(true) }
   const openEdit = (s: typeof stocks[0]) => {
     setEditId(s.id)
-    setForm({ name: s.name, ticker: s.ticker, buyPrice: s.buyPrice, quantity: s.quantity, currentPrice: s.currentPrice, sector: s.sector })
+    setForm({ name: s.name, ticker: s.ticker, buyPrice: s.buyPrice, quantity: s.quantity, currentPrice: s.currentPrice, sector: s.sector, startDate: s.startDate, endDate: s.endDate, paid: s.paid })
     setDialogOpen(true)
   }
   const handleSave = () => {
@@ -564,6 +565,16 @@ function StocksTab() {
             const current = s.currentPrice * s.quantity
             const gain = current - invested
             const pct = invested > 0 ? Math.round((gain / invested) * 100) : 0
+
+            const start = s.startDate ? new Date(s.startDate + "T00:00:00").getTime() : 0
+            const end = s.endDate ? new Date(s.endDate + "T23:59:59").getTime() : 0
+            const now = Date.now()
+            const hasTimeline = start > 0 && end > 0 && end > start
+            const elapsed = hasTimeline ? Math.max(0, Math.min(1, (now - start) / (end - start))) : 0
+            const isDue = hasTimeline && now >= end
+            const isPaid = s.paid
+            const fmtDate = (d: string) => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—")
+
             return (
               <motion.div
                 key={s.id}
@@ -572,10 +583,10 @@ function StocksTab() {
                 transition={{ delay: i * 0.03 }}
                 className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-none"
               >
-                <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
+                <div className={cn("absolute inset-x-0 top-0 h-0.5", isDue ? (isPaid ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-500/70 to-transparent") : pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
                   <div className="flex min-w-0 items-center gap-2">
-                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
+                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", isDue ? (isPaid ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400") : pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
                       {s.ticker ? s.ticker.slice(0, 4).toUpperCase() : "—"}
                     </div>
                     <div className="min-w-0">
@@ -583,7 +594,15 @@ function StocksTab() {
                       <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{s.ticker.toUpperCase()} · {s.quantity} shares</p>
                     </div>
                   </div>
-                  <div className="flex gap-1">
+                  <div className="flex items-center gap-1">
+                    {isDue && (
+                      <span
+                        title={isPaid ? "Paid / settled" : "Overdue — not paid"}
+                        className={cn("flex h-6 w-6 items-center justify-center rounded-full text-white", isPaid ? "bg-green-500" : "bg-red-500")}
+                      >
+                        {isPaid ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
+                      </span>
+                    )}
                     <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
                     <button onClick={() => deleteStock(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
@@ -597,12 +616,41 @@ function StocksTab() {
                     <p className="text-[10px] text-neutral-400">Current</p>
                     <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(current)}</p>
                   </div>
-                  <div className={cn("rounded-xl py-2", gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
+                  <div className={cn("rounded-xl py-2", isDue ? (isPaid ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20") : gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
                     <p className="text-[10px] text-neutral-400">P&L</p>
-                    <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
+                    <p className={cn("text-xs font-semibold", isDue ? (isPaid ? "text-green-600" : "text-red-500") : gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
-                {s.sector && <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>}
+
+                {hasTimeline && (
+                  <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Timeline</span>
+                      {isDue ? (
+                        <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold", isPaid ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400")}>
+                          {isPaid ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
+                          {isPaid ? "Paid" : "Overdue"}
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400">{Math.round(elapsed * 100)}%</span>
+                      )}
+                    </div>
+                    <div className="mt-1.5 flex h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-700/50">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${(isDue ? 100 : elapsed) * 100}%` }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        className={cn("h-full rounded-full", isDue ? (isPaid ? "bg-green-500" : "bg-red-500") : "bg-neutral-900 dark:bg-neutral-50")}
+                      />
+                    </div>
+                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-neutral-400 dark:text-neutral-500">
+                      <span>Start · {fmtDate(s.startDate)}</span>
+                      <span>Closure · {fmtDate(s.endDate)}</span>
+                    </div>
+                  </div>
+                )}
+
+                {s.sector && !hasTimeline && <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>}
               </motion.div>
             )
           })}
@@ -616,7 +664,7 @@ function StocksTab() {
 
 function StockForm({ open, editId, form, setForm, onClose, onSave }: {
   open: boolean; editId: string | null
-  form: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string }
+  form: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string; startDate: string; endDate: string; paid: boolean }
   setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
 }) {
   const invested = form.buyPrice * form.quantity
@@ -672,6 +720,35 @@ function StockForm({ open, editId, form, setForm, onClose, onSave }: {
               <Input id="st-sector" list="sector-suggestions" value={form.sector} onChange={(e) => setForm({ ...form, sector: e.target.value })} placeholder="Technology" />
               <datalist id="sector-suggestions">{SECTORS.map((s) => <option key={s} value={s} />)}</datalist>
             </div>
+          </div>
+          <div className="space-y-1.5">
+            <Label>Investment timeline</Label>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label htmlFor="st-start" className="text-[11px] text-neutral-400">Start date</Label>
+                <Input id="st-start" type="date" value={form.startDate} onChange={(e) => setForm({ ...form, startDate: e.target.value })} />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="st-end" className="text-[11px] text-neutral-400">Closure date</Label>
+                <Input id="st-end" type="date" value={form.endDate} onChange={(e) => setForm({ ...form, endDate: e.target.value })} />
+              </div>
+            </div>
+            <p className="text-[11px] text-neutral-400">A progress bar tracks start → closure. When the closure date arrives, the card shows a green check if marked paid, red X if not.</p>
+          </div>
+          <div className="flex items-center justify-between rounded-xl border border-neutral-200 px-4 py-3 dark:border-neutral-800">
+            <div>
+              <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">Settled / Paid</p>
+              <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Mark as paid once the investment is settled</p>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={form.paid}
+              onClick={() => setForm({ ...form, paid: !form.paid })}
+              className={cn("relative h-6 w-11 rounded-full transition-colors", form.paid ? "bg-green-500" : "bg-neutral-300 dark:bg-neutral-700")}
+            >
+              <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", form.paid ? "left-[22px]" : "left-0.5")} />
+            </button>
           </div>
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
