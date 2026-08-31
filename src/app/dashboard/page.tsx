@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo, Moon, MoonStar, Clock,
+  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo,
   CheckCircle2, Circle, Flame, ArrowUpRight, ArrowDownRight,
   AlertTriangle, ChevronDown, ChevronRight,
   Plus, Minus, Check, Calendar, Trophy, Zap, Bell, BellOff,
@@ -21,7 +21,6 @@ import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import { useContentStore } from "@/store/use-content-store"
-import { useSleepStore } from "@/store/use-sleep-store"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
@@ -57,15 +56,12 @@ function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: t
 /* ── Hero ────────────────────────────────────────────── */
 function DashboardHero() {
   const tasks = useTaskStore((s) => s.tasks)
-  const habits = useHabitStore((s) => s.habits)
-  const getStreak = useHabitStore((s) => s.getStreak)
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
   const dueToday = tasks.filter(
     (t) => !t.completed && t.dueDate === format(new Date(), "yyyy-MM-dd")
   ).length
-  const bestStreak = Math.max(...habits.map((h) => getStreak(h.id)), 0)
   const net =
     incomes.reduce((s, i) => s + i.amount, 0) -
     expenses.reduce((s, e) => s + e.amount, 0)
@@ -76,12 +72,7 @@ function DashboardHero() {
       value: String(dueToday),
       icon: ListTodo,
       tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
-    },
-    {
-      label: "Best habit streak",
-      value: bestStreak > 0 ? `${bestStreak}d` : "—",
-      icon: Flame,
-      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
+      href: "/tasks",
     },
     {
       label: "Net cash flow",
@@ -93,11 +84,16 @@ function DashboardHero() {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
         {stats.map((s) => (
-          <div
+          <Link
             key={s.label}
-            className="flex items-center gap-3 rounded-[14px] bg-white dark:bg-neutral-900 p-4"
+            href={s.href ?? "#"}
+            className={
+              s.href
+                ? "flex items-center gap-3 rounded-[14px] bg-white p-4 transition-colors hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800/70"
+                : "flex items-center gap-3 rounded-[14px] bg-white p-4 dark:bg-neutral-900"
+            }
           >
             <div
               className={cn(
@@ -115,7 +111,7 @@ function DashboardHero() {
                 {s.value}
               </p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </div>
@@ -734,79 +730,6 @@ function ContentSection() {
   )
 }
 
-/* ── Sleep ───────────────────────────────────────────── */
-function SleepSection() {
-  const { entries, getStats, getWeekEntries } = useSleepStore()
-  const stats = useMemo(() => getStats(), [getStats, entries.length])
-  const weekEntries = useMemo(() => getWeekEntries(), [getWeekEntries, entries.length])
-
-  const chartData = useMemo(() => {
-    const days: { day: string; hours: number }[] = []
-    const now = new Date()
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(now)
-      d.setDate(d.getDate() - i)
-      const dateStr = d.toISOString().slice(0, 10)
-      const entry = weekEntries.find((e) => e.date === dateStr) || entries.find((e) => e.date === dateStr)
-      days.push({ day: dateStr.slice(5), hours: entry?.hours ?? 0 })
-    }
-    return days
-  }, [entries, weekEntries])
-
-  const last = stats.lastNight
-
-  return (
-    <Card delay={0.3}>
-      <CardHeader icon={Moon} label="Sleep" color="text-neutral-600 dark:text-neutral-300" />
-      {entries.length === 0 ? (
-        <Link href="/habits" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
-          <MoonStar className="h-8 w-8" />
-          <p className="text-xs">Start tracking your sleep</p>
-        </Link>
-      ) : (
-        <>
-          <div className="mb-3 flex items-center gap-4">
-            {last && (
-              <div className="min-w-0 flex-1">
-                <p className="text-[11px] text-neutral-400">Last night</p>
-                <p className="text-lg font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
-                  {last.hours}h
-                  <span className="ml-2 text-[11px] font-medium text-neutral-400">{last.date}</span>
-                </p>
-                <p className="flex items-center gap-1 text-[11px] text-neutral-500 dark:text-neutral-400">
-                  <Clock className="h-3 w-3" /> {last.bedtime} → {last.wakeTime}
-                </p>
-              </div>
-            )}
-            <div className="shrink-0 text-right">
-              <p className="text-[11px] text-neutral-400">Avg (30d)</p>
-              <p className="text-lg font-bold tracking-tight text-neutral-900 dark:text-white">{stats.avgHours}h</p>
-              <p className="text-[11px] text-neutral-400">{stats.totalNights} nights</p>
-            </div>
-          </div>
-          <div className="h-24">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={chartData} margin={{ top: 4, right: 4, left: -26, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="dash-sleep" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#262626" />
-                    <stop offset="100%" stopColor="#525252" />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
-                <Bar dataKey="hours" fill="url(#dash-sleep)" radius={[5, 5, 2, 2]} barSize={14} name="Sleep" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </>
-      )}
-    </Card>
-  )
-}
-
 /* ── Page ────────────────────────────────────────────── */
 export default function DashboardPage() {
   return (
@@ -817,9 +740,9 @@ export default function DashboardPage() {
         transition={{ duration: 0.3 }}
         className="mx-auto w-full max-w-6xl space-y-6"
       >
-        <DashboardHero />
-
         <MissionSection />
+
+        <DashboardHero />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-5">
           <AlarmCard />
@@ -827,7 +750,6 @@ export default function DashboardPage() {
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
-          <SleepSection />
           <div className="md:col-span-2">
             <ContentSection />
           </div>

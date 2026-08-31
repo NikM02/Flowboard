@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { AlarmClock, Plus, Trash2, BellOff, Check } from "lucide-react"
+import { AlarmClock, Plus, Trash2, BellOff, Check, Pencil } from "lucide-react"
 import { useAlarmStore } from "@/store/use-alarm-store"
 import { cn } from "@/lib/shadcn-utils"
 
@@ -16,19 +16,41 @@ function mapTimeToToday(time: string): string {
 }
 
 export function AlarmCard() {
-  const { alarms, addAlarm, deleteAlarm, toggleAlarm } = useAlarmStore()
+  const { alarms, addAlarm, updateAlarm, deleteAlarm, toggleAlarm } = useAlarmStore()
   const [open, setOpen] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
   const [label, setLabel] = useState("")
   const [time, setTime] = useState("08:00")
 
   const sorted = [...alarms].sort((a, b) => mapTimeToToday(a.time).localeCompare(mapTimeToToday(b.time)))
 
+  const startAdd = () => {
+    setEditingId(null)
+    setLabel("")
+    setTime("08:00")
+    setOpen(true)
+  }
+
+  const startEdit = (id: string) => {
+    const a = alarms.find((x) => x.id === id)
+    if (!a) return
+    setEditingId(id)
+    setLabel(a.label)
+    setTime(a.time)
+    setOpen(true)
+  }
+
+  const close = () => {
+    setOpen(false)
+    setEditingId(null)
+  }
+
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!time) return
-    addAlarm({ label: label.trim(), time })
-    setLabel("")
-    setOpen(false)
+    if (editingId) updateAlarm(editingId, { label: label.trim(), time })
+    else addAlarm({ label: label.trim(), time })
+    close()
   }
 
   return (
@@ -45,7 +67,7 @@ export function AlarmCard() {
         <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">Alarms</h3>
         <span className="text-[10px] text-neutral-400 dark:text-neutral-500">Rings daily</span>
         <button
-          onClick={() => setOpen((v) => !v)}
+          onClick={startAdd}
           className="ml-auto flex h-8 w-8 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-900 hover:text-white dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-white dark:hover:text-neutral-900"
           title="Add alarm"
         >
@@ -80,7 +102,7 @@ export function AlarmCard() {
               <div className="flex gap-2">
                 <button
                   type="button"
-                  onClick={() => setOpen(false)}
+                  onClick={close}
                   className="flex-1 rounded-lg border border-neutral-200 py-2 text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-800"
                 >
                   Cancel
@@ -89,7 +111,7 @@ export function AlarmCard() {
                   type="submit"
                   className="flex flex-1 items-center justify-center gap-1.5 rounded-lg bg-neutral-900 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90 dark:bg-white dark:text-neutral-900"
                 >
-                  <Check className="h-4 w-4" /> Set
+                  <Check className="h-4 w-4" /> {editingId ? "Save" : "Set"}
                 </button>
               </div>
             </div>
@@ -136,6 +158,13 @@ export function AlarmCard() {
                   <p className="truncate text-[11px] text-neutral-400 dark:text-neutral-500">{a.label}</p>
                 )}
               </div>
+              <button
+                onClick={() => startEdit(a.id)}
+                className="rounded-[10px] p-1.5 text-neutral-300 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                title="Edit alarm"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
               <button
                 onClick={() => deleteAlarm(a.id)}
                 className="rounded-[10px] p-1.5 text-neutral-300 transition-colors hover:bg-red-50 hover:text-red-500 dark:text-neutral-600 dark:hover:bg-red-950/40"
