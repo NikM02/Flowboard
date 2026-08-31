@@ -139,6 +139,16 @@ export type Budget = {
   month: string
 }
 
+export type PlanFrequency = "monthly" | "quarterly"
+
+export type InvestmentPlan = {
+  start: string
+  amount: number
+  frequency: PlanFrequency
+  tenure: number
+  paid: string[]
+}
+
 export type SIP = {
   id: string
   name: string
@@ -149,6 +159,7 @@ export type SIP = {
   expectedReturn: number
   investedAmount: number
   currentValue: number
+  plan?: InvestmentPlan
   createdAt: number
 }
 
@@ -163,6 +174,7 @@ export type Stock = {
   startDate: string
   endDate: string
   paid: boolean
+  plan?: InvestmentPlan
   createdAt: number
 }
 
@@ -174,6 +186,7 @@ export type MutualFund = {
   units: number
   investedAmount: number
   currentValue: number
+  plan?: InvestmentPlan
   createdAt: number
 }
 

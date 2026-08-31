@@ -8,7 +8,6 @@ import {
 import {
   TrendingUp, TrendingDown, Wallet, PiggyBank, BarChart3, LayoutDashboard,
   Plus, Trash2, Pencil, Download, ArrowUpRight, ArrowDownRight, Sparkles, Coins,
-  Check, X, Clock3,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
@@ -25,6 +24,11 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { useFinanceStore } from "@/store/use-finance-store"
+import { PlanTracker } from "@/components/finance/plan-tracker"
+import {
+  PlanFields, PlanDraft, draftFromPlan, draftToPlan, emptyPlanDraft,
+} from "@/components/finance/plan-fields"
+import { toggleLatestPaid } from "@/lib/investment-plan"
 import type { SIP, Stock, MutualFund } from "@/types"
 
 type InvestmentTab = "dashboard" | "sips" | "stocks" | "funds" | "archive"
@@ -370,18 +374,24 @@ function SipsTab() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: "", amount: 0, startDate: "", endDate: "" as string | null, frequency: "monthly" as "monthly" | "quarterly", expectedReturn: 0, investedAmount: 0, currentValue: 0 })
+  const [planDraft, setPlanDraft] = useState<PlanDraft>(emptyPlanDraft)
 
-  const reset = () => setForm({ name: "", amount: 0, startDate: "", endDate: "", frequency: "monthly", expectedReturn: 0, investedAmount: 0, currentValue: 0 })
+  const reset = () => {
+    setForm({ name: "", amount: 0, startDate: "", endDate: "", frequency: "monthly", expectedReturn: 0, investedAmount: 0, currentValue: 0 })
+    setPlanDraft(emptyPlanDraft)
+  }
   const openCreate = () => { reset(); setEditId(null); setDialogOpen(true) }
   const openEdit = (s: typeof sips[0]) => {
     setEditId(s.id)
     setForm({ name: s.name, amount: s.amount, startDate: s.startDate, endDate: s.endDate, frequency: s.frequency, expectedReturn: s.expectedReturn, investedAmount: s.investedAmount, currentValue: s.currentValue })
+    setPlanDraft(draftFromPlan(s.plan))
     setDialogOpen(true)
   }
   const handleSave = () => {
     if (!form.name || !form.amount) return
-    if (editId) updateSIP(editId, { ...form, endDate: form.endDate || null })
-    else addSIP({ ...form, endDate: form.endDate || null })
+    const plan = draftToPlan(planDraft, editId ? (sips.find((x) => x.id === editId)?.plan?.paid ?? []) : [])
+    if (editId) updateSIP(editId, { ...form, endDate: form.endDate || null, plan })
+    else addSIP({ ...form, endDate: form.endDate || null, plan })
     setDialogOpen(false); setEditId(null); reset()
   }
 
@@ -440,21 +450,29 @@ function SipsTab() {
                     Projected at {s.expectedReturn}% p.a. · {fmt(expected)}
                   </p>
                 )}
+                <PlanTracker
+                  plan={s.plan}
+                  label="SIP installments"
+                  onEdit={() => openEdit(s)}
+                  onToggleLatest={() => updateSIP(s.id, { plan: toggleLatestPaid(s.plan) })}
+                />
               </motion.div>
             )
           })}
         </div>
       )}
 
-      <SipForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
+      <SipForm open={dialogOpen} editId={editId} form={form} setForm={setForm} planDraft={planDraft} setPlanDraft={setPlanDraft} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
   )
 }
 
-function SipForm({ open, editId, form, setForm, onClose, onSave }: {
+function SipForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClose, onSave }: {
   open: boolean; editId: string | null
   form: { name: string; amount: number; startDate: string; endDate: string | null; frequency: "monthly" | "quarterly"; expectedReturn: number; investedAmount: number; currentValue: number }
-  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+  setForm: (f: typeof form) => void
+  planDraft: PlanDraft; setPlanDraft: (d: PlanDraft) => void
+  onClose: () => void; onSave: () => void
 }) {
   return (
     <Dialog open={open} onOpenChange={(o) => !o && onClose()}>
@@ -516,6 +534,7 @@ function SipForm({ open, editId, form, setForm, onClose, onSave }: {
             <Input id="sip-return" type="number" value={form.expectedReturn || ""} onChange={(e) => setForm({ ...form, expectedReturn: Number(e.target.value) })} placeholder="12" />
             <p className="text-[11px] text-neutral-400">Used for the projection shown on your card</p>
           </div>
+          <PlanFields draft={planDraft} onChange={setPlanDraft} />
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
             <Button size="sm" disabled={!form.name || !form.amount} onClick={onSave}>{editId ? "Save Changes" : "Add SIP"}</Button>
@@ -533,18 +552,24 @@ function StocksTab() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "", startDate: "", endDate: "", paid: false })
+  const [planDraft, setPlanDraft] = useState<PlanDraft>(emptyPlanDraft)
 
-  const reset = () => setForm({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "", startDate: "", endDate: "", paid: false })
+  const reset = () => {
+    setForm({ name: "", ticker: "", buyPrice: 0, quantity: 0, currentPrice: 0, sector: "", startDate: "", endDate: "", paid: false })
+    setPlanDraft(emptyPlanDraft)
+  }
   const openCreate = () => { reset(); setEditId(null); setDialogOpen(true) }
   const openEdit = (s: typeof stocks[0]) => {
     setEditId(s.id)
     setForm({ name: s.name, ticker: s.ticker, buyPrice: s.buyPrice, quantity: s.quantity, currentPrice: s.currentPrice, sector: s.sector, startDate: s.startDate, endDate: s.endDate, paid: s.paid })
+    setPlanDraft(draftFromPlan(s.plan))
     setDialogOpen(true)
   }
   const handleSave = () => {
     if (!form.name || !form.ticker || !form.buyPrice || !form.quantity) return
-    if (editId) updateStock(editId, form)
-    else addStock(form)
+    const plan = draftToPlan(planDraft, editId ? (stocks.find((x) => x.id === editId)?.plan?.paid ?? []) : [])
+    if (editId) updateStock(editId, { ...form, plan })
+    else addStock({ ...form, plan })
     setDialogOpen(false); setEditId(null); reset()
   }
 
@@ -566,15 +591,6 @@ function StocksTab() {
             const gain = current - invested
             const pct = invested > 0 ? Math.round((gain / invested) * 100) : 0
 
-            const start = s.startDate ? new Date(s.startDate + "T00:00:00").getTime() : s.createdAt || 0
-            const end = s.endDate ? new Date(s.endDate + "T23:59:59").getTime() : 0
-            const now = Date.now()
-            const hasTimeline = end > 0 && end > start
-            const elapsed = hasTimeline ? Math.max(0, Math.min(1, (now - start) / (end - start))) : 0
-            const isDue = hasTimeline && now >= end
-            const isPaid = s.paid
-            const fmtDate = (d: string) => (d ? new Date(d + "T00:00:00").toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : (s.createdAt ? new Date(s.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"))
-
             return (
               <motion.div
                 key={s.id}
@@ -583,10 +599,10 @@ function StocksTab() {
                 transition={{ delay: i * 0.03 }}
                 className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900 dark:shadow-none"
               >
-                <div className={cn("absolute inset-x-0 top-0 h-0.5", isDue ? (isPaid ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-500/70 to-transparent") : pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
+                <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
                   <div className="flex min-w-0 items-center gap-2">
-                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", isDue ? (isPaid ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400") : pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
+                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", pct >= 0 ? "bg-green-100 text-green-600 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-500 dark:bg-red-950/40 dark:text-red-400")}>
                       {s.ticker ? s.ticker.slice(0, 4).toUpperCase() : "—"}
                     </div>
                     <div className="min-w-0">
@@ -595,14 +611,6 @@ function StocksTab() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    {isDue && (
-                      <span
-                        title={isPaid ? "Paid / settled" : "Overdue — not paid"}
-                        className={cn("flex h-6 w-6 items-center justify-center rounded-full text-white", isPaid ? "bg-green-500" : "bg-red-500")}
-                      >
-                        {isPaid ? <Check className="h-3.5 w-3.5" /> : <X className="h-3.5 w-3.5" />}
-                      </span>
-                    )}
                     <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
                     <button onClick={() => deleteStock(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-red-950/60 dark:hover:text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
@@ -616,53 +624,20 @@ function StocksTab() {
                     <p className="text-[10px] text-neutral-400">Current</p>
                     <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(current)}</p>
                   </div>
-                  <div className={cn("rounded-xl py-2", isDue ? (isPaid ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20") : gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
+                  <div className={cn("rounded-xl py-2", gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
                     <p className="text-[10px] text-neutral-400">P&L</p>
-                    <p className={cn("text-xs font-semibold", isDue ? (isPaid ? "text-green-600" : "text-red-500") : gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
+                    <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
 
-                {hasTimeline && (
-                  <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Timeline</span>
-                      {isDue ? (
-                        <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold", isPaid ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400" : "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400")}>
-                          {isPaid ? <Check className="h-3 w-3" /> : <X className="h-3 w-3" />}
-                          {isPaid ? "Paid" : "Overdue"}
-                        </span>
-                      ) : (
-                        <span className="text-[10px] font-semibold text-neutral-500 dark:text-neutral-400">{Math.round(elapsed * 100)}%</span>
-                      )}
-                    </div>
-                    <div className="mt-1.5 flex h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-700/50">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: `${(isDue ? 100 : elapsed) * 100}%` }}
-                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                        className={cn("h-full rounded-full", isDue ? (isPaid ? "bg-green-500" : "bg-red-500") : "bg-neutral-900 dark:bg-neutral-50")}
-                      />
-                    </div>
-                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-neutral-400 dark:text-neutral-500">
-                      <span>Start · {fmtDate(s.startDate)}</span>
-                      <span>Closure · {fmtDate(s.endDate)}</span>
-                    </div>
-                  </div>
-                )}
-
-                {!hasTimeline && (
-                  <div className="mt-3 flex items-center justify-between gap-2 rounded-xl border border-dashed border-neutral-200 px-3 py-2 dark:border-neutral-800">
-                    <span className="flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
-                      <Clock3 className="h-3 w-3" />
-                      {s.sector ? `No timeline — ${s.sector}` : "No timeline set"}
-                    </span>
-                    <button
-                      onClick={() => openEdit(s)}
-                      className="text-[10px] font-semibold text-neutral-500 underline-offset-2 hover:underline dark:text-neutral-400"
-                    >
-                      Set closure date
-                    </button>
-                  </div>
+                <PlanTracker
+                  plan={s.plan}
+                  label="Installments"
+                  onEdit={() => openEdit(s)}
+                  onToggleLatest={() => updateStock(s.id, { plan: toggleLatestPaid(s.plan) })}
+                />
+                {!s.plan && s.sector && (
+                  <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>
                 )}
               </motion.div>
             )
@@ -670,15 +645,17 @@ function StocksTab() {
         </div>
       )}
 
-      <StockForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
+      <StockForm open={dialogOpen} editId={editId} form={form} setForm={setForm} planDraft={planDraft} setPlanDraft={setPlanDraft} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
   )
 }
 
-function StockForm({ open, editId, form, setForm, onClose, onSave }: {
+function StockForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClose, onSave }: {
   open: boolean; editId: string | null
   form: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string; startDate: string; endDate: string; paid: boolean }
-  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+  setForm: (f: typeof form) => void
+  planDraft: PlanDraft; setPlanDraft: (d: PlanDraft) => void
+  onClose: () => void; onSave: () => void
 }) {
   const invested = form.buyPrice * form.quantity
   const gainPct = invested > 0 ? Math.round(((form.currentPrice * form.quantity - invested) / invested) * 100) : 0
@@ -763,6 +740,7 @@ function StockForm({ open, editId, form, setForm, onClose, onSave }: {
               <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", form.paid ? "left-[22px]" : "left-0.5")} />
             </button>
           </div>
+          <PlanFields draft={planDraft} onChange={setPlanDraft} />
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
             <Button size="sm" disabled={!form.name || !form.ticker || !form.buyPrice || !form.quantity} onClick={onSave}>{editId ? "Save Changes" : "Add Stock"}</Button>
@@ -780,18 +758,24 @@ function FundsTab() {
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
   const [form, setForm] = useState({ name: "", fundHouse: "", nav: 0, units: 0, investedAmount: 0, currentValue: 0 })
+  const [planDraft, setPlanDraft] = useState<PlanDraft>(emptyPlanDraft)
 
-  const reset = () => setForm({ name: "", fundHouse: "", nav: 0, units: 0, investedAmount: 0, currentValue: 0 })
+  const reset = () => {
+    setForm({ name: "", fundHouse: "", nav: 0, units: 0, investedAmount: 0, currentValue: 0 })
+    setPlanDraft(emptyPlanDraft)
+  }
   const openCreate = () => { reset(); setEditId(null); setDialogOpen(true) }
   const openEdit = (m: typeof mutualFunds[0]) => {
     setEditId(m.id)
     setForm({ name: m.name, fundHouse: m.fundHouse, nav: m.nav, units: m.units, investedAmount: m.investedAmount, currentValue: m.currentValue })
+    setPlanDraft(draftFromPlan(m.plan))
     setDialogOpen(true)
   }
   const handleSave = () => {
     if (!form.name || !form.nav || !form.units) return
-    if (editId) updateMutualFund(editId, form)
-    else addMutualFund(form)
+    const plan = draftToPlan(planDraft, editId ? (mutualFunds.find((x) => x.id === editId)?.plan?.paid ?? []) : [])
+    if (editId) updateMutualFund(editId, { ...form, plan })
+    else addMutualFund({ ...form, plan })
     setDialogOpen(false); setEditId(null); reset()
   }
 
@@ -843,21 +827,29 @@ function FundsTab() {
                     <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
+                <PlanTracker
+                  plan={mf.plan}
+                  label="Installments"
+                  onEdit={() => openEdit(mf)}
+                  onToggleLatest={() => updateMutualFund(mf.id, { plan: toggleLatestPaid(mf.plan) })}
+                />
               </motion.div>
             )
           })}
         </div>
       )}
 
-      <FundForm open={dialogOpen} editId={editId} form={form} setForm={setForm} onClose={() => setDialogOpen(false)} onSave={handleSave} />
+      <FundForm open={dialogOpen} editId={editId} form={form} setForm={setForm} planDraft={planDraft} setPlanDraft={setPlanDraft} onClose={() => setDialogOpen(false)} onSave={handleSave} />
     </div>
   )
 }
 
-function FundForm({ open, editId, form, setForm, onClose, onSave }: {
+function FundForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClose, onSave }: {
   open: boolean; editId: string | null
   form: { name: string; fundHouse: string; nav: number; units: number; investedAmount: number; currentValue: number }
-  setForm: (f: typeof form) => void; onClose: () => void; onSave: () => void
+  setForm: (f: typeof form) => void
+  planDraft: PlanDraft; setPlanDraft: (d: PlanDraft) => void
+  onClose: () => void; onSave: () => void
 }) {
   const implied = form.nav * form.units
 
@@ -918,6 +910,7 @@ function FundForm({ open, editId, form, setForm, onClose, onSave }: {
               <Input id="mf-current" type="number" value={form.currentValue || ""} onChange={(e) => setForm({ ...form, currentValue: Number(e.target.value) })} />
             </div>
           </div>
+          <PlanFields draft={planDraft} onChange={setPlanDraft} />
           <div className="flex justify-end gap-2 pt-1">
             <Button variant="outline" size="sm" onClick={onClose}>Cancel</Button>
             <Button size="sm" disabled={!form.name || !form.nav || !form.units} onClick={onSave}>{editId ? "Save Changes" : "Add Fund"}</Button>

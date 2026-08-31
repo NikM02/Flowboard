@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import type { Expense, Budget, SIP, Stock, MutualFund, ExpenseCategory, Income, IncomeSource } from "@/types"
+import type { Expense, Budget, SIP, Stock, MutualFund, ExpenseCategory, Income, IncomeSource, InvestmentPlan } from "@/types"
 import { generateId } from "@/lib/utils"
 
 type FinanceStore = {
@@ -21,15 +21,15 @@ type FinanceStore = {
   setBudget: (data: { category: ExpenseCategory; limit: number; month: string }) => void
   deleteBudget: (id: string) => void
 
-  addSIP: (data: { name: string; amount: number; startDate: string; endDate: string | null; frequency: "monthly" | "quarterly"; expectedReturn: number; investedAmount: number; currentValue: number }) => void
+  addSIP: (data: { name: string; amount: number; startDate: string; endDate: string | null; frequency: "monthly" | "quarterly"; expectedReturn: number; investedAmount: number; currentValue: number; plan?: InvestmentPlan }) => void
   updateSIP: (id: string, data: Partial<SIP>) => void
   deleteSIP: (id: string) => void
 
-  addStock: (data: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string; startDate?: string; endDate?: string; paid?: boolean }) => void
+  addStock: (data: { name: string; ticker: string; buyPrice: number; quantity: number; currentPrice: number; sector: string; startDate?: string; endDate?: string; paid?: boolean; plan?: InvestmentPlan }) => void
   updateStock: (id: string, data: Partial<Stock>) => void
   deleteStock: (id: string) => void
 
-  addMutualFund: (data: { name: string; fundHouse: string; nav: number; units: number; investedAmount: number; currentValue: number }) => void
+  addMutualFund: (data: { name: string; fundHouse: string; nav: number; units: number; investedAmount: number; currentValue: number; plan?: InvestmentPlan }) => void
   updateMutualFund: (id: string, data: Partial<MutualFund>) => void
   deleteMutualFund: (id: string) => void
 
