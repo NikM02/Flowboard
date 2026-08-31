@@ -145,10 +145,14 @@ async function handle() {
         const tgOk = await sendTelegramMessage(token, chatId, msg)
         const pushOk =
           (await sendWebPushToUser(conn.user_id, {
-            title: m.title,
+            title: m.title.replace(/^\S+\s/, ""),
             body: m.description,
             href: hrefFor(key),
             tag: `cron-${key}`,
+            rmd: true,
+            kind: key.split("|")[0],
+            id: key.split("|")[1],
+            uid: conn.user_id,
           }, pushLoader)) > 0
 
         // Log the reminder as fired when at least one channel delivered it,

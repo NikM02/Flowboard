@@ -50,3 +50,20 @@ export async function getVapidPublicKey(): Promise<string | undefined> {
     return undefined
   }
 }
+
+const UID_KEY = "nexus-user-id"
+
+export function setStoredUserId(uid: string | null) {
+  try {
+    if (uid) localStorage.setItem(UID_KEY, uid)
+    else localStorage.removeItem(UID_KEY)
+  } catch {}
+}
+
+export function getStoredUserId(): string | undefined {
+  try {
+    return localStorage.getItem(UID_KEY) || undefined
+  } catch {
+    return undefined
+  }
+}

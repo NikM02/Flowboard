@@ -6,6 +6,11 @@ export type PushPayload = {
   body?: string
   href?: string
   tag?: string
+  /** Reminder notifications get action buttons (Done / +5 min) in the OS. */
+  rmd?: boolean
+  kind?: string
+  id?: string
+  uid?: string
 }
 
 export type PushSubscriptionRow = {
@@ -95,8 +100,6 @@ export async function removePushSubscription(
 export function buildPayload(p: PushPayload): string {
   return JSON.stringify(p)
 }
-
-// Sends a web push to every device the user has subscribed from.
 export async function sendWebPushToUser(
   userId: string,
   payload: PushPayload,

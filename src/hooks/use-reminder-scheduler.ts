@@ -58,6 +58,8 @@ export function useReminderScheduler() {
         tag: `rmd-${reminder.kind}`,
         href: reminder.href,
         telegram: false,
+        kind: reminder.kind,
+        id: reminder.key.split("|")[1],
       })
     }, delay)
     timersRef.current.push(t)
@@ -83,6 +85,8 @@ export function useReminderScheduler() {
         notify(reminder.title, reminder.description || "", {
           href: reminder.href,
           telegram: false,
+          kind: reminder.kind,
+          id: reminder.key.split("|")[1],
         })
       } else {
         schedule(reminder)

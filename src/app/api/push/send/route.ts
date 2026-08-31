@@ -8,7 +8,7 @@ import { sendWebPushToUser, loadPushSubscriptions } from "@/lib/push"
 // appear even when the app/ui is backgrounded.
 export async function POST(req: NextRequest) {
   try {
-    const { title, body, href, tag } = await req.json()
+    const { title, body, href, tag, rmd, kind, id } = await req.json()
     if (!title) {
       return NextResponse.json({ error: "Missing title" }, { status: 400 })
     }
@@ -20,8 +20,10 @@ export async function POST(req: NextRequest) {
     }
 
     const service = createServiceClient()
-    const sent = await sendWebPushToUser(user.id, { title, body, href, tag }, () =>
-      loadPushSubscriptions(service, user.id)
+    const sent = await sendWebPushToUser(
+      user.id,
+      { title, body, href, tag, rmd: !!rmd, kind, id, uid: user.id },
+      () => loadPushSubscriptions(service, user.id)
     )
 
     return NextResponse.json({ ok: true, delivered: sent })

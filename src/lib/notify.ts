@@ -38,6 +38,9 @@ type NotifyOpts = {
   sound?: boolean
   browser?: boolean
   telegram?: boolean
+  /** Reminder context — turns on the "Done / +5 min" buttons in the OS. */
+  kind?: string
+  id?: string
 }
 
 // Fire a notification across every channel at once:
@@ -56,11 +59,19 @@ export function notify(title: string, description = "", opts?: NotifyOpts) {
       if (isPushDeliveryActive()) {
         // Installed PWA: deliver via the push service so the banner still appears
         // when the tab is backgrounded or closed. The service worker de-dupes
-        // by tag. Fire-and-forget.
+        // by tag and shows action buttons for reminders. Fire-and-forget.
         fetch("/api/push/send", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, body: description || undefined, href: opts?.href, tag }),
+          body: JSON.stringify({
+            title,
+            body: description || undefined,
+            href: opts?.href,
+            tag,
+            rmd: !!opts?.kind,
+            kind: opts?.kind,
+            id: opts?.id,
+          }),
         }).catch(() => {})
       } else {
         // Foreground fallback (browser not installed as a PWA).

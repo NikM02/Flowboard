@@ -18,6 +18,7 @@ import { useIntegrationWatcher } from "@/hooks/use-integration-watcher"
 import { usePushNotifications } from "@/hooks/use-push-notifications"
 import { usePwaPush } from "@/hooks/use-pwa-push"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
+import { setStoredUserId } from "@/lib/push-client"
 import { useThemeStore } from "@/store/use-theme-store"
 import { useEmailStore } from "@/store/use-email-store"
 import { useCalendarStore } from "@/store/use-calendar-store"
@@ -93,7 +94,11 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         const { createClient } = await import("@/lib/supabase/client")
         const client = createClient()
         const { data } = await client.auth.getSession()
-        if (!cancelled) setAuthenticated(!!data.session)
+        if (!cancelled) {
+          setAuthenticated(!!data.session)
+          if (data.session?.user?.id) setStoredUserId(data.session.user.id)
+          else setStoredUserId(null)
+        }
       } catch {
         if (!cancelled) setAuthenticated(false)
       }
@@ -121,8 +126,27 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("keydown", handler)
   }, [])
 
+  // A notification action button (e.g. "✓ Done") mutates data server-side; the
+  // service worker broadcasts this when the app is open so the UI stays in sync.
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return
+    const onMessage = (event: MessageEvent) => {
+      if (event.data?.type === "vault-refresh") window.location.reload()
+    }
+    navigator.serviceWorker.addEventListener("message", onMessage)
+    return () => navigator.serviceWorker.removeEventListener("message", onMessage)
+  }, [])
+
   const handleAuth = useCallback(() => {
     setAuthenticated(true)
+    ;(async () => {
+      try {
+        const { createClient } = await import("@/lib/supabase/client")
+        const client = createClient()
+        const { data } = await client.auth.getSession()
+        setStoredUserId(data.session?.user?.id ?? null)
+      } catch {}
+    })()
   }, [])
 
   const handleLogout = useCallback(async () => {
