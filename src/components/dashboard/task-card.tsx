@@ -73,16 +73,18 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             </p>
           )}
         </div>
-        <div className="flex shrink-0 gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
+        <div className="flex shrink-0 gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
             className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800"
+            aria-label="Edit task"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
             className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50"
+            aria-label="Delete task"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>

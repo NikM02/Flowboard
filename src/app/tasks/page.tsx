@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select"
 import { useTaskStore } from "@/store/use-task-store"
 import { usePageTitleStore } from "@/store/use-page-title-store"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
 
@@ -215,6 +216,7 @@ function TasksPageContent() {
   const viewParam = searchParams.get("view")
   const view: ViewMode = viewParam === "projects" ? "projects" : viewParam === "archive" ? "archive" : "tasks"
   const [taskViewMode, setTaskViewMode] = useState<"card" | "list">("card")
+  const isMobile = useMediaQuery("(max-width: 768px)")
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
   const { setFilterStatus, clearCompleted, setIsCreateModalOpen, projectFilter, setProjectFilter, getProjects } = useTaskStore()
   const projects = getProjects()
@@ -310,7 +312,7 @@ function TasksPageContent() {
                 </SelectContent>
               </Select>
             )}
-            <div className="flex gap-1 rounded-lg bg-neutral-100 p-0.5 dark:bg-neutral-800">
+            <div className="hidden gap-1 rounded-lg bg-neutral-100 p-0.5 dark:bg-neutral-800 md:flex">
               <button
                 onClick={() => setTaskViewMode("card")}
                 className={cn(
@@ -353,7 +355,7 @@ function TasksPageContent() {
             {view === "tasks" && (
               <div className="space-y-6">
                 {/* Tasks first — the focus of the page */}
-                {taskViewMode === "card" ? <TaskCardView /> : <TaskListView />}
+                {!isMobile && taskViewMode === "list" ? <TaskListView /> : <TaskCardView />}
 
                 {/* Analytics — collapsed by default so tasks stay front and center */}
                 <div className="card-modern overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">

@@ -1,10 +1,8 @@
 "use client"
 
-import { useState } from "react"
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Menu, Sun, Moon, LogOut, MoreVertical } from "lucide-react"
-import { cn } from "@/lib/shadcn-utils"
+import { Search, Menu, Sun, Moon, LogOut } from "lucide-react"
 import { NotificationBell } from "./notification-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useThemeStore } from "@/store/use-theme-store"
@@ -35,7 +33,6 @@ export function Header({
   sidebarCollapsed?: boolean
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { colorTheme, setColorTheme } = useThemeStore()
   const pathname = usePathname()
   const { override } = usePageTitleStore()
@@ -92,58 +89,9 @@ export function Header({
               <Search className="h-4 w-4" />
             </button>
 
-            {/* Mobile: Theme toggle in a dropdown */}
-            {isMobile && (
-              <div className="relative">
-                <button
-                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  className={cn(
-                    "flex h-10 w-10 items-center justify-center rounded-[10px] transition-colors",
-                    mobileMenuOpen
-                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                      : "bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
-                  )}
-                  title="More options"
-                >
-                  <MoreVertical className="h-4 w-4" />
-                </button>
-                <AnimatePresence>
-                  {mobileMenuOpen && (
-                    <>
-                      <div className="fixed inset-0 z-[65]" onClick={() => setMobileMenuOpen(false)} />
-                      <motion.div
-                        initial={{ opacity: 0, y: -6, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -6, scale: 0.97 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-full z-[66] mt-2 w-52 overflow-hidden rounded-xl border border-neutral-200 bg-white p-1 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
-                      >
-                        <button
-                          onClick={() => {
-                            setMobileMenuOpen(false)
-                            setColorTheme(colorTheme === "dark" ? "light" : "dark")
-                          }}
-                          className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-neutral-700 transition-colors hover:bg-neutral-100 dark:text-neutral-200 dark:hover:bg-neutral-800"
-                        >
-                          {colorTheme === "dark" ? (
-                            <Sun className="h-4 w-4 shrink-0 text-amber-400" />
-                          ) : (
-                            <Moon className="h-4 w-4 shrink-0 text-indigo-400" />
-                          )}
-                          {colorTheme === "dark" ? "Light mode" : "Dark mode"}
-                        </button>
-                      </motion.div>
-                    </>
-                  )}
-                </AnimatePresence>
-              </div>
-            )}
-
-            <NotificationBell />
-
             <button
               onClick={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}
-              className="hidden md:flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
               title="Toggle theme"
             >
               {colorTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
