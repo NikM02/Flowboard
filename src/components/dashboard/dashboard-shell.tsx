@@ -12,6 +12,7 @@ import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
 import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
 import { PwaInstallSheet } from "@/components/dashboard/pwa-install-sheet"
+import { AlarmRinger } from "@/components/dashboard/alarm-ringer"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
@@ -308,6 +309,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         open={searchOpen}
         onClose={() => setSearchOpen(false)}
       />
+
+      <AlarmRinger />
     </div>
   )
 }

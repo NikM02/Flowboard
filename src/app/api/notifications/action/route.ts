@@ -10,7 +10,7 @@ const HABIT_DATE = (() => {
 })()
 
 const SNOOZE = 5 * 60 * 1000
-const KINDS = ["task", "habit", "content", "goal", "bucket", "todo"] as const
+const KINDS = ["task", "habit", "content", "goal", "bucket", "todo", "alarm"] as const
 
 function formatHHMM(ms: number): string {
   const d = new Date(ms)
@@ -47,7 +47,7 @@ export async function POST(req: NextRequest) {
     if (!KINDS.includes(kind)) {
       return NextResponse.json({ error: "Unknown kind" }, { status: 400 })
     }
-    if (!["done", "snooze"].includes(action ?? "open")) {
+    if (!["done", "snooze", "ok"].includes(action ?? "open")) {
       return NextResponse.json({ error: "Unknown action" }, { status: 400 })
     }
 
@@ -88,7 +88,22 @@ export async function POST(req: NextRequest) {
           h.reminderTime = formatHHMM(Date.now() + (minutes ?? 5) * 60 * 1000)
           changed = true
         }
+      } else if (kind === "alarm") {
+        // Snooze: shift today's alarm +5 min and re-arm so it rings again.
+        const al = (data.alarms ?? []).find((x: any) => x && x.id === id)
+        if (al && al.time) {
+          al.time = formatHHMM(Date.now() + (minutes ?? 5) * 60 * 1000)
+          const today = new Date().toISOString().slice(0, 10)
+          if (Array.isArray(data.reminderLog)) {
+            data.reminderLog = data.reminderLog.filter((k: string) => k !== `alarm|${id}|${today}`)
+          }
+          changed = true
+        }
       }
+    } else if (action === "ok" && kind === "alarm") {
+      // Acknowledge — today's occurrence is already marked in the log so it
+      // won't re-ring. Nothing further to persist; signal handled for the SW.
+      changed = true
     }
 
     if (!changed) {

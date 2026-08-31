@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v2"
+const VERSION = "vault-sw-v3"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -115,7 +115,10 @@ self.addEventListener("push", (event) => {
 
   const actions = []
   if (rmd) {
-    if (kind === "task" || kind === "todo" || kind === "goal" || kind === "bucket") {
+    if (kind === "alarm") {
+      actions.push({ action: "snooze", title: "Snooze +5 min" })
+      actions.push({ action: "ok", title: "OK" })
+    } else if (kind === "task" || kind === "todo" || kind === "goal" || kind === "bucket") {
       actions.push({ action: "done", title: "\u2713 Done" })
       actions.push({ action: "snooze", title: "+5 min" })
     } else if (kind === "habit") {
@@ -133,7 +136,7 @@ self.addEventListener("push", (event) => {
       icon: "/icon-192.png",
       badge: "/favicon-32.png",
       tag: tag || `vf-${Date.now()}`,
-      vibrate: [100, 50, 100],
+      vibrate: kind === "alarm" ? [220, 80, 220, 80, 220] : [100, 50, 100],
       data,
       actions,
       silent: false,
@@ -147,7 +150,10 @@ self.addEventListener("notificationclick", (event) => {
   const action = event.action || "open"
   const href = data.href || "/dashboard"
 
-  if (action === "open" || (action !== "done" && action !== "snooze")) {
+  const isActionButtons = action === "done" || action === "snooze" || action === "ok"
+
+  // Plain taps (and any non-action button) open the app.
+  if (action === "open" || !isActionButtons) {
     event.waitUntil(
       (async () => {
         const all = await clients.matchAll({ type: "window", includeUncontrolled: true })
@@ -166,17 +172,19 @@ self.addEventListener("notificationclick", (event) => {
     return
   }
 
+  // Action buttons (Done / Snooze / OK) are handled server-side so they work
+  // even when the app is closed. "ok" just dismisses — no navigation.
   event.waitUntil(
     fetch("/api/notifications/action", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(
-        action === "snooze"
+        action === "snooze" || action === "ok"
           ? { uid: data.uid, kind: data.kind, id: data.id, action, minutes: 5 }
           : { uid: data.uid, kind: data.kind, id: data.id, action }
       ),
     }).catch(() => {
-      clients.openWindow(href)
+      if (action === "snooze") clients.openWindow(href)
     })
   )
 })

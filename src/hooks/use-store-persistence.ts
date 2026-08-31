@@ -16,6 +16,7 @@ import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 import { useNotificationStore } from "@/store/use-notification-store"
+import { useAlarmStore } from "@/store/use-alarm-store"
 
 const STORAGE_KEY = "flowboard-data-v2"
 const META_KEY = "flowboard-meta-v2"
@@ -43,6 +44,7 @@ type AppData = {
   bucketListItems: unknown[]
   advanceTodos: unknown[]
   notifications: unknown[]
+  alarms: unknown[]
   colorTheme: ColorTheme
 }
 
@@ -77,6 +79,7 @@ function collectData(): AppData {
     bucketListItems: useBucketListStore.getState().items,
     advanceTodos: useAdvanceTodoStore.getState().todos,
     notifications: useNotificationStore.getState().notifications,
+    alarms: useAlarmStore.getState().alarms,
     colorTheme: useThemeStore.getState().colorTheme,
   }
 }
@@ -145,6 +148,7 @@ function applyData(d: AppData) {
     const unreadCount = (d.notifications as any[]).filter((n) => !n.read).length
     useNotificationStore.setState({ unreadCount })
   }
+  if (d.alarms?.length) useAlarmStore.setState({ alarms: d.alarms as any })
 }
 
 // Applies cloud data EXACTLY — including empty collections. Used when
@@ -181,6 +185,7 @@ function applyDataReplace(d: AppData) {
     notifications: (d.notifications ?? []) as any,
     unreadCount: (d.notifications ?? []).filter((n: any) => !n.read).length,
   })
+  useAlarmStore.setState({ alarms: (d.alarms ?? []) as any })
   if (d.colorTheme) useThemeStore.setState({ colorTheme: d.colorTheme })
 }
 
@@ -336,6 +341,7 @@ export function useSupabasePersistence() {
       useAdvanceTodoStore.subscribe(scheduleSave),
       useThemeStore.subscribe(scheduleSave),
       useNotificationStore.subscribe(scheduleSave),
+      useAlarmStore.subscribe(scheduleSave),
     ]
     return () => unsubs.forEach((u) => u())
   }, [scheduleSave])
