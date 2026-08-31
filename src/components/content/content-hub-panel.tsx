@@ -265,13 +265,26 @@ function ContentCard({
 function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items: ContentItem[]; onEdit: (item: ContentItem) => void }) {
   const col = columns.find((c) => c.key === status)!
   const Icon = col.icon
+  const isEmpty = items.length === 0
 
   const { setNodeRef, isOver } = useDroppable({ id: status })
+  const [collapsed, setCollapsed] = useState(isEmpty)
+
+  useEffect(() => {
+    if (!isEmpty && collapsed) setCollapsed(false)
+  }, [isEmpty, collapsed])
+
+  // Auto-expand when dragging over a collapsed empty column so drops still work.
+  useEffect(() => {
+    if (isOver && collapsed && isEmpty) setCollapsed(false)
+  }, [isOver, collapsed, isEmpty])
 
   return (
     <div
+      ref={setNodeRef}
       className={cn(
-        "relative flex max-h-[calc(100vh-260px)] w-[80vw] snap-start flex-col overflow-hidden rounded-2xl border transition-all sm:w-[300px] md:w-[330px] lg:w-[340px]",
+        "relative flex w-[80vw] snap-start flex-col overflow-hidden rounded-2xl border transition-all sm:w-[300px] md:w-[330px] lg:w-[340px]",
+        !collapsed && "max-h-[calc(100vh-260px)]",
         isOver
           ? cn("border-neutral-300 ring-2 ring-neutral-300/60 dark:border-neutral-600 dark:ring-neutral-600/40", col.bg)
           : cn("border-neutral-200/70 bg-neutral-50/60 backdrop-blur-sm dark:border-neutral-800/80 dark:bg-neutral-900/40")
@@ -280,7 +293,14 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
       {/* Column tint glow */}
       <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b to-transparent", col.glow)} />
 
-      <div className="relative z-10 flex items-center gap-2.5 border-b border-neutral-200/70 bg-white/50 px-4 py-3.5 backdrop-blur-sm dark:border-neutral-800/70 dark:bg-neutral-900/50">
+      <button
+        onClick={() => setCollapsed((v) => !v)}
+        title={collapsed ? "Expand column" : "Collapse column"}
+        className={cn(
+          "group relative z-10 flex w-full items-center gap-2.5 px-4 py-3.5 text-left transition-colors",
+          collapsed ? "border-b border-transparent hover:bg-white/40 dark:hover:bg-neutral-800/40" : "border-b border-neutral-200/70 bg-white/50 backdrop-blur-sm dark:border-neutral-800/70 dark:bg-neutral-900/50"
+        )}
+      >
         <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", col.bg)}>
           <Icon className={cn("h-4 w-4", col.color)} />
         </div>
@@ -288,20 +308,32 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
         <span className={cn("ml-auto flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-[10px] font-bold text-white", col.dot)}>
           {items.length}
         </span>
-      </div>
+        <ChevronDown className={cn("h-4 w-4 text-neutral-400 transition-transform", !collapsed && "rotate-180")} />
+      </button>
 
-      <div ref={setNodeRef} className={cn("relative z-10 min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
-        <AnimatePresence mode="popLayout">
-          {items.map((item) => (
-            <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
-          ))}
-        </AnimatePresence>
-        {items.length === 0 && (
-          <div className={cn("flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-12 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
-            <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop items here</p>
-          </div>
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className={cn("relative z-10 min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
+              <AnimatePresence mode="popLayout">
+                {items.map((item) => (
+                  <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
+                ))}
+              </AnimatePresence>
+              {isEmpty && (
+                <div className={cn("flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-12 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
+                  <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop items here</p>
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
-      </div>
+      </AnimatePresence>
     </div>
   )
 }
