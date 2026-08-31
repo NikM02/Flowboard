@@ -760,6 +760,12 @@ export function ContentHubPanel() {
         >
           {view === "archive" ? (
             <ArchiveTab />
+          ) : isMobile ? (
+            <ListView
+              items={nonArchived}
+              onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
+              onMove={handleMove}
+            />
           ) : view === "board" ? (
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
               <div className="kanban-scroll -mx-1 flex h-[calc(100vh-320px)] min-h-[280px] snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-4 sm:gap-3">
