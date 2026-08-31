@@ -244,11 +244,3 @@ export type ContentItem = {
   createdAt: number
   archivedAt?: number
 }
-
-export type Alarm = {
-  id: string
-  label: string
-  time: string // "HH:mm" — rings daily while enabled
-  enabled: boolean
-  createdAt: number
-}

@@ -14,7 +14,6 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { AlarmCard } from "@/components/dashboard/alarm-card"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
@@ -745,7 +744,6 @@ export default function DashboardPage() {
         <DashboardHero />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-5">
-          <AlarmCard />
           <HighPriorityTasks />
           <HabitsChallengesSection />
           <FinanceSection />

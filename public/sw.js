@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v4"
+const VERSION = "vault-sw-v5"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -115,10 +115,7 @@ self.addEventListener("push", (event) => {
 
   const actions = []
   if (rmd) {
-    if (kind === "alarm") {
-      actions.push({ action: "snooze", title: "Snooze +5 min" })
-      actions.push({ action: "ok", title: "OK" })
-    } else if (kind === "task" || kind === "todo" || kind === "goal" || kind === "bucket") {
+    if (kind === "task" || kind === "todo" || kind === "goal" || kind === "bucket") {
       actions.push({ action: "done", title: "\u2713 Done" })
       actions.push({ action: "snooze", title: "+5 min" })
     } else if (kind === "habit") {
@@ -136,7 +133,7 @@ self.addEventListener("push", (event) => {
       icon: "/icon-192.png",
       badge: "/favicon-32.png",
       tag: tag || `vf-${Date.now()}`,
-      vibrate: kind === "alarm" ? [220, 80, 220, 80, 220] : [100, 50, 100],
+      vibrate: [100, 50, 100],
       data,
       actions,
       silent: false,

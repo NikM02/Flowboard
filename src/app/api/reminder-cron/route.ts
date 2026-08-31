@@ -108,14 +108,6 @@ async function handle() {
         fire.push({ key, title: `\u2764\ufe0f Time for: ${String(h.name)}`, description: "Daily habit reminder" })
       }
 
-      // Alarms ring daily at their time while enabled, once per day.
-      for (const al of data.alarms ?? []) {
-        if (!al.enabled || !al.time || al.time !== nowHH) continue
-        const key = `alarm|${al.id}|${today}`
-        if (log.has(key)) continue
-        fire.push({ key, title: al.label ? `${String(al.label)}` : "\u23f0 Alarm", description: `\u23f0 ${al.time}` })
-      }
-
       const hrefFor = (key: string): string | undefined => {
         const kind = key.split("|")[0]
         switch (kind) {
@@ -125,7 +117,6 @@ async function handle() {
           case "goal": return "/future"
           case "bucket": return "/skills/bucket-list"
           case "todo": return "/future"
-          case "alarm": return "/dashboard"
           default: return undefined
         }
       }
