@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback, useRef } from "react"
-import { Loader2, Bell, BellOff, BellRing, Download, WifiOff } from "lucide-react"
+import { Loader2, WifiOff } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { BottomNav } from "@/components/dashboard/bottom-nav"
@@ -41,7 +41,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   useNotificationGenerator()
   useReminderScheduler()
   const { permission } = usePushNotifications()
-  const { supported: pwaSupported, subscribed: pushSubscribed, enable: enablePush } = usePwaPush()
+  const { subscribed: pushSubscribed, enable: enablePush } = usePwaPush()
 
   // PWA install / alert state.
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
@@ -251,43 +251,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
             <WifiOff className="h-3.5 w-3.5" />
             Offline — showing saved copy
           </div>
-        </div>
-      )}
-
-      {permission === "default" && (
-        <button
-          onClick={() => void enablePush()}
-          className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
-        >
-          <BellRing className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Enable Notifications</span>
-        </button>
-      )}
-
-      {permission === "granted" && pwaSupported && !pushSubscribed && !installed && (
-        <button
-          onClick={() => void handlePromptInstall()}
-          className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
-        >
-          <Download className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">{isIOS ? "Install for Alerts" : "Get Alerts"}</span>
-        </button>
-      )}
-
-      {permission === "granted" && pwaSupported && !pushSubscribed && installed && (
-        <button
-          onClick={() => void enablePush()}
-          className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] border border-neutral-200 bg-white px-4 py-2.5 text-xs font-medium text-neutral-900 shadow-lg transition-all hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200 md:bottom-6 md:right-20"
-        >
-          <BellRing className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Turn on Alerts</span>
-        </button>
-      )}
-
-      {permission === "denied" && (
-        <div className="fixed bottom-20 right-4 z-30 flex items-center gap-2 rounded-[10px] bg-neutral-100 px-4 py-2.5 text-xs font-medium text-neutral-500 shadow-lg dark:bg-neutral-800 dark:text-neutral-400 md:bottom-6 md:right-20">
-          <BellOff className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">Notifications blocked</span>
         </div>
       )}
 
