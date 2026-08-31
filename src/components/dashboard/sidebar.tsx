@@ -114,7 +114,7 @@ export function Sidebar({
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
               className="fixed inset-y-0 left-0 z-50 w-72 border-r border-neutral-200/50 bg-white/95 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-900/95"
             >
-              <div className="flex h-full flex-col gap-1 p-4">
+              <div className="flex h-full flex-col gap-1 p-4 pt-safe">
                 <button
                   onClick={onClose}
                   className="absolute right-4 top-4 rounded-[10px] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"

@@ -7,9 +7,18 @@ import { isPushDeliveryActive } from "@/lib/push-client"
 
 let audioCtx: AudioContext | null = null
 
+function vibrate() {
+  try {
+    if (typeof navigator !== "undefined" && "vibrate" in navigator && !isPushDeliveryActive()) {
+      navigator.vibrate([90, 40, 90])
+    }
+  } catch {}
+}
+
 function playTone() {
   try {
     if (typeof window === "undefined") return
+    vibrate()
     const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
     audioCtx = audioCtx || new AC()
     const ctx = audioCtx

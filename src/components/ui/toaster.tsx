@@ -20,7 +20,7 @@ export function Toaster() {
   const { toasts, dismiss } = useToastStore()
 
   return (
-    <div className="fixed bottom-4 right-4 z-[100] flex flex-col gap-2">
+    <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-3 left-3 z-[100] flex flex-col gap-2 sm:left-auto sm:right-4">
       <AnimatePresence>
         {toasts.map((toast) => {
           const Icon = icons[toast.type]
@@ -31,7 +31,7 @@ export function Toaster() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.9 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className={`flex w-80 items-start gap-3 rounded-xl border p-4 shadow-lg ${colors[toast.type]}`}
+              className={`flex w-full items-start gap-3 rounded-xl border p-4 shadow-lg sm:w-80 ${colors[toast.type]}`}
             >
               <Icon className="mt-0.5 h-4 w-4 shrink-0" />
               <div className="flex-1 min-w-0">

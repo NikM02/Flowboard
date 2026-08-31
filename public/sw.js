@@ -1,9 +1,100 @@
-self.addEventListener("install", () => {
-  self.skipWaiting()
+const VERSION = "vault-sw-v2"
+const CACHE = `${VERSION}-core`
+const OFFLINE_CACHE = `${VERSION}-offline`
+
+const APP_SHELL = [
+  "/",
+  "/dashboard",
+  "/tasks",
+  "/habits",
+  "/finance",
+  "/investments",
+  "/future",
+  "/north-star",
+  "/content-hub",
+  "/skills",
+  "/skills/bucket-list",
+  "/offline.html",
+  "/manifest.webmanifest",
+  "/icon-192.png",
+  "/favicon-512.png",
+  "/favicon-32.png",
+  "/apple-touch-icon.png",
+]
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches
+      .open(CACHE)
+      .then((c) => c.addAll(APP_SHELL))
+      .catch(() => {})
+      .then(() => self.skipWaiting())
+  )
 })
 
 self.addEventListener("activate", (event) => {
-  event.waitUntil(clients.claim())
+  event.waitUntil(
+    caches
+      .keys()
+      .then((keys) =>
+        Promise.all(
+          keys.filter((k) => k !== CACHE && k !== OFFLINE_CACHE).map((k) => caches.delete(k))
+        )
+      )
+      .then(() => clients.claim())
+  )
+})
+
+self.addEventListener("fetch", (event) => {
+  const req = event.request
+  if (req.method !== "GET") return
+  const url = new URL(req.url)
+  if (url.origin !== self.location.origin) return // API calls / push services untouched
+
+  // Navigation: network-first, fall back to the cached shell.
+  if (req.mode === "navigate") {
+    event.respondWith(
+      fetch(req)
+        .then((res) => {
+          const copy = res.clone()
+          caches.open(OFFLINE_CACHE).then((c) => c.put("/offline.html", copy))
+          return res
+        })
+        .catch(() =>
+          caches.match("/offline.html").then((cached) => cached || caches.match("/dashboard"))
+        )
+    )
+    return
+  }
+
+  // Static build assets: cache-first (instant load, works offline after first visit).
+  if (url.pathname.startsWith("/_next/static") || url.pathname.startsWith("/favicon") || url.pathname === "/apple-touch-icon.png") {
+    event.respondWith(
+      caches.match(req).then(
+        (cached) =>
+          cached ||
+          fetch(req).then((res) => {
+            const copy = res.clone()
+            caches.open(CACHE).then((c) => c.put(req, copy))
+            return res
+          })
+      )
+    )
+    return
+  }
+
+  // Anything else same-origin: network-first, cache fallback.
+  event.respondWith(
+    fetch(req)
+      .then((res) => {
+        if (res.status === 200) {
+          const copy = res.clone()
+          caches.open(OFFLINE_CACHE).then((c) => c.put(req, copy))
+        }
+        return res
+      })
+      .catch(() => caches.match(req))
+  )
 })
 
 self.addEventListener("push", (event) => {
@@ -75,37 +166,18 @@ self.addEventListener("notificationclick", (event) => {
     return
   }
 
-  // Action buttons mutate data server-side (works with the app closed).
-  const body = {
-    uid: data.uid,
-    kind: data.kind,
-    id: data.id,
-    action,
-    minutes: 5,
-  }
   event.waitUntil(
     fetch("/api/notifications/action", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
+      body: JSON.stringify(
+        action === "snooze"
+          ? { uid: data.uid, kind: data.kind, id: data.id, action, minutes: 5 }
+          : { uid: data.uid, kind: data.kind, id: data.id, action }
+      ),
+    }).catch(() => {
+      clients.openWindow(href)
     })
-      .then((res) => {
-        if (!res.ok) throw new Error("action failed")
-        if (action === "done") {
-          // Reflect the new state in an open window if any.
-          clients.matchAll({ type: "window", includeUncontrolled: true }).then((all) => {
-            all.forEach((c) => {
-              if ("navigate" in c) {
-                c.postMessage({ type: "vault-refresh" })
-              }
-            })
-          })
-        }
-      })
-      .catch(() => {
-        // Offline / failed: open the app as fallback.
-        clients.openWindow(href)
-      })
   )
 })
 
@@ -114,5 +186,8 @@ self.addEventListener("message", (event) => {
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((all) => {
       all.forEach((c) => c.postMessage({ type: "vault-refresh" }))
     })
+  }
+  if (event.data && event.data.type === "vault-skip-waiting") {
+    self.skipWaiting()
   }
 })

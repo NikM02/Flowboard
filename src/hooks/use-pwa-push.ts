@@ -21,6 +21,35 @@ async function registerServiceWorker(): Promise<ServiceWorkerRegistration | null
   if (!window.location.protocol.startsWith("https:") && window.location.hostname !== "localhost") return null
   try {
     const reg = await navigator.serviceWorker.register("/sw.js", { scope: "/" })
+
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      window.location.reload()
+    })
+
+    const applyUpdate = () => {
+      const waiting = reg.waiting
+      if (waiting) {
+        waiting.postMessage({ type: "vault-skip-waiting" })
+      }
+    }
+
+    if (reg.waiting) {
+      applyUpdate()
+    } else {
+      reg.addEventListener("updatefound", () => {
+        const inst = reg.installing
+        if (!inst) return
+        inst.addEventListener("statechange", () => {
+          if (inst.state === "installed" && navigator.serviceWorker.controller) {
+            applyUpdate()
+          }
+        })
+      })
+      navigator.serviceWorker.ready.then((ready) => {
+        if (ready.waiting && navigator.serviceWorker.controller) applyUpdate()
+      })
+    }
+
     return reg
   } catch {
     return null

@@ -58,7 +58,7 @@ export function Header({
         animate={{ y: 0, opacity: 1 }}
         className="sticky top-0 z-[60] border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-950/80"
       >
-        <div className="flex h-14 items-center px-4 lg:px-6">
+        <div className="flex min-h-14 items-center px-safe pt-safe lg:px-6">
           {isMobile && (
             <button
               onClick={onMenuToggle}

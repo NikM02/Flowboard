@@ -59,7 +59,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className="fixed bottom-20 left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900 md:hidden"
+                className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900 md:hidden"
               >
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Theme</span>

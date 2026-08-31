@@ -51,7 +51,7 @@ export function BottomNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="fixed bottom-20 left-4 right-4 z-50 rounded-2xl border border-neutral-200/50 bg-white/95 backdrop-blur-xl p-3 shadow-2xl dark:border-neutral-800/50 dark:bg-neutral-900/95 md:hidden"
+              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/50 bg-white/95 backdrop-blur-xl p-3 shadow-2xl dark:border-neutral-800/50 dark:bg-neutral-900/95 md:hidden"
             >
               <div className="grid grid-cols-3 gap-2">
                 {moreItems.map((item) => {
@@ -80,7 +80,7 @@ export function BottomNav() {
       </AnimatePresence>
 
       <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden dark:border-neutral-800/50 dark:bg-neutral-950/90">
-        <div className="flex items-center justify-around px-1 py-1.5">
+        <div className="flex items-center justify-around px-1 pb-safe pt-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href
