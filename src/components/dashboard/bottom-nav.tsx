@@ -13,11 +13,11 @@ const primaryItems = [
   { href: "/dashboard", label: "Home", icon: LayoutDashboard },
   { href: "/tasks", label: "Tasks", icon: ListTodo },
   { href: "/finance", label: "Finance", icon: Wallet },
+  { href: "/habits", label: "Health", icon: Heart },
 ]
 
 const moreItems = [
   { href: "/north-star", label: "North Star", icon: Compass },
-  { href: "/habits", label: "Health", icon: Heart },
   { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/investments", label: "Investments", icon: TrendingUp },
   { href: "/future", label: "Future", icon: Sparkles },

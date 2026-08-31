@@ -16,7 +16,7 @@ import {
   Plus, Trash2, Pencil, LayoutGrid, List, Archive,
   Check, Calendar, ChevronDown, ChevronUp, GripVertical,
   Lightbulb, FileText, Video, Scissors, CheckCircle2, ArchiveIcon,
-  AlarmClock, Layers,
+  AlarmClock, Layers, ArrowRight, ArrowLeft,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import { Button } from "@/components/ui/button"
@@ -27,9 +27,19 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { useContentStore } from "@/store/use-content-store"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import type { ContentItem, ContentStatus } from "@/types"
 
 const EMOJIS = ["🎬", "📝", "🎥", "💡", "🚀", "🎵", "📸", "🎯", "⭐", "🔥", "💎", "🌟", "🎨", "📱", "💻", "🎮", "🏆", "✨", "🎓", "📚"]
+
+const STATUS_ORDER: ContentStatus[] = ["ideas", "scripts", "filming", "editing", "published"]
+
+function moveStatus(item: ContentItem, dir: 1 | -1): ContentStatus | null {
+  const idx = STATUS_ORDER.indexOf(item.status)
+  const next = idx + dir
+  if (next < 0 || next >= STATUS_ORDER.length) return null
+  return STATUS_ORDER[next]
+}
 
 const columns: { key: ContentStatus; label: string; icon: typeof Lightbulb; color: string; bg: string; border: string; glow: string; dot: string }[] = [
   { key: "ideas", label: "Ideas", icon: Lightbulb, color: "text-amber-600 dark:text-amber-400", bg: "bg-amber-50 dark:bg-amber-950/20", border: "border-amber-200/60 dark:border-amber-900/40", glow: "from-amber-200/40 dark:from-amber-500/10", dot: "bg-amber-500" },
@@ -125,15 +135,15 @@ function ContentCard({
           ? "rotate-2 border-neutral-200 bg-white shadow-2xl shadow-neutral-500/20 ring-2 ring-neutral-300/50 dark:border-neutral-700 dark:bg-neutral-900 dark:shadow-black/40 dark:ring-neutral-600/30"
           : isDragging
             ? "border-neutral-300 bg-white opacity-40 dark:border-neutral-700 dark:bg-neutral-900"
-            : "border-neutral-200/70 bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-lg hover:shadow-neutral-200/40 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:hover:shadow-black/20"
+            : "border-neutral-200/80 bg-white shadow-sm hover:-translate-y-0.5 hover:shadow-lg hover:shadow-neutral-200/50 hover:border-neutral-300 dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none dark:hover:shadow-black/30 dark:hover:border-neutral-700"
       )}
     >
       {/* Top accent hairline */}
       <div className={cn("absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r to-transparent", col.glow)} />
 
-      <div className="flex items-start gap-2.5">
+      <div className="flex items-start gap-3">
         {/* Status-colored emoji tile */}
-        <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-lg", col.bg)}>
+        <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xl", col.bg)}>
           {item.emoji}
         </div>
         <div className="min-w-0 flex-1">
@@ -146,14 +156,14 @@ function ContentCard({
           {...attributes}
           {...listeners}
           aria-label="Drag to move"
-          className="mt-0.5 shrink-0 cursor-grab touch-none rounded-md p-0.5 text-neutral-300 transition-colors hover:text-neutral-500 dark:text-neutral-600 dark:hover:text-neutral-400"
+          className="mt-0.5 shrink-0 cursor-grab touch-none rounded-md p-1 text-neutral-300 transition-colors hover:bg-neutral-100 hover:text-neutral-500 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-400"
         >
           <GripVertical className="h-4 w-4" />
         </button>
       </div>
 
       {/* Meta row */}
-      <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
+      <div className="mt-3 flex flex-wrap items-center gap-1.5">
         <DeadlinePill deadline={item.deadline} />
         {item.subtasks.length > 0 && (
           <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
@@ -164,7 +174,7 @@ function ContentCard({
       </div>
 
       {/* Progress */}
-      <div className="mt-2.5">
+      <div className="mt-3">
         <div className="flex items-center justify-between">
           <span className="text-[10px] font-medium uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
             Progress
@@ -173,9 +183,9 @@ function ContentCard({
             {progress}%
           </span>
         </div>
-        <div className="mt-1 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+        <div className="mt-1.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
           <motion.div
-            className={cn("h-full rounded-full bg-gradient-to-r", col.color.startsWith("text-green") || progress === 100 ? "from-green-500 to-green-400" : "from-neutral-900 to-neutral-500 dark:from-neutral-50 dark:to-neutral-400")}
+            className={cn("h-full rounded-full bg-gradient-to-r", progress === 100 ? "from-green-500 to-green-400" : col.color.startsWith("text-amber") ? "from-amber-500 to-amber-400 dark:from-amber-500 dark:to-amber-400" : col.color.startsWith("text-blue") ? "from-blue-500 to-blue-400 dark:from-blue-500 dark:to-blue-400" : col.color.startsWith("text-purple") ? "from-purple-500 to-purple-400 dark:from-purple-500 dark:to-purple-400" : col.color.startsWith("text-orange") ? "from-orange-500 to-orange-400 dark:from-orange-500 dark:to-orange-400" : "from-neutral-900 to-neutral-500 dark:from-neutral-50 dark:to-neutral-400")}
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
@@ -261,16 +271,16 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
   return (
     <div
       className={cn(
-        "relative flex max-h-[calc(100vh-250px)] w-[78vw] snap-start flex-col overflow-hidden rounded-2xl border transition-all sm:w-[290px] md:w-[310px]",
+        "relative flex max-h-[calc(100vh-260px)] w-[80vw] snap-start flex-col overflow-hidden rounded-2xl border transition-all sm:w-[300px] md:w-[330px] lg:w-[340px]",
         isOver
           ? cn("border-neutral-300 ring-2 ring-neutral-300/60 dark:border-neutral-600 dark:ring-neutral-600/40", col.bg)
           : cn("border-neutral-200/70 bg-neutral-50/60 backdrop-blur-sm dark:border-neutral-800/80 dark:bg-neutral-900/40")
       )}
     >
       {/* Column tint glow */}
-      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-24 bg-gradient-to-b to-transparent", col.glow)} />
+      <div className={cn("pointer-events-none absolute inset-x-0 top-0 h-28 bg-gradient-to-b to-transparent", col.glow)} />
 
-      <div className="relative z-10 flex items-center gap-2.5 border-b border-neutral-200/70 px-3.5 py-3 dark:border-neutral-800/70">
+      <div className="relative z-10 flex items-center gap-2.5 border-b border-neutral-200/70 bg-white/50 px-4 py-3.5 backdrop-blur-sm dark:border-neutral-800/70 dark:bg-neutral-900/50">
         <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg", col.bg)}>
           <Icon className={cn("h-4 w-4", col.color)} />
         </div>
@@ -280,14 +290,14 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
         </span>
       </div>
 
-      <div ref={setNodeRef} className={cn("relative z-10 min-h-[120px] flex-1 space-y-2.5 overflow-y-auto p-2.5 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
+      <div ref={setNodeRef} className={cn("relative z-10 min-h-[150px] flex-1 space-y-3 overflow-y-auto p-3 transition-colors", isOver && "bg-white/40 dark:bg-white/5")}>
         <AnimatePresence mode="popLayout">
           {items.map((item) => (
             <ContentCard key={item.id} item={item} onEdit={() => onEdit(item)} />
           ))}
         </AnimatePresence>
         {items.length === 0 && (
-          <div className={cn("flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-10 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
+          <div className={cn("flex flex-col items-center justify-center rounded-2xl border-2 border-dashed py-12 transition-colors", isOver ? "border-neutral-300 bg-white/50 dark:border-neutral-500 dark:bg-white/5" : "border-neutral-200 dark:border-neutral-800")}>
             <p className="text-xs font-medium text-neutral-400 dark:text-neutral-500">Drop items here</p>
           </div>
         )}
@@ -296,27 +306,29 @@ function KanbanColumn({ status, items, onEdit }: { status: ContentStatus; items:
   )
 }
 
-function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: ContentItem) => void }) {
+function ListView({ items, onEdit, onMove }: { items: ContentItem[]; onEdit: (item: ContentItem) => void; onMove: (item: ContentItem, dir: 1 | -1) => void }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {items.map((item) => {
         const progress = getProgress(item)
         const col = statusCol(item.status)
         const Icon = col.icon
+        const canBack = moveStatus(item, -1) !== null
+        const canForward = moveStatus(item, 1) !== null
         return (
           <motion.div
             key={item.id}
             layout
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-3 shadow-sm transition-all hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none"
+            className="group flex items-center gap-3 rounded-2xl border border-neutral-200/70 bg-white p-3.5 shadow-sm transition-all hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900 dark:shadow-none"
           >
-            <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-base", col.bg)}>
+            <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-base", col.bg)}>
               {item.emoji}
             </div>
             <div className="min-w-0 flex-1">
               <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{item.title}</h4>
-              <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-400 dark:text-neutral-500">
+              <div className="mt-1 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-400 dark:text-neutral-500">
                 <span className={cn("inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold", col.bg, col.color)}>
                   <Icon className="h-3 w-3" /> {col.label}
                 </span>
@@ -333,6 +345,16 @@ function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: Cont
                   </span>
                 )}
               </div>
+              {/* Mobile progress bar */}
+              <div className="mt-2 flex items-center gap-2 sm:hidden">
+                <div className="h-1 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                  <div
+                    className={cn("h-full rounded-full", progress === 100 ? "bg-green-500" : "bg-neutral-900 dark:bg-neutral-50")}
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+                <span className="shrink-0 text-[10px] font-bold text-neutral-500 dark:text-neutral-400">{progress}%</span>
+              </div>
             </div>
             <div className="hidden w-28 sm:block">
               <div className="flex items-center justify-end text-[10px] font-bold text-neutral-500 dark:text-neutral-400">
@@ -345,6 +367,32 @@ function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: Cont
                 />
               </div>
             </div>
+            <div className="flex flex-col items-center gap-1.5">
+              <button
+                onClick={() => canForward && onMove(item, 1)}
+                disabled={!canForward}
+                aria-label="Move forward"
+                title={`Move to ${canForward ? statusCol(moveStatus(item, 1)!).label : ""}`}
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-lg text-white transition-all",
+                  canForward ? "bg-neutral-900 hover:bg-neutral-700 active:scale-95 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200" : "cursor-not-allowed bg-neutral-200 text-neutral-400 opacity-50 dark:bg-neutral-800 dark:text-neutral-600"
+                )}
+              >
+                <ArrowRight className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => canBack && onMove(item, -1)}
+                disabled={!canBack}
+                aria-label="Move backward"
+                title={`Move to ${canBack ? statusCol(moveStatus(item, -1)!).label : ""}`}
+                className={cn(
+                  "flex h-7 w-7 items-center justify-center rounded-lg border text-white transition-all",
+                  canBack ? "bg-neutral-900 hover:bg-neutral-700 active:scale-95 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200" : "cursor-not-allowed bg-neutral-200 text-neutral-400 opacity-50 dark:bg-neutral-800 dark:text-neutral-600"
+                )}
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+              </button>
+            </div>
             <div className="flex gap-1">
               <button onClick={() => onEdit(item)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700 dark:hover:text-neutral-100">
                 <Pencil className="h-3.5 w-3.5" />
@@ -356,6 +404,76 @@ function ListView({ items, onEdit }: { items: ContentItem[]; onEdit: (item: Cont
           </motion.div>
         )
       })}
+    </div>
+  )
+}
+
+function EmptyPipeline({ collapsed, onToggle, onAdd }: { collapsed: boolean; onToggle: () => void; onAdd: () => void }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-neutral-200/70 bg-neutral-50/50 dark:border-neutral-800 dark:bg-neutral-900/40">
+      <button
+        onClick={onToggle}
+        className="flex w-full items-center justify-between px-5 py-4 text-left transition-colors hover:bg-neutral-100/60 dark:hover:bg-neutral-800/40"
+      >
+        <div className="flex items-center gap-4">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-neutral-100 to-neutral-200 text-2xl shadow-sm dark:from-neutral-800 dark:to-neutral-900">
+            🎬
+          </div>
+          <div>
+            <h3 className="text-base font-bold text-neutral-900 dark:text-neutral-50">Start your pipeline</h3>
+            <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
+              No content ideas yet. Add your first piece to begin.
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <span
+            onClick={(e) => { e.stopPropagation(); onAdd() }}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-neutral-900 px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-neutral-700 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200"
+          >
+            <Plus className="h-4 w-4" /> New
+          </span>
+          {collapsed ? (
+            <ChevronDown className="h-5 w-5 text-neutral-400" />
+          ) : (
+            <ChevronUp className="h-5 w-5 text-neutral-400" />
+          )}
+        </div>
+      </button>
+
+      <AnimatePresence initial={false}>
+        {!collapsed && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden border-t border-neutral-200/60 dark:border-neutral-800/60"
+          >
+            <div className="grid gap-3 p-5 sm:grid-cols-3 lg:grid-cols-4">
+              {columns.filter((c) => c.key !== "published").map((col) => {
+                const Icon = col.icon
+                return (
+                  <div key={col.key} className="flex items-center gap-3 rounded-xl border border-neutral-200/70 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
+                    <div className={cn("flex h-9 w-9 shrink-0 items-center justify-center rounded-lg", col.bg)}>
+                      <Icon className={cn("h-4 w-4", col.color)} />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{col.label}</p>
+                      <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Empty — will appear here</p>
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+            <div className="flex justify-center border-t border-neutral-200/60 px-5 py-4 dark:border-neutral-800/60">
+              <Button onClick={onAdd} className="gap-2">
+                <Plus className="h-4 w-4" /> Add your first idea
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }
@@ -588,11 +706,13 @@ function SummaryBar({ items }: { items: ContentItem[] }) {
 
 export function ContentHubPanel() {
   const { items, autoArchivePastDeadline } = useContentStore()
+  const isMobile = useMediaQuery("(max-width: 768px)")
   const [view, setView] = useState<"board" | "list" | "archive">("board")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editItem, setEditItem] = useState<ContentItem | null>(null)
   const [activeItem, setActiveItem] = useState<ContentItem | null>(null)
   const [archivedNotice, setArchivedNotice] = useState<number | null>(null)
+  const [boardCollapsed, setBoardCollapsed] = useState(false)
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -601,6 +721,7 @@ export function ContentHubPanel() {
   const published = useMemo(() => items.filter((i) => i.status === "published" && !i.archivedAt), [items])
   const archived = useMemo(() => items.filter((i) => i.status === "published" && i.archivedAt), [items])
   const nonArchived = useMemo(() => items.filter((i) => i.status !== "published" || !i.archivedAt), [items])
+  const isEmpty = nonArchived.length === 0
 
   useEffect(() => {
     const runAutoArchive = () => {
@@ -637,6 +758,11 @@ export function ContentHubPanel() {
     }
   }
 
+  const handleMove = (item: ContentItem, dir: 1 | -1) => {
+    const next = moveStatus(item, dir)
+    if (next) useContentStore.getState().moveItem(item.id, next)
+  }
+
   const handleSave = (data: { emoji: string; title: string; description: string; deadline: string; status: ContentStatus; reminder?: string }) => {
     if (editItem) {
       useContentStore.getState().updateItem(editItem.id, data)
@@ -671,8 +797,8 @@ export function ContentHubPanel() {
       {/* View tabs */}
       <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
         {[
-          { key: "board" as const, label: "Board", icon: LayoutGrid },
-          { key: "list" as const, label: "List", icon: List },
+          ...(!isMobile ? [{ key: "board" as const, label: "Board", icon: LayoutGrid }] : []),
+          { key: "list" as const, label: isMobile ? "Pipeline" : "List", icon: List },
           { key: "archive" as const, label: "Archive", icon: Archive, count: archived.length },
         ].map((t) => (
           <button
@@ -707,34 +833,43 @@ export function ContentHubPanel() {
           {view === "archive" ? (
             <ArchiveTab />
           ) : view === "board" ? (
-            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-              <div className="kanban-scroll -mx-1 flex snap-x snap-mandatory gap-3 overflow-x-auto px-1 pb-4 sm:gap-4">
-                {columns.filter((c) => c.key !== "published").map((col) => (
+            isEmpty ? (
+              <EmptyPipeline
+                collapsed={boardCollapsed}
+                onToggle={() => setBoardCollapsed((v) => !v)}
+                onAdd={() => { setEditItem(null); setDialogOpen(true) }}
+              />
+            ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+                <div className="kanban-scroll -mx-1 flex snap-x snap-mandatory gap-4 overflow-x-auto px-1 pb-4 sm:gap-4">
+                  {columns.filter((c) => c.key !== "published").map((col) => (
+                    <KanbanColumn
+                      key={col.key}
+                      status={col.key}
+                      items={nonArchived.filter((i) => i.status === col.key)}
+                      onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
+                    />
+                  ))}
                   <KanbanColumn
-                    key={col.key}
-                    status={col.key}
-                    items={nonArchived.filter((i) => i.status === col.key)}
+                    status="published"
+                    items={published}
                     onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
                   />
-                ))}
-                <KanbanColumn
-                  status="published"
-                  items={published}
-                  onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
-                />
-              </div>
-              <DragOverlay>
-                {activeItem && (
-                  <div className="w-[280px]">
-                    <ContentCard item={activeItem} isDragOverlay onEdit={() => {}} />
-                  </div>
-                )}
-              </DragOverlay>
-            </DndContext>
+                </div>
+                <DragOverlay>
+                  {activeItem && (
+                    <div className="w-[300px]">
+                      <ContentCard item={activeItem} isDragOverlay onEdit={() => {}} />
+                    </div>
+                  )}
+                </DragOverlay>
+              </DndContext>
+            )
           ) : (
             <ListView
               items={nonArchived}
               onEdit={(item) => { setEditItem(item); setDialogOpen(true) }}
+              onMove={handleMove}
             />
           )}
         </motion.div>
