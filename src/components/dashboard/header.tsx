@@ -18,7 +18,6 @@ const PAGE_TITLES: Record<string, string> = {
   "/investments": "Investments",
   "/skills": "Skills",
   "/skills/bucket-list": "Bucket List",
-  "/content-hub": "Content Hub",
 }
 
 export function Header({

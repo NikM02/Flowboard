@@ -10,7 +10,7 @@ const HABIT_DATE = (() => {
 })()
 
 const SNOOZE = 5 * 60 * 1000
-const KINDS = ["task", "habit", "content", "goal", "bucket", "todo"] as const
+const KINDS = ["task", "habit", "goal", "bucket", "todo"] as const
 
 function formatHHMM(ms: number): string {
   const d = new Date(ms)
@@ -81,7 +81,6 @@ export async function POST(req: NextRequest) {
       else if (kind === "todo") changed = setReminder(data.advanceTodos, id, next)
       else if (kind === "goal") changed = setReminder(data.futureGoals, id, next)
       else if (kind === "bucket") changed = setReminder(data.bucketListItems, id, next)
-      else if (kind === "content") changed = setReminder(data.contentItems, id, next)
       else if (kind === "habit") {
         const h = (data.habits ?? []).find((x: any) => x && x.id === id)
         if (h && h.reminderTime) {

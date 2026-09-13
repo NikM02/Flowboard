@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v6"
+const VERSION = "vault-sw-v7"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -11,7 +11,6 @@ const APP_SHELL = [
   "/investments",
   "/future",
   "/north-star",
-  "/content-hub",
   "/skills",
   "/skills/bucket-list",
   "/offline.html",

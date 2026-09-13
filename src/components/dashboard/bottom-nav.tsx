@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard, ListTodo, Wallet, Plus, X,
-  Compass, Heart, GraduationCap, TrendingUp, Sparkles, BookOpen, CalendarClock,
+  Compass, Heart, GraduationCap, TrendingUp, Sparkles, CalendarClock,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 
@@ -21,7 +21,6 @@ const moreItems = [
   { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/investments", label: "Investments", icon: TrendingUp },
   { href: "/future", label: "Future", icon: Sparkles },
-  { href: "/content-hub", label: "Content", icon: BookOpen },
 ]
 
 export function BottomNav() {

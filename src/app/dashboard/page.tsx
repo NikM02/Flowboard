@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Compass, Heart, Wallet, TrendingUp, BookOpen, ListTodo,
+  Compass, Heart, Wallet, TrendingUp, ListTodo,
   CheckCircle2, Circle, Flame, ArrowUpRight, ArrowDownRight,
   AlertTriangle, ChevronDown, ChevronRight,
   Plus, Minus, Check, Calendar, Trophy, Zap, Bell, BellOff,
@@ -19,7 +19,6 @@ import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
 import { useFinanceStore } from "@/store/use-finance-store"
-import { useContentStore } from "@/store/use-content-store"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
@@ -654,81 +653,6 @@ function InvestmentsSection() {
   )
 }
 
-/* ── Content Pipeline (interactive) ──────────────────── */
-function ContentSection() {
-  const items = useContentStore((s) => s.items)
-  const moveItem = useContentStore((s) => s.moveItem)
-
-  const activeItems = useMemo(
-    () => items.filter((i) => i.status !== "published").slice(0, 4),
-    [items]
-  )
-
-  const statusColors: Record<string, { bg: string; text: string; next: string }> = {
-    ideas: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "scripts" },
-    scripts: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "filming" },
-    filming: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "editing" },
-    editing: { bg: "bg-neutral-100 dark:bg-neutral-800", text: "text-neutral-700 dark:text-neutral-300", next: "published" },
-  }
-
-  return (
-    <Card delay={0.25}>
-      <CardHeader icon={BookOpen} label="Content Pipeline" color="text-neutral-600 dark:text-neutral-300" />
-      {activeItems.length === 0 ? (
-        <Link href="/content-hub" className="flex flex-col items-center gap-2 py-6 text-neutral-400">
-          <BookOpen className="h-8 w-8" />
-          <p className="text-xs">Start your content pipeline</p>
-        </Link>
-      ) : (
-        <div className="space-y-2">
-          {activeItems.map((item) => {
-            const done = item.subtasks.filter((s) => s.completed).length
-            const total = item.subtasks.length
-            const pct = total > 0 ? Math.round((done / total) * 100) : 0
-            const sc = statusColors[item.status]
-            const nextStatus = sc?.next
-
-            return (
-              <div key={item.id} className="rounded-xl bg-white p-3 dark:bg-neutral-900">
-                <div className="flex items-center gap-2.5">
-                  <span className="text-lg shrink-0">{item.emoji}</span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-neutral-900 truncate dark:text-neutral-50">{item.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      <span className={cn("inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-semibold", sc?.bg, sc?.text)}>
-                        {item.status}
-                      </span>
-                      {item.deadline && (
-                        <span className="text-[10px] text-neutral-400">{format(new Date(item.deadline), "MMM d")}</span>
-                      )}
-                    </div>
-                  </div>
-                  {nextStatus && (
-                    <button
-                      onClick={() => moveItem(item.id, nextStatus as "ideas" | "scripts" | "filming" | "editing" | "published")}
-                      className="shrink-0 rounded-lg border border-neutral-200 bg-white px-2 py-1 text-[10px] font-medium text-neutral-900 transition-colors hover:bg-neutral-900 hover:text-white hover:border-neutral-900 dark:border-neutral-800 dark:bg-neutral-950 dark:text-white dark:hover:bg-white dark:hover:text-neutral-900 dark:hover:border-neutral-200"
-                    >
-                      Move →
-                    </button>
-                  )}
-                </div>
-                {total > 0 && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="h-1 flex-1 overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
-                      <div className="h-full rounded-full bg-neutral-900 dark:bg-white transition-all" style={{ width: `${pct}%` }} />
-                    </div>
-                    <span className="text-[10px] font-medium text-neutral-400">{done}/{total}</span>
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-      )}
-    </Card>
-  )
-}
-
 /* ── Page ────────────────────────────────────────────── */
 export default function DashboardPage() {
   return (
@@ -748,9 +672,6 @@ export default function DashboardPage() {
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
-          <div className="md:col-span-2">
-            <ContentSection />
-          </div>
         </div>
       </motion.div>
     </DashboardShell>

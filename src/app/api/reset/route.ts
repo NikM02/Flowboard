@@ -21,7 +21,6 @@ const EMPTY: Record<string, unknown> = {
   stocks: [],
   mutualFunds: [],
   futureGoals: [],
-  contentItems: [],
   northStar: { vision: "", mission: "", identity: "", pillars: [] },
   bucketListItems: [],
   advanceTodos: [],

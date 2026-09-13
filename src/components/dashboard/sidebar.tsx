@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   ListTodo, X, Heart, GraduationCap, Wallet, Sparkles,
-  TrendingUp, LayoutDashboard, BookOpen, Compass, ChevronsLeft,
+  TrendingUp, LayoutDashboard, Compass, ChevronsLeft,
   Settings, CalendarClock,
 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
@@ -84,11 +84,6 @@ export function Sidebar({
             <span className={labelClass}>{item.label}</span>
           </Link>
         ))}
-
-        <Link href="/content-hub" className={navLinkClass("/content-hub")} title="Content Hub">
-          <BookOpen className="h-4 w-4 shrink-0" />
-          <span className={labelClass}>Content Hub</span>
-        </Link>
       </div>
     </>
   )

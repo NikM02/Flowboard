@@ -8,7 +8,6 @@ import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
-import { useContentStore } from "@/store/use-content-store"
 import { useFutureStore } from "@/store/use-future-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
@@ -152,25 +151,6 @@ export function useNotificationGenerator() {
       }
     })
 
-    const unsubContent = useContentStore.subscribe((state, prevState) => {
-      if (skip()) return
-      const { items } = state
-      const { items: prevItems } = prevState
-      if (items.length > prevItems.length) {
-        const added = items.find((i) => !prevItems.some((p) => p.id === i.id))
-        if (added) notify("New content idea", added.title, { tag: `content-new-${added.id}`, href: "/content-hub" })
-      }
-      for (const item of items) {
-        const prev = prevItems.find((p) => p.id === item.id)
-        if (!prev || prev.status === item.status) continue
-        if (item.status === "published") {
-          notify("Content published", item.title, { tag: `content-pub-${item.id}`, href: "/content-hub" })
-        } else {
-          notify("Content moved", `${item.title} → ${item.status}`, { tag: `content-${item.id}-${item.status}`, href: "/content-hub" })
-        }
-      }
-    })
-
     const unsubFuture = useFutureStore.subscribe((state, prevState) => {
       if (skip()) return
       if (state.goals.length > prevState.goals.length) {
@@ -231,7 +211,6 @@ export function useNotificationGenerator() {
       unsubChallenges()
       unsubSkills()
       unsubFinance()
-      unsubContent()
       unsubFuture()
       unsubBucket()
       unsubTodos()

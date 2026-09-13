@@ -9,7 +9,6 @@ import { useDopamineStore } from "@/store/use-dopamine-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import { useFutureStore } from "@/store/use-future-store"
-import { useContentStore } from "@/store/use-content-store"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
@@ -38,7 +37,6 @@ type AppData = {
   stocks: unknown[]
   mutualFunds: unknown[]
   futureGoals: unknown[]
-  contentItems: unknown[]
   northStar: { vision: string; mission: string; identity: string; pillars: unknown[] }
   bucketListItems: unknown[]
   advanceTodos: unknown[]
@@ -67,7 +65,6 @@ function collectData(): AppData {
     stocks: useFinanceStore.getState().stocks,
     mutualFunds: useFinanceStore.getState().mutualFunds,
     futureGoals: useFutureStore.getState().goals,
-    contentItems: useContentStore.getState().items,
     northStar: {
       vision: useNorthStarStore.getState().vision,
       mission: useNorthStarStore.getState().mission,
@@ -123,7 +120,6 @@ function applyData(d: AppData) {
   if (d.stocks?.length) useFinanceStore.setState({ stocks: d.stocks as any })
   if (d.mutualFunds?.length) useFinanceStore.setState({ mutualFunds: d.mutualFunds as any })
   if (d.futureGoals?.length) useFutureStore.setState({ goals: d.futureGoals as any })
-  if (d.contentItems?.length) useContentStore.setState({ items: d.contentItems as any })
   if (d.northStar) {
     const ns = d.northStar
     const cur = useNorthStarStore.getState()
@@ -167,7 +163,6 @@ function applyDataReplace(d: AppData) {
     mutualFunds: (d.mutualFunds ?? []) as any,
   })
   useFutureStore.setState({ goals: (d.futureGoals ?? []) as any })
-  useContentStore.setState({ items: (d.contentItems ?? []) as any })
   const ns = d.northStar
   useNorthStarStore.setState({
     vision: ns?.vision ?? "",
@@ -342,7 +337,6 @@ export function useSupabasePersistence() {
       useSkillStore.subscribe(scheduleSave),
       useFinanceStore.subscribe(scheduleSave),
       useFutureStore.subscribe(scheduleSave),
-      useContentStore.subscribe(scheduleSave),
       useNorthStarStore.subscribe(scheduleSave),
       useBucketListStore.subscribe(scheduleSave),
       useAdvanceTodoStore.subscribe(scheduleSave),
@@ -395,7 +389,6 @@ export function resetAllStores() {
     stocks: [],
     mutualFunds: [],
     futureGoals: [],
-    contentItems: [],
     northStar: { vision: "", mission: "", identity: "", pillars: [] },
     bucketListItems: [],
     advanceTodos: [],

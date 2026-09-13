@@ -2,7 +2,6 @@
 
 import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
-import { useContentStore } from "@/store/use-content-store"
 import { useFutureStore } from "@/store/use-future-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
@@ -10,7 +9,6 @@ import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 export type ReminderSource =
   | "task"
   | "habit"
-  | "content"
   | "goal"
   | "bucket"
   | "todo"
@@ -65,20 +63,6 @@ export function collectReminders(): Reminder[] {
       title: `Time for: ${h.name}`,
       description: "Daily habit reminder",
       href: "/habits",
-    })
-  }
-
-  for (const c of useContentStore.getState().items) {
-    if (c.archivedAt || !c.reminder) continue
-    const fireAt = new Date(c.reminder).getTime()
-    if (isNaN(fireAt) || fireAt <= now) continue
-    out.push({
-      key: `content:${c.id}:${c.reminder}`,
-      kind: "content",
-      fireAt,
-      title: `Content reminder: ${c.title}`,
-      description: c.status === "published" ? "Piece live in your pipeline" : `Status: ${c.status}`,
-      href: "/content-hub",
     })
   }
 

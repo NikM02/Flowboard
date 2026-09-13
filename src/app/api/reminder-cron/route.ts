@@ -66,14 +66,6 @@ async function handle() {
         tryAdd(`task|${t.id}|${t.reminder}`, `\u23f0 Reminder: ${String(t.title)}`, t.description || (t.dueDate ? `Due ${t.dueDate}` : "Task reminder"))
       }
 
-      // Content pieces with a reminder
-      for (const c of data.contentItems ?? []) {
-        if (c.archivedAt || !c.reminder) continue
-        const cms = new Date(c.reminder).getTime()
-        if (isNaN(cms) || Math.abs(cms - now) > WINDOW_MS) continue
-        tryAdd(`content|${c.id}|${c.reminder}`, `\ud83c\udfac Content: ${String(c.title)}`, `Status: ${String(c.status ?? "ideas")}`)
-      }
-
       // Future goals with a reminder
       for (const g of data.futureGoals ?? []) {
         if (g.completed || !g.reminder) continue
@@ -113,7 +105,6 @@ async function handle() {
         switch (kind) {
           case "task": return "/tasks"
           case "habit": return "/habits"
-          case "content": return "/content-hub"
           case "goal": return "/future"
           case "bucket": return "/skills/bucket-list"
           case "todo": return "/future"

@@ -229,18 +229,3 @@ export type BucketListItem = {
   reminder?: string
   createdAt: number
 }
-
-export type ContentStatus = "ideas" | "scripts" | "filming" | "editing" | "published"
-
-export type ContentItem = {
-  id: string
-  emoji: string
-  title: string
-  description: string
-  deadline: string
-  status: ContentStatus
-  subtasks: { id: string; title: string; completed: boolean }[]
-  reminder?: string
-  createdAt: number
-  archivedAt?: number
-}
