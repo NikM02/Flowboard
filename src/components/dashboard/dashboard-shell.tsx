@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback, useRef } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Loader2, WifiOff } from "lucide-react"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
@@ -14,10 +14,7 @@ import { PwaInstallSheet } from "@/components/dashboard/pwa-install-sheet"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
-import { usePushNotifications } from "@/hooks/use-push-notifications"
-import { usePwaPush } from "@/hooks/use-pwa-push"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
-import { setStoredUserId } from "@/lib/push-client"
 import { useThemeStore } from "@/store/use-theme-store"
 
 export function DashboardShell({ children }: { children: React.ReactNode }) {
@@ -38,8 +35,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   useNotificationGenerator()
   useReminderScheduler()
-  const { permission } = usePushNotifications()
-  const { subscribed: pushSubscribed, enable: enablePush } = usePwaPush()
 
   // PWA install / alert state.
   const [installPrompt, setInstallPrompt] = useState<BeforeInstallPromptEvent | null>(null)
@@ -47,7 +42,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [installed, setInstalled] = useState(false)
   const [showInstallSheet, setShowInstallSheet] = useState(false)
   const [offline, setOffline] = useState(false)
-  const autoEnabled = useRef(false)
 
   const isStandalone = useCallback(() => {
     if (typeof window === "undefined") return false
@@ -101,14 +95,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     }
   }, [installPrompt])
 
-  // Once installed, auto-enable alerts (first time only).
-  useEffect(() => {
-    if (installed && !autoEnabled.current && permission === "granted" && !pushSubscribed) {
-      autoEnabled.current = true
-      void enablePush()
-    }
-  }, [installed, permission, pushSubscribed, enablePush])
-
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -118,8 +104,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         const { data } = await client.auth.getSession()
         if (!cancelled) {
           setAuthenticated(!!data.session)
-          if (data.session?.user?.id) setStoredUserId(data.session.user.id)
-          else setStoredUserId(null)
         }
       } catch {
         if (!cancelled) setAuthenticated(false)
@@ -231,7 +215,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         isIOS={isIOS}
         canPrompt={!!installPrompt}
         onPrompt={() => void handlePromptInstall()}
-        onEnablePush={() => void enablePush()}
       />
 
       <CreateTaskModal />

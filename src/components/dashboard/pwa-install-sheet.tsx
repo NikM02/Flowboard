@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Share, Smartphone, Home, BellRing, Download, X } from "lucide-react"
+import { Share, Smartphone, Home, Download, X } from "lucide-react"
 
 type Props = {
   open: boolean
@@ -10,10 +10,9 @@ type Props = {
   isIOS: boolean
   canPrompt: boolean
   onPrompt: () => void
-  onEnablePush: () => void
 }
 
-export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt, onEnablePush }: Props) {
+export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt }: Props) {
   const [standalone, setStandalone] = useState(false)
 
   useEffect(() => {
@@ -48,12 +47,10 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt, onE
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-base font-bold text-neutral-900 dark:text-white">
-                  {standalone ? "Alerts are about to work" : "Install Vault"}
+                  Install Vault
                 </h3>
                 <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
-                  {standalone
-                    ? "Turn on notifications so reminders reach you like a normal app."
-                    : "Get reminders and badge alerts even when the app is closed."}
+                  Add Vault to your Home Screen for quick access and a badge little bell icon.
                 </p>
               </div>
               <button
@@ -79,11 +76,6 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt, onE
                       title="Choose Add to Home Screen"
                       subtitle='Scroll down the share sheet and tap "Add to Home Screen".'
                     />
-                    <Step
-                      icon={<BellRing className="h-4 w-4" />}
-                      title="Open Vault, then allow alerts"
-                      subtitle="It moves to your Home Screen like a real app — open it and we'll handle the rest."
-                    />
                   </>
                 ) : (
                   <>
@@ -91,11 +83,6 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt, onE
                       icon={<Download className="h-4 w-4" />}
                       title="Tap the install button below"
                       subtitle="Chrome / Edge / Samsung Internet will add Vault to your Home Screen."
-                    />
-                    <Step
-                      icon={<BellRing className="h-4 w-4" />}
-                      title="Allow notifications"
-                      subtitle="Once installed you'll get reminders exactly like a native app."
                     />
                   </>
                 )}
@@ -120,15 +107,14 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt, onE
                   </button>
                 ))}
 
-              <button
-                onClick={() => {
-                  onEnablePush()
-                  onClose()
-                }}
-                className="col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-4 py-3.5 text-sm font-semibold text-white transition-all hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 md:col-span-1"
-              >
-                <BellRing className="h-4 w-4" /> Enable alerts
-              </button>
+              {!standalone && (
+                <button
+                  onClick={onClose}
+                  className={"col-span-2 flex items-center justify-center gap-2 rounded-2xl bg-neutral-900 px-4 py-3.5 text-sm font-semibold text-white transition-all hover:bg-neutral-800 dark:bg-white dark:text-neutral-900 dark:hover:bg-neutral-200 md:col-span-1"}
+                >
+                  Not now
+                </button>
+              )}
             </div>
           </motion.div>
         </>
