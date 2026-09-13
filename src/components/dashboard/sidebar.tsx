@@ -24,13 +24,11 @@ const navItems = [
 export function Sidebar({
   open,
   onClose,
-  onLogout,
   collapsed,
   onToggleCollapse,
 }: {
   open: boolean
   onClose: () => void
-  onLogout: () => void
   collapsed: boolean
   onToggleCollapse: () => void
 }) {

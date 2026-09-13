@@ -6,7 +6,6 @@ import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 import { BottomNav } from "@/components/dashboard/bottom-nav"
 import { GlobalSearch } from "@/components/dashboard/global-search"
-import { LoginScreen } from "@/components/dashboard/login-screen"
 import { CreateTaskModal } from "@/components/dashboard/create-task-modal"
 import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
@@ -160,27 +159,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return () => navigator.serviceWorker.removeEventListener("message", onMessage)
   }, [])
 
-  const handleAuth = useCallback(() => {
-    setAuthenticated(true)
-    ;(async () => {
-      try {
-        const { createClient } = await import("@/lib/supabase/client")
-        const client = createClient()
-        const { data } = await client.auth.getSession()
-        setStoredUserId(data.session?.user?.id ?? null)
-      } catch {}
-    })()
-  }, [])
-
-  const handleLogout = useCallback(async () => {
-    try {
-      const { createClient } = await import("@/lib/supabase/client")
-      const client = createClient()
-      await client.auth.signOut()
-    } catch {}
-    setAuthenticated(false)
-  }, [])
-
   const toggleSidebarCollapsed = useCallback(() => {
     setSidebarCollapsed((c) => {
       const next = !c
@@ -202,10 +180,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (!authenticated) {
-    return <LoginScreen onAuth={handleAuth} />
-  }
-
   if (dataLoading) {
     return (
       <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
@@ -222,7 +196,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-        onLogout={handleLogout}
         collapsed={sidebarCollapsed}
         onToggleCollapse={toggleSidebarCollapsed}
       />
@@ -230,7 +203,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header
           onSearchOpen={() => setSearchOpen(true)}
-          onLogout={handleLogout}
           onMenuToggle={() => setSidebarOpen(true)}
           sidebarCollapsed={sidebarCollapsed}
         />
