@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Menu, Sun, Moon } from "lucide-react"
+import { Search, Menu, Sun, Moon, LogOut } from "lucide-react"
 import { NotificationCenter } from "./notification-center"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useThemeStore } from "@/store/use-theme-store"
@@ -22,10 +22,12 @@ const PAGE_TITLES: Record<string, string> = {
 
 export function Header({
   onSearchOpen,
+  onLogout,
   onMenuToggle,
   sidebarCollapsed,
 }: {
   onSearchOpen: () => void
+  onLogout?: () => void
   onMenuToggle?: () => void
   sidebarCollapsed?: boolean
 }) {
@@ -95,6 +97,14 @@ export function Header({
             </button>
 
             <NotificationCenter />
+
+            <button
+              onClick={onLogout}
+              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
+              title="Logout"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </motion.header>
