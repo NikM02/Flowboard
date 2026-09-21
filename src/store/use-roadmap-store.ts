@@ -33,6 +33,7 @@ type AddTaskInput = {
 type RoadmapStore = {
   roadmaps: Roadmap[]
   addRoadmap: (data: AddRoadmapInput) => void
+  addRoadmapFull: (roadmap: Roadmap) => void
   updateRoadmap: (
     id: string,
     data: Partial<Omit<Roadmap, "id" | "createdAt" | "updatedAt" | "phases">>
@@ -107,6 +108,7 @@ export function normalizeRoadmap(r: any): Roadmap {
           startDate: p?.startDate ?? undefined,
           dueDate: p?.dueDate ?? undefined,
           priority: p?.priority ?? "medium",
+          completedAt: p?.completedAt ?? undefined,
           tasks: Array.isArray(p?.tasks)
             ? p.tasks.map((t: any) => ({
                 id: t?.id ?? generateId(),
@@ -114,6 +116,7 @@ export function normalizeRoadmap(r: any): Roadmap {
                 completed: !!t?.completed,
                 priority: t?.priority ?? "medium",
                 dueDate: t?.dueDate ?? undefined,
+                completedAt: t?.completedAt ?? undefined,
               }))
             : [],
           notes: Array.isArray(p?.notes)
@@ -146,6 +149,9 @@ export const useRoadmapStore = create<RoadmapStore>((set) => ({
       }
       return { roadmaps: [roadmap, ...s.roadmaps] }
     }),
+
+  addRoadmapFull: (roadmap) =>
+    set((s) => ({ roadmaps: [roadmap, ...s.roadmaps].sort((a, b) => b.updatedAt - a.updatedAt) })),
 
   updateRoadmap: (id, data) =>
     set((s) => ({
@@ -191,7 +197,18 @@ export const useRoadmapStore = create<RoadmapStore>((set) => ({
     set((s) => ({
       roadmaps: s.roadmaps.map((r) =>
         r.id === roadmapId
-          ? touch({ ...r, phases: r.phases.map((p) => (p.id === phaseId ? { ...p, status } : p)) })
+          ? touch({
+              ...r,
+              phases: r.phases.map((p) =>
+                p.id === phaseId
+                  ? {
+                      ...p,
+                      status,
+                      completedAt: status === "completed" ? (p.completedAt ?? Date.now()) : undefined,
+                    }
+                  : p
+              ),
+            })
           : r
       ),
     })),
@@ -260,7 +277,13 @@ export const useRoadmapStore = create<RoadmapStore>((set) => ({
                   ? {
                       ...p,
                       tasks: p.tasks.map((t) =>
-                        t.id === taskId ? { ...t, completed: !t.completed } : t
+                        t.id === taskId
+                          ? {
+                              ...t,
+                              completed: !t.completed,
+                              completedAt: !t.completed ? Date.now() : undefined,
+                            }
+                          : t
                       ),
                     }
                   : p

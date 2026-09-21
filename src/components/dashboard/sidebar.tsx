@@ -41,7 +41,7 @@ export function Sidebar({
     cn(
       "group relative flex w-full items-center rounded-[10px] text-sm font-medium transition-all duration-200",
       isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
-      pathname === href
+      (pathname === href || (href !== "/" && pathname.startsWith(href + "/")))
         ? "bg-neutral-100 font-semibold text-neutral-900 dark:bg-neutral-800 dark:text-white"
         : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
     )

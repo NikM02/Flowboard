@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v9"
+const VERSION = "vault-sw-v10"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 

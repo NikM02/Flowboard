@@ -262,6 +262,7 @@ export type RoadmapPhaseTask = {
   completed: boolean
   priority?: RoadmapPriority
   dueDate?: string
+  completedAt?: number
 }
 
 export type RoadmapPhase = {
@@ -274,6 +275,7 @@ export type RoadmapPhase = {
   priority?: RoadmapPriority
   tasks: RoadmapPhaseTask[]
   notes: RoadmapPhaseNote[]
+  completedAt?: number
   createdAt: number
 }
 

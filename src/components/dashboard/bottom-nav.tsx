@@ -56,7 +56,7 @@ export function BottomNav() {
               <div className="grid grid-cols-3 gap-2">
                 {moreItems.map((item) => {
                   const Icon = item.icon
-                  const isActive = pathname === item.href
+                  const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
                   return (
                     <button
                       key={item.href}
@@ -83,7 +83,7 @@ export function BottomNav() {
         <div className="flex items-center justify-around px-1 pb-safe pt-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
             return (
               <button
                 key={item.href}

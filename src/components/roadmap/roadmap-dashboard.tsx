@@ -1,7 +1,8 @@
 "use client"
 
-import { useMemo, useState, type FormEvent } from "react"
+import { useEffect, useMemo, useState, type FormEvent } from "react"
 import { motion, AnimatePresence } from "framer-motion"
+import { useRouter } from "next/navigation"
 import {
   ArrowLeft, Pencil, Trash2, Plus, ChevronDown, ChevronRight,
   Target, CalendarDays, MessageSquarePlus, X, StickyNote,
@@ -13,11 +14,14 @@ import { Input } from "@/components/ui/input"
 import {
   getPhaseProgress, getRoadmapHealth, useRoadmapStore,
 } from "@/store/use-roadmap-store"
+import { usePageTitleStore } from "@/store/use-page-title-store"
 import {
   CATEGORY_META, PRIORITY_META, HEALTH_META, STATUS_META, STATUS_LIST,
   formatShortDate,
 } from "./roadmap-meta"
 import { EditRoadmapDialog, PhaseDialog, TaskDialog } from "./roadmap-dialogs"
+import { RoadmapAnalytics } from "./roadmap-analytics"
+import { RoadmapPhaseView } from "./roadmap-phase-view"
 import type { PhaseStatus, Roadmap, RoadmapPhase } from "@/types"
 
 function StatusBadge({ status }: { status: PhaseStatus }) {
@@ -31,21 +35,10 @@ function StatusBadge({ status }: { status: PhaseStatus }) {
   )
 }
 
-function PhaseTasks({
-  roadmapId, phase, compact,
-}: {
-  roadmapId: string
-  phase: RoadmapPhase
-  compact?: boolean
-}) {
+function PhaseTasks({ roadmapId, phase }: { roadmapId: string; phase: RoadmapPhase }) {
   const { toggleTask, deleteTask, addTask } = useRoadmapStore()
   const [taskOpen, setTaskOpen] = useState(false)
   const [quick, setQuick] = useState("")
-  const [expanded, setExpanded] = useState(false)
-
-  if (compact && !expanded && phase.tasks.length === 0) {
-    return null
-  }
 
   const quickAdd = (e: FormEvent) => {
     e.preventDefault()
@@ -84,27 +77,16 @@ function PhaseTasks({
         </div>
       ))}
 
-      {!compact && (
-        <>
-          <Button variant="outline" size="sm" onClick={() => setTaskOpen(true)} className="h-7 w-full gap-1 text-xs">
-            <Plus className="h-3 w-3" /> Add task
-          </Button>
-          <form onSubmit={quickAdd} className="flex items-center gap-2">
-            <Input value={quick} onChange={(e) => setQuick(e.target.value)} placeholder="Quick add…" className="h-8 flex-1 text-sm" />
-            <Button type="submit" size="sm" className="h-8 gap-1" disabled={!quick.trim()}>
-              <Plus className="h-3.5 w-3.5" /> Add
-            </Button>
-          </form>
-          <TaskDialog open={taskOpen} onOpenChange={setTaskOpen} roadmapId={roadmapId} phaseId={phase.id} />
-        </>
-      )}
-
-      {compact && phase.tasks.length > 0 && (
-        <Button variant="ghost" size="sm" onClick={() => setExpanded((v) => !v)} className="h-6 w-full text-xs text-neutral-400">
-          {expanded ? "Hide tasks" : `Show ${phase.tasks.length} tasks`}
-          {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+      <Button variant="outline" size="sm" onClick={() => setTaskOpen(true)} className="h-7 w-full gap-1 text-xs">
+        <Plus className="h-3 w-3" /> Add task
+      </Button>
+      <form onSubmit={quickAdd} className="flex items-center gap-2">
+        <Input value={quick} onChange={(e) => setQuick(e.target.value)} placeholder="Quick add…" className="h-8 flex-1 text-sm" />
+        <Button type="submit" size="sm" className="h-8 gap-1" disabled={!quick.trim()}>
+          <Plus className="h-3.5 w-3.5" /> Add
         </Button>
-      )}
+      </form>
+      <TaskDialog open={taskOpen} onOpenChange={setTaskOpen} roadmapId={roadmapId} phaseId={phase.id} />
     </div>
   )
 }
@@ -171,12 +153,12 @@ function PhaseRow({
   onOpen: () => void
 }) {
   const { setPhaseStatus, deletePhase } = useRoadmapStore()
-  const [expanded, setExpanded] = useState<boolean>((phase.status === "in-progress" || phase.status === "blocked") && phase.tasks.length > 0)
+  const [expanded, setExpanded] = useState((phase.status === "in-progress" || phase.status === "blocked") && phase.tasks.length > 0)
   const [editOpen, setEditOpen] = useState(false)
   const meta = STATUS_META[phase.status]
   const pct = getPhaseProgress(phase)
   const doneTasks = phase.tasks.filter((t) => t.completed).length
-  const overdue = phase.dueDate && ![ "completed", "on-hold" ].includes(phase.status)
+  const overdue = phase.dueDate && !["completed", "on-hold"].includes(phase.status)
     ? new Date(phase.dueDate).getTime() < Date.now()
     : false
 
@@ -185,7 +167,6 @@ function PhaseRow({
     : phase.status === "not-started" ? "planning"
     : phase.status === "planning" ? "in-progress"
     : phase.status === "in-progress" ? "completed"
-    : phase.status === "on-hold" ? "in-progress"
     : "in-progress"
 
   return (
@@ -208,7 +189,10 @@ function PhaseRow({
           ) : phase.status === "in-progress" ? (
             <span className="h-2.5 w-2.5 rounded-full" style={{ background: meta.dot }} />
           ) : (
-            <span className="h-2.5 w-2.5 rounded-full bg-neutral-300 dark:bg-neutral-700" style={phase.status === "planning" || phase.status === "on-hold" || phase.status === "blocked" ? { background: meta.dot } : undefined} />
+            <span
+              className="h-2.5 w-2.5 rounded-full bg-neutral-300 dark:bg-neutral-700"
+              style={["planning", "on-hold", "blocked"].includes(phase.status) ? { background: meta.dot } : undefined}
+            />
           )}
         </button>
 
@@ -276,9 +260,7 @@ function PhaseRow({
                   variant="outline"
                   size="sm"
                   className="h-7 gap-1 text-xs text-red-500 hover:text-red-600"
-                  onClick={() => {
-                    if (confirm(`Delete milestone "${phase.title}"?`)) deletePhase(roadmap.id, phase.id)
-                  }}
+                  onClick={() => { if (confirm(`Delete milestone "${phase.title}"?`)) deletePhase(roadmap.id, phase.id) }}
                 >
                   <Trash2 className="h-3 w-3" /> Delete
                 </Button>
@@ -293,17 +275,35 @@ function PhaseRow({
   )
 }
 
-export function RoadmapDetail({
-  roadmap, onBack, onOpenPhase,
-}: {
-  roadmap: Roadmap
-  onBack: () => void
-  onOpenPhase: (phaseId: string) => void
-}) {
+export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
+  const router = useRouter()
   const deleteRoadmap = useRoadmapStore((s) => s.deleteRoadmap)
+  const setPageTitle = usePageTitleStore((s) => s.setPageTitle)
   const [editOpen, setEditOpen] = useState(false)
   const [phaseOpen, setPhaseOpen] = useState(false)
   const [filter, setFilter] = useState<PhaseStatus | "all">("all")
+  const [openPhaseId, setOpenPhaseId] = useState<string | null>(null)
+
+  useEffect(() => {
+    setPageTitle(roadmap.title)
+    return () => setPageTitle(null)
+  }, [roadmap.title, setPageTitle])
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 })
+  }, [openPhaseId])
+
+  const openPhase = roadmap.phases.find((p) => p.id === openPhaseId)
+  if (openPhase) {
+    return (
+      <RoadmapPhaseView
+        roadmap={roadmap}
+        phase={openPhase}
+        onBack={() => setOpenPhaseId(null)}
+        onOpenPhase={setOpenPhaseId}
+      />
+    )
+  }
 
   const donePhases = roadmap.phases.filter((p) => p.status === "completed").length
   const blocked = roadmap.phases.filter((p) => p.status === "blocked").length
@@ -325,7 +325,7 @@ export function RoadmapDetail({
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
       <div className="mb-5 flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
+        <Button variant="ghost" size="sm" onClick={() => { setPageTitle(null); router.push("/roadmap") }} className="gap-1.5">
           <ArrowLeft className="h-4 w-4" /> All roadmaps
         </Button>
         <div className="flex items-center gap-1">
@@ -339,7 +339,8 @@ export function RoadmapDetail({
             onClick={() => {
               if (confirm(`Delete "${roadmap.title}" and everything inside it?`)) {
                 deleteRoadmap(roadmap.id)
-                onBack()
+                setPageTitle(null)
+                router.push("/roadmap")
               }
             }}
           >
@@ -388,12 +389,14 @@ export function RoadmapDetail({
             <p className="text-2xl font-bold text-neutral-900 dark:text-white">{pct}%</p>
           </div>
           <div className="mt-2 h-3 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: pct === 100 ? "var(--color-emerald-500, #10b981)" : "var(--color-neutral-900, #171717)" }} />
+            <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: pct === 100 ? "#10b981" : "#171717" }} />
           </div>
         </div>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+      <RoadmapAnalytics roadmap={roadmap} />
+
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto">
           <button
             onClick={() => setFilter("all")}
@@ -441,10 +444,10 @@ export function RoadmapDetail({
         <div className="relative mt-4 space-y-3">
           <div className="absolute bottom-5 left-[27px] top-5 w-px bg-neutral-200 dark:bg-neutral-800" />
           <AnimatePresence mode="popLayout">
-            {visible.map((phase, i) => (
+            {visible.map((phase) => (
               <div key={phase.id} className="relative pl-14">
                 <div className="absolute left-[19px] top-[26px] h-4 w-4 -translate-y-1/2 rounded-full border-4 border-white dark:border-neutral-900" style={{ background: STATUS_META[phase.status].dot }} />
-                <PhaseRow roadmap={roadmap} phase={phase} index={roadmap.phases.indexOf(phase)} onOpen={() => onOpenPhase(phase.id)} />
+                <PhaseRow roadmap={roadmap} phase={phase} index={roadmap.phases.indexOf(phase)} onOpen={() => setOpenPhaseId(phase.id)} />
               </div>
             ))}
           </AnimatePresence>
