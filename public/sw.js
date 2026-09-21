@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v8"
+const VERSION = "vault-sw-v9"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -6,6 +6,7 @@ const APP_SHELL = [
   "/",
   "/dashboard",
   "/tasks",
+  "/roadmap",
   "/habits",
   "/finance",
   "/investments",

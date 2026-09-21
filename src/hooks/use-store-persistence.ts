@@ -11,6 +11,7 @@ import { useFinanceStore } from "@/store/use-finance-store"
 import { useFutureStore } from "@/store/use-future-store"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
+import { useRoadmapStore } from "@/store/use-roadmap-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
@@ -39,6 +40,7 @@ type AppData = {
   futureGoals: unknown[]
   northStar: { vision: string; mission: string; identity: string; pillars: unknown[] }
   bucketListItems: unknown[]
+  roadmaps: unknown[]
   advanceTodos: unknown[]
   notifications: unknown[]
   colorTheme: ColorTheme
@@ -72,6 +74,7 @@ function collectData(): AppData {
       pillars: useNorthStarStore.getState().pillars,
     },
     bucketListItems: useBucketListStore.getState().items,
+    roadmaps: useRoadmapStore.getState().roadmaps,
     advanceTodos: useAdvanceTodoStore.getState().todos,
     notifications: useNotificationStore.getState().notifications,
     colorTheme: useThemeStore.getState().colorTheme,
@@ -135,6 +138,7 @@ function applyData(d: AppData) {
     if (ns.pillars?.length) useNorthStarStore.setState({ pillars: ns.pillars as any })
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
+  if (d.roadmaps?.length) useRoadmapStore.setState({ roadmaps: d.roadmaps as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
   if (d.notifications?.length) {
     useNotificationStore.setState({ notifications: d.notifications as any })
@@ -171,6 +175,7 @@ function applyDataReplace(d: AppData) {
     pillars: (ns?.pillars ?? []) as any,
   })
   useBucketListStore.setState({ items: (d.bucketListItems ?? []) as any })
+  useRoadmapStore.setState({ roadmaps: (d.roadmaps ?? []) as any })
   useAdvanceTodoStore.setState({ todos: (d.advanceTodos ?? []) as any })
   useNotificationStore.setState({
     notifications: (d.notifications ?? []) as any,
@@ -339,6 +344,7 @@ export function useSupabasePersistence() {
       useFutureStore.subscribe(scheduleSave),
       useNorthStarStore.subscribe(scheduleSave),
       useBucketListStore.subscribe(scheduleSave),
+      useRoadmapStore.subscribe(scheduleSave),
       useAdvanceTodoStore.subscribe(scheduleSave),
       useThemeStore.subscribe(scheduleSave),
       useNotificationStore.subscribe(scheduleSave),
@@ -391,6 +397,7 @@ export function resetAllStores() {
     futureGoals: [],
     northStar: { vision: "", mission: "", identity: "", pillars: [] },
     bucketListItems: [],
+    roadmaps: [],
     advanceTodos: [],
     notifications: [],
     colorTheme: "dark",

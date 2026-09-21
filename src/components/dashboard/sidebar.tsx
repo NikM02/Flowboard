@@ -7,13 +7,14 @@ import Link from "next/link"
 import {
   ListTodo, X, Heart, GraduationCap, Wallet, Sparkles,
   TrendingUp, LayoutDashboard, Compass, ChevronsLeft,
-  Settings, CalendarClock,
+  Settings, CalendarClock, Map,
 } from "lucide-react"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 
 const navItems = [
   { href: "/tasks", label: "Tasks", icon: ListTodo },
+  { href: "/roadmap", label: "Roadmap", icon: Map },
   { href: "/habits", label: "Health", icon: Heart },
   { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/finance", label: "Finance", icon: Wallet },

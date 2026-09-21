@@ -229,3 +229,33 @@ export type BucketListItem = {
   reminder?: string
   createdAt: number
 }
+
+export type PhaseStatus = "todo" | "in-progress" | "done"
+
+export type RoadmapPhaseTask = {
+  id: string
+  title: string
+  completed: boolean
+}
+
+export type RoadmapPhase = {
+  id: string
+  title: string
+  description?: string
+  status: PhaseStatus
+  reminder?: string
+  tasks: RoadmapPhaseTask[]
+  createdAt: number
+}
+
+export type Roadmap = {
+  id: string
+  title: string
+  description?: string
+  emoji: string
+  target: string
+  deadline?: string
+  createdAt: number
+  updatedAt: number
+  phases: RoadmapPhase[]
+}

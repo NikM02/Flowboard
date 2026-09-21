@@ -23,6 +23,7 @@ const EMPTY: Record<string, unknown> = {
   futureGoals: [],
   northStar: { vision: "", mission: "", identity: "", pillars: [] },
   bucketListItems: [],
+  roadmaps: [],
   advanceTodos: [],
   notifications: [],
   colorTheme: "dark",

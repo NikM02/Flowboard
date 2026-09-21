@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   LayoutDashboard, ListTodo, Wallet, Plus, X,
-  Compass, Heart, GraduationCap, TrendingUp, Sparkles, CalendarClock,
+  Compass, Heart, GraduationCap, TrendingUp, Sparkles, CalendarClock, Map,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 
@@ -18,6 +18,7 @@ const primaryItems = [
 
 const moreItems = [
   { href: "/north-star", label: "North Star", icon: Compass },
+  { href: "/roadmap", label: "Roadmap", icon: Map },
   { href: "/skills", label: "Skills", icon: GraduationCap },
   { href: "/investments", label: "Investments", icon: TrendingUp },
   { href: "/future", label: "Future", icon: Sparkles },

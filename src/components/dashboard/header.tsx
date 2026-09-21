@@ -11,6 +11,7 @@ import { usePageTitleStore } from "@/store/use-page-title-store"
 const PAGE_TITLES: Record<string, string> = {
   "/dashboard": "Dashboard",
   "/tasks": "Tasks",
+  "/roadmap": "Roadmap",
   "/habits": "Health",
   "/north-star": "North Star",
   "/future": "Future Self",
