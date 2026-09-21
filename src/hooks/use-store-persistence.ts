@@ -11,7 +11,7 @@ import { useFinanceStore } from "@/store/use-finance-store"
 import { useFutureStore } from "@/store/use-future-store"
 import { useNorthStarStore } from "@/store/use-north-star-store"
 import { useBucketListStore } from "@/store/use-bucket-list-store"
-import { useRoadmapStore } from "@/store/use-roadmap-store"
+import { useRoadmapStore, normalizeRoadmap } from "@/store/use-roadmap-store"
 import { useAdvanceTodoStore } from "@/store/use-advance-todo-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
@@ -138,7 +138,7 @@ function applyData(d: AppData) {
     if (ns.pillars?.length) useNorthStarStore.setState({ pillars: ns.pillars as any })
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
-  if (d.roadmaps?.length) useRoadmapStore.setState({ roadmaps: d.roadmaps as any })
+  if (d.roadmaps?.length) useRoadmapStore.setState({ roadmaps: d.roadmaps.map(normalizeRoadmap) as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
   if (d.notifications?.length) {
     useNotificationStore.setState({ notifications: d.notifications as any })
@@ -175,7 +175,7 @@ function applyDataReplace(d: AppData) {
     pillars: (ns?.pillars ?? []) as any,
   })
   useBucketListStore.setState({ items: (d.bucketListItems ?? []) as any })
-  useRoadmapStore.setState({ roadmaps: (d.roadmaps ?? []) as any })
+  useRoadmapStore.setState({ roadmaps: ((d.roadmaps ?? []) as any[]).map(normalizeRoadmap) as any })
   useAdvanceTodoStore.setState({ todos: (d.advanceTodos ?? []) as any })
   useNotificationStore.setState({
     notifications: (d.notifications ?? []) as any,

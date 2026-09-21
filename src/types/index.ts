@@ -230,12 +230,38 @@ export type BucketListItem = {
   createdAt: number
 }
 
-export type PhaseStatus = "todo" | "in-progress" | "done"
+export type PhaseStatus =
+  | "not-started"
+  | "planning"
+  | "in-progress"
+  | "on-hold"
+  | "blocked"
+  | "completed"
+
+export type RoadmapPriority = "low" | "medium" | "high" | "urgent"
+
+export type RoadmapCategory =
+  | "content"
+  | "business"
+  | "career"
+  | "learning"
+  | "financial"
+  | "personal"
+  | "product"
+  | "health"
+
+export type RoadmapPhaseNote = {
+  id: string
+  text: string
+  createdAt: number
+}
 
 export type RoadmapPhaseTask = {
   id: string
   title: string
   completed: boolean
+  priority?: RoadmapPriority
+  dueDate?: string
 }
 
 export type RoadmapPhase = {
@@ -243,8 +269,11 @@ export type RoadmapPhase = {
   title: string
   description?: string
   status: PhaseStatus
-  reminder?: string
+  startDate?: string
+  dueDate?: string
+  priority?: RoadmapPriority
   tasks: RoadmapPhaseTask[]
+  notes: RoadmapPhaseNote[]
   createdAt: number
 }
 
@@ -253,8 +282,10 @@ export type Roadmap = {
   title: string
   description?: string
   emoji: string
-  target: string
+  category: RoadmapCategory
+  target?: string
   deadline?: string
+  priority: RoadmapPriority
   createdAt: number
   updatedAt: number
   phases: RoadmapPhase[]
