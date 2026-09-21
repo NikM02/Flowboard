@@ -11,6 +11,7 @@ import { EditTaskSheet } from "@/components/dashboard/edit-task-sheet"
 import { DeleteConfirmDialog } from "@/components/dashboard/delete-confirm-dialog"
 import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
 import { PwaInstallSheet } from "@/components/dashboard/pwa-install-sheet"
+import { LoginScreen } from "@/components/dashboard/login-screen"
 
 import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
@@ -95,6 +96,19 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     }
   }, [installPrompt])
 
+  const handleAuth = useCallback(() => {
+    setAuthenticated(true)
+  }, [])
+
+  const handleLogout = useCallback(async () => {
+    try {
+      const { createClient } = await import("@/lib/supabase/client")
+      const client = createClient()
+      await client.auth.signOut()
+      setAuthenticated(false)
+    } catch {}
+  }, [])
+
   useEffect(() => {
     let cancelled = false
     ;(async () => {
@@ -175,6 +189,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     )
   }
 
+  if (!authenticated) {
+    return <LoginScreen onAuth={handleAuth} />
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
       <Sidebar
@@ -187,6 +205,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
       <div className="flex min-w-0 flex-1 flex-col">
         <Header
           onSearchOpen={() => setSearchOpen(true)}
+          onLogout={() => void handleLogout()}
           onMenuToggle={() => setSidebarOpen(true)}
           sidebarCollapsed={sidebarCollapsed}
         />
