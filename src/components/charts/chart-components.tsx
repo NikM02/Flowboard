@@ -4,10 +4,14 @@ import { useMemo } from "react"
 import { RadialBarChart, RadialBar, ResponsiveContainer } from "recharts"
 
 const CHART_GRADIENTS: [string, string][] = [
-  ["#262626", "#525252"],
-  ["#525252", "#737373"],
-  ["#737373", "#a3a3a3"],
-  ["#404040", "#737373"],
+  ["#0066cc", "#0a84ff"],
+  ["#34c759", "#63e6be"],
+  ["#af52de", "#bf5df2"],
+  ["#ff9f0a", "#ffd60a"],
+  ["#ff453a", "#ff6961"],
+  ["#30b0c7", "#40cbe0"],
+  ["#5856d6", "#7f7aff"],
+  ["#ff2d55", "#ff6482"],
 ]
 
 export const CHART_GRID_STYLES = {
@@ -23,7 +27,7 @@ export const CHART_AXIS_STYLES = {
   tickLine: false,
 } as const
 
-export const CHART_CURSOR_STYLES = { fill: "rgba(38, 38, 38, 0.06)" }
+export const CHART_CURSOR_STYLES = { fill: "rgba(10, 84, 255, 0.06)" }
 
 interface ChartTooltipProps {
   active?: boolean

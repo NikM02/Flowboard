@@ -37,6 +37,7 @@ export type PlanStatus = {
   nextDue: string
   latestDue: string
   latestPaid: boolean
+  nextPayable: string
   overdue: boolean
   label: string
 }
@@ -51,6 +52,7 @@ export function computePlan(plan: InvestmentPlan | undefined, now: Date = new Da
     nextDue: "",
     latestDue: "",
     latestPaid: false,
+    nextPayable: "",
     overdue: false,
     label: "No plan",
   }
@@ -61,7 +63,9 @@ export function computePlan(plan: InvestmentPlan | undefined, now: Date = new Da
   const dueDates = installments.filter((d) => d <= today)
   const paidDates = new Set(plan.paid || [])
   const paid = dueDates.filter((d) => paidDates.has(d)).length
-  const overdue = dueDates.length > 0 && dueDates.some((d) => !paidDates.has(d))
+  const unpaidDue = dueDates.find((d) => !paidDates.has(d)) || ""
+  const nextPayable = unpaidDue || ""
+  const overdue = dueDates.length > 0 && !!unpaidDue
   const latestDue = dueDates[dueDates.length - 1] || ""
   const latestPaid = latestDue === "" ? false : paidDates.has(latestDue)
   const nextDue = installments.find((d) => d > today) || ""
@@ -83,9 +87,24 @@ export function computePlan(plan: InvestmentPlan | undefined, now: Date = new Da
     nextDue,
     latestDue,
     latestPaid,
+    nextPayable,
     overdue,
     label,
   }
+}
+
+export function paidCount(plan: InvestmentPlan | undefined): number {
+  if (!plan || !plan.start || plan.tenure <= 0) return 0
+  const paid = new Set(plan.paid || [])
+  return enumerateInstallments(plan).filter((d) => paid.has(d)).length
+}
+
+export function monthsSince(key: string, now: Date = new Date()): number {
+  if (!key) return 0
+  const start = new Date(key + "T00:00:00")
+  if (isNaN(start.getTime())) return 0
+  const months = (now.getFullYear() - start.getFullYear()) * 12 + (now.getMonth() - start.getMonth())
+  return Math.max(0, months + (now.getDate() >= start.getDate() ? 0 : -1))
 }
 
 export function formatInstallmentDate(key: string): string {
@@ -94,13 +113,14 @@ export function formatInstallmentDate(key: string): string {
   return new Date(y, m - 1, d).toLocaleDateString("en-US", { day: "numeric", month: "short" })
 }
 
-export function toggleLatestPaid(plan: InvestmentPlan | undefined): InvestmentPlan | undefined {
+export function toggleNextPaid(plan: InvestmentPlan | undefined): InvestmentPlan | undefined {
   if (!plan) return plan
   const st = computePlan(plan)
-  if (!st.latestDue) return plan
+  const target = st.nextPayable || st.latestDue
+  if (!target) return plan
   const paid = new Set(plan.paid || [])
-  if (paid.has(st.latestDue)) paid.delete(st.latestDue)
-  else paid.add(st.latestDue)
+  if (paid.has(target)) paid.delete(target)
+  else paid.add(target)
   return { ...plan, paid: [...paid] }
 }
 

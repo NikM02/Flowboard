@@ -7,8 +7,8 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
 } from "recharts"
 import {
-  TrendingUp, Target, CheckCircle2, Brain, Wallet, Archive,
-  Plus, Trash2, Pencil, Download, Sparkles, ArrowUp, ArrowDown, Minus,
+  TrendingUp, Target, CheckCircle2, Brain, Wallet,
+  Plus, Sparkles, ArrowUp, ArrowDown, Minus,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
@@ -28,13 +28,7 @@ import { useChallengeStore } from "@/store/use-challenge-store"
 import { useDopamineStore } from "@/store/use-dopamine-store"
 import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
-import { useFutureStore } from "@/store/use-future-store"
-import type { GrowthPeriod, GrowthCategory, FutureGoal } from "@/types"
-
-const tabs: { key: "simulator" | "archive"; label: string; icon: typeof Target }[] = [
-  { key: "simulator", label: "Growth", icon: TrendingUp },
-  { key: "archive", label: "Archive", icon: Archive },
-]
+import type { GrowthPeriod, GrowthCategory } from "@/types"
 
 const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string }> = {
   tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-neutral-700", hex: "#404040" },
@@ -115,14 +109,6 @@ function getPeriodLabel(period: GrowthPeriod, date: Date): string {
   }
 }
 
-function getPeriodKey(period: GrowthPeriod, date: Date): string {
-  switch (period) {
-    case "monthly": return format(date, "yyyy-MM")
-    case "quarterly": return `${format(date, "yyyy")}-Q${Math.floor(date.getMonth() / 3) + 1}`
-    case "yearly": return format(date, "yyyy")
-  }
-}
-
 function getPreviousDate(period: GrowthPeriod, date: Date): Date {
   switch (period) {
     case "monthly": return subMonths(date, 1)
@@ -134,22 +120,12 @@ function getPreviousDate(period: GrowthPeriod, date: Date): Date {
 function SimulatorTab() {
   const [period, setPeriod] = useState<GrowthPeriod>("monthly")
   const [selectedDate, setSelectedDate] = useState(() => new Date())
-  const [goalDialogOpen, setGoalDialogOpen] = useState(false)
-  const [editGoalId, setEditGoalId] = useState<string | null>(null)
-  const [goalForm, setGoalForm] = useState({ title: "", category: "tasks" as GrowthCategory, targetValue: 0, currentValue: 0 })
-  const [goalReminderDate, setGoalReminderDate] = useState("")
-  const [goalReminderTime, setGoalReminderTime] = useState("")
-
-  const goals = useFutureStore((s) => s.goals)
-  const { addGoal, updateGoal, deleteGoal, toggleGoalComplete } = useFutureStore()
 
   const currentMetrics = useMemo(() => computeMetrics(period, selectedDate), [period, selectedDate])
   const prevDate = getPreviousDate(period, selectedDate)
   const prevMetrics = useMemo(() => computeMetrics(period, prevDate), [period, prevDate])
   const currentLabel = getPeriodLabel(period, selectedDate)
   const prevLabel = getPeriodLabel(period, prevDate)
-
-  const periodGoals = goals.filter((g) => g.period === period && g.periodKey === getPeriodKey(period, selectedDate))
 
   const handlePrev = () => setSelectedDate(getPreviousDate(period, selectedDate))
   const handleNext = () => {
@@ -168,41 +144,6 @@ function SimulatorTab() {
       }
     })()
     return next <= new Date()
-  }
-
-  const handleGoalSubmit = () => {
-    if (!goalForm.title.trim() || !goalForm.targetValue) return
-    let reminder: string | undefined
-    if (goalReminderDate && goalReminderTime) {
-      const r = new Date(`${goalReminderDate}T${goalReminderTime}`)
-      if (r.getTime() > Date.now()) reminder = r.toISOString()
-    }
-    if (editGoalId) updateGoal(editGoalId, { ...goalForm, reminder })
-    else addGoal({ ...goalForm, period, periodKey: getPeriodKey(period, selectedDate), reminder })
-    setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 })
-    setGoalReminderDate("")
-    setGoalReminderTime("")
-    setEditGoalId(null)
-    setGoalDialogOpen(false)
-  }
-
-  const openGoalEdit = (g: FutureGoal) => {
-    setEditGoalId(g.id)
-    setGoalForm({ title: g.title, category: g.category, targetValue: g.targetValue, currentValue: g.currentValue })
-    if (g.reminder) {
-      const d = new Date(g.reminder)
-      if (!isNaN(d.getTime())) {
-        setGoalReminderDate(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`)
-        setGoalReminderTime(`${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`)
-      } else {
-        setGoalReminderDate("")
-        setGoalReminderTime("")
-      }
-    } else {
-      setGoalReminderDate("")
-      setGoalReminderTime("")
-    }
-    setGoalDialogOpen(true)
   }
 
   const overallGrowth = useMemo(() => {
@@ -390,248 +331,22 @@ function SimulatorTab() {
         })}
       </div>
 
-      {/* Goals */}
-      <div className="rounded-3xl border border-neutral-200/60 bg-white p-6 dark:border-neutral-800/60 dark:bg-neutral-900">
-        <div className="flex items-center justify-between">
-          <div>
-            <h3 className="text-sm font-bold text-neutral-900 dark:text-neutral-50">Goals for {currentLabel}</h3>
-            <p className="mt-0.5 text-[11px] text-neutral-400 dark:text-neutral-500">{periodGoals.length} goal{periodGoals.length !== 1 ? "s" : ""} set</p>
-          </div>
-          <Button size="sm" className="gap-1.5 rounded-xl" onClick={() => { setEditGoalId(null); setGoalForm({ title: "", category: "tasks", targetValue: 0, currentValue: 0 }); setGoalDialogOpen(true) }}>
-            <Plus className="h-3.5 w-3.5" /> Add Goal
-          </Button>
-        </div>
-
-        {periodGoals.length === 0 ? (
-          <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-10 dark:border-neutral-800">
-            <Target className="mb-2 h-8 w-8 text-neutral-300 dark:text-neutral-600" />
-            <p className="text-xs text-neutral-500 dark:text-neutral-400">No goals set for this period</p>
-            <Button variant="outline" size="sm" className="mt-3 gap-1.5" onClick={() => setGoalDialogOpen(true)}>
-              <Plus className="h-3.5 w-3.5" /> Add first goal
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-4 space-y-2">
-            {periodGoals.map((g) => {
-              const curVal = currentMetrics[g.category]?.value ?? 0
-              const pct = g.targetValue > 0 ? Math.min(Math.round((curVal / g.targetValue) * 100), 100) : 0
-              const catCfg = categoryConfig[g.category]
-              return (
-                <div key={g.id} className={cn(
-                  "group flex items-center gap-3 rounded-xl border p-3 transition-all",
-                  g.completed
-                    ? "border-green-200 bg-green-50/50 dark:border-green-900/30 dark:bg-green-950/15"
-                    : "border-neutral-200/60 dark:border-neutral-800/60"
-                )}>
-                  <button
-                    onClick={() => toggleGoalComplete(g.id)}
-                    className={cn(
-                      "shrink-0 rounded-full border-2 w-5 h-5 flex items-center justify-center transition-all",
-                      g.completed ? "border-green-500 bg-green-500" : "border-neutral-300 dark:border-neutral-600"
-                    )}
-                  >
-                    {g.completed && <CheckCircle2 className="h-3 w-3 text-white" />}
-                  </button>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <span className={cn("text-sm font-medium", g.completed ? "text-green-700 line-through dark:text-green-300" : "text-neutral-900 dark:text-neutral-50")}>
-                        {g.title}
-                      </span>
-                      <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium" style={{ backgroundColor: `${catCfg.hex}15`, color: catCfg.hex }}>
-                        {catCfg.label}
-                      </span>
-                    </div>
-                    <div className="mt-1.5 flex items-center gap-3">
-                      <span className="text-[11px] text-neutral-400">{curVal}% / {g.targetValue}%</span>
-                      <div className="flex-1 max-w-[140px] h-1.5 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                        <motion.div
-                          className="h-full rounded-full"
-                          style={{ backgroundColor: catCfg.hex }}
-                          initial={{ width: 0 }}
-                          animate={{ width: `${pct}%` }}
-                          transition={{ duration: 0.4 }}
-                        />
-                      </div>
-                      <span className={cn("text-[11px] font-medium", pct >= 100 ? "text-green-600" : "text-neutral-400")}>{pct}%</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button onClick={() => openGoalEdit(g)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800">
-                      <Pencil className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={() => deleteGoal(g.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/50">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </div>
-
-      {/* Goal Dialog */}
-      <AnimatePresence>
-        {goalDialogOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm"
-            onClick={() => setGoalDialogOpen(false)}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95, y: 8 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.95, y: 8 }}
-              transition={{ duration: 0.15 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-sm rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl dark:border-neutral-800 dark:bg-neutral-900"
-            >
-              <h3 className="text-lg font-semibold text-neutral-900 dark:text-neutral-50">{editGoalId ? "Edit" : "Add"} Goal</h3>
-              <p className="mt-1 text-sm text-neutral-500 dark:text-neutral-400">Set a target for {currentLabel}</p>
-              <div className="mt-5 space-y-4">
-                <div>
-                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Title</Label>
-                  <Input className="mt-1.5" value={goalForm.title} onChange={(e) => setGoalForm({ ...goalForm, title: e.target.value })} placeholder="e.g. Complete 80% of tasks" autoFocus />
-                </div>
-                <div>
-                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Category</Label>
-                  <Select value={goalForm.category} onValueChange={(v) => setGoalForm({ ...goalForm, category: v as GrowthCategory })}>
-                    <SelectTrigger className="mt-1.5"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {(Object.keys(categoryConfig) as GrowthCategory[]).map((c) => (
-                        <SelectItem key={c} value={c}>{categoryConfig[c].label}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Target (%)</Label>
-                  <Input className="mt-1.5" type="number" min={0} max={100} value={goalForm.targetValue || ""} onChange={(e) => setGoalForm({ ...goalForm, targetValue: Number(e.target.value) })} />
-                </div>
-                <div>
-                  <Label className="text-xs font-medium text-neutral-600 dark:text-neutral-400">Reminder (optional)</Label>
-                  <div className="mt-1.5 grid grid-cols-2 gap-2">
-                    <Input type="date" value={goalReminderDate} onChange={(e) => setGoalReminderDate(e.target.value)} />
-                    <Input type="time" step={300} value={goalReminderTime} onChange={(e) => setGoalReminderTime(e.target.value)} />
-                  </div>
-                  <p className="mt-1 text-[11px] text-neutral-500">Get an alert to check in on this goal — app push.</p>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-end gap-2">
-                <Button variant="outline" size="sm" onClick={() => setGoalDialogOpen(false)}>Cancel</Button>
-                <Button size="sm" disabled={!goalForm.title.trim() || !goalForm.targetValue} onClick={handleGoalSubmit}>
-                  {editGoalId ? "Save" : "Add Goal"}
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  )
-}
-
-function ArchiveTab() {
-  const { goals, clearAll } = useFutureStore()
-
-  const handleExport = async () => {
-    const data = goals.map((g) => ({
-      Title: g.title,
-      Category: categoryConfig[g.category].label,
-      Period: g.period,
-      "Period Key": g.periodKey,
-      "Target (%)": g.targetValue,
-      Completed: g.completed ? "Yes" : "No",
-    }))
-    const XLSX = await import("xlsx")
-    const wb = XLSX.utils.book_new()
-    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Goals")
-    XLSX.writeFile(wb, "future-self-goals.xlsx")
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex gap-2">
-        <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
-          <Download className="h-3.5 w-3.5" /> Export .xlsx
-        </Button>
-        <Button variant="outline" size="sm" onClick={clearAll} className="gap-2 text-red-500 hover:text-red-600">
-          <Trash2 className="h-3.5 w-3.5" /> Clear All
-        </Button>
-      </div>
-      {goals.length === 0 ? (
-        <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-neutral-200 py-16 dark:border-neutral-800">
-          <Archive className="mb-3 h-10 w-10 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No goals archived</p>
-        </div>
-      ) : (
-        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
-          <div className="space-y-2">
-            {goals.map((g) => {
-              const catCfg = categoryConfig[g.category]
-              return (
-                <div key={g.id} className="flex items-center gap-3 rounded-xl border border-neutral-200/60 p-3 dark:border-neutral-800/60">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-                    <catCfg.icon className="h-4 w-4" style={{ color: catCfg.hex }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className={cn("text-sm font-medium", g.completed ? "text-green-700 line-through dark:text-green-300" : "text-neutral-900 dark:text-neutral-50")}>
-                      {g.title}
-                    </span>
-                    <p className="text-[11px] text-neutral-400">{g.periodKey} &middot; Target: {g.targetValue}%</p>
-                  </div>
-                  <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", g.completed ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300" : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400")}>
-                    {g.completed ? "Done" : "Active"}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
     </div>
   )
 }
 
 export function FuturePanel() {
-  const [tab, setTab] = useState<"simulator" | "archive">("simulator")
-
   return (
     <div>
-
-      <div className="mb-6 flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 overflow-x-auto">
-        {tabs.map((t) => {
-          const Icon = t.icon
-          return (
-            <button
-              key={t.key}
-              onClick={() => setTab(t.key)}
-              className={cn(
-                "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 whitespace-nowrap",
-                tab === t.key
-                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                  : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
-              )}
-            >
-              <Icon className="h-4 w-4" />
-              {t.label}
-            </button>
-          )
-        })}
-      </div>
-
       <AnimatePresence mode="wait">
         <motion.div
-          key={tab}
+          key="simulator"
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
         >
-          {tab === "simulator" && <SimulatorTab />}
-          {tab === "archive" && <ArchiveTab />}
+          <SimulatorTab />
         </motion.div>
       </AnimatePresence>
     </div>

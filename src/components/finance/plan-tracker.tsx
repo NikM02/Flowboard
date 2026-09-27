@@ -39,7 +39,8 @@ export function PlanTracker({
 
   const progress = Math.min(st.elapsed, 100)
   const completed = st.paid >= st.total
-  const dueNow = st.latestDue && !st.latestPaid
+  const payable = st.nextPayable || st.nextDue || st.latestDue
+  const dueNow = !!st.nextPayable
 
   return (
     <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
@@ -78,21 +79,21 @@ export function PlanTracker({
         <div>
           <p className="text-[10px] text-neutral-400">Next payable</p>
           <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">
-            {formatInstallmentDate(st.nextDue || st.latestDue)}
-            {plan?.amount ? ` · ₹${plan.amount.toLocaleString()}` : ""}
+            {formatInstallmentDate(payable)}
+            {!completed && plan?.amount ? ` · ₹${plan.amount.toLocaleString()}` : ""}
           </p>
         </div>
         <div className="flex items-center gap-1.5">
           <button
             onClick={onToggleLatest}
-            disabled={!st.latestDue}
+            disabled={!st.nextPayable && !st.latestDue}
             className={cn(
               "flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors",
               dueNow ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/40 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
             )}
           >
-            {st.latestPaid ? <Check className="h-3 w-3" /> : <Play className="h-3 w-3" />}
-            {st.latestPaid ? "Paid" : "Mark paid"}
+            {st.nextPayable ? <Play className="h-3 w-3" /> : st.latestPaid ? <Check className="h-3 w-3" /> : <Play className="h-3 w-3" />}
+            {st.nextPayable ? "Mark paid" : st.latestPaid ? "Paid" : "Mark paid"}
           </button>
           {onEdit && (
             <button

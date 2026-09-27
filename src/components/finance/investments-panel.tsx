@@ -14,6 +14,7 @@ import {
   ChartTooltip, ChartGradients, ChartGlow,
   CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
 } from "@/components/charts/chart-components"
+import { useFinanceStore } from "@/store/use-finance-store"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -23,13 +24,12 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
-import { useFinanceStore } from "@/store/use-finance-store"
 import { PlanTracker } from "@/components/finance/plan-tracker"
 import {
   PlanFields, PlanDraft, draftFromPlan, draftToPlan, emptyPlanDraft,
 } from "@/components/finance/plan-fields"
-import { toggleLatestPaid } from "@/lib/investment-plan"
-import type { SIP, Stock, MutualFund } from "@/types"
+import { toggleNextPaid, paidCount, monthsSince } from "@/lib/investment-plan"
+import type { SIP, Stock, MutualFund, InvestmentPlan } from "@/types"
 
 type InvestmentTab = "dashboard" | "sips" | "stocks" | "funds" | "archive"
 
@@ -41,7 +41,7 @@ const tabs: { key: InvestmentTab; label: string; icon: typeof TrendingUp }[] = [
   { key: "archive", label: "Archive", icon: Download },
 ]
 
-const COLORS = ["#525252", "#404040", "#737373", "#a3a3a3", "#171717", "#d4d4d4"]
+const COLORS = ["#0a84ff", "#34c759", "#bf5af2", "#ff9f0a", "#ff453a", "#30b0c7", "#5856d6", "#ffd60a"]
 const SECTORS = ["Technology", "Banking / Financial", "Energy", "Automobile", "Pharma", "Consumer", "Infrastructure", "Metals", "FMCG", "IT Services"]
 const FUND_HOUSES = ["HDFC", "SBI", "ICICI Prudential", "Nippon India", "Kotak", "Axis", "UTI", "Aditya Birla", "Motilal Oswal", "Tata", "Parag Parikh", "Mirae"]
 
@@ -51,6 +51,14 @@ function fmt(n: number) {
 
 function fmtPct(n: number) {
   return `${n >= 0 ? "+" : ""}${n}%`
+}
+
+function derivePlanValues(plan: InvestmentPlan | undefined, fallbackInvested: number, fallbackCurrent: number, annualReturn = 0) {
+  if (!plan || !plan.start) return { investedAmount: fallbackInvested, currentValue: fallbackCurrent }
+  const invested = paidCount(plan) * plan.amount
+  const months = monthsSince(plan.start)
+  const current = annualReturn > 0 && months > 0 ? invested * Math.pow(1 + annualReturn / 100 / 12, months) : invested
+  return { investedAmount: invested, currentValue: current }
 }
 
 function AssetCardHeader({ label, icon: Icon, action }: { label: string; icon: typeof Wallet; action: React.ReactNode }) {
@@ -390,8 +398,9 @@ function SipsTab() {
   const handleSave = () => {
     if (!form.name || !form.amount) return
     const plan = draftToPlan(planDraft, editId ? (sips.find((x) => x.id === editId)?.plan?.paid ?? []) : [])
-    if (editId) updateSIP(editId, { ...form, endDate: form.endDate || null, plan })
-    else addSIP({ ...form, endDate: form.endDate || null, plan })
+    const { investedAmount, currentValue } = derivePlanValues(plan, form.investedAmount, form.currentValue, form.expectedReturn)
+    if (editId) updateSIP(editId, { ...form, endDate: form.endDate || null, plan, investedAmount, currentValue })
+    else addSIP({ ...form, endDate: form.endDate || null, plan, investedAmount, currentValue })
     setDialogOpen(false); setEditId(null); reset()
   }
 
@@ -454,7 +463,12 @@ function SipsTab() {
                   plan={s.plan}
                   label="SIP installments"
                   onEdit={() => openEdit(s)}
-                  onToggleLatest={() => updateSIP(s.id, { plan: toggleLatestPaid(s.plan) })}
+                  onToggleLatest={() => {
+                    const plan = toggleNextPaid(s.plan)
+                    if (!plan) return
+                    const derived = derivePlanValues(plan, s.investedAmount, s.currentValue, s.expectedReturn)
+                    updateSIP(s.id, { plan, ...derived })
+                  }}
                 />
               </motion.div>
             )
@@ -634,7 +648,7 @@ function StocksTab() {
                   plan={s.plan}
                   label="Installments"
                   onEdit={() => openEdit(s)}
-                  onToggleLatest={() => updateStock(s.id, { plan: toggleLatestPaid(s.plan) })}
+                  onToggleLatest={() => updateStock(s.id, { plan: toggleNextPaid(s.plan) })}
                 />
                 {!s.plan && s.sector && (
                   <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-500">{s.sector}</p>
@@ -774,8 +788,9 @@ function FundsTab() {
   const handleSave = () => {
     if (!form.name || !form.nav || !form.units) return
     const plan = draftToPlan(planDraft, editId ? (mutualFunds.find((x) => x.id === editId)?.plan?.paid ?? []) : [])
-    if (editId) updateMutualFund(editId, { ...form, plan })
-    else addMutualFund({ ...form, plan })
+    const { investedAmount, currentValue } = derivePlanValues(plan, form.investedAmount, form.currentValue)
+    if (editId) updateMutualFund(editId, { ...form, plan, investedAmount, currentValue })
+    else addMutualFund({ ...form, plan, investedAmount, currentValue })
     setDialogOpen(false); setEditId(null); reset()
   }
 
@@ -831,7 +846,12 @@ function FundsTab() {
                   plan={mf.plan}
                   label="Installments"
                   onEdit={() => openEdit(mf)}
-                  onToggleLatest={() => updateMutualFund(mf.id, { plan: toggleLatestPaid(mf.plan) })}
+                  onToggleLatest={() => {
+                    const plan = toggleNextPaid(mf.plan)
+                    if (!plan) return
+                    const derived = derivePlanValues(plan, mf.investedAmount, mf.currentValue)
+                    updateMutualFund(mf.id, { plan, ...derived })
+                  }}
                 />
               </motion.div>
             )
