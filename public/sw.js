@@ -1,4 +1,4 @@
-const VERSION = "king-sw-v11"
+const VERSION = "king-sw-v12"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -20,6 +20,7 @@ const APP_SHELL = [
   "/favicon-512.png",
   "/favicon-32.png",
   "/apple-touch-icon.png",
+  "/King.png",
 ]
 
 self.addEventListener("install", (event) => {
