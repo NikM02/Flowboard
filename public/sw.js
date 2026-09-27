@@ -1,4 +1,4 @@
-const VERSION = "king-sw-v13"
+const VERSION = "king-sw-v14"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
