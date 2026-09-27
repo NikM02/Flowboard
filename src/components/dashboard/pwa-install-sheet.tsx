@@ -47,10 +47,10 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt }: P
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="text-base font-bold text-neutral-900 dark:text-white">
-                  Install Vault
+                  Install King
                 </h3>
                 <p className="mt-0.5 text-sm text-neutral-500 dark:text-neutral-400">
-                  Add Vault to your Home Screen for quick access and a badge little bell icon.
+                  Add King to your Home Screen for quick access and a little bell icon.
                 </p>
               </div>
               <button
@@ -82,7 +82,7 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt }: P
                     <Step
                       icon={<Download className="h-4 w-4" />}
                       title="Tap the install button below"
-                      subtitle="Chrome / Edge / Samsung Internet will add Vault to your Home Screen."
+                      subtitle="Chrome / Edge / Samsung Internet will add King to your Home Screen."
                     />
                   </>
                 )}

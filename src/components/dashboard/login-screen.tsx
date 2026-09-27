@@ -61,7 +61,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           transition={{ type: "spring", damping: 14, stiffness: 160 }}
           className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
         >
-          <Image src="/Vault.png" alt="Vault" width={44} height={44} className="rounded-xl" />
+          <Image src="/King.png" alt="King" width={44} height={44} className="rounded-xl" />
         </motion.div>
 
         <motion.p

@@ -23,7 +23,7 @@ const PUSH_KEY = "pushSubscriptions"
 export function getVapidSubscriber() {
   const publicKey = process.env.VAPID_PUBLIC_KEY
   const privateKey = process.env.VAPID_PRIVATE_KEY
-  const email = process.env.VAPID_EMAIL || "vault@flowboard.app"
+  const email = process.env.VAPID_EMAIL || "king@flowboard.app"
   if (!publicKey || !privateKey) return null
   try {
     webpush.setVapidDetails(`mailto:${email}`, publicKey, privateKey)

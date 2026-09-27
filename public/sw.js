@@ -1,4 +1,4 @@
-const VERSION = "vault-sw-v10"
+const VERSION = "king-sw-v11"
 const CACHE = `${VERSION}-core`
 const OFFLINE_CACHE = `${VERSION}-offline`
 
@@ -102,10 +102,10 @@ self.addEventListener("push", (event) => {
   try {
     data = event.data ? event.data.json() : {}
   } catch {
-    data = { title: "Vault", body: event.data ? event.data.text() : "" }
+    data = { title: "King", body: event.data ? event.data.text() : "" }
   }
   const {
-    title = "Vault",
+    title = "King",
     body = "",
     href = "/dashboard",
     tag,
@@ -187,12 +187,12 @@ self.addEventListener("notificationclick", (event) => {
 })
 
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "vault-refresh") {
+  if (event.data && event.data.type === "king-refresh") {
     clients.matchAll({ type: "window", includeUncontrolled: true }).then((all) => {
-      all.forEach((c) => c.postMessage({ type: "vault-refresh" }))
+      all.forEach((c) => c.postMessage({ type: "king-refresh" }))
     })
   }
-  if (event.data && event.data.type === "vault-skip-waiting") {
+  if (event.data && event.data.type === "king-skip-waiting") {
     self.skipWaiting()
   }
 })

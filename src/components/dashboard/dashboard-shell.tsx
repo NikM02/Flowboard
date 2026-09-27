@@ -151,7 +151,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return
     const onMessage = (event: MessageEvent) => {
-      if (event.data?.type === "vault-refresh") window.location.reload()
+      if (event.data?.type === "king-refresh") window.location.reload()
     }
     navigator.serviceWorker.addEventListener("message", onMessage)
     return () => navigator.serviceWorker.removeEventListener("message", onMessage)

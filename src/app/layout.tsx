@@ -20,15 +20,15 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: "Vault - My Journey",
+  title: "King - My Journey",
   description: "Your personal command center for tasks, projects, habits, and growth",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
-    title: "Vault",
+    title: "King",
     statusBarStyle: "black-translucent",
   },
-  applicationName: "Vault",
+  applicationName: "King",
   icons: {
     icon: [
       { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },

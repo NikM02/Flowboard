@@ -1,6 +1,6 @@
 {
-  "name": "Vault - Personal Dashboard",
-  "short_name": "Vault",
+  "name": "King - Personal Dashboard",
+  "short_name": "King",
   "description": "Tasks, habits, finance & goals — your notifications stay on.",
   "id": "/dashboard",
   "start_url": "/dashboard",
