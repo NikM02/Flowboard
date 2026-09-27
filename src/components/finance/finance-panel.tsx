@@ -42,18 +42,27 @@ const expenseCategories: { value: ExpenseCategory; label: string }[] = [
 ]
 
 const categoryColors: Record<ExpenseCategory, string> = {
-  food: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  transport: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  housing: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  utilities: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  entertainment: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  healthcare: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  shopping: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  education: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  other: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
+  food: "#ff9f0a",
+  transport: "#0a84ff",
+  housing: "#5856d6",
+  utilities: "#30b0c7",
+  entertainment: "#bf5af2",
+  healthcare: "#ff453a",
+  shopping: "#ff2d55",
+  education: "#34c759",
+  other: "#8e8e93",
 }
 
-const PIE_COLORS = ["#a3a3a3", "#525252", "#737373", "#d4d4d4", "#a3a3a3", "#171717", "#404040", "#525252", "#737373"]
+function CategoryChip({ category, label }: { category: ExpenseCategory | "overall"; label?: string }) {
+  const color = category === "overall" ? "#0066cc" : categoryColors[category]
+  return (
+    <span className="inline-flex items-center gap-1 rounded-md px-2 py-0.5 text-[10px] font-semibold" style={{ color, backgroundColor: `${color}1a` }}>
+      {label || category}
+    </span>
+  )
+}
+
+const PIE_COLORS = ["#0a84ff", "#34c759", "#bf5af2", "#ff9f0a", "#ff453a", "#30b0c7", "#5856d6", "#ffd60a", "#ff2d55"]
 
 const incomeSources: { value: IncomeSource; label: string }[] = [
   { value: "job", label: "Job" },
@@ -65,12 +74,21 @@ const incomeSources: { value: IncomeSource; label: string }[] = [
 ]
 
 const incomeColors: Record<IncomeSource, string> = {
-  job: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  youtube: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  digital: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  website: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  freelance: "bg-neutral-100 text-neutral-700 dark:bg-neutral-800 dark:text-neutral-300",
-  other: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-400",
+  job: "#0a84ff",
+  youtube: "#ff453a",
+  digital: "#34c759",
+  website: "#5856d6",
+  freelance: "#ff9f0a",
+  other: "#8e8e93",
+}
+
+function IncomeChip({ source }: { source: IncomeSource }) {
+  const color = incomeColors[source]
+  return (
+    <span className="shrink-0 rounded-lg px-2 py-1 text-xs font-medium capitalize" style={{ color, backgroundColor: `${color}1a` }}>
+      {source}
+    </span>
+  )
 }
 
 const tabs: { key: FinanceTab; label: string; icon: typeof Wallet }[] = [
@@ -236,9 +254,7 @@ function IncomeTab() {
           {incomes.map((inc) => (
             <div key={inc.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
               <div className="flex items-center gap-3 min-w-0">
-                <span className={cn("shrink-0 rounded-lg px-2 py-1 text-xs font-medium", incomeColors[inc.source])}>
-                  {inc.source}
-                </span>
+                <IncomeChip source={inc.source} />
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50 truncate">{inc.description || inc.source}</p>
                   <p className="text-xs text-neutral-400">{inc.date}</p>
@@ -374,9 +390,7 @@ function ExpensesTab() {
           {expenses.map((e) => (
             <div key={e.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
               <div className="flex items-center gap-3 min-w-0">
-                <span className={cn("shrink-0 rounded-lg px-2 py-1 text-xs font-medium", categoryColors[e.category])}>
-                  {e.category}
-                </span>
+                <CategoryChip category={e.category} label={e.category} />
                 <div className="min-w-0">
                   <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50 truncate">{e.description || e.category}</p>
                   <p className="text-xs text-neutral-400">{e.date}</p>
@@ -473,24 +487,32 @@ function ExpensesTab() {
 // ─── Budget Tab ───────────────────────────────────────────
 
 function BudgetTab() {
-  const { expenses, budgets, setBudget, deleteBudget } = useFinanceStore()
-  const [form, setForm] = useState({ category: "food" as ExpenseCategory, limit: 0, month: format(new Date(), "yyyy-MM") })
+  const { expenses, budgets, setBudget, updateBudget, deleteBudget } = useFinanceStore()
+  const [form, setForm] = useState({ category: "food" as ExpenseCategory | "overall", limit: 0, month: format(new Date(), "yyyy-MM") })
+  const [editId, setEditId] = useState<string | null>(null)
 
   const handleSetBudget = () => {
     if (!form.limit || !form.month) return
-    setBudget(form)
+    const payload = { category: form.category, limit: form.limit, month: form.month }
+    if (editId) updateBudget(editId, payload)
+    else setBudget(payload)
+    setEditId(null)
+    setForm({ category: "food", limit: 0, month: format(new Date(), "yyyy-MM") })
   }
 
   const rows = useMemo(
     () =>
       budgets.map((bgt) => {
+        const isOverall = bgt.category === "overall"
         const spent = expenses
-          .filter((e) => e.category === bgt.category && e.date.startsWith(bgt.month))
+          .filter((e) => (isOverall ? e.date.startsWith(bgt.month) : e.category === bgt.category && e.date.startsWith(bgt.month)))
           .reduce((s, e) => s + e.amount, 0)
         const pct = bgt.limit ? Math.round((spent / bgt.limit) * 100) : 0
         const remaining = bgt.limit - spent
-        const cat = expenseCategories.find((c) => c.value === bgt.category)
-        return { ...bgt, spent, pct, remaining, label: cat?.label || bgt.category }
+        const cat = isOverall ? null : expenseCategories.find((c) => c.value === bgt.category)
+        const label = isOverall ? "Overall" : cat?.label || bgt.category
+        const color = isOverall ? "#0066cc" : categoryColors[bgt.category as ExpenseCategory]
+        return { ...bgt, spent, pct, remaining, label, isOverall, color }
       }),
     [budgets, expenses]
   )
@@ -499,6 +521,11 @@ function BudgetTab() {
   const totalSpent = rows.reduce((s, r) => s + r.spent, 0)
   const totalRemaining = totalBudget - totalSpent
   const totalPct = totalBudget ? Math.round((totalSpent / totalBudget) * 100) : 0
+
+  const budgetChartData = useMemo(
+    () => rows.map((r) => ({ name: r.label, limit: r.limit, spent: Math.min(r.spent, r.limit), color: r.color })),
+    [rows]
+  )
 
   return (
     <div className="space-y-4">
@@ -528,13 +555,33 @@ function BudgetTab() {
         </div>
         <div className="mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
           <motion.div
-            className={cn("h-full rounded-full", totalPct > 100 ? "bg-red-500" : totalPct > 80 ? "bg-amber-500" : "bg-emerald-500")}
+            className={cn("h-full rounded-full", totalPct > 100 ? "bg-red-500" : totalPct > 80 ? "bg-amber-500" : "bg-gradient-to-r from-[#0a84ff] to-[#34c759]")}
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(totalPct, 100)}%` }}
             transition={{ duration: 0.4 }}
           />
         </div>
       </div>
+
+      {/* Colourful chart */}
+      {budgetChartData.length > 0 && (
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Budget vs Spend</h3>
+          <div className="mt-2 h-[200px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={budgetChartData} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
+                <ChartGradients ids={["bgt-limit", "bgt-spent"]} />
+                <XAxis dataKey="name" {...CHART_AXIS_STYLES} />
+                <YAxis {...CHART_AXIS_STYLES} />
+                <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} cursor={CHART_CURSOR_STYLES} />
+                <Legend iconType="circle" iconSize={8} formatter={(value: string) => <span className="text-xs text-neutral-600 dark:text-neutral-400">{value}</span>} />
+                <Bar dataKey="limit" fill="url(#bgt-limit)" radius={[7, 7, 2, 2]} barSize={14} name="Budget" />
+                <Bar dataKey="spent" fill="url(#bgt-spent)" radius={[7, 7, 2, 2]} barSize={14} name="Spent" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+      )}
 
       {budgets.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-neutral-200 py-8 text-center text-sm text-neutral-400 dark:border-neutral-800">
@@ -545,15 +592,16 @@ function BudgetTab() {
           {rows.map((bgt) => (
             <div key={bgt.id} className="group rounded-xl border border-neutral-200/50 bg-white p-2.5 dark:border-neutral-800/50 dark:bg-neutral-900">
               <div className="flex items-center gap-2">
-                <span className={cn("shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-semibold", categoryColors[bgt.category])}>
-                  {bgt.label}
-                </span>
+                <CategoryChip category={bgt.category} label={bgt.label} />
                 <span className="text-[10px] text-neutral-400">{bgt.month}</span>
                 <div className="ml-auto flex items-center gap-1.5">
                   <span className={cn("text-xs font-bold", bgt.pct > 100 ? "text-red-500" : "text-neutral-900 dark:text-neutral-50")}>
                     ₹{bgt.spent.toLocaleString()}
                     <span className="font-normal text-neutral-400"> / ₹{bgt.limit.toLocaleString()}</span>
                   </span>
+                  <button onClick={() => { setEditId(bgt.id); setForm({ category: bgt.category, limit: bgt.limit, month: bgt.month }) }} aria-label="Edit budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+                    <Pencil className="h-3.5 w-3.5" />
+                  </button>
                   <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
@@ -562,7 +610,8 @@ function BudgetTab() {
               <div className="mt-2 flex items-center gap-2">
                 <div className="relative h-1.5 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
-                    className={cn("absolute inset-y-0 left-0 rounded-full", bgt.pct > 100 ? "bg-red-500" : bgt.pct > 80 ? "bg-amber-500" : "bg-emerald-500")}
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{ backgroundColor: bgt.pct > 100 ? "#ff453a" : bgt.pct > 80 ? "#ff9f0a" : bgt.color }}
                     initial={{ width: 0 }}
                     animate={{ width: `${Math.min(bgt.pct, 100)}%` }}
                     transition={{ duration: 0.4 }}
@@ -584,11 +633,12 @@ function BudgetTab() {
       )}
 
       <div className="rounded-xl border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
-        <p className="mb-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">Set / Update budget</p>
-        <div className="flex flex-wrap gap-2">
-          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory })}>
+        <p className="mb-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">{editId ? "Edit budget" : "Add another budget"}</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory | "overall" })}>
             <SelectTrigger className="h-8 flex-1 min-w-[110px] text-xs"><SelectValue /></SelectTrigger>
             <SelectContent>
+              <SelectItem value="overall">Overall (all categories)</SelectItem>
               {expenseCategories.map((c) => (
                 <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
               ))}
@@ -597,7 +647,7 @@ function BudgetTab() {
           <Input type="number" placeholder="Limit ₹" className="h-8 w-28 text-xs" value={form.limit || ""} onChange={(e) => setForm({ ...form, limit: Number(e.target.value) })} />
           <Input type="month" className="h-8 flex-1 min-w-[130px] text-xs" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
         </div>
-        <Button size="sm" className="mt-2.5 h-8 w-full text-xs" onClick={handleSetBudget} disabled={!form.limit || !form.month}>Set Budget</Button>
+        <Button size="sm" className="mt-2.5 h-8 w-full text-xs" onClick={handleSetBudget} disabled={!form.limit || !form.month}>{editId ? "Save Budget" : "Set Budget"}</Button>
       </div>
     </div>
   )

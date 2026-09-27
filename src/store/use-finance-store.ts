@@ -18,7 +18,8 @@ type FinanceStore = {
   updateExpense: (id: string, data: Partial<Expense>) => void
   deleteExpense: (id: string) => void
 
-  setBudget: (data: { category: ExpenseCategory; limit: number; month: string }) => void
+  setBudget: (data: { category: ExpenseCategory | "overall"; limit: number; month: string }) => void
+  updateBudget: (id: string, data: Partial<Budget>) => void
   deleteBudget: (id: string) => void
 
   addSIP: (data: { name: string; amount: number; startDate: string; endDate: string | null; frequency: "monthly" | "quarterly"; expectedReturn: number; investedAmount: number; currentValue: number; plan?: InvestmentPlan }) => void
@@ -79,6 +80,9 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
       }
       return { budgets: [...s.budgets, { id: generateId(), ...data }] }
     })
+  },
+  updateBudget: (id, data) => {
+    set((s) => ({ budgets: s.budgets.map((b) => (b.id === id ? { ...b, ...data } : b)) }))
   },
   deleteBudget: (id) => {
     set((s) => ({ budgets: s.budgets.filter((b) => b.id !== id) }))

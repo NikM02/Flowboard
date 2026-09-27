@@ -134,7 +134,7 @@ export type Expense = {
 
 export type Budget = {
   id: string
-  category: ExpenseCategory
+  category: ExpenseCategory | "overall"
   limit: number
   month: string
 }
