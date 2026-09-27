@@ -43,7 +43,7 @@ export function Header({
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-[60] border-b border-neutral-100 bg-white/80 backdrop-blur-xl dark:border-neutral-800/50 dark:bg-neutral-950/80"
+        className="sticky top-0 z-[60] border-b border-neutral-200/60 bg-white/70 backdrop-blur-2xl dark:border-neutral-800/50 dark:bg-neutral-950/70"
       >
         <div className="flex min-h-14 items-center px-safe pt-safe lg:px-6">
           {isMobile && (

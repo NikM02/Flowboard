@@ -25,7 +25,7 @@ function getInitialTheme(): ColorTheme {
     const stored = localStorage.getItem(THEME_KEY) as ColorTheme | null
     if (stored && ["dark", "light"].includes(stored)) return stored
   } catch {}
-  return "dark"
+  return "light"
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({

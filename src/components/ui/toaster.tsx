@@ -31,7 +31,7 @@ export function Toaster() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.9 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className={`flex w-full items-start gap-3 rounded-xl border p-4 shadow-lg sm:w-80 ${colors[toast.type]}`}
+              className={`flex w-full items-start gap-3 rounded-[18px] border p-4 shadow-lg shadow-neutral-900/5 backdrop-blur-xl sm:w-80 ${colors[toast.type]}`}
             >
               <Icon className="mt-0.5 h-4 w-4 shrink-0" />
               <div className="flex-1 min-w-0">

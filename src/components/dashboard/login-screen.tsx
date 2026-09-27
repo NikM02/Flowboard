@@ -48,7 +48,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-y-auto bg-neutral-950 px-6 py-12" style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-y-auto bg-neutral-50 px-6 py-12 dark:bg-black" style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,16 +59,16 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", damping: 14, stiffness: 160 }}
-          className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/10 bg-white/5 shadow-2xl shadow-black/40"
+          className="flex h-20 w-20 items-center justify-center rounded-full border border-neutral-200/80 bg-white shadow-lg shadow-neutral-900/5 dark:border-neutral-800 dark:bg-neutral-900"
         >
-          <Image src="/King.png" alt="King" width={44} height={44} className="rounded-xl" />
+          <Image src="/King.png" alt="King" width={44} height={44} className="rounded-full" />
         </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.6 }}
-          className="mt-8 max-w-xs text-xl font-semibold italic leading-relaxed text-white/85"
+          className="mt-8 max-w-xs text-xl font-semibold italic leading-relaxed text-neutral-700 dark:text-neutral-300"
         >
           “{QUOTE}”
         </motion.p>
@@ -82,10 +82,10 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           <button
             onClick={handleGoogleLogin}
             disabled={loading || !ready}
-            className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-white px-5 py-3.5 text-sm font-semibold text-neutral-800 shadow-lg shadow-black/30 transition-all hover:bg-neutral-100 active:scale-[0.985] disabled:opacity-60"
+            className="group flex w-full items-center justify-center gap-3 rounded-full bg-blue-600 px-5 py-3.5 text-sm font-semibold text-white transition-all hover:bg-blue-500 active:scale-[0.985] disabled:opacity-60"
           >
             {loading ? (
-              <Loader2 className="h-4.5 w-4.5 animate-spin text-neutral-400" />
+              <Loader2 className="h-4.5 w-4.5 animate-spin text-white/80" />
             ) : (
               <svg className="h-4.5 w-4.5 shrink-0" viewBox="0 0 24 24" aria-hidden>
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" />

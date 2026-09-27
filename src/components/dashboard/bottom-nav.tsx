@@ -64,7 +64,7 @@ export function BottomNav() {
                       className={cn(
                         "flex flex-col items-center gap-1.5 rounded-[10px] px-2 py-3 transition-all",
                         isActive
-                          ? "bg-neutral-900 text-white shadow-md dark:bg-white dark:text-neutral-900"
+                          ? "bg-blue-600 text-white shadow-none dark:bg-blue-600 dark:text-white"
                           : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
                       )}
                     >
@@ -116,10 +116,10 @@ export function BottomNav() {
             )}
           >
             <div className={cn(
-              "flex h-10 w-10 items-center justify-center rounded-[10px] transition-all",
+              "flex h-10 w-10 items-center justify-center rounded-full transition-all",
               open
                 ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+                : "bg-blue-600 text-white hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500"
             )}>
               {open ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
             </div>

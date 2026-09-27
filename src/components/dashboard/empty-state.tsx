@@ -26,7 +26,7 @@ export function EmptyState({ archive }: { archive?: boolean }) {
         {archive ? "Complete a task and it will appear here." : "Create your first task to get started."}
       </p>
       {!archive && (
-        <Button onClick={() => setIsCreateModalOpen(true)} className="mt-5 gap-2 rounded-xl">
+        <Button onClick={() => setIsCreateModalOpen(true)} className="mt-5 gap-2 rounded-full">
           <Plus className="h-4 w-4" /> Create task
         </Button>
       )}

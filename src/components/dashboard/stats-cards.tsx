@@ -7,10 +7,10 @@ import { useTaskStore } from "@/store/use-task-store"
 import { Sparkline, RadialGauge } from "@/components/charts/chart-components"
 
 const statConfigs = [
-  { key: "total", icon: ListTodo, label: "Total", color: "#262626", gauge: ["#262626", "#404040"] },
-  { key: "active", icon: Circle, label: "Active", color: "#525252", gauge: ["#525252", "#737373"] },
-  { key: "completed", icon: CheckCircle2, label: "Done", color: "#404040", gauge: ["#404040", "#525252"] },
-  { key: "progress", icon: TrendingUp, label: "Progress", color: "#171717", gauge: ["#171717", "#262626"] },
+  { key: "total", icon: ListTodo, label: "Total", color: "#0066cc", gauge: ["#0066cc", "#2b8bf7"] },
+  { key: "active", icon: Circle, label: "Active", color: "#2b8bf7", gauge: ["#2b8bf7", "#5a9eff"] },
+  { key: "completed", icon: CheckCircle2, label: "Done", color: "#34c759", gauge: ["#34c759", "#45c86f"] },
+  { key: "progress", icon: TrendingUp, label: "Progress", color: "#0066cc", gauge: ["#0066cc", "#2b8bf7"] },
 ]
 
 function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
@@ -71,7 +71,7 @@ export function StatsCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.07, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className="relative overflow-hidden rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm transition-all hover:shadow-md dark:border-neutral-800/50 dark:bg-neutral-900"
+            className="relative overflow-hidden rounded-[18px] border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
           >
             <div className="relative flex items-center justify-between">
               <div className="flex flex-col gap-1">
@@ -89,7 +89,7 @@ export function StatsCards() {
               {isProgress ? (
                 <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full bg-neutral-900 dark:bg-white"
+                    className="absolute inset-y-0 left-0 rounded-full bg-blue-600 dark:bg-blue-500"
                     initial={{ width: 0 }}
                     animate={{ width: `${stats.progress}%` }}
                     transition={{ duration: 1, delay: 0.3 }}

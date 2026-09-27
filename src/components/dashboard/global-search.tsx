@@ -167,7 +167,7 @@ export function GlobalSearch({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -20 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-3xl border border-neutral-200 bg-white shadow-2xl shadow-neutral-900/20 dark:border-neutral-800 dark:bg-neutral-900"
+            className="fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-[18px] border border-neutral-200/80 bg-white shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <div className="flex items-center gap-3 border-b border-neutral-200 px-4 dark:border-neutral-800">
               <Search className="h-4 w-4 shrink-0 text-neutral-400" />
@@ -201,7 +201,7 @@ export function GlobalSearch({
                       onMouseEnter={() => setSelectedIndex(i)}
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
                         i === selectedIndex
-                          ? "bg-neutral-100 dark:bg-neutral-800"
+                          ? "bg-blue-50 dark:bg-blue-500/15"
                           : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
                       }`}
                     >
