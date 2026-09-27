@@ -5,13 +5,14 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Download, Trash2, Plus, Archive, ListTodo, LayoutGrid, List,
-  FolderKanban, BarChart3, ChevronDown, X, FolderPlus,
+  FolderKanban, BarChart3, ChevronDown, X, FolderPlus, ListTree,
 } from "lucide-react"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { Filters } from "@/components/dashboard/filters"
 import { TaskCardView } from "@/components/dashboard/task-card-view"
 import { TaskListView } from "@/components/dashboard/task-list-view"
+import { TaskTreeView } from "@/components/dashboard/task-tree-view"
 import { TaskCharts } from "@/components/dashboard/task-charts"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -28,7 +29,7 @@ import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
 
-type ViewMode = "tasks" | "projects" | "archive"
+type ViewMode = "tasks" | "tree" | "projects" | "archive"
 
 const PROJECT_COLORS = [
   "bg-neutral-900",
@@ -214,7 +215,7 @@ function TasksPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const viewParam = searchParams.get("view")
-  const view: ViewMode = viewParam === "projects" ? "projects" : viewParam === "archive" ? "archive" : "tasks"
+  const view: ViewMode = viewParam === "projects" ? "projects" : viewParam === "archive" ? "archive" : viewParam === "tree" ? "tree" : "tasks"
   const [taskViewMode, setTaskViewMode] = useState<"card" | "list">("card")
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
@@ -224,12 +225,12 @@ function TasksPageContent() {
   const handleViewChange = useCallback((v: ViewMode) => {
     router.replace(v === "tasks" ? "/tasks" : `/tasks?view=${v}`, { scroll: false })
     if (v === "archive") setFilterStatus("completed")
-    else if (v === "tasks") setFilterStatus("active")
+    else if (v === "tasks" || v === "tree") setFilterStatus("active")
   }, [router, setFilterStatus])
 
   const { setPageTitle } = usePageTitleStore()
   useEffect(() => {
-    setPageTitle(view === "projects" ? "Projects" : view === "archive" ? "Archive" : "Tasks")
+    setPageTitle(view === "tree" ? "Tree" : view === "projects" ? "Projects" : view === "archive" ? "Archive" : "Tasks")
     return () => setPageTitle(null)
   }, [view, setPageTitle])
 
@@ -277,6 +278,7 @@ function TasksPageContent() {
         <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
           {([
             { key: "tasks" as const, label: "Tasks", icon: ListTodo },
+            { key: "tree" as const, label: "Tree", icon: ListTree },
             { key: "projects" as const, label: "Projects", icon: FolderKanban },
             { key: "archive" as const, label: "Archive", icon: Archive },
           ]).map((t) => (
@@ -399,6 +401,8 @@ function TasksPageContent() {
                 </div>
               </div>
             )}
+
+            {view === "tree" && <TaskTreeView />}
 
             {view === "projects" && (
               <ProjectsPanel onOpenProject={() => handleViewChange("tasks")} />
