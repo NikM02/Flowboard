@@ -395,7 +395,7 @@ export function SkillPanel() {
             </Button>
           </motion.div>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {active.map((skill) => (
                 <SkillCard key={skill.id} skill={skill} />
@@ -432,7 +432,7 @@ export function SkillPanel() {
               Clear all
             </Button>
           </div>
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             <AnimatePresence mode="popLayout">
               {completed.map((skill) => (
                 <div

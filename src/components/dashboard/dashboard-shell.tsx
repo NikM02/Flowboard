@@ -210,7 +210,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
           sidebarCollapsed={sidebarCollapsed}
         />
 
-        <main className="flex-1 overflow-y-auto pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0">
           <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             {children}
           </div>

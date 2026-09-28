@@ -116,7 +116,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
 
   return (
     <div className="max-h-44 overflow-auto pr-1 sm:max-h-56">
-      <div className={cn("grid grid-cols-7 gap-1 min-w-[280px] sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10 sm:min-w-fit")}>
+      <div className={cn("grid grid-cols-7 gap-1 sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10")}>
         {challenge.days.map((d) => {
           const isToday = d.date === todayDate
           return (
@@ -301,7 +301,7 @@ export function ChallengeSliderPanel() {
           No challenges yet
         </div>
       ) : viewMode === "card" ? (
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {challenges.map((c) => <ChallengeCard key={c.id} challenge={c} onEdit={openEdit} />)}
         </div>
       ) : (
