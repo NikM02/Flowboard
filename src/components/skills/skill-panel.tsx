@@ -219,21 +219,21 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       exit={{ opacity: 0, scale: 0.95 }}
       className="card-modern card-hover glass group rounded-2xl p-5"
     >
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-              <SourceIcon className="h-4 w-4" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
-              <p className="text-xs text-neutral-500 dark:text-neutral-400">
-                {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
-              </p>
+<div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2.5">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
+                <SourceIcon className="h-4 w-4" />
+              </div>
+              <div className="min-w-0">
+                <h3 className="truncate font-semibold text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
+                <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
+                  {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
+                </p>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="flex items-center gap-1">
+          <div className="flex shrink-0 items-center gap-1">
           <button
             onClick={() => setEditOpen(true)}
             className="shrink-0 rounded-lg p-1.5 text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
@@ -337,20 +337,20 @@ export function SkillPanel() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
-          <Link href="/skills/bucket-list" className="w-full sm:w-auto">
-            <Button variant="outline" className="w-full gap-2 sm:w-auto">
+        <div className="flex gap-2">
+          <Link href="/skills/bucket-list" className="flex-1 sm:w-auto sm:flex-none">
+            <Button variant="outline" className="w-full gap-2">
               <List className="h-4 w-4" />
               Bucket List
             </Button>
           </Link>
-          <Button onClick={() => setCreateOpen(true)} className="w-full gap-2 sm:w-auto">
+          <Button onClick={() => setCreateOpen(true)} className="w-full flex-1 gap-2 sm:w-auto sm:flex-none">
             <Plus className="h-4 w-4" />
             New Skill
           </Button>
         </div>
 
-        <div className="flex gap-1 self-start rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 sm:self-auto">
+        <div className="flex w-full gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 sm:w-auto">
           {(["active", "archive"] as const).map((t) => (
             <button
               key={t}
