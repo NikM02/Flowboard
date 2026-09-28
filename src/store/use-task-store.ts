@@ -1,10 +1,12 @@
 import { create } from "zustand"
-import type { Task, ViewMode, FilterStatus, SortOption } from "@/types"
+import type { Task, ViewMode, FilterStatus, SortOption, Priority } from "@/types"
 import { generateId, calculateProgress, isAllSubtasksComplete } from "@/lib/utils"
+import { defaultProjectIcon } from "@/lib/project-icons"
 
 type TaskStore = {
   tasks: Task[]
   projects: string[]
+  projectIcons: Record<string, string>
   viewMode: ViewMode
   filterStatus: FilterStatus
   sortBy: SortOption
@@ -15,6 +17,7 @@ type TaskStore = {
   isEditSheetOpen: boolean
   isDeleteDialogOpen: boolean
   completePendingId: string | null
+  createPriority: Priority
 
   setViewMode: (mode: ViewMode) => void
   setFilterStatus: (status: FilterStatus) => void
@@ -25,6 +28,8 @@ type TaskStore = {
   setIsCreateModalOpen: (open: boolean) => void
   setIsEditSheetOpen: (open: boolean) => void
   setIsDeleteDialogOpen: (open: boolean) => void
+  setCreatePriority: (p: Priority) => void
+  openCreateModal: (priority?: Priority) => void
   requestComplete: (id: string) => void
   confirmComplete: () => void
   cancelComplete: () => void
@@ -35,8 +40,10 @@ type TaskStore = {
   toggleSubtask: (taskId: string, subtaskId: string) => void
   addSubtask: (taskId: string, title: string) => void
   removeSubtask: (taskId: string, subtaskId: string) => void
-  addProject: (name: string) => void
+  addProject: (name: string, icon?: string) => void
   deleteProject: (name: string) => void
+  setProjectIcon: (name: string, icon: string) => void
+  getProjectIcon: (name: string) => string
 
   getFilteredTasks: () => Task[]
   getProjects: () => string[]
@@ -49,6 +56,7 @@ type TaskStore = {
 export const useTaskStore = create<TaskStore>((set, get) => ({
   tasks: [],
   projects: [],
+  projectIcons: {},
   viewMode: "card",
   filterStatus: "active",
   sortBy: "createdAt",
@@ -59,6 +67,7 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   isEditSheetOpen: false,
   isDeleteDialogOpen: false,
   completePendingId: null,
+  createPriority: "medium" as Priority,
 
   setViewMode: (mode) => set({ viewMode: mode }),
   setFilterStatus: (status) => set({ filterStatus: status }),
@@ -69,6 +78,9 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
   setIsCreateModalOpen: (open) => set({ isCreateModalOpen: open }),
   setIsEditSheetOpen: (open) => set({ isEditSheetOpen: open }),
   setIsDeleteDialogOpen: (open) => set({ isDeleteDialogOpen: open }),
+  setCreatePriority: (p) => set({ createPriority: p }),
+  openCreateModal: (priority) =>
+    set((s) => ({ isCreateModalOpen: true, createPriority: priority ?? s.createPriority })),
   requestComplete: (id) => set({ completePendingId: id }),
   confirmComplete: () => {
     const id = get().completePendingId
@@ -147,19 +159,35 @@ export const useTaskStore = create<TaskStore>((set, get) => ({
     }))
   },
 
-  addProject: (name) => {
+  addProject: (name, icon) => {
     const clean = name.trim()
     if (!clean) return
-    const { projects } = get()
+    const { projects, projectIcons } = get()
     if (projects.includes(clean)) return
-    set({ projects: [...projects, clean] })
+    set({
+      projects: [...projects, clean],
+      projectIcons: icon ? { ...projectIcons, [clean]: icon } : projectIcons,
+    })
   },
 
   deleteProject: (name) => {
-    const { projects } = get()
+    const { projects, projectIcons } = get()
     if (projects.includes(name)) {
-      set({ projects: projects.filter((p) => p !== name) })
+      const next = { ...projectIcons }
+      delete next[name]
+      set({ projects: projects.filter((p) => p !== name), projectIcons: next })
     }
+  },
+
+  setProjectIcon: (name, icon) => {
+    const clean = name.trim()
+    if (!clean) return
+    set((state) => ({ projectIcons: { ...state.projectIcons, [clean]: icon } }))
+  },
+
+  getProjectIcon: (name) => {
+    const clean = name.trim() || "Uncategorized"
+    return get().projectIcons[clean] ?? defaultProjectIcon(clean)
   },
 
   getFilteredTasks: () => {

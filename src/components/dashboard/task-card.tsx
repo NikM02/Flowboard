@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import {
   Calendar, Edit3, Trash2, CheckCircle2, Circle,
-  ChevronDown, ChevronRight, Plus, Minus, FolderKanban,
+  ChevronDown, ChevronRight, Plus, Minus,
 } from "lucide-react"
 import type { Task } from "@/types"
 import { useTaskStore } from "@/store/use-task-store"
@@ -19,7 +19,7 @@ const priorityConfig = {
 }
 
 export function TaskCard({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask, requestComplete } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, toggleSubtask, updateTask, requestComplete, getProjectIcon } = useTaskStore()
   const [expanded, setExpanded] = useState(false)
 
   const priority = priorityConfig[task.priority]
@@ -61,9 +61,14 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold", priority.bg, priority.color, priority.border, "border")}>
               {priority.label}
             </span>
+            {task.storyPoints != null && (
+              <span className="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                {task.storyPoints} pts
+              </span>
+            )}
             {task.project && (
               <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">
-                <FolderKanban className="h-2.5 w-2.5" /> {task.project}
+                {getProjectIcon(task.project)} {task.project}
               </span>
             )}
           </div>

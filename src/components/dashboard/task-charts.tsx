@@ -9,7 +9,14 @@ import {
 import { useTaskStore } from "@/store/use-task-store"
 import { format, subDays } from "date-fns"
 
-const COLORS = ["#262626", "#525252", "#737373", "#a3a3a3", "#d4d4d4"]
+const COLORS = ["#0066cc", "#34c759", "#ff9f0a", "#af52de", "#3fd0c9", "#ff375f"]
+
+const PRIORITY_BAR_COLORS: Record<string, string> = {
+  Urgent: "#ff3b30",
+  High: "#ff9f0a",
+  Medium: "#ffcc00",
+  Low: "#0066cc",
+}
 
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
@@ -60,12 +67,12 @@ export function TaskCompletionChart() {
         <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
           <defs>
             <linearGradient id="completedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#262626" stopOpacity={0.15} />
-              <stop offset="95%" stopColor="#262626" stopOpacity={0} />
+              <stop offset="5%" stopColor="#0066cc" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="#0066cc" stopOpacity={0} />
             </linearGradient>
             <linearGradient id="createdGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#737373" stopOpacity={0.15} />
-              <stop offset="95%" stopColor="#737373" stopOpacity={0} />
+              <stop offset="5%" stopColor="#34c759" stopOpacity={0.25} />
+              <stop offset="95%" stopColor="#34c759" stopOpacity={0} />
             </linearGradient>
           </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
@@ -84,7 +91,7 @@ export function TaskCompletionChart() {
           <Area
             type="monotone"
             dataKey="completed"
-            stroke="#262626"
+            stroke="#0066cc"
             strokeWidth={2}
             fill="url(#completedGrad)"
             name="Completed"
@@ -92,7 +99,7 @@ export function TaskCompletionChart() {
           <Area
             type="monotone"
             dataKey="created"
-            stroke="#737373"
+            stroke="#34c759"
             strokeWidth={1.5}
             strokeDasharray="4 4"
             fill="url(#createdGrad)"
@@ -205,8 +212,8 @@ export function PriorityBarChart() {
             radius={[4, 4, 0, 0]}
             maxBarSize={40}
           >
-            {data.map((_, i) => (
-              <Cell key={i} fill={COLORS[i]} />
+            {data.map((d) => (
+              <Cell key={d.name} fill={PRIORITY_BAR_COLORS[d.name] ?? "#0066cc"} />
             ))}
           </Bar>
         </BarChart>

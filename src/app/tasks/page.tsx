@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import {
   Download, Trash2, Plus, Archive, ListTodo, LayoutGrid, List,
   FolderKanban, BarChart3, ChevronDown, X, FolderPlus, ListTree,
+  Zap, Flame, Minus,
 } from "lucide-react"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { StatsCards } from "@/components/dashboard/stats-cards"
@@ -27,28 +28,104 @@ import { useTaskStore } from "@/store/use-task-store"
 import { usePageTitleStore } from "@/store/use-page-title-store"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
-import type { Task } from "@/types"
+import { PROJECT_ICONS, defaultProjectColor } from "@/lib/project-icons"
+import type { Task, Priority } from "@/types"
 
 type ViewMode = "tasks" | "tree" | "projects" | "archive"
 
-const PROJECT_COLORS = [
-  "bg-neutral-900",
-  "bg-neutral-700",
-  "bg-neutral-500",
-  "bg-neutral-400",
-  "bg-neutral-600",
-  "bg-neutral-800",
+const PROJECT_GRADIENTS = [
+  "from-blue-500 to-cyan-400",
+  "from-green-500 to-emerald-400",
+  "from-amber-500 to-orange-400",
+  "from-violet-500 to-purple-400",
+  "from-cyan-500 to-teal-400",
+  "from-rose-500 to-pink-400",
+  "from-indigo-500 to-blue-400",
+  "from-red-500 to-orange-400",
 ]
+
+/* ── Focus slots: 3 urgent / 2 medium / 3 low ────────── */
+const FOCUS_SLOTS: { priority: Priority; label: string; capacity: number; color: string; bar: string; icon: typeof Flame }[] = [
+  { priority: "high", label: "Urgent", capacity: 3, color: "text-red-500", bar: "bg-gradient-to-r from-red-500 to-orange-400", icon: Flame },
+  { priority: "medium", label: "Medium", capacity: 2, color: "text-amber-500", bar: "bg-gradient-to-r from-amber-500 to-yellow-400", icon: Zap },
+  { priority: "low", label: "Low", capacity: 3, color: "text-blue-500", bar: "bg-gradient-to-r from-blue-500 to-cyan-400", icon: Minus },
+]
+
+function FocusSlots() {
+  const tasks = useTaskStore((s) => s.tasks)
+  const openCreateModal = useTaskStore((s) => s.openCreateModal)
+  const setSelectedTask = useTaskStore((s) => s.setSelectedTask)
+  const setIsEditSheetOpen = useTaskStore((s) => s.setIsEditSheetOpen)
+
+  return (
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {FOCUS_SLOTS.map((slot) => {
+        const active = tasks.filter((t) => !t.completed && t.priority === slot.priority)
+        const full = active.length >= slot.capacity
+        const Icon = slot.icon
+        return (
+          <div
+            key={slot.priority}
+            className="rounded-2xl border border-neutral-200 bg-white p-3.5 dark:border-neutral-800 dark:bg-neutral-900"
+          >
+            <div className="flex items-center justify-between gap-2">
+              <span className={cn("flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide", slot.color)}>
+                <Icon className="h-3.5 w-3.5" /> {slot.label}
+              </span>
+              <span className="text-[11px] font-semibold tabular-nums text-neutral-500 dark:text-neutral-400">
+                {active.length}/{slot.capacity} slots
+              </span>
+            </div>
+            <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              <div
+                className={cn("h-full rounded-full transition-all", slot.bar)}
+                style={{ width: `${Math.min(100, (active.length / slot.capacity) * 100)}%` }}
+              />
+            </div>
+            {active.length > 0 && (
+              <div className="mt-2.5 space-y-1">
+                {active.slice(0, slot.capacity).map((t) => (
+                  <button
+                    key={t.id}
+                    onClick={() => { setSelectedTask(t); setIsEditSheetOpen(true) }}
+                    className="block w-full truncate text-left text-[11px] text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
+                    title={`${t.title} — tap to edit`}
+                  >
+                    • {t.title}{t.storyPoints != null ? ` (${t.storyPoints} pts)` : ""}
+                  </button>
+                ))}
+                {active.length > slot.capacity && (
+                  <p className="text-[10px] font-medium text-neutral-400">+{active.length - slot.capacity} over capacity</p>
+                )}
+              </div>
+            )}
+            <Button
+              variant={full ? "outline" : "secondary"}
+              size="sm"
+              onClick={() => openCreateModal(slot.priority)}
+              className="mt-2.5 w-full gap-1.5 rounded-xl text-xs"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              {slot.priority === "high" ? "Push urgent task" : `Add ${slot.label.toLowerCase()} task`}
+            </Button>
+          </div>
+        )
+      })}
+    </div>
+  )
+}
 
 function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { addProject } = useTaskStore()
   const [name, setName] = useState("")
+  const [icon, setIcon] = useState<string>(PROJECT_ICONS[0])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!name.trim()) return
-    addProject(name)
+    addProject(name, icon)
     setName("")
+    setIcon(PROJECT_ICONS[0])
     onOpenChange(false)
   }
 
@@ -74,6 +151,26 @@ function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
               required
             />
           </div>
+          <div className="space-y-2">
+            <Label>Project icon</Label>
+            <div className="flex flex-wrap gap-1.5">
+              {PROJECT_ICONS.map((emoji) => (
+                <button
+                  key={emoji}
+                  type="button"
+                  onClick={() => setIcon(emoji)}
+                  className={cn(
+                    "flex h-9 w-9 items-center justify-center rounded-xl text-lg transition-all",
+                    icon === emoji
+                      ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2 dark:bg-white dark:text-neutral-900 dark:ring-white"
+                      : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                  )}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="flex justify-end gap-3 pt-2">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
             <Button type="submit" disabled={!name.trim()}>Create</Button>
@@ -85,8 +182,9 @@ function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
 }
 
 function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
-  const { tasks, projects, getProjectStats, setProjectFilter, deleteProject } = useTaskStore()
+  const { tasks, projects, getProjectStats, setProjectFilter, deleteProject, getProjectIcon, setProjectIcon } = useTaskStore()
   const [newOpen, setNewOpen] = useState(false)
+  const [iconEdit, setIconEdit] = useState<string | null>(null)
 
   const stats = getProjectStats()
   const created = new Set(projects)
@@ -129,7 +227,12 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
             const preview = tasks
               .filter((t) => (t.project.trim() || "Uncategorized") === name)
               .slice(0, 3)
-            const color = PROJECT_COLORS[i % PROJECT_COLORS.length]
+            const points = tasks
+              .filter((t) => (t.project.trim() || "Uncategorized") === name)
+              .reduce((sum, t) => sum + (t.storyPoints ?? 0), 0)
+            const gradient = PROJECT_GRADIENTS[i % PROJECT_GRADIENTS.length]
+            const tileColor = defaultProjectColor(name)
+            const icon = getProjectIcon(name)
             const isCreated = created.has(name)
 
             return (
@@ -143,13 +246,18 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
-                    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400", color)}>
-                      <FolderKanban className="h-4 w-4" />
-                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setIconEdit(iconEdit === name ? null : name) }}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-lg transition-transform hover:scale-105"
+                      style={{ backgroundColor: `${tileColor}1a` }}
+                      title="Change project icon"
+                    >
+                      {icon}
+                    </button>
                     <div>
                       <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{name}</h3>
                       <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
-                        {s.total} tasks · {pct}% done
+                        {s.total} tasks · {pct}% done{points > 0 ? ` · ${points} pts` : ""}
                       </p>
                     </div>
                   </div>
@@ -164,8 +272,27 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   )}
                 </div>
 
+                {iconEdit === name && (
+                  <div className="mt-2.5 flex flex-wrap gap-1" onClick={(e) => e.stopPropagation()}>
+                    {PROJECT_ICONS.map((emoji) => (
+                      <button
+                        key={emoji}
+                        onClick={() => { setProjectIcon(name, emoji); setIconEdit(null) }}
+                        className={cn(
+                          "flex h-8 w-8 items-center justify-center rounded-lg text-base transition-all",
+                          icon === emoji
+                            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+                            : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                        )}
+                      >
+                        {emoji}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                  <div className={cn("h-full rounded-full bg-gradient-to-r transition-all", color)} style={{ width: `${progress}%` }} />
+                  <div className={cn("h-full rounded-full bg-gradient-to-r transition-all", gradient)} style={{ width: `${progress}%` }} />
                 </div>
 
                 {preview.length > 0 && (
@@ -219,7 +346,7 @@ function TasksPageContent() {
   const [taskViewMode, setTaskViewMode] = useState<"card" | "list">("card")
   const isMobile = useMediaQuery("(max-width: 768px)")
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
-  const { setFilterStatus, clearCompleted, setIsCreateModalOpen, projectFilter, setProjectFilter, getProjects } = useTaskStore()
+  const { setFilterStatus, clearCompleted, openCreateModal, projectFilter, setProjectFilter, getProjects } = useTaskStore()
   const projects = getProjects()
 
   const handleViewChange = useCallback((v: ViewMode) => {
@@ -339,7 +466,7 @@ function TasksPageContent() {
               </button>
             </div>
             <Filters />
-            <Button onClick={() => setIsCreateModalOpen(true)} className="ml-auto gap-2 rounded-xl">
+            <Button onClick={() => openCreateModal()} className="ml-auto gap-2 rounded-xl">
               <Plus className="h-4 w-4" /> New Task
             </Button>
           </div>
@@ -356,6 +483,9 @@ function TasksPageContent() {
           >
             {view === "tasks" && (
               <div className="space-y-6">
+                {/* Focus slots — urgent push board with 3 / 2 / 3 capacity */}
+                <FocusSlots />
+
                 {/* Tasks first — the focus of the page */}
                 {!isMobile && taskViewMode === "list" ? <TaskListView /> : <TaskCardView />}
 

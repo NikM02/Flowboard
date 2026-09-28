@@ -3,12 +3,13 @@
 import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  ChevronDown, CheckCircle2, Circle, FolderKanban, Calendar,
+  ChevronDown, CheckCircle2, Circle, Calendar,
   Clock, ListChecks, Edit3, Trash2,
 } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { useTaskStore } from "@/store/use-task-store"
 import { formatDate } from "@/lib/utils"
+import { getTaskStatus, TASK_STATUS_STYLES } from "@/lib/task-status"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task, Subtask, Priority } from "@/types"
 import { EmptyState } from "./empty-state"
@@ -53,6 +54,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
   const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask, requestComplete } = useTaskStore()
   const priority = priorityConfig[task.priority]
   const doneCount = task.subtasks.filter((s) => s.completed).length
+  const status = getTaskStatus(task)
 
   const handleToggleComplete = () => {
     if (task.completed) updateTask(task.id, { completed: false })
@@ -97,6 +99,14 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
             <span className={cn("inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-semibold", priority.bg, priority.color)}>
               {priority.label}
             </span>
+            <span className={cn("inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold", TASK_STATUS_STYLES[status.key])}>
+              {status.label}
+            </span>
+            {task.storyPoints != null && (
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300" title="Story points">
+                {task.storyPoints} pts
+              </span>
+            )}
             {task.dueDate && (
               <span className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
                 <Calendar className="h-3 w-3" />
@@ -119,13 +129,6 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
               <Progress value={task.progress} className="h-1 w-16" />
               <span className="w-7 text-right text-[11px] font-medium tabular-nums text-neutral-500 dark:text-neutral-400">{task.progress}%</span>
             </span>
-            {task.completed ? (
-              <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-400">
-                <CheckCircle2 className="h-3 w-3" /> Done
-              </span>
-            ) : (
-              <span className="text-neutral-400 dark:text-neutral-500">Active</span>
-            )}
           </div>
 
           {/* Subtasks */}
@@ -164,11 +167,13 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
   dot: string
   index: number
 }) {
-  const { updateTask } = useTaskStore()
+  const { updateTask, getProjectIcon } = useTaskStore()
   const [collapsed, setCollapsed] = useState(false)
   const done = groupTasks.filter((t) => t.completed).length
   const pct = groupTasks.length > 0 ? Math.round((done / groupTasks.length) * 100) : 0
   const allDone = done === groupTasks.length
+  const totalPoints = groupTasks.reduce((s, t) => s + (t.storyPoints ?? 0), 0)
+  const icon = getProjectIcon(name)
 
   const toggleAll = () => {
     const next = !allDone
@@ -201,17 +206,18 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
           className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
         >
           <span
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px]"
-            style={{ backgroundColor: `${dot}1a`, color: dot }}
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-base"
+            style={{ backgroundColor: `${dot}1a` }}
+            title={name}
           >
-            <FolderKanban className="h-4 w-4" />
+            {icon}
           </span>
           <span className="min-w-0 flex-1">
             <span className={cn("block truncate text-sm font-bold tracking-tight", allDone ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-900 dark:text-neutral-50")}>
               {name}
             </span>
             <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">
-              {done}/{groupTasks.length} done · {pct}%
+              {done}/{groupTasks.length} done · {pct}%{totalPoints > 0 ? ` · ${totalPoints} pts` : ""}
             </span>
           </span>
           <span className="hidden w-24 sm:block">

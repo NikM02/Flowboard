@@ -14,6 +14,7 @@ export type Task = {
   completed: boolean
   progress: number
   priority: Priority
+  storyPoints?: number
   dueDate: string
   dueTime?: string
   reminder: string | null

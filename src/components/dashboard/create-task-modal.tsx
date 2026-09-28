@@ -27,12 +27,13 @@ import { generateId } from "@/lib/utils"
 import { cn } from "@/lib/shadcn-utils"
 
 export function CreateTaskModal() {
-  const { isCreateModalOpen, setIsCreateModalOpen, addTask, getProjects } = useTaskStore()
+  const { isCreateModalOpen, setIsCreateModalOpen, addTask, getProjects, createPriority } = useTaskStore()
   const projects = getProjects()
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [project, setProject] = useState("")
   const [priority, setPriority] = useState<Priority>("medium")
+  const [storyPoints, setStoryPoints] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [dueTime, setDueTime] = useState("")
   const [wantReminder, setWantReminder] = useState(false)
@@ -45,14 +46,15 @@ export function CreateTaskModal() {
     setTitle("")
     setDescription("")
     setProject("")
-    setPriority("medium")
+    setPriority(createPriority)
+    setStoryPoints("")
     setDueDate("")
     setDueTime("")
     setWantReminder(false)
     setReminderDate("")
     setReminderTime("")
     setSubtasks([])
-  }, [isCreateModalOpen])
+  }, [isCreateModalOpen, createPriority])
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -71,6 +73,7 @@ export function CreateTaskModal() {
       description: description.trim(),
       project: project.trim() || "Uncategorized",
       priority,
+      storyPoints: storyPoints.trim() ? Math.max(0, Math.min(100, parseInt(storyPoints.trim(), 10) || 0)) : undefined,
       dueDate: finalDueDate,
       dueTime: dueTime || undefined,
       reminder,
@@ -142,7 +145,7 @@ export function CreateTaskModal() {
             </datalist>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
             <div className="space-y-2">
               <Label htmlFor="task-priority">Priority</Label>
               <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
@@ -155,6 +158,18 @@ export function CreateTaskModal() {
                   <SelectItem value="high">High</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="task-points">Story Points</Label>
+              <Input
+                id="task-points"
+                type="number"
+                min={0}
+                max={100}
+                placeholder="e.g. 5"
+                value={storyPoints}
+                onChange={(e) => setStoryPoints(e.target.value)}
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="dueDate">Due Date</Label>

@@ -69,14 +69,15 @@ function DashboardHero() {
       label: "Tasks due today",
       value: String(dueToday),
       icon: ListTodo,
-      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
+      tile: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
       href: "/tasks",
     },
     {
       label: "Net cash flow",
       value: `₹${net.toLocaleString("en-IN")}`,
       icon: Wallet,
-      tile: "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300",
+      tile: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
+      href: "/finance",
     },
   ]
 
@@ -183,8 +184,8 @@ function HighPriorityTasks() {
     <Card delay={0.05} className="overflow-visible">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-            <AlertTriangle className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-red-100 dark:bg-red-900/30">
+            <AlertTriangle className="h-4 w-4 text-red-500" />
           </div>
           <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">High Priority</h3>
         </div>
@@ -230,6 +231,11 @@ function HighPriorityTasks() {
                       </p>
                       <div className="flex items-center gap-2 mt-0.5">
                         {t.project && <span className="text-[10px] text-neutral-400">{t.project}</span>}
+                        {t.storyPoints != null && (
+                          <span className="rounded-full bg-violet-100 px-1.5 py-px text-[10px] font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
+                            {t.storyPoints} pts
+                          </span>
+                        )}
                         {t.dueDate && (
                           <span className="flex items-center gap-0.5 text-[10px] text-neutral-400">
                             <Calendar className="h-2.5 w-2.5" /> {format(new Date(t.dueDate), "MMM d")}
@@ -345,8 +351,8 @@ function HabitsChallengesSection() {
     <Card delay={0.1} className="overflow-visible">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-            <Heart className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-pink-100 dark:bg-pink-900/30">
+            <Heart className="h-4 w-4 text-pink-500" />
           </div>
           <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Health</h3>
           <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{format(new Date(), "MMM d, yyyy")}</span>
@@ -480,7 +486,7 @@ function FinanceSection() {
 
   return (
     <Card delay={0.15}>
-      <CardHeader icon={Wallet} label="Cash Flow" color="text-neutral-600 dark:text-neutral-300" />
+      <CardHeader icon={Wallet} label="Cash Flow" color="text-green-600 dark:text-green-400" />
       <div className="flex items-baseline gap-2 mb-1">
         <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
           {isPositive ? "+" : ""}₹{net.toLocaleString("en-IN")}
@@ -507,12 +513,12 @@ function FinanceSection() {
             <BarChart data={monthlyData} barGap={4}>
               <defs>
                 <linearGradient id="dash-income" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#262626" />
-                  <stop offset="100%" stopColor="#525252" />
+                  <stop offset="0%" stopColor="#34c759" />
+                  <stop offset="100%" stopColor="#45c86f" />
                 </linearGradient>
                 <linearGradient id="dash-expense" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#a3a3a3" />
-                  <stop offset="100%" stopColor="#d4d4d4" />
+                  <stop offset="0%" stopColor="#ff3b30" />
+                  <stop offset="100%" stopColor="#ff9f0a" />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
@@ -561,9 +567,9 @@ function InvestmentsSection() {
     const tp = ti > 0 ? Math.round((tg / ti) * 100) : 0
 
     const alloc = [
-      { name: "Stocks", value: stockCur, color: "#404040" },
-      { name: "Mutual Funds", value: mfCur, color: "#737373" },
-      { name: "SIPs", value: sipCur, color: "#a3a3a3" },
+      { name: "Stocks", value: stockCur, color: "#0066cc" },
+      { name: "Mutual Funds", value: mfCur, color: "#af52de" },
+      { name: "SIPs", value: sipCur, color: "#34c759" },
     ].filter((d) => d.value > 0)
 
     return { totalCurrent: tc, totalGain: tg, totalGainPct: tp, allocationData: alloc }
@@ -580,7 +586,7 @@ function InvestmentsSection() {
 
   return (
     <Card delay={0.2}>
-      <CardHeader icon={TrendingUp} label="Investments" color="text-neutral-600 dark:text-neutral-300" />
+      <CardHeader icon={TrendingUp} label="Investments" color="text-violet-600 dark:text-violet-400" />
       <div className="flex items-center gap-3 mb-3">
         {allocationData.length > 0 && (
           <div className="relative h-14 w-14 shrink-0">

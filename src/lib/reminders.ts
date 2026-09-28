@@ -39,12 +39,21 @@ export function collectReminders(): Reminder[] {
     if (t.completed || !t.reminder) continue
     const fireAt = new Date(t.reminder).getTime()
     if (isNaN(fireAt) || fireAt <= now) continue
+    const bits: string[] = []
+    if (t.project) bits.push(t.project)
+    bits.push(t.priority === "high" ? "High priority" : t.priority === "medium" ? "Medium priority" : "Low priority")
+    if (t.storyPoints != null) bits.push(`${t.storyPoints} pts`)
+    if (t.subtasks.length > 0) {
+      const done = t.subtasks.filter((s) => s.completed).length
+      bits.push(`${done}/${t.subtasks.length} subtasks`)
+    }
+    if (t.dueDate) bits.push(`due ${t.dueDate}${t.dueTime ? ` ${t.dueTime}` : ""}`)
     out.push({
       key: `task:${t.id}:${t.reminder}`,
       kind: "task",
       fireAt,
-      title: `Reminder: ${t.title}`,
-      description: t.description || (t.dueDate ? `Due ${t.dueDate}` : "Task reminder"),
+      title: `⏰ Reminder: ${t.title}`,
+      description: t.description ? `${t.description} — ${bits.join(" · ")}` : bits.join(" · ") || "Task reminder",
       href: "/tasks",
     })
   }
@@ -61,7 +70,7 @@ export function collectReminders(): Reminder[] {
       kind: "habit",
       fireAt: fireAt.getTime(),
       title: `Time for: ${h.name}`,
-      description: "Daily habit reminder",
+      description: `${h.frequency === "weekly" ? "Weekly" : "Daily"} habit${h.description ? ` — ${h.description.slice(0, 80)}` : ""} · tap to check in`,
       href: "/habits",
     })
   }
@@ -75,7 +84,7 @@ export function collectReminders(): Reminder[] {
       kind: "goal",
       fireAt,
       title: `Goal check-in: ${g.title}`,
-      description: `Progress ${g.currentValue}/${g.targetValue}`,
+      description: `Progress ${g.currentValue}/${g.targetValue} (${g.period}) · tap to update`,
       href: "/future",
     })
   }
@@ -88,8 +97,8 @@ export function collectReminders(): Reminder[] {
       key: `bucket:${b.id}:${b.reminder}`,
       kind: "bucket",
       fireAt,
-      title: b.expectedDate ? `Bucket list: ${b.title}` : `Bucket list: ${b.title}`,
-      description: b.expectedDate ? `Target date ${b.expectedDate}` : "Don't lose the dream",
+      title: `Bucket list dream ✨ ${b.title}`,
+      description: b.expectedDate ? `Target date ${b.expectedDate}${b.timeframe ? ` · ${b.timeframe}` : ""}` : "Don't lose the dream — tap to view",
       href: "/skills/bucket-list",
     })
   }
@@ -102,8 +111,8 @@ export function collectReminders(): Reminder[] {
       key: `todo:${a.id}:${a.reminder}`,
       kind: "todo",
       fireAt,
-      title: `Todo reminder: ${a.title}`,
-      description: `Scheduled for ${a.date}`,
+      title: `⏰ Todo reminder: ${a.title}`,
+      description: `Scheduled for ${a.date} · tap to open`,
       href: "/dashboard",
     })
   }

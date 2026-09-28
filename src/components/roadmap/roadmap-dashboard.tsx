@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useRouter } from "next/navigation"
 import {
   ArrowLeft, Pencil, Trash2, Plus, ChevronDown, ChevronRight,
-  Target, CalendarDays, MessageSquarePlus, X, StickyNote,
+  Target, CalendarDays, MessageSquarePlus, X, StickyNote, Gauge,
 } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
@@ -283,6 +283,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
   const [phaseOpen, setPhaseOpen] = useState(false)
   const [filter, setFilter] = useState<PhaseStatus | "all">("all")
   const [openPhaseId, setOpenPhaseId] = useState<string | null>(null)
+  const [analyticsOpen, setAnalyticsOpen] = useState(false)
 
   useEffect(() => {
     setPageTitle(roadmap.title)
@@ -394,7 +395,27 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </div>
       </div>
 
-      <RoadmapAnalytics roadmap={roadmap} />
+      <div className="mt-6">
+        <button
+          onClick={() => setAnalyticsOpen((v) => !v)}
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400 transition-colors hover:text-neutral-600 dark:hover:text-neutral-300"
+        >
+          <Gauge className="h-4 w-4" /> Analytics & growth
+          {analyticsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+        </button>
+        <AnimatePresence initial={false}>
+          {analyticsOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden"
+            >
+              <RoadmapAnalytics roadmap={roadmap} />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto">
@@ -442,11 +463,11 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </motion.div>
       ) : (
         <div className="relative mt-4 space-y-3">
-          <div className="absolute bottom-5 left-[27px] top-5 w-px bg-neutral-200 dark:bg-neutral-800" />
+          <div className="absolute bottom-5 left-[27px] top-5 hidden w-px bg-neutral-200 sm:block dark:bg-neutral-800" />
           <AnimatePresence mode="popLayout">
             {visible.map((phase) => (
-              <div key={phase.id} className="relative pl-14">
-                <div className="absolute left-[19px] top-[26px] h-4 w-4 -translate-y-1/2 rounded-full border-4 border-white dark:border-neutral-900" style={{ background: STATUS_META[phase.status].dot }} />
+              <div key={phase.id} className="relative sm:pl-14">
+                <div className="absolute left-[19px] top-[26px] hidden h-4 w-4 -translate-y-1/2 rounded-full border-4 border-white sm:block dark:border-neutral-900" style={{ background: STATUS_META[phase.status].dot }} />
                 <PhaseRow roadmap={roadmap} phase={phase} index={roadmap.phases.indexOf(phase)} onOpen={() => setOpenPhaseId(phase.id)} />
               </div>
             ))}

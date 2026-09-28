@@ -35,6 +35,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
   const [description, setDescription] = useState(task?.description ?? "")
   const [project, setProject] = useState(task?.project ?? "")
   const [priority, setPriority] = useState<Priority>(task?.priority ?? "medium")
+  const [storyPoints, setStoryPoints] = useState(task?.storyPoints != null ? String(task.storyPoints) : "")
   const [dueDate, setDueDate] = useState(task?.dueDate ?? "")
   const [dueTime, setDueTime] = useState(task?.dueTime ?? "")
   const [reminderMins, setReminderMins] = useState<number | null>(() => {
@@ -68,6 +69,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
       description: description.trim(),
       project: project.trim() || "Uncategorized",
       priority,
+      storyPoints: storyPoints.trim() ? Math.max(0, Math.min(100, parseInt(storyPoints.trim(), 10) || 0)) : undefined,
       dueDate,
       dueTime: dueTime || undefined,
       reminder,
@@ -120,7 +122,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
         </datalist>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <div className="space-y-2">
           <Label htmlFor="edit-task-priority">Priority</Label>
           <Select value={priority} onValueChange={(v) => setPriority(v as Priority)}>
@@ -133,6 +135,18 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
               <SelectItem value="high">High</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="edit-task-points">Story Points</Label>
+          <Input
+            id="edit-task-points"
+            type="number"
+            min={0}
+            max={100}
+            placeholder="e.g. 5"
+            value={storyPoints}
+            onChange={(e) => setStoryPoints(e.target.value)}
+          />
         </div>
         <div className="space-y-2">
           <Label htmlFor="edit-dueDate">Due Date</Label>

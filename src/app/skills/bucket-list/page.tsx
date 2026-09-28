@@ -195,6 +195,7 @@ function WishCard({
   onEdit: () => void
 }) {
   const { toggleComplete, deleteItem } = useBucketListStore()
+  const [lightbox, setLightbox] = useState(false)
 
   return (
     <motion.div
@@ -212,7 +213,10 @@ function WishCard({
     >
       {/* Image */}
       {item.imageUrl ? (
-        <div className="relative h-44 overflow-hidden sm:h-48">
+        <div
+          className="relative h-44 cursor-zoom-in overflow-hidden sm:h-48"
+          onClick={() => setLightbox(true)}
+        >
           <img
             src={item.imageUrl}
             alt={item.title}
@@ -333,6 +337,23 @@ function WishCard({
           </button>
         </div>
       </div>
+
+      <Dialog open={lightbox} onOpenChange={setLightbox}>
+        <DialogContent className="max-w-3xl border-0 bg-neutral-950 p-0 sm:max-w-4xl dark:bg-neutral-950">
+          <img
+            src={item.imageUrl}
+            alt={item.title}
+            className="max-h-[82vh] w-full rounded-lg object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+          <div className="px-5 py-4">
+            <p className="text-center text-base font-semibold text-white">{item.title}</p>
+            {item.description && (
+              <p className="mt-1 text-center text-sm text-neutral-300">{item.description}</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </motion.div>
   )
 }
