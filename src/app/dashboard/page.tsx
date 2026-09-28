@@ -1,17 +1,16 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import Link from "next/link"
 import {
-  Compass, Heart, Wallet, TrendingUp, ListTodo,
-  CheckCircle2, Circle, Flame, ArrowUpRight, ArrowDownRight,
-  AlertTriangle, ChevronDown, ChevronRight,
-  Plus, Minus, Check, Calendar, Trophy, Zap, Bell, BellOff,
+  Compass, Heart, Wallet, TrendingUp,
+  CheckCircle2, Flame, ArrowUpRight, ArrowDownRight,
+  Lock, Moon, Check, Calendar, Zap,
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
-  BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid,
+  AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { useNorthStarStore } from "@/store/use-north-star-store"
@@ -19,6 +18,7 @@ import { useTaskStore } from "@/store/use-task-store"
 import { useHabitStore } from "@/store/use-habit-store"
 import { useChallengeStore } from "@/store/use-challenge-store"
 import { useFinanceStore } from "@/store/use-finance-store"
+import { useSleepStore } from "@/store/use-sleep-store"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
 import type { Task } from "@/types"
@@ -53,67 +53,34 @@ function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: t
 
 /* ── Hero ────────────────────────────────────────────── */
 function DashboardHero() {
-  const tasks = useTaskStore((s) => s.tasks)
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
-  const dueToday = tasks.filter(
-    (t) => !t.completed && t.dueDate === format(new Date(), "yyyy-MM-dd")
-  ).length
-  const net =
-    incomes.reduce((s, i) => s + i.amount, 0) -
-    expenses.reduce((s, e) => s + e.amount, 0)
-
-  const stats = [
-    {
-      label: "Tasks due today",
-      value: String(dueToday),
-      icon: ListTodo,
-      tile: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400",
-      href: "/tasks",
-    },
-    {
-      label: "Net cash flow",
-      value: `₹${net.toLocaleString("en-IN")}`,
-      icon: Wallet,
-      tile: "bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400",
-      href: "/finance",
-    },
-  ]
+  const net = useMemo(
+    () =>
+      incomes.reduce((s, i) => s + i.amount, 0) -
+      expenses.reduce((s, e) => s + e.amount, 0),
+    [incomes, expenses]
+  )
 
   return (
-    <div className="space-y-5">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4">
-        {stats.map((s) => (
-          <Link
-            key={s.label}
-            href={s.href ?? "#"}
-            className={
-              s.href
-                ? "flex items-center gap-3 rounded-[14px] bg-white p-4 transition-colors hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800/70"
-                : "flex items-center gap-3 rounded-[14px] bg-white p-4 dark:bg-neutral-900"
-            }
-          >
-            <div
-              className={cn(
-                "flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]",
-                s.tile
-              )}
-            >
-              <s.icon className="h-4 w-4" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
-                {s.label}
-              </p>
-              <p className="truncate text-lg font-extrabold tracking-tight text-neutral-900 dark:text-neutral-50">
-                {s.value}
-              </p>
-            </div>
-          </Link>
-        ))}
+    <Link
+      href="/finance"
+      className="flex items-center gap-3 rounded-[14px] bg-white p-4 transition-colors hover:bg-neutral-50 dark:bg-neutral-900 dark:hover:bg-neutral-800/70"
+    >
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400">
+        <Wallet className="h-4 w-4" />
       </div>
-    </div>
+      <div className="min-w-0">
+        <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500 dark:text-neutral-400">
+          Net cash flow
+        </p>
+        <p className="truncate text-lg font-extrabold tracking-tight text-neutral-900 dark:text-neutral-50">
+          ₹{net.toLocaleString("en-IN")}
+        </p>
+      </div>
+      <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-neutral-300 dark:text-neutral-600" />
+    </Link>
   )
 }
 
@@ -136,194 +103,149 @@ function MissionSection() {
   )
 }
 
-/* ── High Priority Tasks (interactive) ───────────────── */
-function HighPriorityTasks() {
+/* ── Focus Flow (urgent → medium → low) ──────────────── */
+function FocusFlowSection() {
   const tasks = useTaskStore((s) => s.tasks)
-  const updateTask = useTaskStore((s) => s.updateTask)
   const requestComplete = useTaskStore((s) => s.requestComplete)
-  const [expanded, setExpanded] = useState<string | null>(null)
 
-  const highTasks = useMemo(
-    () => tasks.filter((t) => t.priority === "high" && !t.completed).slice(0, 6),
-    [tasks]
-  )
+  const { groups, pendingTotal, hasAnyActive } = useMemo(() => {
+    const done = (p: Task["priority"]) => tasks.filter((t) => t.completed && t.priority === p).length
+    const active = (p: Task["priority"]) => tasks.filter((t) => !t.completed && t.priority === p)
 
-  const handleComplete = (t: Task) => {
-    requestComplete(t.id)
-  }
+    const doneHigh = done("high")
+    const doneMedium = done("medium")
+    const showMedium = doneHigh > 0
+    const showLow = doneMedium > 0
 
-  const adjustProgress = (t: Task, delta: number) => {
-    const step = 25
-    let next = Math.round(t.progress / step) * step + delta
-    next = Math.max(0, Math.min(100, next))
-    if (next >= 100) requestComplete(t.id)
-    else updateTask(t.id, { progress: next, completed: false })
-  }
+    const high = active("high").slice(0, 3)
+    const medium = active("medium").slice(0, 2)
+    const low = active("low").slice(0, 3)
 
-  const toggleReminder = (t: Task) => {
-    if (t.reminder) {
-      updateTask(t.id, { reminder: null })
-    } else {
-      let reminderDate: Date
-      if (t.dueDate) {
-        const due = new Date(t.dueDate)
-        reminderDate = new Date(due.getTime() - 60 * 60 * 1000)
-        if (reminderDate < new Date()) {
-          reminderDate = new Date()
-          reminderDate.setMinutes(reminderDate.getMinutes() + 5)
-        }
-      } else {
-        reminderDate = new Date()
-        reminderDate.setHours(reminderDate.getHours() + 1)
-      }
-      updateTask(t.id, { reminder: reminderDate.toISOString() })
-    }
-  }
+    const groups = [
+      {
+        key: "high",
+        label: "Urgent",
+        dot: "bg-red-500",
+        box: "border-red-400 dark:border-red-500/60",
+        boxChecked: "border-red-500 bg-red-500 text-white",
+        active: high,
+        open: true,
+      },
+      {
+        key: "medium",
+        label: "Medium",
+        dot: "bg-amber-500",
+        box: "border-amber-400 dark:border-amber-500/60",
+        boxChecked: "border-amber-500 bg-amber-500 text-white",
+        active: medium,
+        open: showMedium,
+      },
+      {
+        key: "low",
+        label: "Low",
+        dot: "bg-sky-500",
+        box: "border-sky-400 dark:border-sky-500/60",
+        boxChecked: "border-sky-500 bg-sky-500 text-white",
+        active: low,
+        open: showLow,
+      },
+    ]
+
+    const pendingTotal = groups.reduce((s, g) => s + (g.open ? g.active.length : 0), 0)
+    const hasAnyActive = tasks.some((t) => !t.completed)
+
+    return { groups, pendingTotal, hasAnyActive }
+  }, [tasks])
 
   return (
     <Card delay={0.05} className="overflow-visible">
-      <div className="mb-4 flex items-center justify-between">
+      <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-red-100 dark:bg-red-900/30">
-            <AlertTriangle className="h-4 w-4 text-red-500" />
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-amber-100 dark:bg-amber-900/30">
+            <Zap className="h-4 w-4 text-amber-500" />
           </div>
-          <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">High Priority</h3>
+          <div>
+            <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Focus Flow</h3>
+            <p className="text-[10px] text-neutral-400 dark:text-neutral-500">Urgent first · finish one to unlock the next tier</p>
+          </div>
         </div>
-        {highTasks.length > 0 && (
+        {pendingTotal > 0 ? (
           <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white dark:bg-white dark:text-neutral-900">
-            {highTasks.length}
+            {pendingTotal}
           </span>
+        ) : (
+          <CheckCircle2 className="h-4 w-4 text-green-500" />
         )}
       </div>
-      {highTasks.length === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-8 text-neutral-400">
-          <CheckCircle2 className="h-7 w-7" />
-          <p className="text-xs">All clear! No high priority tasks.</p>
+
+      {!hasAnyActive ? (
+        <div className="flex flex-col items-center gap-1 py-7 text-neutral-400">
+          <CheckCircle2 className="h-6 w-6" />
+          <p className="text-xs">All caught up — nothing pending.</p>
+          <Link href="/tasks" className="mt-1 text-[11px] font-semibold text-amber-500 hover:underline">
+            Plan your next task
+          </Link>
         </div>
       ) : (
-        <div className="space-y-2">
-          <AnimatePresence>
-            {highTasks.map((t) => {
-              const isExpanded = expanded === t.id
-              return (
-                <motion.div
-                  key={t.id}
-                  layout
-                  initial={{ opacity: 0, y: 8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8, height: 0 }}
-                  className="rounded-[12px] bg-white dark:bg-neutral-900 overflow-hidden"
-                >
-                  <div className="flex items-center gap-2.5 px-3 py-2.5">
-                    <button onClick={() => handleComplete(t)} className="shrink-0">
-                      <div className={cn(
-                        "flex h-4 w-4 items-center justify-center rounded-[10px] border transition-all",
-                        t.completed
-                          ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900"
-                          : "border-neutral-300 dark:border-neutral-600"
-                      )}>
-                        {t.completed && <Check className="h-2.5 w-2.5" />}
-                      </div>
-                    </button>
-                    <div className="min-w-0 flex-1 cursor-pointer" onClick={() => setExpanded(isExpanded ? null : t.id)}>
-                      <p className={cn("text-sm font-medium truncate", t.completed ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-900 dark:text-neutral-50")}>
-                        {t.title}
-                      </p>
-                      <div className="flex items-center gap-2 mt-0.5">
-                        {t.project && <span className="text-[10px] text-neutral-400">{t.project}</span>}
-                        {t.storyPoints != null && (
-                          <span className="rounded-full bg-violet-100 px-1.5 py-px text-[10px] font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300">
-                            {t.storyPoints} pts
-                          </span>
-                        )}
-                        {t.dueDate && (
-                          <span className="flex items-center gap-0.5 text-[10px] text-neutral-400">
-                            <Calendar className="h-2.5 w-2.5" /> {format(new Date(t.dueDate), "MMM d")}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 shrink-0">
-                      <button
-                        onClick={() => toggleReminder(t)}
-                        className={cn(
-                          "flex h-5 w-5 items-center justify-center rounded-[10px] transition-all",
-                          t.reminder
-                            ? "bg-neutral-200 text-neutral-700 dark:bg-neutral-700 dark:text-neutral-300"
-                            : "border border-neutral-200 text-neutral-400 hover:bg-neutral-100 dark:border-neutral-700 dark:hover:bg-neutral-700"
-                        )}
-                        title={t.reminder ? "Reminder set" : "Remind me 1h before due"}
-                      >
-                        {t.reminder ? <Bell className="h-3 w-3" /> : <BellOff className="h-3 w-3" />}
-                      </button>
-                      <button onClick={() => adjustProgress(t, -25)} disabled={t.progress <= 0}
-                        className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
-                        <Minus className="h-3 w-3" />
-                      </button>
-                      <span className="min-w-[28px] text-center text-[10px] font-bold text-neutral-600 dark:text-neutral-400">{t.progress}%</span>
-                      <button onClick={() => adjustProgress(t, 25)} disabled={t.progress >= 100}
-                        className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-20 dark:border-neutral-700 dark:hover:bg-neutral-700">
-                        <Plus className="h-3 w-3" />
-                      </button>
-                    </div>
-                    <button onClick={() => setExpanded(isExpanded ? null : t.id)} className="shrink-0 text-neutral-300 dark:text-neutral-600">
-                      {isExpanded ? <ChevronDown className="h-3.5 w-3.5" /> : <ChevronRight className="h-3.5 w-3.5" />}
-                    </button>
-                  </div>
-
-                  <div className="h-0.5 w-full bg-neutral-100 dark:bg-neutral-800">
-                    <motion.div
-                      className="h-full bg-neutral-900 dark:bg-white"
-                      animate={{ width: `${t.progress}%` }}
-                      transition={{ duration: 0.3 }}
-                    />
-                  </div>
-
-                  <AnimatePresence>
-                    {isExpanded && t.subtasks.length > 0 && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="overflow-hidden"
-                      >
-                        <div className="space-y-1 px-3 pb-2.5 pt-1">
-                          {t.subtasks.map((sub) => (
-                            <button
-                              key={sub.id}
-                              onClick={() => {
-                                const newSubs = t.subtasks.map((s) => s.id === sub.id ? { ...s, completed: !s.completed } : s)
-                                const done = newSubs.filter((s) => s.completed).length
-                                const pct = newSubs.length > 0 ? Math.round((done / newSubs.length) * 100) : 0
-                                updateTask(t.id, { subtasks: newSubs, progress: pct, completed: pct >= 100 })
-                              }}
-                              className="flex w-full items-center gap-2 rounded-[10px] px-2 py-1 text-left hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
-                            >
-                              {sub.completed ? (
-                                <Check className="h-3 w-3 shrink-0 text-neutral-600 dark:text-neutral-300" />
-                              ) : (
-                                <Circle className="h-3 w-3 shrink-0 text-neutral-300 dark:text-neutral-600" />
-                              )}
-                              <span className={cn("text-xs", sub.completed ? "text-neutral-400 line-through" : "text-neutral-600 dark:text-neutral-400")}>
-                                {sub.title}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      </motion.div>
+        <div className="space-y-3.5">
+          {groups.map((g) => (
+            <div key={g.key}>
+              <div className="mb-1.5 flex items-center justify-between px-0.5">
+                <span className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+                  <span className={cn("h-1.5 w-1.5 rounded-full", g.dot)} />
+                  {g.label}
+                  {!g.open && <Lock className="h-3 w-3 text-neutral-300 dark:text-neutral-600" />}
+                </span>
+                {!g.open
+                  ? g.active.length > 0 && (
+                      <span className="text-[10px] font-medium text-neutral-300 dark:text-neutral-600">
+                        {g.active.length} awaiting
+                      </span>
+                    )
+                  : g.active.length === 0 && (
+                      <span className="text-[10px] font-semibold text-emerald-500">clear</span>
                     )}
-                  </AnimatePresence>
-                </motion.div>
-              )
-            })}
-          </AnimatePresence>
+              </div>
+              <AnimatePresence initial={false}>
+                {g.open &&
+                  g.active.map((t) => (
+                    <motion.div
+                      key={t.id}
+                      layout
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      className="mb-1.5 flex items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2 dark:border-neutral-800 dark:bg-white/[0.03]"
+                    >
+                      <button onClick={() => requestComplete(t.id)} className="shrink-0">
+                        <span className={cn("flex h-4 w-4 items-center justify-center rounded-[10px] border transition-colors", g.box)} />
+                      </button>
+                      <button
+                        onClick={() => requestComplete(t.id)}
+                        className="min-w-0 flex-1 text-left"
+                      >
+                        <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-50">{t.title}</p>
+                        <div className="mt-0.5 flex items-center gap-2 text-[10px] text-neutral-400">
+                          {t.project && <span className="max-w-[40%] truncate">{t.project}</span>}
+                          {t.dueDate && (
+                            <span className="flex shrink-0 items-center gap-0.5">
+                              <Calendar className="h-2.5 w-2.5" /> {format(new Date(t.dueDate), "MMM d")}
+                            </span>
+                          )}
+                        </div>
+                      </button>
+                    </motion.div>
+                  ))}
+              </AnimatePresence>
+            </div>
+          ))}
         </div>
       )}
     </Card>
   )
 }
 
-/* ── Habits & Challenges (interactive) ───────────────── */
+/* ── Health (habits + sleep + challenges) ────────────── */
 function HabitsChallengesSection() {
   const habits = useHabitStore((s) => s.habits)
   const toggleDay = useHabitStore((s) => s.toggleDay)
@@ -331,10 +253,12 @@ function HabitsChallengesSection() {
   const challenges = useChallengeStore((s) => s.challenges)
   const toggleDayC = useChallengeStore((s) => s.toggleDay)
   const getProgress = useChallengeStore((s) => s.getProgress)
+  const sleepEntries = useSleepStore((s) => s.entries)
 
   const today = format(new Date(), "yyyy-MM-dd")
   const todayCompleted = habits.filter((h) => h.records.find((r) => r.date === today)?.completed).length
   const bestStreak = Math.max(...habits.map((h) => getStreak(h.id)), 0)
+  const todaySleep = useMemo(() => sleepEntries.find((e) => e.date === today), [sleepEntries, today])
 
   const activeChallenges = useMemo(() =>
     challenges.filter((c) => c.joined && c.days.some((d) => !d.completed)).slice(0, 3),
@@ -372,7 +296,7 @@ function HabitsChallengesSection() {
       </div>
 
       {habits.length > 0 && (
-        <div className="mb-3">
+        <>
           <div className="grid grid-cols-2 gap-1.5">
             {habits.slice(0, 6).map((h) => {
               const done = h.records.find((r) => r.date === today)?.completed ?? false
@@ -405,11 +329,45 @@ function HabitsChallengesSection() {
               +{habits.length - 6} more
             </Link>
           )}
-        </div>
+        </>
       )}
 
+      <Link
+        href="/habits"
+        className={cn(
+          "mt-1.5 flex items-center gap-2 rounded-[10px] px-2.5 py-2 text-left transition-all",
+          todaySleep
+            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
+            : "border border-dashed border-indigo-300/70 bg-white hover:bg-indigo-50/50 dark:border-indigo-700/50 dark:bg-neutral-900 dark:hover:bg-neutral-800"
+        )}
+      >
+        {todaySleep ? (
+          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border border-indigo-500 bg-indigo-500 text-white">
+            <Check className="h-2.5 w-2.5" />
+          </div>
+        ) : (
+          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border border-indigo-400 text-indigo-500">
+            <Moon className="h-2.5 w-2.5" />
+          </div>
+        )}
+        <span className="flex items-center gap-1 truncate text-[11px] font-medium">
+          <Moon className={cn("h-3 w-3", todaySleep ? "text-indigo-200 dark:text-indigo-300" : "text-indigo-400")} />
+          Sleep
+        </span>
+        <span
+          className={cn(
+            "ml-auto shrink-0 rounded-full px-2 py-px text-[10px] font-semibold",
+            todaySleep
+              ? "bg-indigo-500/20 text-indigo-100 dark:text-indigo-200"
+              : "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300"
+          )}
+        >
+          {todaySleep ? `${todaySleep.hours}h · ${todaySleep.quality}/5` : "Log tonight"}
+        </span>
+      </Link>
+
       {activeChallenges.length > 0 && (
-        <div>
+        <div className="mt-4">
           <div className="space-y-1.5">
             {todayChallengeDays.map(({ challenge: c, todayDay }) => {
               const progress = getProgress(c.id)
@@ -451,7 +409,7 @@ function HabitsChallengesSection() {
   )
 }
 
-/* ── Cash Flow (interactive) ─────────────────────────── */
+/* ── Cash Flow ───────────────────────────────────────── */
 function FinanceSection() {
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
@@ -487,58 +445,75 @@ function FinanceSection() {
   return (
     <Card delay={0.15}>
       <CardHeader icon={Wallet} label="Cash Flow" color="text-green-600 dark:text-green-400" />
-      <div className="flex items-baseline gap-2 mb-1">
-        <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
-          {isPositive ? "+" : ""}₹{net.toLocaleString("en-IN")}
+      <div className="flex items-center gap-2.5">
+        <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 dark:text-white" : "text-rose-500 dark:text-rose-400")}>
+          {isPositive ? "+" : "−"}₹{Math.abs(net).toLocaleString("en-IN")}
+        </span>
+        <span
+          className={cn(
+            "flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
+            isPositive
+              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+              : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
+          )}
+        >
+          {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+          Net
         </span>
       </div>
-      <div className="flex gap-4 mb-4 text-xs">
-        <div className="flex items-center gap-1.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-            <ArrowUpRight className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+
+      <div className="mt-3 mb-4 grid grid-cols-2 gap-2.5">
+        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
+          <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400">
+            <ArrowUpRight className="h-3 w-3 text-green-500" /> Income
           </div>
-          <span className="text-neutral-500">₹{totalIncome.toLocaleString("en-IN")}</span>
+          <p className="mt-1 truncate text-sm font-bold text-neutral-900 dark:text-white">₹{totalIncome.toLocaleString("en-IN")}</p>
         </div>
-        <div className="flex items-center gap-1.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-            <ArrowDownRight className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
+          <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400">
+            <ArrowDownRight className="h-3 w-3 text-rose-500" /> Expenses
           </div>
-          <span className="text-neutral-500">₹{totalExpenses.toLocaleString("en-IN")}</span>
+          <p className="mt-1 truncate text-sm font-bold text-neutral-900 dark:text-white">₹{totalExpenses.toLocaleString("en-IN")}</p>
         </div>
       </div>
 
-      {monthlyData.length > 0 && (
-        <div className="h-32 mb-3">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={monthlyData} barGap={4}>
-              <defs>
-                <linearGradient id="dash-income" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#34c759" />
-                  <stop offset="100%" stopColor="#45c86f" />
-                </linearGradient>
-                <linearGradient id="dash-expense" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#ff3b30" />
-                  <stop offset="100%" stopColor="#ff9f0a" />
-                </linearGradient>
-              </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
-              <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
-              <YAxis hide />
-              <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} cursor={{ fill: "rgba(0,0,0,0.04)" }} />
-              <Bar dataKey="income" fill="url(#dash-income)" radius={[6, 6, 2, 2]} barSize={14} name="Income" />
-              <Bar dataKey="expense" fill="url(#dash-expense)" radius={[6, 6, 2, 2]} barSize={14} name="Expense" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      {monthlyData.length > 0 ? (
+        <>
+          <div className="h-36">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthlyData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
+                <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }}
+                  formatter={(value) => `₹${Number(value ?? 0).toLocaleString("en-IN")}`}
+                />
+                <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" strokeWidth={2} fill="#22c55e" fillOpacity={0.12} dot={false} />
+                <Area type="monotone" dataKey="expense" name="Expense" stroke="#f43f5e" strokeWidth={2} fill="#f43f5e" fillOpacity={0.08} dot={false} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-1 flex items-center gap-3 text-[10px] text-neutral-500">
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-green-500" /> Income
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-2 w-2 rounded-full bg-rose-500" /> Expenses
+            </span>
+          </div>
+        </>
+      ) : (
+        <p className="py-6 text-center text-xs text-neutral-400">No transactions yet.</p>
       )}
 
       {recentExpenses.length > 0 && (
-        <div className="space-y-1">
+        <div className="mt-3 space-y-1">
           <span className="text-[10px] font-medium text-neutral-400">Recent</span>
           {recentExpenses.map((e) => (
-            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
+            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5">
               <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{e.description}</span>
-              <span className="text-xs font-medium text-neutral-600 dark:text-neutral-400 shrink-0 ml-2">-₹{e.amount.toLocaleString("en-IN")}</span>
+              <span className="text-xs font-medium text-neutral-600 shrink-0 ml-2 dark:text-neutral-400">-₹{e.amount.toLocaleString("en-IN")}</span>
             </div>
           ))}
         </div>
@@ -569,7 +544,7 @@ function InvestmentsSection() {
     const alloc = [
       { name: "Stocks", value: stockCur, color: "#0066cc" },
       { name: "Mutual Funds", value: mfCur, color: "#af52de" },
-      { name: "SIPs", value: sipCur, color: "#34c759" },
+      { name: "SIPs", value: sipCur, color: "#22c55e" },
     ].filter((d) => d.value > 0)
 
     return { totalCurrent: tc, totalGain: tg, totalGainPct: tp, allocationData: alloc }
@@ -579,7 +554,6 @@ function InvestmentsSection() {
   const topStocks = useMemo(() =>
     stocks.slice(0, 3).map((s) => ({
       name: s.name,
-      gain: (s.currentPrice * s.quantity) - (s.buyPrice * s.quantity),
       pct: s.buyPrice > 0 ? Math.round(((s.currentPrice - s.buyPrice) / s.buyPrice) * 100) : 0,
     })),
   [stocks])
@@ -587,73 +561,100 @@ function InvestmentsSection() {
   return (
     <Card delay={0.2}>
       <CardHeader icon={TrendingUp} label="Investments" color="text-violet-600 dark:text-violet-400" />
-      <div className="flex items-center gap-3 mb-3">
-        {allocationData.length > 0 && (
-          <div className="relative h-14 w-14 shrink-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <defs>
-                  <filter id="dash-alloc-glow" x="-20%" y="-20%" width="140%" height="140%">
-                    <feGaussianBlur stdDeviation="2" result="blur" />
-                    <feMerge>
-                      <feMergeNode in="blur" />
-                      <feMergeNode in="SourceGraphic" />
-                    </feMerge>
-                  </filter>
-                </defs>
-                <Pie
-                  data={allocationData}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={16}
-                  outerRadius={25}
-                  dataKey="value"
-                  stroke="none"
-                  paddingAngle={4}
-                  cornerRadius={4}
+
+      {allocationData.length === 0 ? (
+        <div className="flex flex-col items-center gap-1 py-7 text-neutral-400">
+          <TrendingUp className="h-6 w-6" />
+          <p className="text-xs">No investments yet.</p>
+          <Link href="/finance" className="mt-1 text-[11px] font-semibold text-violet-500 hover:underline">
+            Add your first holding
+          </Link>
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center gap-3">
+            <div className="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={allocationData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="56%"
+                    outerRadius="98%"
+                    dataKey="value"
+                    stroke="none"
+                    paddingAngle={4}
+                    cornerRadius={6}
+                  >
+                    {allocationData.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-[8px] text-neutral-400 sm:text-[9px]">Total</span>
+                <span className="text-[10px] font-bold text-neutral-900 dark:text-white sm:text-xs">₹{(totalCurrent / 1000).toFixed(1)}k</span>
+              </div>
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className={cn("text-xl font-bold tracking-tight sm:text-2xl", isGain ? "text-neutral-900 dark:text-white" : "text-rose-500 dark:text-rose-400")}>
+                  {isGain ? "+" : "−"}₹{Math.abs(totalGain).toLocaleString("en-IN")}
+                </span>
+                <span
+                  className={cn(
+                    "flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
+                    isGain
+                      ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                      : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
+                  )}
                 >
-                  {allocationData.map((entry, i) => (
-                    <Cell key={i} fill={entry.color} style={{ filter: "url(#dash-alloc-glow)" }} />
-                  ))}
-                </Pie>
-                <Tooltip contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
+                  {isGain ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+                  {Math.abs(totalGainPct)}%
+                </span>
+              </div>
+              <p className="mt-0.5 text-[11px] text-neutral-400">on ₹{totalCurrent.toLocaleString("en-IN")} invested all-time</p>
+            </div>
           </div>
-        )}
-        <div>
-          <span className={cn("text-xl font-bold tracking-tight", isGain ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
-            {isGain ? "+" : ""}₹{totalGain.toLocaleString("en-IN")}
-          </span>
-          <p className="text-[11px] text-neutral-400">
-            {isGain ? "+" : ""}{totalGainPct}% · ₹{totalCurrent.toLocaleString("en-IN")}
-          </p>
-        </div>
-      </div>
 
-      {allocationData.length > 0 && (
-        <div className="flex gap-3 mb-3">
-          {allocationData.map((d) => (
-            <div key={d.name} className="flex items-center gap-1.5 text-[10px] text-neutral-500">
-              <span className="h-2 w-2 rounded-full shrink-0" style={{ backgroundColor: d.color }} />
-              {d.name}
-            </div>
-          ))}
-        </div>
-      )}
+          <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
+            {allocationData.map((d) => {
+              const pct = totalCurrent > 0 ? Math.round((d.value / totalCurrent) * 100) : 0
+              return (
+                <span
+                  key={d.name}
+                  className="flex items-center gap-1.5 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+                >
+                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: d.color }} />
+                  {d.name} · {pct}%
+                </span>
+              )
+            })}
+          </div>
 
-      {topStocks.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-[10px] font-medium text-neutral-400">Top Stocks</span>
-          {topStocks.map((s) => (
-            <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-white/70 dark:hover:bg-white/5">
-              <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{s.name}</span>
-              <span className={cn("text-xs font-medium shrink-0 ml-2", s.gain >= 0 ? "text-neutral-900 dark:text-white" : "text-neutral-500 dark:text-neutral-400")}>
-                {s.gain >= 0 ? "+" : ""}{s.pct}%
-              </span>
+          {topStocks.length > 0 && (
+            <div className="mt-4 space-y-1">
+              <span className="text-[10px] font-medium text-neutral-400">Top Stocks</span>
+              {topStocks.map((s) => (
+                <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5">
+                  <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{s.name}</span>
+                  <span
+                    className={cn(
+                      "ml-2 shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold",
+                      s.pct >= 0
+                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                        : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
+                    )}
+                  >
+                    {s.pct >= 0 ? "+" : "−"}{Math.abs(s.pct)}%
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
+        </>
       )}
     </Card>
   )
@@ -674,7 +675,7 @@ export default function DashboardPage() {
         <DashboardHero />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-5">
-          <HighPriorityTasks />
+          <FocusFlowSection />
           <HabitsChallengesSection />
           <FinanceSection />
           <InvestmentsSection />
