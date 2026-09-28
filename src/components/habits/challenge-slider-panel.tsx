@@ -61,14 +61,14 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
       className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
     >
       <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
-            <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 sm:h-11 sm:w-11">
+            <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0 flex-1">
-            <h4 className="truncate text-[15px] font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
-            {challenge.description && <p className="truncate text-xs text-neutral-400">{challenge.description}</p>}
-            <p className="mt-0.5 text-[11px] text-neutral-400">
+            <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50 sm:text-[15px]">{challenge.title}</h4>
+            {challenge.description && <p className="truncate text-[11px] text-neutral-400 sm:text-xs">{challenge.description}</p>}
+            <p className="mt-0.5 truncate whitespace-nowrap text-[10px] text-neutral-400 sm:text-[11px]">
               {format(new Date(challenge.startDate), "MMM d, yyyy")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
             </p>
           </div>
@@ -115,8 +115,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   return (
     <div
       className={cn(
-        "mt-3 grid max-h-44 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700",
-        cols === 7 ? "grid-cols-7" : "grid-cols-10"
+        "mt-3 grid max-h-44 gap-1.5 overflow-y-auto pr-0 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700 sm:pr-1",
+        cols === 7 ? "grid-cols-7 sm:grid-cols-7" : "grid-cols-7 sm:grid-cols-10"
       )}
     >
       {challenge.days.map((d) => {
