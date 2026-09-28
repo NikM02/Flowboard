@@ -85,7 +85,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           <span>To {format(new Date(challenge.endDate), "MMM d, yyyy")}</span>
         </div>
 
-        <div className="mb-3 flex items-center gap-1.5 overflow-x-auto">
+        <div className="mb-3 grid grid-cols-7 gap-1">
           {challenge.days.map((d) => {
             const isToday = d.date === todayDate
             return (
@@ -94,7 +94,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
                 onClick={() => toggleDay(challenge.id, d.day)}
                 aria-label={`Day ${d.day}`}
                 className={cn(
-                  "flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] border-2 text-xs font-semibold transition-all",
+                  "flex h-8 w-8 items-center justify-center rounded-[10px] border-2 text-xs font-semibold transition-all",
                   d.completed
                     ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                     : "bg-white border-neutral-200 text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700",
@@ -174,7 +174,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   return (
     <div
       className={cn(
-        "mt-3 grid max-h-64 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700",
+        "mt-3 grid max-h-44 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700",
         cols === 7 ? "grid-cols-7" : "grid-cols-10"
       )}
     >
