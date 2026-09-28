@@ -12,9 +12,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select"
 import { useSkillStore } from "@/store/use-skill-store"
 import { downloadCSV } from "@/lib/csv"
 import type { SkillSource } from "@/types"
@@ -35,8 +32,6 @@ function formatSkillDate(d: string) {
 function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const addSkill = useSkillStore((s) => s.addSkill)
   const [name, setName] = useState("")
-  const [source, setSource] = useState<SkillSource>("book")
-  const [sourceDetail, setSourceDetail] = useState("")
   const [startDate, setStartDate] = useState("")
   const [endDate, setEndDate] = useState("")
   const [notes, setNotes] = useState("")
@@ -46,10 +41,8 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
 
   const handleSubmit = () => {
     if (!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly) return
-    addSkill({ name: name.trim(), source, sourceDetail: sourceDetail.trim(), startDate, endDate, notes: notes.trim() })
+    addSkill({ name: name.trim(), source: "book", sourceDetail: "", startDate, endDate, notes: notes.trim() })
     setName("")
-    setSource("book")
-    setSourceDetail("")
     setStartDate("")
     setEndDate("")
     setNotes("")
@@ -67,30 +60,6 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
           <div className="space-y-2">
             <Label htmlFor="create-skill-name">Skill name</Label>
             <Input id="create-skill-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. TypeScript" />
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="create-skill-source">Source</Label>
-              <Select value={source} onValueChange={(v) => setSource(v as SkillSource)}>
-                <SelectTrigger id="create-skill-source">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="book">Book</SelectItem>
-                  <SelectItem value="course">Course</SelectItem>
-                  <SelectItem value="youtube">YouTube</SelectItem>
-                  <SelectItem value="person">Person</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="create-skill-source-detail">Source detail</Label>
-              <Input id="create-skill-source-detail"
-                value={sourceDetail}
-                onChange={(e) => setSourceDetail(e.target.value)}
-                placeholder="Title, channel, name..."
-              />
-            </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -133,8 +102,6 @@ function EditSkillDialog({
 }) {
   const updateSkill = useSkillStore((s) => s.updateSkill)
   const [name, setName] = useState(skill.name)
-  const [source, setSource] = useState(skill.source)
-  const [sourceDetail, setSourceDetail] = useState(skill.sourceDetail)
   const [startDate, setStartDate] = useState(skill.startDate)
   const [endDate, setEndDate] = useState(skill.endDate)
   const [notes, setNotes] = useState(skill.notes)
@@ -144,7 +111,7 @@ function EditSkillDialog({
 
   const handleSubmit = () => {
     if (!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly) return
-    updateSkill(skill.id, { name: name.trim(), source, sourceDetail: sourceDetail.trim(), startDate, endDate, notes: notes.trim() })
+    updateSkill(skill.id, { name: name.trim(), source: skill.source, sourceDetail: skill.sourceDetail, startDate, endDate, notes: notes.trim() })
     onOpenChange(false)
   }
 
@@ -159,26 +126,6 @@ function EditSkillDialog({
           <div className="space-y-2">
             <Label htmlFor="edit-skill-name">Skill name</Label>
             <Input id="edit-skill-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. TypeScript" />
-          </div>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="edit-skill-source">Source</Label>
-              <Select value={source} onValueChange={(v) => setSource(v as SkillSource)}>
-                <SelectTrigger id="edit-skill-source">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="book">Book</SelectItem>
-                  <SelectItem value="course">Course</SelectItem>
-                  <SelectItem value="youtube">YouTube</SelectItem>
-                  <SelectItem value="person">Person</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="edit-skill-source-detail">Source detail</Label>
-              <Input id="edit-skill-source-detail" value={sourceDetail} onChange={(e) => setSourceDetail(e.target.value)} placeholder="Title, channel, name..." />
-            </div>
           </div>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -215,7 +162,6 @@ function EditSkillDialog({
 function SkillCard({ skill }: { skill: { id: string; name: string; source: SkillSource; sourceDetail: string; startDate: string; endDate: string; progress: number; notes: string } }) {
   const { updateProgress, completeSkill, deleteSkill } = useSkillStore()
   const [editOpen, setEditOpen] = useState(false)
-  const SourceIcon = sourceConfig[skill.source].icon
 
   return (
     <motion.div
@@ -223,52 +169,39 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900"
+      className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
     >
-      {/* Cover */}
-      <div className="relative flex h-28 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/20 dark:to-emerald-950/20 sm:h-32">
-        <SourceIcon className="h-9 w-9 text-teal-300 dark:text-teal-600" />
-        {skill.progress === 100 && (
-          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
-            <Check className="h-4 w-4 text-white" />
-          </div>
-        )}
-        <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
-          {skill.progress !== 100 && (
-            <>
-              <button
-                onClick={() => setEditOpen(true)}
-                aria-label="Edit skill"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
-              >
-                <Pencil className="h-3.5 w-3.5" />
-              </button>
-              <button
-                onClick={() => deleteSkill(skill.id)}
-                aria-label="Delete skill"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-              </button>
-            </>
+      <div className="mb-3 flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <h3 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
+          {skill.notes && (
+            <p className="mt-0.5 truncate text-xs text-neutral-400">{skill.notes}</p>
           )}
         </div>
-        <div className="absolute bottom-3 left-3">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-900/90 dark:text-neutral-300">
-            {sourceConfig[skill.source].label}
-          </span>
+        <div className="flex shrink-0 gap-0.5 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
+          <button
+            onClick={() => setEditOpen(true)}
+            aria-label="Edit skill"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-600 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
+          >
+            <Pencil className="h-3.5 w-3.5" />
+          </button>
+          <button
+            onClick={() => deleteSkill(skill.id)}
+            aria-label="Delete skill"
+            className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:bg-neutral-800 dark:hover:bg-red-950/30"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </button>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-4 sm:p-5">
-        <h3 className="truncate text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
-        <p className="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">{skill.sourceDetail}</p>
-        <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">
-          {formatSkillDate(skill.startDate)} <span className="text-neutral-300 dark:text-neutral-600">&rarr;</span> {formatSkillDate(skill.endDate)}
-        </p>
+      <div className="mb-3 flex items-center gap-3 text-[11px] text-neutral-400">
+        <span>From {formatSkillDate(skill.startDate)}</span>
+        <span>To {formatSkillDate(skill.endDate)}</span>
+      </div>
 
-        <div className="mt-3 space-y-2.5 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
+      <div className="space-y-2.5 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
           <div className="flex-1">
             <div className="flex items-center justify-between text-xs">
               <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
@@ -313,7 +246,6 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
             Mark as Complete
           </Button>
         )}
-      </div>
 
       <EditSkillDialog skill={skill} open={editOpen} onOpenChange={setEditOpen} />
     </motion.div>
@@ -443,9 +375,11 @@ export function SkillPanel() {
                     <Check className="h-4 w-4 shrink-0 text-green-500" />
                     <span className="min-w-0 truncate font-medium text-neutral-700 dark:text-neutral-300">{skill.name}</span>
                   </div>
-                  <p className="mt-1 truncate text-xs text-neutral-500">
-                    {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
-                  </p>
+                  {skill.notes && (
+                    <p className="mt-1 truncate text-xs text-neutral-500">
+                      {skill.notes}
+                    </p>
+                  )}
                   <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-neutral-400">
                     <span>{skill.startDate} &rarr; {skill.endDate}</span>
                     <span className="font-semibold text-green-600 dark:text-green-400">{skill.progress}%</span>
