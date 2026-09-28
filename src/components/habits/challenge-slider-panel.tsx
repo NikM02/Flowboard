@@ -58,10 +58,10 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="card-modern card-hover glass w-full rounded-2xl p-3.5 sm:p-5"
+      className="card-modern card-hover glass w-full min-w-0 overflow-hidden rounded-2xl p-3.5 sm:p-5"
     >
-      <div className="mb-2.5 flex items-start justify-between gap-1 sm:gap-3 sm:mb-3">
-        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+      <div className="mb-2.5 flex min-w-0 items-start justify-between gap-1 sm:gap-3 sm:mb-3">
+        <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 sm:h-11 sm:w-11">
             <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 sm:h-5 sm:w-5" />
           </div>
@@ -301,7 +301,7 @@ export function ChallengeSliderPanel() {
           No challenges yet
         </div>
       ) : viewMode === "card" ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {challenges.map((c) => <ChallengeCard key={c.id} challenge={c} onEdit={openEdit} />)}
         </div>
       ) : (
