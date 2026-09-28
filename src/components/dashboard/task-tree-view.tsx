@@ -328,17 +328,21 @@ export function TaskTreeView() {
         </p>
       </div>
 
-      <AnimatePresence mode="popLayout">
-        {groups.map((g, i) => (
-          <ProjectGroup
-            key={g.name}
-            name={g.name}
-            groupTasks={g.tasks}
-            dot={PROJECT_DOTS[i % PROJECT_DOTS.length]}
-            index={i}
-          />
-        ))}
-      </AnimatePresence>
+      <div className="-mx-4 overflow-x-auto px-4 pb-1">
+        <div className="min-w-[320px] space-y-3">
+          <AnimatePresence mode="popLayout">
+            {groups.map((g, i) => (
+              <ProjectGroup
+                key={g.name}
+                name={g.name}
+                groupTasks={g.tasks}
+                dot={PROJECT_DOTS[i % PROJECT_DOTS.length]}
+                index={i}
+              />
+            ))}
+          </AnimatePresence>
+        </div>
+      </div>
     </div>
   )
 }

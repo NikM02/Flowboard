@@ -90,7 +90,7 @@ export function StatsCards() {
                 <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
                     className="absolute inset-y-0 left-0 rounded-full"
-                    style={{ background: `linear-gradient(90deg, ${config.color}, ${config.gauge[1]})` }}
+                    style={{ background: config.color }}
                     initial={{ width: 0 }}
                     animate={{ width: `${stats.progress}%` }}
                     transition={{ duration: 1, delay: 0.3 }}

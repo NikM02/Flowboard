@@ -15,27 +15,24 @@ import { Input } from "@/components/ui/input"
 import { Progress } from "@/components/ui/progress"
 import { EmptyState } from "./empty-state"
 
-const PRIORITY_META: Record<Priority, { label: string; text: string; badge: string; check: string; bar: string }> = {
+const PRIORITY_META: Record<Priority, { label: string; text: string; badge: string; check: string }> = {
   high: {
     label: "High",
     text: "text-red-500",
     badge: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
-    check: "bg-gradient-to-br from-red-500 to-orange-400",
-    bar: "bg-gradient-to-r from-red-500 to-orange-400",
+    check: "bg-red-500",
   },
   medium: {
     label: "Medium",
     text: "text-amber-500",
     badge: "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
-    check: "bg-gradient-to-br from-amber-500 to-yellow-400",
-    bar: "bg-gradient-to-r from-amber-500 to-yellow-400",
+    check: "bg-amber-500",
   },
   low: {
     label: "Low",
     text: "text-blue-500",
     badge: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
-    check: "bg-gradient-to-br from-blue-500 to-cyan-400",
-    bar: "bg-gradient-to-r from-blue-500 to-cyan-400",
+    check: "bg-blue-500",
   },
 }
 
@@ -64,7 +61,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: { id: string
           className={cn(
             "flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all",
             subtask.completed
-              ? "border-transparent bg-gradient-to-br from-emerald-500 to-teal-400"
+              ? "border-transparent bg-emerald-500"
               : "border-neutral-300 bg-white hover:border-neutral-400 dark:border-neutral-600 dark:bg-neutral-900 dark:hover:border-neutral-500"
           )}
         >
@@ -249,12 +246,14 @@ export function TaskCheckList() {
   if (tasks.length === 0) return <EmptyState />
 
   return (
-    <div className="space-y-2">
-      <AnimatePresence mode="popLayout">
-        {tasks.map((task, index) => (
-          <CheckRow key={task.id} task={task} index={index} />
-        ))}
-      </AnimatePresence>
+    <div className="-mx-4 overflow-x-auto px-4 pb-1">
+      <div className="min-w-[320px] space-y-2">
+        <AnimatePresence mode="popLayout">
+          {tasks.map((task, index) => (
+            <CheckRow key={task.id} task={task} index={index} />
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

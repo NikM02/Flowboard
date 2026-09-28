@@ -24,7 +24,6 @@ import {
 import { useTaskStore } from "@/store/use-task-store"
 import type { Priority } from "@/types"
 import { generateId } from "@/lib/utils"
-import { cn } from "@/lib/shadcn-utils"
 
 export function CreateTaskModal() {
   const { isCreateModalOpen, setIsCreateModalOpen, addTask, getProjects, createPriority } = useTaskStore()
@@ -36,9 +35,6 @@ export function CreateTaskModal() {
   const [storyPoints, setStoryPoints] = useState("")
   const [dueDate, setDueDate] = useState("")
   const [dueTime, setDueTime] = useState("")
-  const [wantReminder, setWantReminder] = useState(false)
-  const [reminderDate, setReminderDate] = useState("")
-  const [reminderTime, setReminderTime] = useState("")
   const [subtasks, setSubtasks] = useState<{ id: string; title: string }[]>([])
 
   useEffect(() => {
@@ -48,11 +44,8 @@ export function CreateTaskModal() {
     setProject("")
     setPriority(createPriority)
     setStoryPoints("")
-    setDueDate("")
+    setDueDate(new Date().toISOString().slice(0, 10))
     setDueTime("")
-    setWantReminder(false)
-    setReminderDate("")
-    setReminderTime("")
     setSubtasks([])
   }, [isCreateModalOpen, createPriority])
 
@@ -60,13 +53,7 @@ export function CreateTaskModal() {
     e.preventDefault()
     if (!title.trim()) return
 
-    const finalDueDate = dueDate || new Date(Date.now() + 7 * 86400000).toISOString().split("T")[0]
-
-    let reminder: string | null = null
-    if (wantReminder && reminderDate && reminderTime) {
-      const r = new Date(`${reminderDate}T${reminderTime}`)
-      if (r.getTime() > Date.now()) reminder = r.toISOString()
-    }
+    const finalDueDate = dueDate || new Date().toISOString().slice(0, 10)
 
     addTask({
       title: title.trim(),
@@ -76,7 +63,7 @@ export function CreateTaskModal() {
       storyPoints: storyPoints.trim() ? Math.max(0, Math.min(100, parseInt(storyPoints.trim(), 10) || 0)) : undefined,
       dueDate: finalDueDate,
       dueTime: dueTime || undefined,
-      reminder,
+      reminder: null,
       subtasks: subtasks.map((s) => ({ id: s.id, title: s.title, completed: false })),
     })
 
@@ -191,54 +178,6 @@ export function CreateTaskModal() {
               />
             </div>
            </div>
-
-          <button
-            type="button"
-            onClick={() => {
-              setWantReminder(!wantReminder)
-              if (!wantReminder && !reminderTime) setReminderTime("12:00")
-            }}
-            className={cn(
-              "flex w-full items-center justify-between rounded-[10px] border px-3 py-2.5 text-left transition-colors",
-              wantReminder
-                ? "border-indigo-200 bg-indigo-50 dark:border-indigo-800 dark:bg-indigo-950/30"
-                : "border-neutral-200 bg-neutral-50 hover:bg-neutral-100 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800"
-            )}
-          >
-            <div>
-              <p className={cn("text-xs font-semibold", wantReminder ? "text-indigo-700 dark:text-indigo-300" : "text-neutral-800 dark:text-neutral-200")}>
-                Remind me (notification)
-              </p>
-              <p className="text-[10px] text-neutral-500">Get an alert at this time — app push</p>
-            </div>
-            <span className={cn("relative h-5 w-9 shrink-0 rounded-full transition-colors", wantReminder ? "bg-indigo-600" : "bg-neutral-300 dark:bg-neutral-700")}>
-              <span className={cn("absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-all", wantReminder ? "left-[18px]" : "left-0.5")} />
-            </span>
-          </button>
-
-          {wantReminder && (
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="reminderDate">Reminder Date</Label>
-                <Input
-                  id="reminderDate"
-                  type="date"
-                  value={reminderDate}
-                  onChange={(e) => setReminderDate(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="reminderTime">Reminder Time</Label>
-                <Input
-                  id="reminderTime"
-                  type="time"
-                  step={300}
-                  value={reminderTime}
-                  onChange={(e) => setReminderTime(e.target.value)}
-                />
-              </div>
-            </div>
-          )}
 
           <div className="space-y-3">
             <div className="flex items-center justify-between">

@@ -32,15 +32,15 @@ import type { Task, Priority } from "@/types"
 
 type ViewMode = "tasks" | "tree" | "projects" | "archive"
 
-const PROJECT_GRADIENTS = [
-  "from-blue-500 to-cyan-400",
-  "from-green-500 to-emerald-400",
-  "from-amber-500 to-orange-400",
-  "from-violet-500 to-purple-400",
-  "from-cyan-500 to-teal-400",
-  "from-rose-500 to-pink-400",
-  "from-indigo-500 to-blue-400",
-  "from-red-500 to-orange-400",
+const PROJECT_COLORS = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-amber-500",
+  "bg-violet-500",
+  "bg-teal-500",
+  "bg-pink-500",
+  "bg-indigo-500",
+  "bg-orange-500",
 ]
 
 /* ── Today panel — daily 3 / 2 / 3 planner ────────────── */
@@ -160,7 +160,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
             const points = tasks
               .filter((t) => (t.project.trim() || "Uncategorized") === name)
               .reduce((sum, t) => sum + (t.storyPoints ?? 0), 0)
-            const gradient = PROJECT_GRADIENTS[i % PROJECT_GRADIENTS.length]
+            const gradient = PROJECT_COLORS[i % PROJECT_COLORS.length]
             const tileColor = defaultProjectColor(name)
             const icon = getProjectIcon(name)
             const isCreated = created.has(name)
@@ -222,7 +222,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                 )}
 
                 <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                  <div className={cn("h-full rounded-full bg-gradient-to-r transition-all", gradient)} style={{ width: `${progress}%` }} />
+                  <div className={cn("h-full rounded-full transition-all", gradient)} style={{ width: `${progress}%` }} />
                 </div>
 
                 {preview.length > 0 && (
@@ -372,11 +372,11 @@ function TasksPageContent() {
 
         {/* Tasks controls */}
         {view === "tasks" && (
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2">
             {projects.length > 0 && (
               <Select value={projectFilter} onValueChange={setProjectFilter}>
-                <SelectTrigger className="h-9 w-[140px] gap-1 border-neutral-200/60 bg-white text-xs dark:border-neutral-800/60 dark:bg-neutral-950 sm:w-[160px] sm:text-sm">
-                  <FolderKanban className="h-3.5 w-3.5 text-neutral-500" />
+                <SelectTrigger className="h-9 w-[104px] gap-1 border-neutral-200/60 bg-white text-xs dark:border-neutral-800/60 dark:bg-neutral-950 sm:w-[160px] sm:text-sm">
+                  <FolderKanban className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
                   <SelectValue placeholder="All Projects" />
                 </SelectTrigger>
                 <SelectContent align="end">
@@ -388,7 +388,7 @@ function TasksPageContent() {
               </Select>
             )}
             <Filters />
-            <Button onClick={() => openCreateModal()} className="ml-auto gap-2 rounded-xl">
+            <Button onClick={() => openCreateModal()} className="ml-auto max-sm:h-9 max-sm:px-3 max-sm:text-xs gap-2 rounded-xl">
               <Plus className="h-4 w-4" /> New Task
             </Button>
           </div>

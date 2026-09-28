@@ -4,7 +4,6 @@ import { useMemo } from "react"
 import { motion } from "framer-motion"
 import { Flame, Zap, Sparkles, Plus, Check, CalendarDays } from "lucide-react"
 import { useTaskStore } from "@/store/use-task-store"
-import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 import type { Priority, Task } from "@/types"
 import { Button } from "@/components/ui/button"
@@ -18,7 +17,6 @@ type SlotDef = {
   check: string
   bar: string
   chip: string
-  dots: string
 }
 
 const SLOTS: SlotDef[] = [
@@ -28,10 +26,9 @@ const SLOTS: SlotDef[] = [
     capacity: 3,
     icon: Flame,
     accent: "text-red-500",
-    check: "bg-gradient-to-br from-red-500 to-orange-400",
-    bar: "from-red-500 to-orange-400",
-    chip: "bg-red-50 text-red-600 dark:bg-red-500/10 dark:text-red-400",
-    dots: "gradient-red",
+    check: "bg-red-500",
+    bar: "bg-red-500",
+    chip: "bg-red-100 text-red-600 dark:bg-red-500/15 dark:text-red-400",
   },
   {
     priority: "medium",
@@ -39,10 +36,9 @@ const SLOTS: SlotDef[] = [
     capacity: 2,
     icon: Zap,
     accent: "text-amber-500",
-    check: "bg-gradient-to-br from-amber-500 to-yellow-400",
-    bar: "from-amber-500 to-yellow-400",
-    chip: "bg-amber-50 text-amber-700 dark:bg-amber-500/10 dark:text-amber-400",
-    dots: "gradient-amber",
+    check: "bg-amber-500",
+    bar: "bg-amber-500",
+    chip: "bg-amber-100 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400",
   },
   {
     priority: "low",
@@ -50,10 +46,9 @@ const SLOTS: SlotDef[] = [
     capacity: 3,
     icon: Sparkles,
     accent: "text-blue-500",
-    check: "bg-gradient-to-br from-blue-500 to-cyan-400",
-    bar: "from-blue-500 to-cyan-400",
-    chip: "bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400",
-    dots: "gradient-blue",
+    check: "bg-blue-500",
+    bar: "bg-blue-500",
+    chip: "bg-blue-100 text-blue-600 dark:bg-blue-500/15 dark:text-blue-400",
   },
 ]
 
@@ -63,20 +58,13 @@ function TodayRing({ pct }: { pct: number }) {
   return (
     <div className="relative h-14 w-14 shrink-0">
       <svg width={56} height={56} viewBox="0 0 56 56" className="-rotate-90">
-        <defs>
-          <linearGradient id="todayRing" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="#ff6b6b" />
-            <stop offset="50%" stopColor="#f59e0b" />
-            <stop offset="100%" stopColor="#60a5fa" />
-          </linearGradient>
-        </defs>
         <circle cx={28} cy={28} r={R} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth={5} />
         <circle
           cx={28}
           cy={28}
           r={R}
           fill="none"
-          stroke="url(#todayRing)"
+          stroke="#f59e0b"
           strokeWidth={5}
           strokeLinecap="round"
           strokeDasharray={C}
@@ -113,7 +101,6 @@ export function TodayPanel() {
   const setIsEditSheetOpen = useTaskStore((s) => s.setIsEditSheetOpen)
   const updateTask = useTaskStore((s) => s.updateTask)
   const requestComplete = useTaskStore((s) => s.requestComplete)
-  const isMobile = useMediaQuery("(max-width: 768px)")
 
   const stats = getStats()
   const todayKey = useMemo(() => new Date().toISOString().slice(0, 10), [])
@@ -149,11 +136,7 @@ export function TodayPanel() {
   return (
     <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
       {/* Header */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-neutral-900 via-neutral-800 to-neutral-900 px-4 py-4 sm:px-5 dark:from-neutral-950 dark:via-neutral-900 dark:to-neutral-950">
-        <div className="pointer-events-none absolute -right-10 -top-12 h-40 w-40 rounded-full bg-red-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute -bottom-14 right-16 h-40 w-40 rounded-full bg-blue-500/20 blur-3xl" />
-        <div className="pointer-events-none absolute right-40 top-0 h-24 w-24 rounded-full bg-amber-400/20 blur-2xl" />
-
+      <div className="relative bg-neutral-900 px-4 py-4 sm:px-5 dark:bg-neutral-950">
         <div className="relative flex items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
@@ -216,7 +199,7 @@ export function TodayPanel() {
                         key={i}
                         className={cn(
                           "h-1.5 w-4 rounded-full transition-all",
-                          filled ? cn("bg-gradient-to-r", slot.bar) : "bg-neutral-200 dark:bg-neutral-700"
+                          filled ? cn(slot.bar) : "bg-neutral-200 dark:bg-neutral-700"
                         )}
                       />
                     )
@@ -230,12 +213,7 @@ export function TodayPanel() {
                       <button
                         key={i}
                         onClick={() => openCreateModal(slot.priority)}
-                        className={cn(
-                          "flex w-full items-center gap-2 rounded-lg border border-dashed px-2 py-1.5 text-left transition-colors",
-                          isMobile
-                            ? "border-neutral-200 text-neutral-400 hover:border-neutral-300 dark:border-neutral-700 dark:hover:border-neutral-600"
-                            : "border-neutral-200 text-neutral-400 hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:border-neutral-600 dark:hover:bg-neutral-800/40"
-                        )}
+                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 dark:border-neutral-700 dark:hover:border-neutral-600 dark:hover:bg-neutral-800/40"
                       >
                         <Plus className="h-3.5 w-3.5 shrink-0 opacity-50" />
                         <span className="truncate text-[11px]">Empty {slot.label.toLowerCase()} slot — add</span>

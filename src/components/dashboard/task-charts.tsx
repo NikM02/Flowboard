@@ -81,16 +81,6 @@ export function TaskCompletionChart() {
       </div>
       <ResponsiveContainer width="100%" height={200}>
         <AreaChart data={data} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
-          <defs>
-            <linearGradient id="completedGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
-            </linearGradient>
-            <linearGradient id="createdGrad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-              <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
-            </linearGradient>
-          </defs>
           <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" vertical={false} />
           <XAxis
             dataKey="date"
@@ -113,7 +103,8 @@ export function TaskCompletionChart() {
             dataKey="completed"
             stroke="#6366f1"
             strokeWidth={2.5}
-            fill="url(#completedGrad)"
+            fill="#6366f1"
+            fillOpacity={0.12}
             name="Completed"
             activeDot={{ r: 4 }}
           />
@@ -123,7 +114,8 @@ export function TaskCompletionChart() {
             stroke="#10b981"
             strokeWidth={1.5}
             strokeDasharray="4 4"
-            fill="url(#createdGrad)"
+            fill="#10b981"
+            fillOpacity={0.1}
             name="Created"
             activeDot={{ r: 4 }}
           />
@@ -206,7 +198,7 @@ export function CategoryPieChart() {
             <div key={item.name} className="flex items-center gap-1.5">
               <span
                 className="h-2.5 w-2.5 rounded-full"
-                style={{ background: `linear-gradient(135deg, ${COLORS[i % COLORS.length]}, ${COLORS[(i + 1) % COLORS.length]})` }}
+                style={{ background: COLORS[i % COLORS.length] }}
               />
               <span className="max-w-[140px] truncate text-xs text-neutral-600 dark:text-neutral-400">{item.name}</span>
               <span className="pl-1 text-xs font-semibold text-neutral-900 dark:text-white">{item.value}</span>
