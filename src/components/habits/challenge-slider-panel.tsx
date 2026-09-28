@@ -57,7 +57,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
             <Trash2 className="h-4 w-4" />
           </button>
           {allDone && (
-            <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-9 sm:h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-3.5 w-3.5" />Done
             </Button>
           )}
@@ -89,7 +89,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
             if (todayDay) toggleDay(challenge.id, todayDay.day)
           }}
           className={cn(
-            "flex items-center justify-center rounded-lg border text-[10px] sm:text-xs font-medium transition-all h-6 sm:h-7 px-1.5 sm:px-2 gap-0.5 sm:gap-1",
+            "flex items-center justify-center rounded-lg border text-xs font-medium transition-all h-9 sm:h-7 px-2.5 sm:px-2 gap-1",
             challenge.days.some((d) => d.date === format(new Date(), "yyyy-MM-dd") && d.completed)
               ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
               : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
@@ -115,8 +115,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="max-h-48 overflow-x-auto pr-1">
-      <div className={cn("grid gap-1 sm:gap-1.5 min-w-[260px]", cols === 7 ? "grid-cols-7" : "grid-cols-10")}>
+    <div className="max-h-44 overflow-auto pr-1 sm:max-h-56">
+      <div className={cn("grid grid-cols-7 gap-1 min-w-[280px] sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10 sm:min-w-fit")}>
         {challenge.days.map((d) => {
           const isToday = d.date === todayDate
           return (
@@ -124,8 +124,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
               key={d.day}
               onClick={() => toggleDay(challenge.id, d.day)}
               className={cn(
-                "flex items-center justify-center rounded-lg border-2 font-semibold text-[10px] sm:text-xs transition-all relative",
-                total === 21 ? "h-[30px] sm:h-[34px]" : "h-[26px] sm:h-[30px]",
+                "flex items-center justify-center rounded-lg border-2 font-semibold text-xs transition-all relative",
+                cols === 7 ? "h-9 sm:h-10" : "h-9",
                 d.completed
                   ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                   : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
@@ -133,7 +133,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
               )}
               title={`Day ${d.day} - ${d.date}${isToday ? " (Today)" : ""}`}
             >
-              {d.completed ? <Check className={cn(total === 21 ? "h-4 w-4" : "h-3.5 w-3.5")} strokeWidth={3} /> : <span>{d.day}</span>}
+              {d.completed ? <Check className={cn(cols === 7 ? "h-4 w-4" : "h-4 w-4")} strokeWidth={3} /> : <span>{d.day}</span>}
               {isToday && !d.completed && (
                 <span className="absolute -top-1 -right-1 flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
@@ -165,40 +165,15 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
           <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{challenge.title}</h4>
-            <span className="text-[10px] font-medium text-neutral-400 shrink-0">{typeLabel[challenge.type]}</span>
+            <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
+            <span className="shrink-0 text-[10px] font-medium text-neutral-400">{typeLabel[challenge.type]}</span>
           </div>
-          <p className="text-[11px] text-neutral-400 truncate">
+          <p className="truncate text-[11px] text-neutral-400">
             {completed}/{challenge.days.length} · {progress}%
             {challenge.description && ` · ${challenge.description}`}
           </p>
-        </div>
-
-        <div className="flex items-center gap-1 overflow-x-auto max-w-[120px] sm:max-w-[200px]">
-          {challenge.days.filter((d) => d.day <= 14 || d.day > challenge.days.length - 7).map((d) => {
-            const isToday = d.date === todayDate
-            return (
-              <button
-                key={d.day}
-                onClick={() => toggleDay(challenge.id, d.day)}
-                className={cn(
-                  "flex items-center justify-center rounded border transition-all shrink-0",
-                  "h-6 w-6 text-[10px] font-medium",
-                  d.completed
-                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
-                    : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-500",
-                  isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
-                )}
-              >
-                {d.completed ? <Check className="h-3 w-3" strokeWidth={3} /> : d.day}
-              </button>
-            )
-          })}
-          {challenge.days.length > 21 && (
-            <span className="text-[10px] text-neutral-400 shrink-0">...</span>
-          )}
         </div>
 
         <button
@@ -207,34 +182,58 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
             if (todayDay) toggleDay(challenge.id, todayDay.day)
           }}
           className={cn(
-            "flex items-center justify-center rounded-lg border text-[10px] font-medium transition-all h-7 px-1.5 gap-0.5 shrink-0",
+            "flex h-9 shrink-0 items-center justify-center rounded-lg border px-2.5 text-xs font-medium transition-all gap-1",
             challenge.days.some((d) => d.date === todayDate && d.completed)
               ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
               : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
           )}
         >
           {challenge.days.some((d) => d.date === todayDate && d.completed) ? (
-            <Check className="h-3 w-3" strokeWidth={3} />
+            <Check className="h-3.5 w-3.5" strokeWidth={3} />
           ) : (
-            <span className="h-3 w-3 rounded-sm border border-current" />
+            <span className="h-3.5 w-3.5 rounded-sm border border-current" />
           )}
           Today
         </button>
 
-        <div className="flex gap-0.5 shrink-0">
-          <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+        <div className="flex shrink-0 gap-0.5">
+          <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
             <Edit3 className="h-4 w-4" />
           </button>
           {allDone ? (
-            <Button size="sm" className="h-10 gap-1 text-xs rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-10 gap-1 rounded-[10px] bg-emerald-600 px-2.5 text-xs text-white hover:bg-emerald-700" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-4 w-4" />Done
             </Button>
           ) : (
-            <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
+            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:bg-neutral-800 dark:hover:bg-red-950/30">
               <Trash2 className="h-4 w-4" />
             </button>
           )}
         </div>
+      </div>
+
+      <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto">
+        {challenge.days.filter((d) => d.day <= 14 || d.day > challenge.days.length - 7).map((d) => {
+          const isToday = d.date === todayDate
+          return (
+            <button
+              key={d.day}
+              onClick={() => toggleDay(challenge.id, d.day)}
+              className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-[11px] font-medium transition-all",
+                d.completed
+                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
+                  : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-500",
+                isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
+              )}
+            >
+              {d.completed ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : d.day}
+            </button>
+          )
+        })}
+        {challenge.days.length > 21 && (
+          <span className="shrink-0 text-[10px] text-neutral-400">...</span>
+        )}
       </div>
     </motion.div>
   )
@@ -269,27 +268,29 @@ export function ChallengeSliderPanel() {
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
       className="space-y-4"
     >
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Flame className="h-5 w-5 text-amber-500" />
           <h3 className="text-base font-semibold text-neutral-900 dark:text-neutral-50">Challenges</h3>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <div className="flex rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-700">
             <button
               onClick={() => setViewMode("card")}
-              className={cn("rounded-md p-1.5 transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
+              aria-label="Card view"
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode("list")}
-              className={cn("rounded-md p-1.5 transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
+              aria-label="List view"
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
             >
               <List className="h-3.5 w-3.5" />
             </button>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)} className="gap-1.5 rounded-xl text-xs h-9 sm:h-8 px-3 sm:px-2.5">
+          <Button onClick={() => setIsCreateModalOpen(true)} className="h-9 gap-1.5 rounded-xl px-3 text-xs">
             <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />New Challenge
           </Button>
         </div>
@@ -326,7 +327,7 @@ export function ChallengeSliderPanel() {
               <Label htmlFor="edit-challenge-description">Description</Label>
               <Textarea id="edit-challenge-description" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={2} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="edit-challenge-start">Start Date</Label>
                 <Input id="edit-challenge-start" type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />
@@ -402,7 +403,7 @@ function CreateChallengeModal() {
             <Label htmlFor="create-challenge-description">Description</Label>
             <Textarea id="create-challenge-description" placeholder="What's your challenge about?" value={description} onChange={(e) => setDescription(e.target.value)} rows={2} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="create-challenge-start">Start Date</Label>
               <Input id="create-challenge-start" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />

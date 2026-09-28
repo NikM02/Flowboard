@@ -242,13 +242,15 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
           <div className="flex shrink-0 items-center gap-1">
           <button
             onClick={() => setEditOpen(true)}
-            className="shrink-0 rounded-lg p-1.5 text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+            aria-label="Edit skill"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => deleteSkill(skill.id)}
-            className="shrink-0 rounded-lg p-1.5 text-neutral-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-red-950/50"
+            aria-label="Delete skill"
+            className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-red-950/50"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -305,7 +307,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       {skill.progress === 100 && (
         <Button
           onClick={() => completeSkill(skill.id)}
-          className="mt-3 w-full gap-2"
+          className="mt-3 h-10 w-full gap-2"
           size="sm"
         >
           <Check className="h-4 w-4" />
@@ -356,13 +358,13 @@ export function SkillPanel() {
           </Button>
         </div>
 
-        <div className="flex w-full gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 sm:w-auto">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 sm:w-auto">
           {(["active", "archive"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={cn(
-                "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
+                "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium capitalize transition-all sm:flex-none",
                 tab === t
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
@@ -416,7 +418,7 @@ export function SkillPanel() {
       ) : (
         <div>
           <div className="mb-3 flex flex-col gap-2 sm:flex-row">
-            <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+            <Button variant="outline" size="sm" onClick={handleExport} className="h-10 gap-2 sm:h-9">
               <Download className="h-3.5 w-3.5" />
               Export (.csv)
             </Button>
@@ -424,7 +426,7 @@ export function SkillPanel() {
               variant="outline"
               size="sm"
               onClick={() => { if (confirm(`Clear all ${completed.length} completed skills?`)) clearCompleted() }}
-              className="gap-2 text-red-500 hover:text-red-600"
+              className="h-10 gap-2 text-red-500 hover:text-red-600 sm:h-9"
             >
               <Trash2 className="h-3.5 w-3.5" />
               Clear all
@@ -437,9 +439,9 @@ export function SkillPanel() {
                   key={skill.id}
                   className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50"
                 >
-                  <div className="flex items-center gap-2">
+                  <div className="flex min-w-0 items-center gap-2">
                     <Check className="h-4 w-4 shrink-0 text-green-500" />
-                    <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.name}</span>
+                    <span className="min-w-0 truncate font-medium text-neutral-700 dark:text-neutral-300">{skill.name}</span>
                   </div>
                   <p className="mt-1 truncate text-xs text-neutral-500">
                     {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}

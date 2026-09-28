@@ -69,14 +69,14 @@ export function HabitTrackerSection() {
             key={t.key}
             onClick={() => setTab(t.key)}
             className={cn(
-              "flex items-center gap-1.5 sm:gap-2 rounded-xl px-2 sm:px-3 py-1.5 sm:py-2 text-xs sm:text-sm font-medium whitespace-nowrap transition-all shrink-0",
+              "flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-medium whitespace-nowrap transition-all sm:gap-2 sm:px-4 sm:py-2 sm:text-sm",
               tab === t.key
                 ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                 : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
             )}
           >
             <t.icon className="h-4 w-4" />
-            <span className={cn(tab !== t.key && "hidden sm:inline")}>{t.label}</span>
+            <span>{t.label}</span>
           </button>
         ))}
       </div>
@@ -106,20 +106,18 @@ export function HabitTrackerSection() {
               <Label htmlFor="habit-description">Description</Label>
               <Textarea id="habit-description" value={editDesc} onChange={(e) => setEditDesc(e.target.value)} rows={2} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="habit-category">Category</Label>
-                <Select value={editCategory} onValueChange={(v) => setEditCategory(v as HabitCategory)}>
-                  <SelectTrigger id="habit-category"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    {(Object.entries(categoryLabels) as [HabitCategory, string][]).map(([k, v]) => (
-                      <SelectItem key={k} value={k}>{v}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+            <div className="space-y-2">
+              <Label htmlFor="habit-category">Category</Label>
+              <Select value={editCategory} onValueChange={(v) => setEditCategory(v as HabitCategory)}>
+                <SelectTrigger id="habit-category"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {(Object.entries(categoryLabels) as [HabitCategory, string][]).map(([k, v]) => (
+                    <SelectItem key={k} value={k}>{v}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="habit-start">Start Date</Label>
                 <Input id="habit-start" type="date" value={editStart} onChange={(e) => setEditStart(e.target.value)} />

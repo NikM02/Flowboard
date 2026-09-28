@@ -182,13 +182,13 @@ export function SleepPanel() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="grid flex-1 grid-cols-3 gap-2.5 sm:gap-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="grid grid-cols-3 gap-2.5 sm:flex-1 sm:gap-4">
           <StatChip label="Avg (30d)" value={`${stats.avgHours}h`} icon={Clock} />
           <StatChip label="Avg quality" value={QUALITY_LABELS[stats.avgQuality] || "—"} icon={MoonStar} />
-          <StatChip label="Nights logged" value={String(stats.totalNights)} icon={Moon} />
+          <StatChip label="Nights" value={String(stats.totalNights)} icon={Moon} />
         </div>
-        <Button onClick={openCreate} className="shrink-0">
+        <Button onClick={openCreate} className="w-full shrink-0 sm:w-auto">
           <Plus className="mr-1.5 h-4 w-4" /> Log Sleep
         </Button>
       </div>
@@ -217,12 +217,12 @@ export function SleepPanel() {
                 <span className="h-0.5 w-4 bg-indigo-500" /> 8h target
               </span>
             </div>
-            <div className="h-40">
+            <div className="h-44 sm:h-48">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={chartData} margin={{ top: 4, right: 4, left: -22, bottom: 0 }}>
+                <BarChart data={chartData} margin={{ top: 4, right: 4, left: -12, bottom: 0 }}>
                   <ChartGradients ids={["sleep-hours"]} />
                   <CartesianGrid {...CHART_GRID_STYLES} />
-                  <XAxis dataKey="day" {...CHART_AXIS_STYLES} />
+                  <XAxis dataKey="day" interval={1} {...CHART_AXIS_STYLES} />
                   <YAxis {...CHART_AXIS_STYLES} />
                   <Tooltip
                     content={
@@ -276,13 +276,15 @@ export function SleepPanel() {
                   <div className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
                     <button
                       onClick={() => openEdit(e)}
-                      className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                      aria-label="Edit sleep entry"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => deleteEntry(e.id)}
-                      className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
+                      aria-label="Delete sleep entry"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

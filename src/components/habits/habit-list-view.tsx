@@ -20,28 +20,30 @@ export function HabitListView({ onEdit }: { onEdit?: (habit: Habit) => void }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="truncate text-xs font-semibold uppercase tracking-wider text-neutral-400">
           Week of {format(weekDays[0], "MMM d")} – {format(weekDays[6], "MMM d, yyyy")}
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <div className="flex rounded-lg border border-neutral-200 p-0.5 dark:border-neutral-700">
             <button
               onClick={() => setHabitViewMode("card")}
-              className={cn("rounded-md p-1.5 transition-colors", habitViewMode === "card" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
+              aria-label="Card view"
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", habitViewMode === "card" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setHabitViewMode("list")}
-              className={cn("rounded-md p-1.5 transition-colors", habitViewMode === "list" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
+              aria-label="List view"
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", habitViewMode === "list" ? "bg-neutral-100 text-neutral-900 dark:bg-neutral-700 dark:text-neutral-50" : "text-neutral-400 hover:text-neutral-600")}
             >
               <List className="h-3.5 w-3.5" />
             </button>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex items-center gap-1 text-xs font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors"
+            className="flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50"
           >
             <Plus className="h-3.5 w-3.5" />New Habit
           </button>
@@ -107,7 +109,7 @@ function HabitCard({
         </div>
       )}
 
-      <div className="mb-3 flex items-center justify-center gap-3">
+      <div className="mb-3 grid grid-cols-7 gap-1">
         {weekDays.map((d, i) => {
           const ds = format(d, "yyyy-MM-dd")
           const done = habit.records.some((r) => r.date === ds && r.completed)
@@ -126,7 +128,7 @@ function HabitCard({
               <span className="text-[10px] font-medium text-neutral-400 uppercase">{dayLabels[i]}</span>
               <div
                 className={cn(
-                  "flex h-7 w-7 items-center justify-center rounded-[10px] border-2 transition-all",
+                  "flex h-8 w-8 items-center justify-center rounded-[10px] border-2 transition-all",
                   done
                     ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                     : "bg-white border-neutral-200 dark:bg-neutral-950 dark:border-neutral-700"
@@ -144,7 +146,7 @@ function HabitCard({
           <button
             onClick={() => toggleDay(habit.id, today)}
             className={cn(
-              "flex items-center justify-center rounded-lg border-2 transition-all h-8 px-2 gap-1 text-xs font-medium",
+              "flex h-9 items-center justify-center rounded-lg border-2 px-2 text-xs font-medium transition-all",
               habit.records.some((r) => r.date === today && r.completed)
                 ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
                 : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
@@ -188,8 +190,9 @@ function HabitListItem({
       <div className="flex items-center gap-3">
         <button
           onClick={() => toggleDay(habit.id, today)}
+          aria-label="Toggle today"
           className={cn(
-            "flex items-center justify-center rounded-xl border-2 transition-all shrink-0",
+            "flex shrink-0 items-center justify-center rounded-xl border-2 transition-all",
             "h-10 w-10",
             doneToday
               ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
@@ -199,13 +202,13 @@ function HabitListItem({
           {doneToday && <Check className="h-5 w-5" strokeWidth={3} />}
         </button>
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{habit.name}</h4>
-            <span className="text-[10px] font-medium text-neutral-400 uppercase shrink-0">{habit.category}</span>
+            <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{habit.name}</h4>
+            <span className="shrink-0 text-[10px] font-medium text-neutral-400 uppercase">{habit.category}</span>
           </div>
           {(habit.description || habit.startDate || habit.endDate) && (
-            <p className="mt-0.5 text-[11px] text-neutral-400 truncate">
+            <p className="mt-0.5 truncate text-[11px] text-neutral-400">
               {habit.description}
               {habit.startDate && (habit.description ? " · " : "")}From {format(new Date(habit.startDate as string), "MMM d")}
               {habit.endDate && ` → ${format(new Date(habit.endDate as string), "MMM d, yyyy")}`}
@@ -213,40 +216,53 @@ function HabitListItem({
           )}
         </div>
 
-        <div className="flex items-center gap-1 overflow-x-auto">
-          {weekDays.map((d, i) => {
-            const ds = format(d, "yyyy-MM-dd")
-            const done = habit.records.some((r) => r.date === ds && r.completed)
-            const isFuture = ds > today
-            return (
-              <button
-                key={ds}
-                onClick={() => !isFuture && toggleDay(habit.id, ds)}
-                disabled={isFuture}
-                aria-label={`Toggle ${format(d, "EEEE")}`}
-                className={cn(
-                  "flex items-center justify-center rounded-sm transition-all h-5 w-5 sm:h-4 sm:w-4",
-                  done
-                    ? "bg-neutral-900 dark:bg-neutral-50"
-                    : isFuture
-                    ? "bg-neutral-100 dark:bg-neutral-800"
-                    : "bg-neutral-200 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
-                )}
-              >
-                {done && <Check className="h-3 w-3 text-white dark:text-neutral-900" strokeWidth={3} />}
-              </button>
-            )
-          })}
-        </div>
+        <button
+          onClick={() => toggleDay(habit.id, today)}
+          className={cn(
+            "flex h-9 shrink-0 items-center justify-center rounded-lg border-2 px-2 text-xs font-medium transition-all",
+            doneToday
+              ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
+              : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
+          )}
+        >
+          {doneToday ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-sm border border-current" />}
+          Today
+        </button>
 
-        <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
-          <button onClick={() => onEdit?.(habit)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
+        <div className="flex shrink-0 gap-0.5 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
+          <button onClick={() => onEdit?.(habit)} aria-label="Edit habit" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
+          <button onClick={() => deleteHabit(habit.id)} aria-label="Delete habit" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 dark:bg-neutral-800 dark:hover:bg-red-950/30">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
+      </div>
+
+      <div className="mt-2.5 flex items-center gap-1.5 overflow-x-auto">
+        {weekDays.map((d, i) => {
+          const ds = format(d, "yyyy-MM-dd")
+          const done = habit.records.some((r) => r.date === ds && r.completed)
+          const isFuture = ds > today
+          return (
+            <button
+              key={ds}
+              onClick={() => !isFuture && toggleDay(habit.id, ds)}
+              disabled={isFuture}
+              aria-label={`Toggle ${format(d, "EEEE")}`}
+              className={cn(
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] transition-all",
+                done
+                  ? "bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900"
+                  : isFuture
+                  ? "bg-neutral-100 text-neutral-300 dark:bg-neutral-800"
+                  : "bg-neutral-200 text-neutral-500 hover:bg-neutral-300 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+              )}
+            >
+              {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : dayLabels[i]}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

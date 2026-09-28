@@ -146,7 +146,7 @@ function WishDialog({
               </div>
             )}
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="wish-date">Target Date</Label>
               <Input
@@ -170,7 +170,7 @@ function WishDialog({
           </div>
           <div className="space-y-2">
             <Label htmlFor="wish-reminder-date">Reminder (optional)</Label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
               <Input
                 id="wish-reminder-date"
                 type="date"
@@ -251,13 +251,13 @@ function WishCard({
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); onEdit() }}
-                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
-                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -285,13 +285,13 @@ function WishCard({
               <>
                 <button
                   onClick={(e) => { e.stopPropagation(); onEdit() }}
-                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
+                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
                   onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
-                  className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
+                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -426,13 +426,13 @@ export default function BucketListPage() {
         </div>
 
         {/* Filter */}
-        <div className="flex w-full gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
           {(["all", "pending", "completed"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={cn(
-                "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
+                "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
                 filter === f
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
