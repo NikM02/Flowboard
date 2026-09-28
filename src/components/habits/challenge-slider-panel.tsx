@@ -55,112 +55,53 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
   const remaining = challenge.days.length - completed
   const allDone = remaining === 0
   const Icon = typeIcon[challenge.type]
-  const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
       className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
     >
-      {/* Mobile: habit-card replica */}
-      <div className="sm:hidden">
-        <div className="mb-3 flex items-start justify-between gap-2">
+      <div className="mb-3 flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
+            <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
+          </div>
           <div className="min-w-0 flex-1">
-            <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
-            {challenge.description && (
-              <p className="mt-0.5 truncate text-xs text-neutral-400">{challenge.description}</p>
-            )}
-          </div>
-          <div className="flex shrink-0 gap-0.5">
-            <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300">
-              <Edit3 className="h-3.5 w-3.5" />
-            </button>
-            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30">
-              <Trash2 className="h-3.5 w-3.5" />
-            </button>
+            <h4 className="truncate text-[15px] font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
+            {challenge.description && <p className="truncate text-xs text-neutral-400">{challenge.description}</p>}
+            <p className="mt-0.5 text-[11px] text-neutral-400">
+              {format(new Date(challenge.startDate), "MMM d, yyyy")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
+            </p>
           </div>
         </div>
-
-        <div className="mb-3 flex items-center gap-3 text-[11px] text-neutral-400">
-          <span>From {format(new Date(challenge.startDate), "MMM d, yyyy")}</span>
-          <span>To {format(new Date(challenge.endDate), "MMM d, yyyy")}</span>
-        </div>
-
-        <div className="mb-3 grid grid-cols-7 gap-1">
-          {challenge.days.map((d) => {
-            const isToday = d.date === todayDate
-            return (
-              <button
-                key={d.day}
-                onClick={() => toggleDay(challenge.id, d.day)}
-                aria-label={`Day ${d.day}`}
-                className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-[10px] border-2 text-xs font-semibold transition-all",
-                  d.completed
-                    ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
-                    : "bg-white border-neutral-200 text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700",
-                  isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
-                )}
-              >
-                {d.completed ? <Check className="h-4 w-4" strokeWidth={3} /> : <span>{d.day}</span>}
-              </button>
-            )
-          })}
-        </div>
-
-        <div className="flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800">
-          <div className="flex items-center gap-2">
-            <ChallengeTodayButton challenge={challenge} className="h-9 px-2" />
-            <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
-          </div>
-          <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{typeLabel[challenge.type]}</span>
+        <div className="flex shrink-0 items-center gap-1">
+          <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors">
+            <Edit3 className="h-4 w-4" />
+          </button>
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30 transition-colors">
+            <Trash2 className="h-4 w-4" />
+          </button>
+          {allDone && (
+            <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
+              <Check className="h-3.5 w-3.5" />Done
+            </Button>
+          )}
         </div>
       </div>
 
-      {/* Desktop: modern replica */}
-      <div className="hidden sm:block">
-        <div className="mb-3 flex items-start justify-between gap-3">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
-              <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <h4 className="truncate text-[15px] font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
-              {challenge.description && <p className="truncate text-xs text-neutral-400">{challenge.description}</p>}
-              <p className="mt-0.5 text-[11px] text-neutral-400">
-                {format(new Date(challenge.startDate), "MMM d, yyyy")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
-              </p>
-            </div>
-          </div>
-          <div className="flex shrink-0 items-center gap-1">
-            <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors">
-              <Edit3 className="h-4 w-4" />
-            </button>
-            <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30 transition-colors">
-              <Trash2 className="h-4 w-4" />
-            </button>
-            {allDone && (
-              <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
-                <Check className="h-3.5 w-3.5" />Done
-              </Button>
-            )}
-          </div>
-        </div>
+      <div className="mb-1.5 flex items-center justify-between text-xs">
+        <span className="font-medium text-neutral-500 dark:text-neutral-400">{completed}/{challenge.days.length} days done</span>
+        <span className="font-semibold text-neutral-700 dark:text-neutral-300">{progress}%</span>
+      </div>
+      <Progress value={progress} className="h-1.5" />
 
-        <div className="mb-1.5 flex items-center justify-between text-xs">
-          <span className="font-medium text-neutral-500 dark:text-neutral-400">{completed}/{challenge.days.length} days done</span>
-          <span className="font-semibold text-neutral-700 dark:text-neutral-300">{progress}%</span>
-        </div>
-        <Progress value={progress} className="h-1.5" />
+      <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
 
-        <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
-
-        <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800">
-          <div className="flex items-center gap-2">
-            <ChallengeTodayButton challenge={challenge} className="h-9 px-2.5" />
-            <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
-          </div>
-          <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{typeLabel[challenge.type]}</span>
+      <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800">
+        <div className="flex items-center gap-2">
+          <ChallengeTodayButton challenge={challenge} className="h-9 px-2.5" />
+          <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
         </div>
+        <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{typeLabel[challenge.type]}</span>
       </div>
     </motion.div>
   )
