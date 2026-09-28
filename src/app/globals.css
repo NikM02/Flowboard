@@ -2,9 +2,15 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Fonts stay `inline` so they resolve the Geist vars injected on <html>. */
 @theme inline {
   --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", var(--font-geist-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
+}
+
+/* Colors are NOT inline: utilities reference var(--color-*) so the .dark
+   block below can re-theme the whole app at runtime. */
+@theme {
   --color-background: #f5f5f7;
   --color-foreground: #1d1d1f;
 
@@ -234,8 +240,9 @@
 
 /* ── Dark ──────────────────────────────────────────────── */
 /* Obsidian-black system theme: pure #000 canvas with
-   near-black layered surfaces and soft hairline borders. */
-.dark {
+   near-black layered surfaces and soft hairline borders.
+   Scoped to html.dark so it outranks Tailwind's :root theme layer. */
+html.dark {
   --color-background: #000000;
   --color-foreground: #f5f5f7;
 
