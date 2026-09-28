@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
-  AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid,
+  ComposedChart, Area, Line, XAxis, YAxis, Tooltip, CartesianGrid,
 } from "recharts"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { useNorthStarStore } from "@/store/use-north-star-store"
@@ -492,7 +492,7 @@ function FinanceSection() {
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
-  const { totalIncome, totalExpenses, net, monthlyData, recentExpenses } = useMemo(() => {
+  const { totalIncome, totalExpenses, net, changePct, monthlyData, recentExpenses } = useMemo(() => {
     const ti = incomes.reduce((s, i) => s + i.amount, 0)
     const te = expenses.reduce((s, e) => s + e.amount, 0)
     const n = ti - te
@@ -508,36 +508,48 @@ function FinanceSection() {
       if (!monthMap[m]) monthMap[m] = { income: 0, expense: 0 }
       monthMap[m].expense += e.amount
     }
-    const md = Object.entries(monthMap)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .slice(-6)
-      .map(([month, v]) => ({ month: month.slice(5), income: v.income, expense: v.expense }))
+    const entries = Object.entries(monthMap).sort(([a], [b]) => a.localeCompare(b))
+    const md = entries.slice(-6).map(([month, v]) => ({
+      month: month.slice(5),
+      income: v.income,
+      expense: v.expense,
+      net: v.income - v.expense,
+    }))
+
+    let cp = 0
+    if (md.length >= 2) {
+      const prev = md[md.length - 2].net
+      const cur = md[md.length - 1].net
+      if (prev !== 0) cp = Math.round(((cur - prev) / Math.abs(prev)) * 100)
+    }
 
     const re = [...expenses].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 3)
 
-    return { totalIncome: ti, totalExpenses: te, net: n, monthlyData: md, recentExpenses: re }
+    return { totalIncome: ti, totalExpenses: te, net: n, changePct: cp, monthlyData: md, recentExpenses: re }
   }, [incomes, expenses])
 
   const isPositive = net >= 0
 
   return (
-    <Card delay={0.15}>
+    <Card delay={0.15} className="overflow-hidden">
       <CardHeader icon={Wallet} label="Cash Flow" color="text-green-600 dark:text-green-400" />
-      <div className="flex items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
         <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 dark:text-white" : "text-rose-500 dark:text-rose-400")}>
           {isPositive ? "+" : "−"}₹{Math.abs(net).toLocaleString("en-IN")}
         </span>
-        <span
-          className={cn(
-            "flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
-            isPositive
-              ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-              : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-          )}
-        >
-          {isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
-          Net
-        </span>
+        {monthlyData.length >= 2 && (
+          <span
+            className={cn(
+              "flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
+              changePct >= 0
+                ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
+                : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
+            )}
+          >
+            {changePct >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
+            {Math.abs(changePct)}% vs last month
+          </span>
+        )}
       </div>
 
       <div className="mt-3 mb-4 grid grid-cols-2 gap-2.5">
@@ -557,19 +569,31 @@ function FinanceSection() {
 
       {monthlyData.length > 0 ? (
         <>
-          <div className="h-36">
+          <div className="h-44">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={monthlyData} margin={{ top: 4, right: 4, left: 4, bottom: 0 }}>
+              <ComposedChart data={monthlyData} margin={{ top: 6, right: 4, left: 4, bottom: 0 }}>
+                <defs>
+                  <linearGradient id="cf-income" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#22c55e" stopOpacity={0.3} />
+                    <stop offset="100%" stopColor="#22c55e" stopOpacity={0.02} />
+                  </linearGradient>
+                  <linearGradient id="cf-expense" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.26} />
+                    <stop offset="100%" stopColor="#f43f5e" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e5e5e5" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#a3a3a3" }} axisLine={false} tickLine={false} />
                 <YAxis hide />
                 <Tooltip
-                  contentStyle={{ borderRadius: 8, border: "1px solid #e5e5e5", fontSize: 12 }}
+                  contentStyle={{ borderRadius: 10, border: "1px solid #e5e5e5", fontSize: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
                   formatter={(value) => `₹${Number(value ?? 0).toLocaleString("en-IN")}`}
+                  cursor={{ stroke: "#a3a3a3", strokeDasharray: "3 3" }}
                 />
-                <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" strokeWidth={2} fill="#22c55e" fillOpacity={0.12} dot={false} />
-                <Area type="monotone" dataKey="expense" name="Expense" stroke="#f43f5e" strokeWidth={2} fill="#f43f5e" fillOpacity={0.08} dot={false} />
-              </AreaChart>
+                <Area type="monotone" dataKey="expense" name="Expense" stroke="#f43f5e" strokeWidth={2} fill="url(#cf-expense)" dot={false} activeDot={{ r: 3 }} />
+                <Area type="monotone" dataKey="income" name="Income" stroke="#22c55e" strokeWidth={2} fill="url(#cf-income)" dot={false} activeDot={{ r: 3 }} />
+                <Line type="monotone" dataKey="net" name="Net" stroke="#9ca3af" strokeWidth={2.5} strokeDasharray="4 3" dot={false} activeDot={{ r: 4 }} />
+              </ComposedChart>
             </ResponsiveContainer>
           </div>
           <div className="mt-1 flex items-center gap-3 text-[10px] text-neutral-500">
@@ -578,6 +602,9 @@ function FinanceSection() {
             </span>
             <span className="flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-rose-500" /> Expenses
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="h-0.5 w-3 rounded-full bg-neutral-400" /> Net
             </span>
           </div>
         </>
@@ -601,12 +628,18 @@ function FinanceSection() {
 }
 
 /* ── Investments ─────────────────────────────────────── */
+const investmentGrads: Record<string, { grad: string; solid: string }> = {
+  Stocks: { grad: "url(#inv-stocks)", solid: "#3b82f6" },
+  "Mutual Funds": { grad: "url(#inv-mf)", solid: "#8b5cf6" },
+  SIPs: { grad: "url(#inv-sip)", solid: "#22c55e" },
+}
+
 function InvestmentsSection() {
   const sips = useFinanceStore((s) => s.sips)
   const stocks = useFinanceStore((s) => s.stocks)
   const mutualFunds = useFinanceStore((s) => s.mutualFunds)
 
-  const { totalCurrent, totalGain, totalGainPct, allocationData } = useMemo(() => {
+  const { totalCurrent, investedTotal, totalGain, totalGainPct, allocationData } = useMemo(() => {
     const sipInv = sips.reduce((s, i) => s + i.investedAmount, 0)
     const sipCur = sips.reduce((s, i) => s + i.currentValue, 0)
     const stockInv = stocks.reduce((s, i) => s + i.buyPrice * i.quantity, 0)
@@ -620,24 +653,26 @@ function InvestmentsSection() {
     const tp = ti > 0 ? Math.round((tg / ti) * 100) : 0
 
     const alloc = [
-      { name: "Stocks", value: stockCur, color: "#0066cc" },
-      { name: "Mutual Funds", value: mfCur, color: "#af52de" },
-      { name: "SIPs", value: sipCur, color: "#22c55e" },
+      { name: "Stocks", value: stockCur, invested: stockInv, color: "#3b82f6" },
+      { name: "Mutual Funds", value: mfCur, invested: mfInv, color: "#8b5cf6" },
+      { name: "SIPs", value: sipCur, invested: sipInv, color: "#22c55e" },
     ].filter((d) => d.value > 0)
 
-    return { totalCurrent: tc, totalGain: tg, totalGainPct: tp, allocationData: alloc }
+    return { totalCurrent: tc, investedTotal: ti, totalGain: tg, totalGainPct: tp, allocationData: alloc }
   }, [sips, stocks, mutualFunds])
 
   const isGain = totalGain >= 0
-  const topStocks = useMemo(() =>
+  const topMovers = useMemo(() =>
     stocks.slice(0, 3).map((s) => ({
       name: s.name,
+      change: (s.currentPrice - s.buyPrice) * s.quantity,
+      inv: s.buyPrice * s.quantity,
       pct: s.buyPrice > 0 ? Math.round(((s.currentPrice - s.buyPrice) / s.buyPrice) * 100) : 0,
     })),
   [stocks])
 
   return (
-    <Card delay={0.2}>
+    <Card delay={0.2} className="overflow-hidden">
       <CardHeader icon={TrendingUp} label="Investments" color="text-violet-600 dark:text-violet-400" />
 
       {allocationData.length === 0 ? (
@@ -650,15 +685,29 @@ function InvestmentsSection() {
         </div>
       ) : (
         <>
-          <div className="flex items-center gap-3">
-            <div className="relative h-16 w-16 shrink-0 sm:h-20 sm:w-20">
+          <div className="flex items-center gap-4">
+            <div className="relative h-20 w-20 shrink-0 sm:h-24 sm:w-24">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
+                  <defs>
+                    <linearGradient id="inv-stocks" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#60a5fa" />
+                      <stop offset="100%" stopColor="#2563eb" />
+                    </linearGradient>
+                    <linearGradient id="inv-mf" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#c4b5fd" />
+                      <stop offset="100%" stopColor="#7c3aed" />
+                    </linearGradient>
+                    <linearGradient id="inv-sip" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#4ade80" />
+                      <stop offset="100%" stopColor="#16a34a" />
+                    </linearGradient>
+                  </defs>
                   <Pie
                     data={allocationData}
                     cx="50%"
                     cy="50%"
-                    innerRadius="56%"
+                    innerRadius="58%"
                     outerRadius="98%"
                     dataKey="value"
                     stroke="none"
@@ -666,18 +715,25 @@ function InvestmentsSection() {
                     cornerRadius={6}
                   >
                     {allocationData.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
+                      <Cell key={i} fill={investmentGrads[entry.name]?.grad ?? entry.color} />
                     ))}
                   </Pie>
+                  <Tooltip
+                    contentStyle={{ borderRadius: 10, border: "1px solid #e5e5e5", fontSize: 12, boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}
+                    formatter={(value) => `₹${Number(value ?? 0).toLocaleString("en-IN")}`}
+                  />
                 </PieChart>
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-[8px] text-neutral-400 sm:text-[9px]">Total</span>
-                <span className="text-[10px] font-bold text-neutral-900 dark:text-white sm:text-xs">₹{(totalCurrent / 1000).toFixed(1)}k</span>
+                <span className="text-[8px] font-medium text-neutral-400 sm:text-[9px]">Total</span>
+                <span className="text-[11px] font-bold text-neutral-900 dark:text-white sm:text-sm">₹{(totalCurrent / 1000).toFixed(1)}k</span>
+                <span className={cn("flex items-center gap-0.5 rounded-full px-1 text-[8px] font-bold sm:text-[9px]", isGain ? "text-green-600 dark:text-green-400" : "text-rose-500 dark:text-rose-400")}>
+                  {isGain ? "+" : "−"}{Math.abs(totalGainPct)}%
+                </span>
               </div>
             </div>
             <div className="min-w-0">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className={cn("text-xl font-bold tracking-tight sm:text-2xl", isGain ? "text-neutral-900 dark:text-white" : "text-rose-500 dark:text-rose-400")}>
                   {isGain ? "+" : "−"}₹{Math.abs(totalGain).toLocaleString("en-IN")}
                 </span>
@@ -693,43 +749,64 @@ function InvestmentsSection() {
                   {Math.abs(totalGainPct)}%
                 </span>
               </div>
-              <p className="mt-0.5 text-[11px] text-neutral-400">on ₹{totalCurrent.toLocaleString("en-IN")} invested all-time</p>
+              <p className="mt-1.5 text-[11px] text-neutral-400">
+                invested ₹{investedTotal.toLocaleString("en-IN")} · worth ₹{totalCurrent.toLocaleString("en-IN")}
+              </p>
+              <div className="mt-2 flex items-center gap-1.5">
+                {allocationData.map((d) => (
+                  <span key={d.name} className="flex h-2 flex-1 overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <span className="h-full rounded-full" style={{ width: `${totalCurrent > 0 ? (d.value / totalCurrent) * 100 : 0}%`, backgroundColor: d.color }} />
+                  </span>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="mt-4 flex flex-wrap gap-x-3 gap-y-1.5">
+          <div className="mt-4 space-y-2.5">
             {allocationData.map((d) => {
               const pct = totalCurrent > 0 ? Math.round((d.value / totalCurrent) * 100) : 0
+              const dGain = d.value - d.invested
               return (
-                <span
-                  key={d.name}
-                  className="flex items-center gap-1.5 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
-                >
-                  <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: d.color }} />
-                  {d.name} · {pct}%
-                </span>
+                <div key={d.name}>
+                  <div className="mb-1 flex items-center justify-between text-[11px]">
+                    <span className="flex items-center gap-1.5 font-medium text-neutral-600 dark:text-neutral-300">
+                      <span className="h-2 w-2 rounded-full" style={{ backgroundColor: d.color }} />
+                      {d.name}
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <span className="text-neutral-400">₹{(d.value / 1000).toFixed(1)}k</span>
+                      <span className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", dGain >= 0 ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400")}>
+                        {dGain >= 0 ? "+" : "−"}{Math.abs(Math.round((dGain / (d.invested || 1)) * 100))}%
+                      </span>
+                    </span>
+                  </div>
+                  <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                    <div
+                      className="h-full rounded-full"
+                      style={{ width: `${pct}%`, background: investmentGrads[d.name]?.grad ?? d.color }}
+                    />
+                  </div>
+                </div>
               )
             })}
           </div>
 
-          {topStocks.length > 0 && (
-            <div className="mt-4 space-y-1">
-              <span className="text-[10px] font-medium text-neutral-400">Top Stocks</span>
-              {topStocks.map((s) => (
-                <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5">
-                  <span className="text-xs text-neutral-600 truncate dark:text-neutral-400">{s.name}</span>
-                  <span
-                    className={cn(
-                      "ml-2 shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold",
-                      s.pct >= 0
-                        ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400"
-                        : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400"
-                    )}
-                  >
-                    {s.pct >= 0 ? "+" : "−"}{Math.abs(s.pct)}%
-                  </span>
-                </div>
-              ))}
+          {topMovers.length > 0 && (
+            <div className="mt-4">
+              <span className="mb-1.5 block px-0.5 text-[10px] font-medium text-neutral-400">Top Stocks</span>
+              <div className="space-y-1">
+                {topMovers.map((s) => (
+                  <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 dark:hover:bg-white/5">
+                    <div className="min-w-0">
+                      <p className="truncate text-xs font-medium text-neutral-700 dark:text-neutral-300">{s.name}</p>
+                      <p className="text-[10px] text-neutral-400">₹{s.inv.toLocaleString("en-IN")} invested</p>
+                    </div>
+                    <span className={cn("ml-2 shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold", s.pct >= 0 ? "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400" : "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-400")}>
+                      {s.pct >= 0 ? "+" : "−"}{Math.abs(s.pct)}%
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </>
