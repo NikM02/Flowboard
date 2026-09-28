@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
-import { Book, Video, GraduationCap, Users, Plus, Check, Archive, Download, Trash2, Pencil, List } from "lucide-react"
+import { Book, Video, GraduationCap, Users, Plus, Check, Archive, Download, Trash2, Pencil, List, Clock } from "lucide-react"
 import Link from "next/link"
 import { cn } from "@/lib/shadcn-utils"
 import { Button } from "@/components/ui/button"
@@ -169,41 +169,50 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
+      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900"
     >
-      <div className="mb-3 flex items-start justify-between gap-2">
-        <div className="min-w-0 flex-1">
-          <h3 className="truncate text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
-          {skill.notes && (
-            <p className="mt-0.5 truncate text-xs text-neutral-400">{skill.notes}</p>
-          )}
-        </div>
-        <div className="flex shrink-0 gap-0.5 sm:opacity-0 sm:transition-opacity sm:group-hover:opacity-100">
+      {/* Cover */}
+      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/20 dark:to-emerald-950/20 sm:h-44">
+        <GraduationCap className="h-10 w-10 text-teal-300 dark:text-teal-600" />
+        {skill.progress === 100 && (
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
+            <Check className="h-4 w-4 text-white" />
+          </div>
+        )}
+        <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
           <button
             onClick={() => setEditOpen(true)}
             aria-label="Edit skill"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-600 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300"
+            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => deleteSkill(skill.id)}
             aria-label="Delete skill"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:bg-neutral-800 dark:hover:bg-red-950/30"
+            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
-      </div>
-
-      <div className="mb-3 flex items-center gap-3 text-[11px] text-neutral-400">
-        <span>From {formatSkillDate(skill.startDate)}</span>
-        <span>To {formatSkillDate(skill.endDate)}</span>
+        <div className="absolute bottom-3 left-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-800/90 dark:text-neutral-300">
+            <Clock className="h-3 w-3" />
+            {formatSkillDate(skill.startDate)} – {formatSkillDate(skill.endDate)}
+          </span>
+        </div>
       </div>
 
       {/* Content */}
-      <div>
-        <div className="flex items-center justify-between text-xs">
+      <div className="p-4 sm:p-5">
+        <h3 className="truncate text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
+        {skill.notes && (
+          <p className="mt-1 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400 line-clamp-2">
+            {skill.notes}
+          </p>
+        )}
+
+        <div className="mt-3 flex items-center justify-between text-xs">
           <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
           <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.progress}%</span>
         </div>
