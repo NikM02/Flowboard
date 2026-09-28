@@ -57,8 +57,11 @@ function derivePlanValues(plan: InvestmentPlan | undefined, fallbackInvested: nu
   if (!plan || !plan.start) return { investedAmount: fallbackInvested, currentValue: fallbackCurrent }
   const invested = paidCount(plan) * plan.amount
   const months = monthsSince(plan.start)
-  const current = annualReturn > 0 && months > 0 ? invested * Math.pow(1 + annualReturn / 100 / 12, months) : invested
-  return { investedAmount: invested, currentValue: current }
+  if (annualReturn > 0 && months > 0) {
+    return { investedAmount: invested, currentValue: invested * Math.pow(1 + annualReturn / 100 / 12, months) }
+  }
+  const ratio = fallbackInvested > 0 ? fallbackCurrent / fallbackInvested : 1
+  return { investedAmount: invested, currentValue: Math.round(invested * ratio * 100) / 100 }
 }
 
 function AssetCardHeader({ label, icon: Icon, action }: { label: string; icon: typeof Wallet; action: React.ReactNode }) {
@@ -232,11 +235,11 @@ function DashboardTab() {
       </motion.div>
 
       {/* Charts */}
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Allocation</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Where your money is</p>
-          <div className="mt-3 h-[240px]">
+          <div className="mt-3 h-[220px] sm:h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <ChartGlow id="inv-pie-glow" />
@@ -259,7 +262,7 @@ function DashboardTab() {
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Invested vs Current</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Portfolio comparison</p>
-          <div className="mt-3 h-[240px]">
+          <div className="mt-3 h-[220px] sm:h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} margin={{ top: 4, right: 4, bottom: 0, left: -8 }}>
                 <ChartGradients ids={["inv-invested", "inv-current"]} />
@@ -441,17 +444,17 @@ function SipsTab() {
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Invested</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(s.investedAmount)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(s.investedAmount)}</p>
                   </div>
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Current</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(s.currentValue)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(s.currentValue)}</p>
                   </div>
                   <div className={cn("rounded-xl py-2", gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
                     <p className="text-[10px] text-neutral-400">Return</p>
-                    <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
+                    <p className={cn("truncate px-1 text-[11px] font-semibold sm:text-xs", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
                 {s.expectedReturn > 0 && monthsElapsed > 0 && (
@@ -630,17 +633,17 @@ function StocksTab() {
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Invested</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(invested)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(invested)}</p>
                   </div>
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Current</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(current)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(current)}</p>
                   </div>
                   <div className={cn("rounded-xl py-2", gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
                     <p className="text-[10px] text-neutral-400">P&L</p>
-                    <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
+                    <p className={cn("truncate px-1 text-[11px] font-semibold sm:text-xs", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
 
@@ -829,17 +832,17 @@ function FundsTab() {
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Invested</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(mf.investedAmount)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(mf.investedAmount)}</p>
                   </div>
-                  <div className="rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
+                  <div className="min-w-0 rounded-xl bg-neutral-50 py-2 dark:bg-neutral-800/50">
                     <p className="text-[10px] text-neutral-400">Current</p>
-                    <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{fmt(mf.currentValue)}</p>
+                    <p className="truncate px-1 text-[11px] font-semibold text-neutral-900 sm:text-xs dark:text-neutral-50">{fmt(mf.currentValue)}</p>
                   </div>
                   <div className={cn("rounded-xl py-2", gain >= 0 ? "bg-green-50 dark:bg-green-950/20" : "bg-red-50 dark:bg-red-950/20")}>
                     <p className="text-[10px] text-neutral-400">Return</p>
-                    <p className={cn("text-xs font-semibold", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
+                    <p className={cn("truncate px-1 text-[11px] font-semibold sm:text-xs", gain >= 0 ? "text-green-600" : "text-red-500")}>{fmtPct(pct)}</p>
                   </div>
                 </div>
                 <PlanTracker
@@ -1022,12 +1025,19 @@ function ArchiveTab() {
 
 export function InvestmentsPanel() {
   const [tab, setTab] = useState<InvestmentTab>("dashboard")
+  const counts = useFinanceStore((s) => ({
+    sips: s.sips.length,
+    stocks: s.stocks.length,
+    funds: s.mutualFunds.length,
+  }))
 
   return (
     <div>
       <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
         {tabs.map((t) => {
           const Icon = t.icon
+          const count =
+            t.key === "sips" ? counts.sips : t.key === "stocks" ? counts.stocks : t.key === "funds" ? counts.funds : 0
           return (
             <button
               key={t.key}
@@ -1038,6 +1048,14 @@ export function InvestmentsPanel() {
               )}
             >
               <Icon className="h-4 w-4 shrink-0" /> {t.label}
+              {count > 0 && (
+                <span className={cn(
+                  "flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold tabular-nums",
+                  tab === t.key ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900" : "bg-neutral-300/70 text-neutral-600 dark:bg-neutral-700 dark:text-neutral-300"
+                )}>
+                  {count}
+                </span>
+              )}
             </button>
           )
         })}
