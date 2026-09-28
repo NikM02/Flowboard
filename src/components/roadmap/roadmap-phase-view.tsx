@@ -101,14 +101,14 @@ export function RoadmapPhaseView({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-neutral-400">
               Milestone {String(index + 1).padStart(2, "0")} of {roadmap.phases.length}
               {overdue && <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-red-600 dark:bg-red-500/15 dark:text-red-400">Overdue</span>}
             </p>
-            <h1 className="mt-1 text-2xl font-bold leading-tight text-neutral-900 dark:text-white">{phase.title}</h1>
+            <h1 className="mt-1 text-xl font-bold leading-tight text-neutral-900 sm:text-2xl dark:text-white">{phase.title}</h1>
             {phase.description && <p className="mt-2 text-sm text-neutral-500 dark:text-neutral-400">{phase.description}</p>}
           </div>
         </div>
@@ -126,7 +126,7 @@ export function RoadmapPhaseView({
           )}
         </div>
 
-        <div className="mt-5 flex items-center gap-3">
+        <div className="mt-5 flex flex-wrap items-center gap-3">
           <div className="flex-1">
             <div className="flex items-center justify-between text-[11px] font-medium text-neutral-400">
               <span>{doneTasks}/{phase.tasks.length} tasks</span>
@@ -142,8 +142,8 @@ export function RoadmapPhaseView({
         </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="flex items-center justify-between">
+      <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="flex items-center justify-between gap-2">
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
             <Target className="h-4 w-4" /> Tasks
           </h2>
@@ -201,7 +201,7 @@ export function RoadmapPhaseView({
         </form>
       </div>
 
-      <div className="mt-4 rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+      <div className="mt-4 rounded-3xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
         <button onClick={() => setNotesOpen((v) => !v)} className="flex w-full items-center justify-between">
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
             <StickyNote className="h-4 w-4" /> Log & notes ({phase.notes.length})

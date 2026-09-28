@@ -286,7 +286,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
   const [analyticsOpen, setAnalyticsOpen] = useState(false)
 
   useEffect(() => {
-    setPageTitle(roadmap.title)
+    setPageTitle("Roadmap")
     return () => setPageTitle(null)
   }, [roadmap.title, setPageTitle])
 
@@ -350,11 +350,11 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 dark:border-neutral-800 dark:bg-neutral-900">
-        <div className="flex items-start gap-4">
-          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-3xl dark:bg-neutral-800">{roadmap.emoji}</div>
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="flex items-start gap-3 sm:gap-4">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-2xl sm:h-16 sm:w-16 sm:text-3xl dark:bg-neutral-800">{roadmap.emoji}</div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-xl font-bold text-neutral-900 dark:text-white">{roadmap.title}</h1>
+            <h1 className="text-lg font-bold text-neutral-900 sm:text-xl dark:text-white">{roadmap.title}</h1>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[roadmap.priority].badge)}>{PRIORITY_META[roadmap.priority].label} priority</span>
               <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400">{CATEGORY_META[roadmap.category].label}</span>
