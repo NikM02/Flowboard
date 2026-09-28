@@ -26,6 +26,12 @@ const sourceConfig: Record<SkillSource, { label: string; icon: typeof Book }> = 
   person: { label: "Person", icon: Users },
 }
 
+function formatSkillDate(d: string) {
+  const dt = new Date(d)
+  if (isNaN(dt.getTime())) return d
+  return dt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+}
+
 function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (v: boolean) => void }) {
   const addSkill = useSkillStore((s) => s.addSkill)
   const [name, setName] = useState("")
@@ -250,9 +256,9 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       </div>
 
       <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
-        <span>{skill.startDate}</span>
+        <span className="whitespace-nowrap">{formatSkillDate(skill.startDate)}</span>
         <span className="text-neutral-300 dark:text-neutral-600">&rarr;</span>
-        <span>{skill.endDate}</span>
+        <span className="whitespace-nowrap">{formatSkillDate(skill.endDate)}</span>
         {skill.notes && (
           <>
             <span className="text-neutral-300 dark:text-neutral-600">&middot;</span>
@@ -261,7 +267,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
         )}
       </div>
 
-      <div className="mt-3 flex items-center gap-3">
+      <div className="mt-3 space-y-2.5 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
         <div className="flex-1">
           <div className="flex items-center justify-between text-xs">
             <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
@@ -276,11 +282,11 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
             />
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 sm:w-auto">
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2 text-xs"
+            className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
             onClick={() => updateProgress(skill.id, Math.max(0, skill.progress - 10))}
           >
             -10
@@ -288,7 +294,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
           <Button
             variant="outline"
             size="sm"
-            className="h-8 px-2 text-xs"
+            className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
             onClick={() => updateProgress(skill.id, Math.min(100, skill.progress + 10))}
           >
             +10

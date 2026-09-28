@@ -32,6 +32,13 @@ const timeframes = [
   "Someday",
 ]
 
+function normalizeImageUrl(url: string) {
+  const t = url.trim()
+  if (/^https?:\/\//i.test(t)) return t.replace(/^http:\/\//i, "https://")
+  if (t && !/^data:/i.test(t)) return `https://${t}`
+  return t
+}
+
 type FilterType = "all" | "pending" | "completed"
 
 function WishDialog({
@@ -73,7 +80,7 @@ function WishDialog({
     onSave({
       title: title.trim(),
       description: description.trim(),
-      imageUrl: imageUrl.trim(),
+      imageUrl: normalizeImageUrl(imageUrl),
       expectedDate,
       timeframe,
       reminder,
@@ -127,7 +134,7 @@ function WishDialog({
             {imageUrl && (
               <div className="mt-2 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
                 <img
-                  src={imageUrl}
+                  src={normalizeImageUrl(imageUrl)}
                   alt="Preview"
                   className="h-32 w-full object-cover"
                   referrerPolicy="no-referrer"
@@ -213,21 +220,23 @@ function WishCard({
           : "border-neutral-200/60 dark:border-neutral-800/60"
       )}
     >
-      {/* Image */}
+      {/* Cover image */}
       {item.imageUrl ? (
         <div
           className="relative h-44 cursor-zoom-in overflow-hidden sm:h-48"
           onClick={() => setLightbox(true)}
         >
+          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
+            <ImageIcon className="h-10 w-10 text-neutral-300 dark:text-neutral-600" />
+          </div>
           <img
-            src={item.imageUrl}
+            src={normalizeImageUrl(item.imageUrl)}
             alt={item.title}
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             referrerPolicy="no-referrer"
             loading="lazy"
             onError={(e) => {
-              ;(e.target as HTMLImageElement).src = ""
-              ;(e.target as HTMLImageElement).className = "h-full w-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700"
+              ;(e.target as HTMLImageElement).style.display = "none"
             }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
@@ -345,7 +354,7 @@ function WishCard({
       <Dialog open={lightbox} onOpenChange={setLightbox}>
         <DialogContent className="max-w-3xl border-0 bg-neutral-950 p-0 sm:max-w-4xl dark:bg-neutral-950">
           <img
-            src={item.imageUrl}
+            src={normalizeImageUrl(item.imageUrl)}
             alt={item.title}
             className="max-h-[82vh] w-full rounded-lg object-contain"
             referrerPolicy="no-referrer"
@@ -392,7 +401,7 @@ export default function BucketListPage() {
               Skills
             </Link>
           </div>
-          <Button onClick={() => { setEditItem(null); setDialogOpen(true) }} className="gap-2 self-start">
+          <Button onClick={() => { setEditItem(null); setDialogOpen(true) }} className="w-full gap-2 sm:w-auto sm:self-start">
             <Plus className="h-4 w-4" />
             Add Wish
           </Button>
@@ -415,13 +424,13 @@ export default function BucketListPage() {
         </div>
 
         {/* Filter */}
-        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div className="flex w-full gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
           {(["all", "pending", "completed"] as const).map((f) => (
             <button
               key={f}
               onClick={() => setFilter(f)}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all",
+                "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
                 filter === f
                   ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
                   : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
