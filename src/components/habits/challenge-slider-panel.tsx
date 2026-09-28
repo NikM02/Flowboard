@@ -116,18 +116,18 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
         </div>
       </div>
 
-      {/* Desktop: original layout */}
+      {/* Desktop: modern replica */}
       <div className="hidden sm:block">
         <div className="mb-3 flex items-start justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-              <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-neutral-100 dark:bg-neutral-800">
+              <Icon className="h-5 w-5 text-neutral-600 dark:text-neutral-400" />
             </div>
-            <div className="min-w-0">
-              <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
+            <div className="min-w-0 flex-1">
+              <h4 className="truncate text-[15px] font-semibold text-neutral-900 dark:text-neutral-50">{challenge.title}</h4>
               {challenge.description && <p className="truncate text-xs text-neutral-400">{challenge.description}</p>}
-              <p className="mt-0.5 text-[10px] text-neutral-400">
-                {format(new Date(challenge.startDate), "MMM d")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
+              <p className="mt-0.5 text-[11px] text-neutral-400">
+                {format(new Date(challenge.startDate), "MMM d, yyyy")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
               </p>
             </div>
           </div>
@@ -146,29 +146,21 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
 
-        <div className="mb-3 grid grid-cols-3 gap-2">
-          <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{completed}</p>
-            <p className="text-[10px] text-neutral-400">Done</p>
-          </div>
-          <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{remaining}</p>
-            <p className="text-[10px] text-neutral-400">Left</p>
-          </div>
-          <div className="rounded-lg bg-neutral-50 p-2 text-center dark:bg-neutral-900">
-            <p className="text-lg font-bold text-neutral-900 dark:text-neutral-50">{progress}%</p>
-            <p className="text-[10px] text-neutral-400">Progress</p>
-          </div>
+        <div className="mb-1.5 flex items-center justify-between text-xs">
+          <span className="font-medium text-neutral-500 dark:text-neutral-400">{completed}/{challenge.days.length} days done</span>
+          <span className="font-semibold text-neutral-700 dark:text-neutral-300">{progress}%</span>
         </div>
-
-        <Progress value={progress} className="mb-3 h-1.5" />
-
-        <div className="mb-3 flex items-center justify-between">
-          <span className="text-[10px] font-medium uppercase text-neutral-400">{typeLabel[challenge.type]}</span>
-          <ChallengeTodayButton challenge={challenge} />
-        </div>
+        <Progress value={progress} className="h-1.5" />
 
         <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
+
+        <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800">
+          <div className="flex items-center gap-2">
+            <ChallengeTodayButton challenge={challenge} className="h-9 px-2.5" />
+            <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
+          </div>
+          <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{typeLabel[challenge.type]}</span>
+        </div>
       </div>
     </motion.div>
   )
@@ -180,7 +172,12 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className={cn("grid grid-cols-7 gap-1 sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10")}>
+    <div
+      className={cn(
+        "mt-3 grid max-h-64 gap-1.5 overflow-y-auto pr-1 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700",
+        cols === 7 ? "grid-cols-7" : "grid-cols-10"
+      )}
+    >
       {challenge.days.map((d) => {
         const isToday = d.date === todayDate
         return (
@@ -188,8 +185,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
             key={d.day}
             onClick={() => toggleDay(challenge.id, d.day)}
             className={cn(
-              "relative flex items-center justify-center rounded-lg border-2 text-xs font-semibold transition-all",
-              cols === 7 ? "h-9 sm:h-10" : "h-9",
+              "relative flex h-9 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-all",
               d.completed
                 ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
                 : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
