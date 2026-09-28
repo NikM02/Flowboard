@@ -6,7 +6,8 @@ import Link from "next/link"
 import {
   Compass, Heart, Wallet, TrendingUp,
   CheckCircle2, Flame, ArrowUpRight, ArrowDownRight,
-  Lock, Moon, Check, Calendar, Zap,
+  Lock, Moon, Check, Calendar, Zap, Trophy,
+  Dumbbell, Brain, Book, Target, Palette, Users, Sun, Coffee, Music, Code,
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
@@ -21,7 +22,22 @@ import { useFinanceStore } from "@/store/use-finance-store"
 import { useSleepStore } from "@/store/use-sleep-store"
 import { format } from "date-fns"
 import { cn } from "@/lib/shadcn-utils"
-import type { Task } from "@/types"
+import type { Task, HabitIcon } from "@/types"
+
+const habitIconMap: Record<HabitIcon, typeof Heart> = {
+  heart: Heart, dumbbell: Dumbbell, brain: Brain, book: Book, target: Target,
+  palette: Palette, users: Users, sun: Sun, moon: Moon, coffee: Coffee, music: Music, code: Code,
+}
+
+const habitColors: Record<string, { check: string; box: string; tile: string }> = {
+  health: { check: "border-rose-400 bg-rose-500 text-white", box: "border-rose-400/70", tile: "bg-rose-100 text-rose-600 dark:bg-rose-900/30 dark:text-rose-300" },
+  fitness: { check: "border-emerald-400 bg-emerald-500 text-white", box: "border-emerald-400/70", tile: "bg-emerald-100 text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300" },
+  mindfulness: { check: "border-violet-400 bg-violet-500 text-white", box: "border-violet-400/70", tile: "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-300" },
+  learning: { check: "border-blue-400 bg-blue-500 text-white", box: "border-blue-400/70", tile: "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300" },
+  productivity: { check: "border-amber-400 bg-amber-500 text-white", box: "border-amber-400/70", tile: "bg-amber-100 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300" },
+  creative: { check: "border-pink-400 bg-pink-500 text-white", box: "border-pink-400/70", tile: "bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300" },
+  social: { check: "border-cyan-400 bg-cyan-500 text-white", box: "border-cyan-400/70", tile: "bg-cyan-100 text-cyan-600 dark:bg-cyan-900/30 dark:text-cyan-300" },
+}
 
 function Card({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
   return (
@@ -106,14 +122,14 @@ function MissionSection() {
 /* ── Focus Flow (urgent → medium → low) ──────────────── */
 function FocusFlowSection() {
   const tasks = useTaskStore((s) => s.tasks)
-  const requestComplete = useTaskStore((s) => s.requestComplete)
+  const updateTask = useTaskStore((s) => s.updateTask)
 
   const { groups, pendingTotal, hasAnyActive } = useMemo(() => {
-    const done = (p: Task["priority"]) => tasks.filter((t) => t.completed && t.priority === p).length
+    const doneCount = (p: Task["priority"]) => tasks.filter((t) => t.completed && t.priority === p).length
     const active = (p: Task["priority"]) => tasks.filter((t) => !t.completed && t.priority === p)
 
-    const doneHigh = done("high")
-    const doneMedium = done("medium")
+    const doneHigh = doneCount("high")
+    const doneMedium = doneCount("medium")
     const showMedium = doneHigh > 0
     const showLow = doneMedium > 0
 
@@ -127,27 +143,27 @@ function FocusFlowSection() {
         label: "Urgent",
         dot: "bg-red-500",
         box: "border-red-400 dark:border-red-500/60",
-        boxChecked: "border-red-500 bg-red-500 text-white",
         active: high,
         open: true,
+        done: doneHigh,
       },
       {
         key: "medium",
         label: "Medium",
         dot: "bg-amber-500",
         box: "border-amber-400 dark:border-amber-500/60",
-        boxChecked: "border-amber-500 bg-amber-500 text-white",
         active: medium,
         open: showMedium,
+        done: doneMedium,
       },
       {
         key: "low",
         label: "Low",
         dot: "bg-sky-500",
         box: "border-sky-400 dark:border-sky-500/60",
-        boxChecked: "border-sky-500 bg-sky-500 text-white",
         active: low,
         open: showLow,
+        done: doneCount("low"),
       },
     ]
 
@@ -156,6 +172,10 @@ function FocusFlowSection() {
 
     return { groups, pendingTotal, hasAnyActive }
   }, [tasks])
+
+  const handleComplete = (t: Task) => {
+    updateTask(t.id, { completed: true, progress: 100 })
+  }
 
   return (
     <Card delay={0.05} className="overflow-visible">
@@ -202,8 +222,14 @@ function FocusFlowSection() {
                         {g.active.length} awaiting
                       </span>
                     )
-                  : g.active.length === 0 && (
-                      <span className="text-[10px] font-semibold text-emerald-500">clear</span>
+                  : g.active.length === 0 ? (
+                      <span className={cn("text-[10px] font-semibold", g.done > 0 ? "text-emerald-500" : "text-neutral-300 dark:text-neutral-600")}>
+                        {g.done > 0 ? `\u2713 ${g.done} done` : "clear"}
+                      </span>
+                    ) : (
+                      <span className="text-[10px] font-medium text-neutral-400">
+                        {g.done > 0 ? `${g.done}/${g.done + g.active.length} done` : `${g.active.length} left`}
+                      </span>
                     )}
               </div>
               <AnimatePresence initial={false}>
@@ -217,11 +243,11 @@ function FocusFlowSection() {
                       exit={{ opacity: 0, y: -6 }}
                       className="mb-1.5 flex items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2 dark:border-neutral-800 dark:bg-white/[0.03]"
                     >
-                      <button onClick={() => requestComplete(t.id)} className="shrink-0">
+                      <button onClick={() => handleComplete(t)} className="shrink-0">
                         <span className={cn("flex h-4 w-4 items-center justify-center rounded-[10px] border transition-colors", g.box)} />
                       </button>
                       <button
-                        onClick={() => requestComplete(t.id)}
+                        onClick={() => handleComplete(t)}
                         className="min-w-0 flex-1 text-left"
                       >
                         <p className="truncate text-sm font-medium text-neutral-900 dark:text-neutral-50">{t.title}</p>
@@ -245,7 +271,10 @@ function FocusFlowSection() {
   )
 }
 
-/* ── Health (habits + sleep + challenges) ────────────── */
+/* ── Health Track (habits + sleep + challenges) ──────── */
+const rowBase =
+  "flex w-full items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2 text-left transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:bg-white/[0.03] dark:hover:bg-neutral-800/60"
+
 function HabitsChallengesSection() {
   const habits = useHabitStore((s) => s.habits)
   const toggleDay = useHabitStore((s) => s.toggleDay)
@@ -254,22 +283,41 @@ function HabitsChallengesSection() {
   const toggleDayC = useChallengeStore((s) => s.toggleDay)
   const getProgress = useChallengeStore((s) => s.getProgress)
   const sleepEntries = useSleepStore((s) => s.entries)
+  const addSleep = useSleepStore((s) => s.addEntry)
+  const deleteSleep = useSleepStore((s) => s.deleteEntry)
 
   const today = format(new Date(), "yyyy-MM-dd")
-  const todayCompleted = habits.filter((h) => h.records.find((r) => r.date === today)?.completed).length
+
+  const displayedHabits = useMemo(() => habits.slice(0, 6), [habits])
+  const todaySleep = useMemo(() => sleepEntries.find((e) => e.date === today) ?? null, [sleepEntries, today])
   const bestStreak = Math.max(...habits.map((h) => getStreak(h.id)), 0)
-  const todaySleep = useMemo(() => sleepEntries.find((e) => e.date === today), [sleepEntries, today])
 
-  const activeChallenges = useMemo(() =>
-    challenges.filter((c) => c.joined && c.days.some((d) => !d.completed)).slice(0, 3),
-  [challenges])
+  const activeChallenges = useMemo(
+    () =>
+      challenges
+        .filter((c) => c.joined)
+        .map((c) => ({ challenge: c, todayDay: c.days.find((d) => d.date === today) ?? null }))
+        .filter((x) => x.todayDay)
+        .slice(0, 3),
+    [challenges, today]
+  )
 
-  const todayChallengeDays = useMemo(() => {
-    return activeChallenges.map((c) => {
-      const todayDay = c.days.find((d) => d.date === today)
-      return { challenge: c, todayDay }
-    })
-  }, [activeChallenges, today])
+  const habitDone = displayedHabits.filter((h) => h.records.find((r) => r.date === today)?.completed).length
+  const challengeDone = activeChallenges.filter(({ todayDay }) => todayDay?.completed).length
+  const totalItems = displayedHabits.length + 1 + activeChallenges.length
+  const doneItems = habitDone + (todaySleep ? 1 : 0) + challengeDone
+  const pct = totalItems > 0 ? Math.round((doneItems / totalItems) * 100) : 0
+
+  const toggleSleep = () => {
+    if (todaySleep) {
+      deleteSleep(todaySleep.id)
+    } else {
+      addSleep({ date: today, bedtime: "22:00", wakeTime: "06:00", quality: 4, notes: "" })
+    }
+  }
+
+  const R = 20
+  const CIRC = 2 * Math.PI * R
 
   return (
     <Card delay={0.1} className="overflow-visible">
@@ -278,132 +326,162 @@ function HabitsChallengesSection() {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-pink-100 dark:bg-pink-900/30">
             <Heart className="h-4 w-4 text-pink-500" />
           </div>
-          <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Health</h3>
+          <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-white">Health Track</h3>
           <span className="text-[10px] text-neutral-400 dark:text-neutral-500">{format(new Date(), "MMM d, yyyy")}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {bestStreak > 0 && (
-            <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-400 dark:text-neutral-500">
-              <Flame className="h-3 w-3" /> {bestStreak}d
-            </span>
-          )}
-          {habits.length > 0 && (
-            <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white dark:bg-white dark:text-neutral-900">
-              {todayCompleted}/{habits.length}
-            </span>
-          )}
-        </div>
+        {bestStreak > 0 && (
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-600 dark:bg-orange-900/30 dark:text-orange-400">
+            <Flame className="h-3 w-3" /> {bestStreak}d streak
+          </span>
+        )}
       </div>
 
-      {habits.length > 0 && (
-        <>
-          <div className="grid grid-cols-2 gap-1.5">
-            {habits.slice(0, 6).map((h) => {
-              const done = h.records.find((r) => r.date === today)?.completed ?? false
-              return (
-                <button
-                  key={h.id}
-                  onClick={() => toggleDay(h.id, today)}
-                  className={cn(
-                    "flex items-center gap-2 rounded-[10px] px-2.5 py-2 text-left transition-all",
-                    done
-                      ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                      : "border border-neutral-200 bg-white hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800"
-                  )}
-                >
-                  <div className={cn(
-                    "flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] transition-all",
-                    done ? "bg-white text-neutral-900 dark:bg-neutral-900 dark:text-white" : "border border-neutral-300 dark:border-neutral-600"
-                  )}>
-                    {done && <Check className="h-2.5 w-2.5" />}
-                  </div>
-                  <span className={cn("text-[11px] font-medium truncate", done ? "text-white dark:text-neutral-900" : "text-neutral-700 dark:text-neutral-300")}>
-                    {h.name}
-                  </span>
-                </button>
-              )
-            })}
-          </div>
-          {habits.length > 6 && (
-            <Link href="/habits" className="mt-2 flex items-center justify-center gap-1 text-[10px] text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
-              +{habits.length - 6} more
-            </Link>
-          )}
-        </>
-      )}
-
-      <Link
-        href="/habits"
-        className={cn(
-          "mt-1.5 flex items-center gap-2 rounded-[10px] px-2.5 py-2 text-left transition-all",
-          todaySleep
-            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-            : "border border-dashed border-indigo-300/70 bg-white hover:bg-indigo-50/50 dark:border-indigo-700/50 dark:bg-neutral-900 dark:hover:bg-neutral-800"
-        )}
-      >
-        {todaySleep ? (
-          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border border-indigo-500 bg-indigo-500 text-white">
-            <Check className="h-2.5 w-2.5" />
-          </div>
-        ) : (
-          <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border border-indigo-400 text-indigo-500">
-            <Moon className="h-2.5 w-2.5" />
-          </div>
-        )}
-        <span className="flex items-center gap-1 truncate text-[11px] font-medium">
-          <Moon className={cn("h-3 w-3", todaySleep ? "text-indigo-200 dark:text-indigo-300" : "text-indigo-400")} />
-          Sleep
-        </span>
-        <span
-          className={cn(
-            "ml-auto shrink-0 rounded-full px-2 py-px text-[10px] font-semibold",
-            todaySleep
-              ? "bg-indigo-500/20 text-indigo-100 dark:text-indigo-200"
-              : "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300"
-          )}
-        >
-          {todaySleep ? `${todaySleep.hours}h · ${todaySleep.quality}/5` : "Log tonight"}
-        </span>
-      </Link>
-
-      {activeChallenges.length > 0 && (
-        <div className="mt-4">
-          <div className="space-y-1.5">
-            {todayChallengeDays.map(({ challenge: c, todayDay }) => {
-              const progress = getProgress(c.id)
-              const isTodayDone = todayDay?.completed ?? false
-              return (
-                <div key={c.id} className="rounded-[10px] bg-white px-3 py-2.5 dark:bg-neutral-900">
-                  <div className="flex items-center gap-2.5">
-                    <button
-                      onClick={() => { if (todayDay) toggleDayC(c.id, todayDay.day) }}
-                      disabled={!todayDay}
-                      className={cn(
-                        "flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border transition-all",
-                        isTodayDone ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900" : "border-neutral-300 dark:border-neutral-600",
-                        !todayDay && "opacity-30"
-                      )}
-                    >
-                      {isTodayDone && <Check className="h-2.5 w-2.5" />}
-                    </button>
-                    <span className="text-xs font-medium text-neutral-700 truncate dark:text-neutral-300 flex-1">{c.title}</span>
-                    <span className="text-[10px] font-bold text-neutral-400 dark:text-neutral-500 shrink-0">{progress}%</span>
-                  </div>
-                  <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-                    <div className="h-full bg-neutral-900 dark:bg-white transition-all" style={{ width: `${progress}%` }} />
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
-      )}
-
-      {habits.length === 0 && challenges.length === 0 && (
+      {totalItems === 0 ? (
         <Link href="/habits" className="flex flex-col items-center gap-2 py-8 text-neutral-400">
           <Zap className="h-7 w-7" />
           <p className="text-xs">Start tracking health</p>
         </Link>
+      ) : (
+        <>
+          <div className="mb-4 flex items-center gap-3 rounded-[12px] border border-pink-100 bg-pink-50/60 px-3.5 py-3 dark:border-pink-900/30 dark:bg-pink-900/10">
+            <div className="relative h-12 w-12 shrink-0">
+              <svg viewBox="0 0 48 48" className="h-12 w-12 -rotate-90">
+                <circle cx="24" cy="24" r={R} fill="none" strokeWidth="5" className="stroke-pink-100 dark:stroke-neutral-800" />
+                <circle
+                  cx="24"
+                  cy="24"
+                  r={R}
+                  fill="none"
+                  strokeWidth="5"
+                  strokeLinecap="round"
+                  className="stroke-pink-500"
+                  strokeDasharray={CIRC}
+                  strokeDashoffset={CIRC * (1 - pct / 100)}
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-neutral-800 dark:text-neutral-100">
+                {pct}%
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-[13px] font-bold text-neutral-900 dark:text-white">Today&apos;s health</p>
+              <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                {doneItems} of {totalItems} done · habits, sleep &amp; challenges
+              </p>
+              <div className="mt-1.5 h-1.5 w-full min-w-[64px] overflow-hidden rounded-full bg-white dark:bg-neutral-800">
+                <div className="h-full rounded-full bg-pink-500 transition-all" style={{ width: `${pct}%` }} />
+              </div>
+            </div>
+          </div>
+
+          {displayedHabits.length > 0 && (
+            <div className="mb-3">
+              <div className="mb-1.5 flex items-center justify-between px-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Habits</span>
+                {habits.length > 6 && (
+                  <Link href="/habits" className="text-[10px] font-medium text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300">
+                    +{habits.length - 6} more
+                  </Link>
+                )}
+              </div>
+              <div className="space-y-1.5">
+                {displayedHabits.map((h) => {
+                  const Icon = habitIconMap[h.icon] || Heart
+                  const c = habitColors[h.category] || habitColors.health
+                  const done = h.records.find((r) => r.date === today)?.completed ?? false
+                  const streak = getStreak(h.id)
+                  return (
+                    <button key={h.id} onClick={() => toggleDay(h.id, today)} className={rowBase}>
+                      <span className={cn(
+                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                        done ? c.check : c.box
+                      )}>
+                        {done && <Check className="h-3 w-3" />}
+                      </span>
+                      <span className={cn("flex h-6 w-6 shrink-0 items-center justify-center rounded-lg", c.tile)}>
+                        <Icon className="h-3 w-3" />
+                      </span>
+                      <span className={cn("min-w-0 flex-1 truncate text-[13px] font-medium", done ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-800 dark:text-neutral-200")}>
+                        {h.name}
+                      </span>
+                      {streak > 0 && (
+                        <span className="flex shrink-0 items-center gap-0.5 text-[10px] font-medium text-amber-500">
+                          <Flame className="h-3 w-3" /> {streak}
+                        </span>
+                      )}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
+          <div className="mb-3">
+            <div className="mb-1.5 px-0.5">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Sleep</span>
+            </div>
+            <button onClick={toggleSleep} className={rowBase}>
+              <span className={cn(
+                "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                todaySleep ? "border-indigo-400 bg-indigo-500 text-white" : "border-indigo-400/70"
+              )}>
+                {todaySleep && <Check className="h-3 w-3" />}
+              </span>
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300">
+                <Moon className="h-3 w-3" />
+              </span>
+              <span className={cn("min-w-0 flex-1 truncate text-[13px] font-medium", todaySleep ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-800 dark:text-neutral-200")}>
+                Sleep
+              </span>
+              <span className={cn(
+                "shrink-0 rounded-full px-2 py-px text-[10px] font-semibold",
+                todaySleep
+                  ? "bg-indigo-100 text-indigo-600 dark:bg-indigo-900/30 dark:text-indigo-300"
+                  : "bg-neutral-100 text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500"
+              )}>
+                {todaySleep ? `${todaySleep.hours}h · ${todaySleep.quality}/5` : "Tap to log"}
+              </span>
+            </button>
+          </div>
+
+          {activeChallenges.length > 0 && (
+            <div>
+              <div className="mb-1.5 px-0.5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">Challenges</span>
+              </div>
+              <div className="space-y-1.5">
+                {activeChallenges.map(({ challenge: c, todayDay }) => {
+                  const done = todayDay?.completed ?? false
+                  const progress = getProgress(c.id)
+                  return (
+                    <button key={c.id} onClick={() => toggleDayC(c.id, todayDay!.day)} className={rowBase}>
+                      <span className={cn(
+                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                        done ? "border-rose-400 bg-rose-500 text-white" : "border-rose-400/70"
+                      )}>
+                        {done && <Check className="h-3 w-3" />}
+                      </span>
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600 dark:bg-pink-900/30 dark:text-pink-300">
+                        <Trophy className="h-3 w-3" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className={cn("block truncate text-[13px] font-medium", done ? "text-neutral-400 line-through dark:text-neutral-500" : "text-neutral-800 dark:text-neutral-200")}>
+                          {c.title}
+                        </span>
+                        <span className="mt-1 block h-1 w-full min-w-[48px] overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                          <span className="block h-full rounded-full bg-rose-500 transition-all" style={{ width: `${progress}%` }} />
+                        </span>
+                      </span>
+                      <span className="shrink-0 text-[10px] font-bold text-neutral-400 dark:text-neutral-500">
+                        Day {todayDay!.day} · {progress}%
+                      </span>
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+        </>
       )}
     </Card>
   )
