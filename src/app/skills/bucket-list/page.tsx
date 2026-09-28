@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Star, Plus, Trash2, Pencil, Check, Image as ImageIcon,
+  Star, Plus, Trash2, Pencil, Check,
   Calendar, Clock, Sparkles, ArrowLeft, Filter,
 } from "lucide-react"
 import Link from "next/link"
@@ -32,13 +32,6 @@ const timeframes = [
   "Someday",
 ]
 
-function normalizeImageUrl(url: string) {
-  const t = url.trim()
-  if (/^https?:\/\//i.test(t)) return t.replace(/^http:\/\//i, "https://")
-  if (t && !/^data:/i.test(t)) return `https://${t}`
-  return t
-}
-
 type FilterType = "all" | "pending" | "completed"
 
 function WishDialog({
@@ -54,7 +47,6 @@ function WishDialog({
 }) {
   const [title, setTitle] = useState(item?.title ?? "")
   const [description, setDescription] = useState(item?.description ?? "")
-  const [imageUrl, setImageUrl] = useState(item?.imageUrl ?? "")
   const [expectedDate, setExpectedDate] = useState(item?.expectedDate ?? "")
   const [timeframe, setTimeframe] = useState(item?.timeframe ?? "6 months")
   const [reminderDate, setReminderDate] = useState(() => {
@@ -80,7 +72,7 @@ function WishDialog({
     onSave({
       title: title.trim(),
       description: description.trim(),
-      imageUrl: normalizeImageUrl(imageUrl),
+      imageUrl: "",
       expectedDate,
       timeframe,
       reminder,
@@ -116,35 +108,6 @@ function WishDialog({
               rows={3}
               placeholder="What makes this special to you?"
             />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="wish-image">Image URL</Label>
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <ImageIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
-                <Input
-                  id="wish-image"
-                  value={imageUrl}
-                  onChange={(e) => setImageUrl(e.target.value)}
-                  placeholder="https://example.com/photo.jpg"
-                  className="pl-9"
-                />
-              </div>
-            </div>
-            {imageUrl && (
-              <div className="mt-2 overflow-hidden rounded-xl border border-neutral-200 dark:border-neutral-800">
-                <img
-                  src={normalizeImageUrl(imageUrl)}
-                  alt="Preview"
-                  className="h-32 w-full object-cover"
-                  referrerPolicy="no-referrer"
-                  loading="lazy"
-                  onError={(e) => {
-                    ;(e.target as HTMLImageElement).style.display = "none"
-                  }}
-                />
-              </div>
-            )}
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-2">
@@ -204,7 +167,6 @@ function WishCard({
   onEdit: () => void
 }) {
   const { toggleComplete, deleteItem } = useBucketListStore()
-  const [lightbox, setLightbox] = useState(false)
 
   return (
     <motion.div
@@ -220,95 +182,44 @@ function WishCard({
           : "border-neutral-200/60 dark:border-neutral-800/60"
       )}
     >
-      {/* Cover image */}
-      {item.imageUrl ? (
-        <div
-          className="relative h-44 cursor-zoom-in overflow-hidden sm:h-48"
-          onClick={() => setLightbox(true)}
-        >
-          <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700">
-            <ImageIcon className="h-10 w-10 text-neutral-300 dark:text-neutral-600" />
+      {/* Cover */}
+      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 sm:h-44">
+        <Star className="h-10 w-10 text-amber-300 dark:text-amber-600" />
+        {item.completed && (
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
+            <Check className="h-4 w-4 text-white" />
           </div>
-          <img
-            src={normalizeImageUrl(item.imageUrl)}
-            alt={item.title}
-            className="absolute inset-0 h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
-            referrerPolicy="no-referrer"
-            loading="lazy"
-            onError={(e) => {
-              ;(e.target as HTMLImageElement).style.display = "none"
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-          {item.completed && (
-            <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
-              <Check className="h-4 w-4 text-white" />
-            </div>
+        )}
+        <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
+          {!item.completed && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); onEdit() }}
+                aria-label="Edit wish"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
+                aria-label="Delete wish"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </>
           )}
-          {/* Actions overlay */}
-          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
-            {!item.completed && (
-              <>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit() }}
-                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
-                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </>
-            )}
-          </div>
-          {/* Timeframe badge */}
-          <div className="absolute bottom-3 left-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-900/90 dark:text-neutral-300">
-              <Clock className="h-3 w-3" />
-              {item.timeframe}
-            </span>
-          </div>
         </div>
-      ) : (
-        <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 sm:h-48">
-          <Star className="h-10 w-10 text-amber-300 dark:text-amber-600" />
-          {item.completed && (
-            <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
-              <Check className="h-4 w-4 text-white" />
-            </div>
-          )}
-          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
-            {!item.completed && (
-              <>
-                <button
-                  onClick={(e) => { e.stopPropagation(); onEdit() }}
-                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
-                >
-                  <Pencil className="h-3.5 w-3.5" />
-                </button>
-                <button
-                  onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
-                  className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
-                >
-                  <Trash2 className="h-3.5 w-3.5" />
-                </button>
-              </>
-            )}
-          </div>
-          <div className="absolute bottom-3 left-3">
-            <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-800/90 dark:text-neutral-300">
-              <Clock className="h-3 w-3" />
-              {item.timeframe}
-            </span>
-          </div>
+        <div className="absolute bottom-3 left-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-800/90 dark:text-neutral-300">
+            <Clock className="h-3 w-3" />
+            {item.timeframe}
+          </span>
         </div>
-      )}
+      </div>
 
       {/* Content */}
-      <div className="p-4">
+      <div className="p-4 sm:p-5">
         <h3 className={cn(
           "text-base font-semibold tracking-tight",
           item.completed
@@ -352,24 +263,6 @@ function WishCard({
           </button>
         </div>
       </div>
-
-      <Dialog open={lightbox} onOpenChange={setLightbox}>
-        <DialogContent className="max-w-3xl border-0 bg-neutral-950 p-0 sm:max-w-4xl dark:bg-neutral-950">
-          <img
-            src={normalizeImageUrl(item.imageUrl)}
-            alt={item.title}
-            className="max-h-[82vh] w-full rounded-lg object-contain"
-            referrerPolicy="no-referrer"
-            onClick={(e) => e.stopPropagation()}
-          />
-          <div className="px-5 py-4">
-            <p className="text-center text-base font-semibold text-white">{item.title}</p>
-            {item.description && (
-              <p className="mt-1 text-center text-sm text-neutral-300">{item.description}</p>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </motion.div>
   )
 }

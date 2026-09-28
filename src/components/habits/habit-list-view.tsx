@@ -84,7 +84,7 @@ function HabitCard({
   const today = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="group card-modern card-hover glass rounded-2xl p-4">
+    <div className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{habit.name}</h4>

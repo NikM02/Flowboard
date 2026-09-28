@@ -34,7 +34,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="group card-modern card-hover glass rounded-2xl p-4"
+      className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
         <div className="flex items-center gap-3 min-w-0">
@@ -115,8 +115,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="max-h-44 overflow-auto pr-1 sm:max-h-56">
-      <div className={cn("grid grid-cols-7 gap-1 sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10")}>
+    <div className={cn("grid grid-cols-7 gap-1 sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10")}>
         {challenge.days.map((d) => {
           const isToday = d.date === todayDate
           return (
@@ -144,7 +143,6 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
           )
         })}
       </div>
-    </div>
   )
 }
 
