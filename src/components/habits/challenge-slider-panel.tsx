@@ -58,14 +58,14 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5"
+      className="card-modern card-hover glass w-full rounded-2xl p-3.5 sm:p-5"
     >
-      <div className="mb-3 flex items-start justify-between gap-3">
-        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 sm:h-11 sm:w-11">
+      <div className="mb-2.5 flex items-start justify-between gap-1 sm:gap-3 sm:mb-3">
+        <div className="flex min-w-0 items-center gap-2 sm:gap-3">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800 sm:h-11 sm:w-11">
             <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400 sm:h-5 sm:w-5" />
           </div>
-          <div className="min-w-0 flex-1">
+          <div className="min-w-0">
             <h4 className="truncate text-sm font-semibold text-neutral-900 dark:text-neutral-50 sm:text-[15px]">{challenge.title}</h4>
             {challenge.description && <p className="truncate text-[11px] text-neutral-400 sm:text-xs">{challenge.description}</p>}
             <p className="mt-0.5 truncate whitespace-nowrap text-[10px] text-neutral-400 sm:text-[11px]">
@@ -74,21 +74,21 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => onEdit(challenge)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors">
-            <Edit3 className="h-4 w-4" />
+          <button onClick={() => onEdit(challenge)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:hover:text-neutral-300 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
+            <Edit3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
-          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30 transition-colors">
-            <Trash2 className="h-4 w-4" />
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 dark:bg-neutral-800 dark:hover:bg-red-950/30 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
+            <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
           {allDone && (
-            <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white sm:h-7" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-3.5 w-3.5" />Done
             </Button>
           )}
         </div>
       </div>
 
-      <div className="mb-1.5 flex items-center justify-between text-xs">
+      <div className="mb-1 flex items-center justify-between text-[11px] sm:mb-1.5 sm:text-xs">
         <span className="font-medium text-neutral-500 dark:text-neutral-400">{completed}/{challenge.days.length} days done</span>
         <span className="font-semibold text-neutral-700 dark:text-neutral-300">{progress}%</span>
       </div>
@@ -96,9 +96,9 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
       <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
 
-      <div className="mt-3 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800">
-        <div className="flex items-center gap-2">
-          <ChallengeTodayButton challenge={challenge} className="h-9 px-2.5" />
+      <div className="mt-2.5 flex items-center justify-between border-t border-neutral-100 pt-2 dark:border-neutral-800 sm:mt-3">
+        <div className="flex items-center gap-1.5 sm:gap-2">
+          <ChallengeTodayButton challenge={challenge} className="h-8 px-2 sm:h-9 sm:px-2.5" />
           <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
         </div>
         <span className="text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{typeLabel[challenge.type]}</span>
@@ -115,7 +115,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
   return (
     <div
       className={cn(
-        "mt-3 grid max-h-44 gap-1.5 overflow-y-auto pr-0 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700 sm:pr-1",
+        "mt-2.5 grid max-h-36 gap-1 overflow-y-auto pr-0 [scrollbar-width:thin] [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-700 sm:mt-3 sm:max-h-44 sm:gap-1.5 sm:pr-1",
         cols === 7 ? "grid-cols-7 sm:grid-cols-7" : "grid-cols-7 sm:grid-cols-10"
       )}
     >
@@ -126,10 +126,10 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
             key={d.day}
             onClick={() => toggleDay(challenge.id, d.day)}
             className={cn(
-              "relative flex h-9 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-all",
+              "relative flex h-8 items-center justify-center rounded-lg border text-[11px] font-semibold transition-all sm:h-9 sm:rounded-lg sm:border-2 sm:text-xs",
               d.completed
                 ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
-                : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
+                : "bg-neutral-50 border-neutral-200 text-neutral-500 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
               isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
             )}
             title={`Day ${d.day} - ${d.date}${isToday ? " (Today)" : ""}`}
