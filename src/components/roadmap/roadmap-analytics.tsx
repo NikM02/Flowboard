@@ -1,7 +1,7 @@
 "use client"
 
 import { useMemo } from "react"
-import { TrendingUp, Flag, AlertTriangle, Gauge } from "lucide-react"
+import { TrendingUp, Flag, AlertTriangle } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import type { Roadmap } from "@/types"
 import { STATUS_META, STATUS_LIST } from "./roadmap-meta"
@@ -170,12 +170,8 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
   }))
 
   return (
-    <div className="mt-6">
-      <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
-        <Gauge className="h-4 w-4" /> Analytics & growth
-      </h2>
-
-      <div className="mt-3 grid gap-4 lg:grid-cols-2">
+    <div>
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
         <div className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
           <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Progress</p>
           <div className="mt-4 flex items-center gap-6">

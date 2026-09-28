@@ -76,13 +76,14 @@ export function RoadmapPhaseView({
 
   return (
     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.2 }}>
-      <div className="mb-5 flex items-center justify-between">
-        <Button variant="ghost" size="sm" onClick={onBack} className="gap-1.5">
-          <ArrowLeft className="h-4 w-4" /> {roadmap.title}
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <Button variant="ghost" size="sm" onClick={onBack} className="min-w-0 gap-1.5">
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          <span className="max-w-[32vw] truncate sm:max-w-none">{roadmap.title}</span>
         </Button>
-        <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center gap-1">
           <Button variant="ghost" size="sm" onClick={() => setEditOpen(true)} className="gap-1.5">
-            <Pencil className="h-3.5 w-3.5" /> Edit
+            <Pencil className="h-3.5 w-3.5" /> <span className="max-sm:hidden">Edit</span>
           </Button>
           <Button
             variant="ghost"
@@ -95,7 +96,7 @@ export function RoadmapPhaseView({
               }
             }}
           >
-            <Trash2 className="h-3.5 w-3.5" /> Delete
+            <Trash2 className="h-3.5 w-3.5" /> <span className="max-sm:hidden">Delete</span>
           </Button>
         </div>
       </div>

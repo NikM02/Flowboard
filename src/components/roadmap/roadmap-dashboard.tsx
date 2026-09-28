@@ -331,7 +331,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </Button>
         <div className="flex items-center gap-1">
           <Button variant="ghost" size="sm" onClick={() => setEditOpen(true)} className="gap-1.5">
-            <Pencil className="h-3.5 w-3.5" /> Edit
+            <Pencil className="h-3.5 w-3.5" /> <span className="max-sm:hidden">Edit</span>
           </Button>
           <Button
             variant="ghost"
@@ -345,7 +345,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
               }
             }}
           >
-            <Trash2 className="h-3.5 w-3.5" /> Delete
+            <Trash2 className="h-3.5 w-3.5" /> <span className="max-sm:hidden">Delete</span>
           </Button>
         </div>
       </div>
@@ -368,12 +368,12 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
           </div>
         </div>
 
-        <div className="mt-6 grid grid-cols-3 gap-3 text-center sm:grid-cols-6">
-          {STATUS_LIST.map((st) => (
-            <div key={st} className="rounded-xl bg-neutral-50 py-2.5 dark:bg-neutral-800/60">
-              <p className="text-lg font-bold text-neutral-900 dark:text-white">{counts[st]}</p>
-              <p className="text-[10px] font-medium text-neutral-400">{STATUS_META[st].label}</p>
-            </div>
+        <div className="mt-4 flex flex-wrap gap-1.5">
+          {STATUS_LIST.filter((st) => counts[st] > 0).map((st) => (
+            <span key={st} className="inline-flex items-center gap-1 rounded-full bg-neutral-50 px-2 py-0.5 text-[10px] font-medium text-neutral-500 dark:bg-neutral-800/60 dark:text-neutral-400">
+              <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_META[st].dot }} />
+              {counts[st]} {STATUS_META[st].label}
+            </span>
           ))}
         </div>
 

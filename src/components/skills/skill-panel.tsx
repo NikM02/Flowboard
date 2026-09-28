@@ -35,9 +35,10 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
   const [notes, setNotes] = useState("")
 
   const dateInvalid = !!startDate && !!endDate && endDate < startDate
+  const endTooEarly = !!endDate && endDate < new Date().toISOString().slice(0, 10)
 
   const handleSubmit = () => {
-    if (!name.trim() || !startDate || !endDate || dateInvalid) return
+    if (!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly) return
     addSkill({ name: name.trim(), source, sourceDetail: sourceDetail.trim(), startDate, endDate, notes: notes.trim() })
     setName("")
     setSource("book")
@@ -94,16 +95,20 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
               <Input id="create-skill-end-date" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
           </div>
-          {dateInvalid && (
+          {endTooEarly ? (
+            <p className="text-xs font-medium text-red-500">
+              End date must be today or in the future.
+            </p>
+          ) : dateInvalid ? (
             <p className="text-xs font-medium text-red-500">
               End date must be on or after the start date.
             </p>
-          )}
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor="create-skill-notes">Notes (optional)</Label>
             <Textarea id="create-skill-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any notes..." />
           </div>
-          <Button onClick={handleSubmit} className="w-full" disabled={!name.trim() || !startDate || !endDate || dateInvalid}>
+          <Button onClick={handleSubmit} className="w-full" disabled={!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly}>
             Create skill
           </Button>
         </div>
@@ -128,9 +133,10 @@ function EditSkillDialog({
   const [notes, setNotes] = useState(skill.notes)
 
   const dateInvalid = !!startDate && !!endDate && endDate < startDate
+  const endTooEarly = !!endDate && endDate < new Date().toISOString().slice(0, 10)
 
   const handleSubmit = () => {
-    if (!name.trim() || !startDate || !endDate || dateInvalid) return
+    if (!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly) return
     updateSkill(skill.id, { name: name.trim(), source, sourceDetail: sourceDetail.trim(), startDate, endDate, notes: notes.trim() })
     onOpenChange(false)
   }
@@ -177,16 +183,20 @@ function EditSkillDialog({
               <Input id="edit-skill-end-date" type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
             </div>
           </div>
-          {dateInvalid && (
+          {endTooEarly ? (
+            <p className="text-xs font-medium text-red-500">
+              End date must be today or in the future.
+            </p>
+          ) : dateInvalid ? (
             <p className="text-xs font-medium text-red-500">
               End date must be on or after the start date.
             </p>
-          )}
+          ) : null}
           <div className="space-y-2">
             <Label htmlFor="edit-skill-notes">Notes (optional)</Label>
             <Textarea id="edit-skill-notes" value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Any notes..." />
           </div>
-          <Button onClick={handleSubmit} className="w-full" disabled={!name.trim() || !startDate || !endDate || dateInvalid}>
+          <Button onClick={handleSubmit} className="w-full" disabled={!name.trim() || !startDate || !endDate || dateInvalid || endTooEarly}>
             Save changes
           </Button>
         </div>

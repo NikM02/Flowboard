@@ -188,12 +188,13 @@ function OverviewTab() {
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={monthlyData}>
                   <CartesianGrid {...CHART_GRID_STYLES} />
+                  <ChartGradients ids={["ov-income", "ov-expense"]} />
                   <XAxis dataKey="month" {...CHART_AXIS_STYLES} />
                   <YAxis {...CHART_AXIS_STYLES} />
                   <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} cursor={CHART_CURSOR_STYLES} />
                   <Legend iconSize={8} wrapperStyle={{ fontSize: 11 }} />
-                  <Bar dataKey="income" fill="#16a34a" radius={[7, 7, 2, 2]} name="Income" />
-                  <Bar dataKey="expense" fill="#ef4444" radius={[7, 7, 2, 2]} name="Expenses" />
+                  <Bar dataKey="income" fill="url(#ov-income)" radius={[7, 7, 2, 2]} name="Income" />
+                  <Bar dataKey="expense" fill="url(#ov-expense)" radius={[7, 7, 2, 2]} name="Expenses" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -358,6 +359,22 @@ function ExpensesTab() {
 
   const totalExpenses = expenses.reduce((s, e) => s + e.amount, 0)
 
+  const catData = useMemo(() => {
+    const map: Record<ExpenseCategory, number> = {
+      food: 0, transport: 0, housing: 0, utilities: 0, entertainment: 0,
+      healthcare: 0, shopping: 0, education: 0, other: 0,
+    }
+    for (const e of expenses) map[e.category] += e.amount
+    return Object.entries(map)
+      .filter(([, value]) => value > 0)
+      .map(([cat, value]) => ({
+        name: cat.charAt(0).toUpperCase() + cat.slice(1),
+        value,
+        color: categoryColors[cat as ExpenseCategory],
+      }))
+      .sort((a, b) => b.value - a.value)
+  }, [expenses])
+
   const handleCreate = () => {
     if (!form.amount || !form.date) return
     addExpense(form)
@@ -377,6 +394,54 @@ function ExpensesTab() {
 
   return (
     <div className="space-y-4">
+      {catData.length > 0 && (
+        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+          <div className="flex items-center justify-between gap-2">
+            <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Spending Breakdown</h3>
+            <span className="text-lg font-bold text-red-500">₹{totalExpenses.toLocaleString()}</span>
+          </div>
+          <div className="mt-3 grid gap-5 sm:grid-cols-2 sm:items-center">
+            <div className="h-[210px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <ChartGlow id="exp-pie-glow" />
+                  <Pie
+                    data={catData}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={54}
+                    outerRadius={84}
+                    paddingAngle={4}
+                    cornerRadius={8}
+                    stroke="none"
+                  >
+                    {catData.map((d, i) => (
+                      <Cell key={i} fill={d.color} style={{ filter: "url(#exp-pie-glow)" }} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<ChartTooltip formatter={(v) => `₹${Number(v).toLocaleString()}`} />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-2.5">
+              {catData.map((d) => {
+                const pct = totalExpenses ? Math.round((d.value / totalExpenses) * 100) : 0
+                return (
+                  <div key={d.name} className="flex items-center gap-2.5">
+                    <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ background: d.color }} />
+                    <span className="min-w-0 flex-1 truncate text-xs capitalize text-neutral-600 dark:text-neutral-300">{d.name}</span>
+                    <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">₹{d.value.toLocaleString()}</span>
+                    <span className="w-10 shrink-0 text-right text-xs font-bold" style={{ color: d.color }}>{pct}%</span>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-neutral-900 dark:text-neutral-50">All Expenses</h3>
         <Button size="sm" onClick={() => { setEditId(null); setForm({ category: "food", amount: 0, date: "", description: "" }); setCreateOpen(true) }} className="gap-2">
@@ -490,6 +555,7 @@ function BudgetTab() {
   const { expenses, budgets, setBudget, updateBudget, deleteBudget } = useFinanceStore()
   const [form, setForm] = useState({ category: "food" as ExpenseCategory | "overall", limit: 0, month: format(new Date(), "yyyy-MM") })
   const [editId, setEditId] = useState<string | null>(null)
+  const [dialogOpen, setDialogOpen] = useState(false)
 
   const handleSetBudget = () => {
     if (!form.limit || !form.month) return
@@ -498,6 +564,7 @@ function BudgetTab() {
     else setBudget(payload)
     setEditId(null)
     setForm({ category: "food", limit: 0, month: format(new Date(), "yyyy-MM") })
+    setDialogOpen(false)
   }
 
   const rows = useMemo(
@@ -583,9 +650,16 @@ function BudgetTab() {
         </div>
       )}
 
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Budgets ({budgets.length})</h3>
+        <Button size="sm" onClick={() => { setEditId(null); setForm({ category: "overall", limit: 0, month: format(new Date(), "yyyy-MM") }); setDialogOpen(true) }} className="gap-1.5">
+          <Plus className="h-3.5 w-3.5" /> Add Budget
+        </Button>
+      </div>
+
       {budgets.length === 0 ? (
         <p className="rounded-2xl border border-dashed border-neutral-200 py-8 text-center text-sm text-neutral-400 dark:border-neutral-800">
-          No budgets set yet — add your first below.
+          No budgets set yet — add one for the overall total or per category.
         </p>
       ) : (
         <div className="space-y-2">
@@ -599,10 +673,10 @@ function BudgetTab() {
                     ₹{bgt.spent.toLocaleString()}
                     <span className="font-normal text-neutral-400"> / ₹{bgt.limit.toLocaleString()}</span>
                   </span>
-                  <button onClick={() => { setEditId(bgt.id); setForm({ category: bgt.category, limit: bgt.limit, month: bgt.month }) }} aria-label="Edit budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+                  <button onClick={() => { setEditId(bgt.id); setForm({ category: bgt.category, limit: bgt.limit, month: bgt.month }); setDialogOpen(true) }} aria-label="Edit budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
+                  <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -632,23 +706,41 @@ function BudgetTab() {
         </div>
       )}
 
-      <div className="rounded-xl border border-neutral-200/50 bg-white p-3 dark:border-neutral-800/50 dark:bg-neutral-900">
-        <p className="mb-2 text-xs font-semibold text-neutral-600 dark:text-neutral-300">{editId ? "Edit budget" : "Add another budget"}</p>
-        <div className="flex flex-wrap items-center gap-2">
-          <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory | "overall" })}>
-            <SelectTrigger className="h-8 flex-1 min-w-[110px] text-xs"><SelectValue /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="overall">Overall (all categories)</SelectItem>
-              {expenseCategories.map((c) => (
-                <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Input type="number" placeholder="Limit ₹" className="h-8 w-28 text-xs" value={form.limit || ""} onChange={(e) => setForm({ ...form, limit: Number(e.target.value) })} />
-          <Input type="month" className="h-8 flex-1 min-w-[130px] text-xs" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
-        </div>
-        <Button size="sm" className="mt-2.5 h-8 w-full text-xs" onClick={handleSetBudget} disabled={!form.limit || !form.month}>{editId ? "Save Budget" : "Set Budget"}</Button>
-      </div>
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{editId ? "Edit Budget" : "Add Budget"}</DialogTitle>
+            <DialogDescription>
+              {editId ? "Update the monthly limit for this budget." : "Create a budget for the overall total or a specific category."}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <Label>Category</Label>
+              <Select value={form.category} onValueChange={(v) => setForm({ ...form, category: v as ExpenseCategory | "overall" })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="overall">Overall (all categories)</SelectItem>
+                  {expenseCategories.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Monthly limit (₹)</Label>
+              <Input type="number" value={form.limit || ""} onChange={(e) => setForm({ ...form, limit: Number(e.target.value) })} placeholder="0" />
+            </div>
+            <div className="space-y-2">
+              <Label>Month</Label>
+              <Input type="month" value={form.month} onChange={(e) => setForm({ ...form, month: e.target.value })} />
+            </div>
+            <Button className="w-full" onClick={handleSetBudget} disabled={!form.limit || !form.month}>
+              {editId ? "Save Budget" : "Add Budget"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

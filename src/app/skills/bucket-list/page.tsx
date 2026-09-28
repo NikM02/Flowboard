@@ -130,6 +130,8 @@ function WishDialog({
                   src={imageUrl}
                   alt="Preview"
                   className="h-32 w-full object-cover"
+                  referrerPolicy="no-referrer"
+                  loading="lazy"
                   onError={(e) => {
                     ;(e.target as HTMLImageElement).style.display = "none"
                   }}
@@ -221,6 +223,8 @@ function WishCard({
             src={item.imageUrl}
             alt={item.title}
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            referrerPolicy="no-referrer"
+            loading="lazy"
             onError={(e) => {
               ;(e.target as HTMLImageElement).src = ""
               ;(e.target as HTMLImageElement).className = "h-full w-full bg-gradient-to-br from-neutral-100 to-neutral-200 dark:from-neutral-800 dark:to-neutral-700"
@@ -233,17 +237,17 @@ function WishCard({
             </div>
           )}
           {/* Actions overlay */}
-          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
             {!item.completed && (
               <>
                 <button
-                  onClick={onEdit}
+                  onClick={(e) => { e.stopPropagation(); onEdit() }}
                   className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  onClick={() => deleteItem(item.id)}
+                  onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
                   className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -267,17 +271,17 @@ function WishCard({
               <Check className="h-4 w-4 text-white" />
             </div>
           )}
-          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
             {!item.completed && (
               <>
                 <button
-                  onClick={onEdit}
+                  onClick={(e) => { e.stopPropagation(); onEdit() }}
                   className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
                 >
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
                 <button
-                  onClick={() => deleteItem(item.id)}
+                  onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
                   className="flex h-7 w-7 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
@@ -344,6 +348,7 @@ function WishCard({
             src={item.imageUrl}
             alt={item.title}
             className="max-h-[82vh] w-full rounded-lg object-contain"
+            referrerPolicy="no-referrer"
             onClick={(e) => e.stopPropagation()}
           />
           <div className="px-5 py-4">

@@ -22,7 +22,7 @@ export function RoadmapPanel() {
   return (
     <div>
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Button onClick={() => setCreateOpen(true)} className="gap-2 self-start">
+        <Button onClick={() => setCreateOpen(true)} className="w-full gap-2 sm:w-auto">
           <Plus className="h-4 w-4" />
           New Roadmap
         </Button>
