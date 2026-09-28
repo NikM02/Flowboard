@@ -1025,11 +1025,9 @@ function ArchiveTab() {
 
 export function InvestmentsPanel() {
   const [tab, setTab] = useState<InvestmentTab>("dashboard")
-  const counts = useFinanceStore((s) => ({
-    sips: s.sips.length,
-    stocks: s.stocks.length,
-    funds: s.mutualFunds.length,
-  }))
+  const sipCount = useFinanceStore((s) => s.sips.length)
+  const stockCount = useFinanceStore((s) => s.stocks.length)
+  const fundCount = useFinanceStore((s) => s.mutualFunds.length)
 
   return (
     <div>
@@ -1037,7 +1035,7 @@ export function InvestmentsPanel() {
         {tabs.map((t) => {
           const Icon = t.icon
           const count =
-            t.key === "sips" ? counts.sips : t.key === "stocks" ? counts.stocks : t.key === "funds" ? counts.funds : 0
+            t.key === "sips" ? sipCount : t.key === "stocks" ? stockCount : t.key === "funds" ? fundCount : 0
           return (
             <button
               key={t.key}
