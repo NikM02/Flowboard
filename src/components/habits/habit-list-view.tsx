@@ -55,7 +55,7 @@ export function HabitListView({ onEdit }: { onEdit?: (habit: Habit) => void }) {
           No habits yet
         </div>
       ) : habitViewMode === "card" ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {habits.map((habit) => (
             <HabitCard key={habit.id} habit={habit} weekDays={weekDays} dayLabels={dayLabels} onEdit={onEdit} toggleDay={toggleDay} deleteHabit={deleteHabit} />
           ))}

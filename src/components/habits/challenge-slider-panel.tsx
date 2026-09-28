@@ -301,7 +301,7 @@ export function ChallengeSliderPanel() {
           No challenges yet
         </div>
       ) : viewMode === "card" ? (
-        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           {challenges.map((c) => <ChallengeCard key={c.id} challenge={c} onEdit={openEdit} />)}
         </div>
       ) : (
