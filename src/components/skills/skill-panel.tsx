@@ -223,97 +223,97 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="card-modern card-hover glass group rounded-2xl p-4 sm:p-5"
+      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md dark:border-neutral-800/60 dark:bg-neutral-900"
     >
-<div className="flex items-start justify-between gap-3">
-          <div className="min-w-0 flex-1">
-            <div className="flex min-w-0 items-center gap-2.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300">
-                <SourceIcon className="h-4 w-4" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="truncate font-semibold text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
-                <p className="truncate text-xs text-neutral-500 dark:text-neutral-400">
-                  {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
-                </p>
-              </div>
+      {/* Cover */}
+      <div className="relative flex h-28 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 dark:from-teal-950/20 dark:to-emerald-950/20 sm:h-32">
+        <SourceIcon className="h-9 w-9 text-teal-300 dark:text-teal-600" />
+        {skill.progress === 100 && (
+          <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
+            <Check className="h-4 w-4 text-white" />
+          </div>
+        )}
+        <div className="absolute right-3 top-3 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 max-sm:opacity-100">
+          {skill.progress !== 100 && (
+            <>
+              <button
+                onClick={() => setEditOpen(true)}
+                aria-label="Edit skill"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+              </button>
+              <button
+                onClick={() => deleteSkill(skill.id)}
+                aria-label="Delete skill"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </button>
+            </>
+          )}
+        </div>
+        <div className="absolute bottom-3 left-3">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-900/90 dark:text-neutral-300">
+            {sourceConfig[skill.source].label}
+          </span>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="p-4 sm:p-5">
+        <h3 className="truncate text-base font-semibold tracking-tight text-neutral-900 dark:text-neutral-50">{skill.name}</h3>
+        <p className="mt-0.5 truncate text-xs text-neutral-500 dark:text-neutral-400">{skill.sourceDetail}</p>
+        <p className="mt-2 text-xs text-neutral-400 dark:text-neutral-500">
+          {formatSkillDate(skill.startDate)} <span className="text-neutral-300 dark:text-neutral-600">&rarr;</span> {formatSkillDate(skill.endDate)}
+        </p>
+
+        <div className="mt-3 space-y-2.5 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
+          <div className="flex-1">
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
+              <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.progress}%</span>
+            </div>
+            <div className="relative mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              <motion.div
+                className="absolute inset-y-0 left-0 rounded-full bg-neutral-900 dark:bg-neutral-50"
+                initial={{ width: 0 }}
+                animate={{ width: `${skill.progress}%` }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+              />
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-1">
-          <button
-            onClick={() => setEditOpen(true)}
-            aria-label="Edit skill"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 opacity-0 transition-all hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
-          >
-            <Pencil className="h-3.5 w-3.5" />
-          </button>
-          <button
-            onClick={() => deleteSkill(skill.id)}
-            aria-label="Delete skill"
-            className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-red-950/50"
-          >
-            <Trash2 className="h-3.5 w-3.5" />
-          </button>
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
+              onClick={() => updateProgress(skill.id, Math.max(0, skill.progress - 10))}
+            >
+              -10
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
+              onClick={() => updateProgress(skill.id, Math.min(100, skill.progress + 10))}
+            >
+              +10
+            </Button>
+          </div>
         </div>
-      </div>
 
-      <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-neutral-500 dark:text-neutral-400">
-        <span className="whitespace-nowrap">{formatSkillDate(skill.startDate)}</span>
-        <span className="text-neutral-300 dark:text-neutral-600">&rarr;</span>
-        <span className="whitespace-nowrap">{formatSkillDate(skill.endDate)}</span>
-        {skill.notes && (
-          <>
-            <span className="text-neutral-300 dark:text-neutral-600">&middot;</span>
-            <span className="truncate">{skill.notes}</span>
-          </>
+        {skill.progress === 100 && (
+          <Button
+            onClick={() => completeSkill(skill.id)}
+            className="mt-3 h-10 w-full gap-2"
+            size="sm"
+          >
+            <Check className="h-4 w-4" />
+            Mark as Complete
+          </Button>
         )}
       </div>
-
-      <div className="mt-3 space-y-2.5 sm:flex sm:items-center sm:gap-3 sm:space-y-0">
-        <div className="flex-1">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-neutral-500 dark:text-neutral-400">Progress</span>
-            <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.progress}%</span>
-          </div>
-          <div className="relative mt-1.5 h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-            <motion.div
-              className="absolute inset-y-0 left-0 rounded-full bg-neutral-900 dark:bg-neutral-50"
-              initial={{ width: 0 }}
-              animate={{ width: `${skill.progress}%` }}
-              transition={{ duration: 0.4, ease: "easeOut" }}
-            />
-          </div>
-        </div>
-        <div className="flex w-full items-center gap-2 sm:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
-            onClick={() => updateProgress(skill.id, Math.max(0, skill.progress - 10))}
-          >
-            -10
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-9 flex-1 gap-1.5 text-xs sm:w-auto sm:flex-none sm:px-2.5"
-            onClick={() => updateProgress(skill.id, Math.min(100, skill.progress + 10))}
-          >
-            +10
-          </Button>
-        </div>
-      </div>
-
-      {skill.progress === 100 && (
-        <Button
-          onClick={() => completeSkill(skill.id)}
-          className="mt-3 h-10 w-full gap-2"
-          size="sm"
-        >
-          <Check className="h-4 w-4" />
-          Mark as Complete
-        </Button>
-      )}
 
       <EditSkillDialog skill={skill} open={editOpen} onOpenChange={setEditOpen} />
     </motion.div>

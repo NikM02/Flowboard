@@ -24,6 +24,30 @@ const typeLabel: Record<ChallengeType, string> = {
   "21": "21 Days", "30": "30 Days", "90": "90 Days",
 }
 
+function ChallengeTodayButton({ challenge, className }: { challenge: Challenge; className?: string }) {
+  const { toggleDay } = useChallengeStore()
+  const todayDate = format(new Date(), "yyyy-MM-dd")
+  const done = challenge.days.some((d) => d.date === todayDate && d.completed)
+  return (
+    <button
+      onClick={() => {
+        const todayDay = challenge.days.find((d) => d.date === todayDate)
+        if (todayDay) toggleDay(challenge.id, todayDay.day)
+      }}
+      className={cn(
+        "flex items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-all",
+        done
+          ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
+          : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500",
+        className ?? "h-9 sm:h-7 px-2.5 sm:px-2"
+      )}
+    >
+      {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-sm border border-current" />}
+      Today
+    </button>
+  )
+}
+
 function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c: Challenge) => void }) {
   const { toggleDay, getProgress, deleteChallenge } = useChallengeStore()
   const progress = getProgress(challenge.id)
@@ -42,7 +66,12 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
             <Icon className="h-4 w-4 text-neutral-600 dark:text-neutral-400" />
           </div>
           <div className="min-w-0">
-            <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{challenge.title}</h4>
+            <div className="flex items-center gap-1.5 min-w-0">
+              <h4 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50 truncate">{challenge.title}</h4>
+              <span className="shrink-0 rounded-full bg-neutral-100 px-1.5 py-0.5 text-[9px] font-medium text-neutral-500 sm:hidden dark:bg-neutral-800 dark:text-neutral-400">
+                {typeLabel[challenge.type]}
+              </span>
+            </div>
             {challenge.description && <p className="text-[11px] sm:text-xs text-neutral-400 truncate">{challenge.description}</p>}
             <p className="text-[9px] sm:text-[10px] text-neutral-400 mt-0.5">
               {format(new Date(challenge.startDate), "MMM d")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
@@ -64,7 +93,8 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-1.5 sm:gap-2 mb-2 sm:mb-3">
+      {/* Desktop stat tiles */}
+      <div className="mb-2 hidden grid-cols-3 gap-1.5 sm:mb-3 sm:grid sm:gap-2">
         <div className="rounded-lg bg-neutral-50 p-1.5 sm:p-2 text-center dark:bg-neutral-900">
           <p className="text-base sm:text-lg font-bold text-neutral-900 dark:text-neutral-50">{completed}</p>
           <p className="text-[9px] sm:text-[10px] text-neutral-400">Done</p>
@@ -79,29 +109,27 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
         </div>
       </div>
 
-      <Progress value={progress} className="h-1 mb-2 sm:h-1.5 sm:mb-3" />
+      {/* Compact progress (mobile) */}
+      <div className="mb-3 sm:hidden">
+        <div className="mb-1.5 flex items-center justify-between text-xs">
+          <span className="font-medium text-neutral-500 dark:text-neutral-400">
+            {completed}/{challenge.days.length} days done
+          </span>
+          <span className="font-semibold text-neutral-700 dark:text-neutral-300">{progress}%</span>
+        </div>
+        <Progress value={progress} className="h-1.5" />
+      </div>
 
-      <div className="flex items-center justify-between mb-2 sm:mb-3">
-        <span className="text-[9px] sm:text-[10px] font-medium text-neutral-400 uppercase">{typeLabel[challenge.type]}</span>
-        <button
-          onClick={() => {
-            const todayDay = challenge.days.find((d) => d.date === format(new Date(), "yyyy-MM-dd"))
-            if (todayDay) toggleDay(challenge.id, todayDay.day)
-          }}
-          className={cn(
-            "flex items-center justify-center rounded-lg border text-xs font-medium transition-all h-9 sm:h-7 px-2.5 sm:px-2 gap-1",
-            challenge.days.some((d) => d.date === format(new Date(), "yyyy-MM-dd") && d.completed)
-              ? "bg-emerald-50 border-emerald-300 text-emerald-700 dark:bg-emerald-950/30 dark:border-emerald-600 dark:text-emerald-400"
-              : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
-          )}
-        >
-          {challenge.days.some((d) => d.date === format(new Date(), "yyyy-MM-dd") && d.completed) ? (
-            <Check className="h-3 w-3" strokeWidth={3} />
-          ) : (
-            <span className="h-3 w-3 rounded-sm border border-current" />
-          )}
-          Today
-        </button>
+      {/* Desktop progress + today row */}
+      <Progress value={progress} className="hidden h-1.5 mb-2 sm:block sm:mb-3" />
+      <div className="hidden items-center justify-between mb-2 sm:mb-3 sm:flex">
+        <span className="text-[10px] font-medium text-neutral-400 uppercase">{typeLabel[challenge.type]}</span>
+        <ChallengeTodayButton challenge={challenge} />
+      </div>
+
+      {/* Mobile today row */}
+      <div className="mb-3 sm:hidden">
+        <ChallengeTodayButton challenge={challenge} className="h-9 w-full" />
       </div>
 
       <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
@@ -111,38 +139,41 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
 function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; toggleDay: (id: string, day: number) => void }) {
   const total = challenge.days.length
-  const cols = total === 21 ? 7 : 10
   const todayDate = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className={cn("grid grid-cols-7 gap-1 sm:gap-1.5", cols === 7 ? "" : "sm:grid-cols-10")}>
-        {challenge.days.map((d) => {
-          const isToday = d.date === todayDate
-          return (
-            <button
-              key={d.day}
-              onClick={() => toggleDay(challenge.id, d.day)}
-              className={cn(
-                "flex items-center justify-center rounded-lg border-2 font-semibold text-xs transition-all relative",
-                cols === 7 ? "h-9 sm:h-10" : "h-9",
-                d.completed
-                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
-                  : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
-                isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
-              )}
-              title={`Day ${d.day} - ${d.date}${isToday ? " (Today)" : ""}`}
-            >
-              {d.completed ? <Check className={cn(cols === 7 ? "h-4 w-4" : "h-4 w-4")} strokeWidth={3} /> : <span>{d.day}</span>}
-              {isToday && !d.completed && (
-                <span className="absolute -top-1 -right-1 flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </div>
+    <div
+      className={cn(
+        "flex items-center gap-1 overflow-x-auto sm:grid sm:items-stretch sm:gap-1.5 sm:overflow-visible",
+        total === 21 ? "sm:grid-cols-7" : "sm:grid-cols-10"
+      )}
+    >
+      {challenge.days.map((d) => {
+        const isToday = d.date === todayDate
+        return (
+          <button
+            key={d.day}
+            onClick={() => toggleDay(challenge.id, d.day)}
+            className={cn(
+              "relative flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border-2 text-xs font-semibold transition-all sm:h-9 sm:w-auto",
+              d.completed
+                ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
+                : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-900/30 dark:bg-neutral-900 dark:border-neutral-700 dark:hover:border-neutral-50/30",
+              isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 dark:ring-offset-neutral-950"
+            )}
+            title={`Day ${d.day} - ${d.date}${isToday ? " (Today)" : ""}`}
+          >
+            {d.completed ? <Check className="h-4 w-4" strokeWidth={3} /> : <span>{d.day}</span>}
+            {isToday && !d.completed && (
+              <span className="absolute -top-1 -right-1 flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+              </span>
+            )}
+          </button>
+        )
+      })}
+    </div>
   )
 }
 
