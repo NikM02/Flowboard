@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from "framer-motion"
 import { format } from "date-fns"
 import {
   Wallet, TrendingUp, BarChart3, PieChart as PieChartIcon,
-  Plus, Trash2, Pencil,
+  Plus, Trash2, Pencil, Archive, Download,
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend, CartesianGrid,
@@ -25,9 +25,10 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { useFinanceStore } from "@/store/use-finance-store"
+import { downloadCSV } from "@/lib/csv"
 import type { ExpenseCategory, IncomeSource } from "@/types"
 
-type FinanceTab = "overview" | "income" | "expenses" | "budget"
+type FinanceTab = "overview" | "income" | "expenses" | "budget" | "archive"
 
 const expenseCategories: { value: ExpenseCategory; label: string }[] = [
   { value: "food", label: "Food" },
@@ -96,6 +97,7 @@ const tabs: { key: FinanceTab; label: string; icon: typeof Wallet }[] = [
   { key: "income", label: "Income", icon: TrendingUp },
   { key: "expenses", label: "Expenses", icon: Wallet },
   { key: "budget", label: "Budget", icon: PieChartIcon },
+  { key: "archive", label: "Archive", icon: Archive },
 ]
 
 // ─── Overview Tab ─────────────────────────────────────────
@@ -745,6 +747,112 @@ function BudgetTab() {
   )
 }
 
+// ─── Archive Tab ──────────────────────────────────────────
+
+function ArchiveTab() {
+  const { incomes, expenses, budgets, sips, stocks, mutualFunds, clearAll } = useFinanceStore()
+  const [confirmOpen, setConfirmOpen] = useState(false)
+
+  const totalIncome = incomes.reduce((s, i) => s + i.amount, 0)
+  const totalExpense = expenses.reduce((s, e) => s + e.amount, 0)
+  const invested = sips.reduce((s, si) => s + si.investedAmount, 0) +
+    stocks.reduce((s, st) => s + st.buyPrice * st.quantity, 0) +
+    mutualFunds.reduce((s, mf) => s + mf.investedAmount, 0)
+
+  const handleExport = () => {
+    const header = [
+      "Record", "Name", "Date", "Month", "Category", "Source", "Description", "Amount",
+      "Limit", "Quantity", "Buy Price", "Current Price", "Units", "NAV", "Frequency",
+      "Start Date", "End Date", "Expected Return %", "Invested", "Current Value", "Paid", "Notes",
+    ]
+    const rows: (string | number)[][] = []
+    for (const inc of incomes) {
+      rows.push(["Income", "", inc.date, "", "", inc.source, inc.description, inc.amount])
+    }
+    for (const e of expenses) {
+      rows.push(["Expense", "", e.date, "", e.category, "", e.description, e.amount])
+    }
+    for (const b of budgets) {
+      rows.push(["Budget", "", "", b.month, b.category, "", "", "", b.limit])
+    }
+    for (const si of sips) {
+      rows.push(["SIP", si.name, si.startDate, "", "", "", "", si.amount, "", "", "", "", "", "", si.frequency, si.startDate, si.endDate ?? "", si.expectedReturn, si.investedAmount, si.currentValue])
+    }
+    for (const st of stocks) {
+      rows.push(["Stock", st.name, st.startDate, "", st.sector, st.ticker, "", "", "", st.quantity, st.buyPrice, st.currentPrice, "", "", "", st.startDate, st.endDate, "", "", "", st.paid ? "Yes" : "No"])
+    }
+    for (const mf of mutualFunds) {
+      rows.push(["Mutual Fund", mf.name, "", "", mf.fundHouse, "", "", "", "", "", "", "", mf.units, mf.nav, "", "", "", "", mf.investedAmount, mf.currentValue])
+    }
+    downloadCSV(`flowboard-finance-${new Date().toISOString().slice(0, 10)}.csv`, header, rows)
+  }
+
+  const stats = [
+    { label: "Incomes", value: incomes.length, sub: `₹${totalIncome.toLocaleString()}` },
+    { label: "Expenses", value: expenses.length, sub: `₹${totalExpense.toLocaleString()}` },
+    { label: "Budgets", value: budgets.length, sub: "" },
+    { label: "SIPs", value: sips.length, sub: `₹${invested.toLocaleString()} invested` },
+    { label: "Stocks", value: stocks.length, sub: "" },
+    { label: "Mutual Funds", value: mutualFunds.length, sub: "" },
+  ]
+
+  return (
+    <div className="space-y-4">
+      <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 dark:border-neutral-800/60 dark:bg-neutral-900">
+        <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">
+          <Archive className="h-4 w-4" /> Finance Archive
+        </h3>
+        <p className="mt-1.5 text-sm text-neutral-500 dark:text-neutral-400">
+          Export every finance record to a CSV file, or completely clear the finance data.
+        </p>
+
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {stats.map((s) => (
+            <div key={s.label} className="rounded-2xl border border-neutral-200/60 bg-neutral-50/60 p-3 dark:border-neutral-800/60 dark:bg-neutral-900/60">
+              <p className="truncate text-[10px] font-medium uppercase tracking-wide text-neutral-400">{s.label}</p>
+              <p className="mt-0.5 text-lg font-bold text-neutral-900 dark:text-neutral-50">{s.value}</p>
+              {s.sub && <p className="truncate text-[10px] text-neutral-400">{s.sub}</p>}
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+          <Button onClick={handleExport} disabled={totalIncome + totalExpense + invested === 0 && sips.length + stocks.length + mutualFunds.length + budgets.length === 0} className="gap-2">
+            <Download className="h-4 w-4" /> Export all data (.csv)
+          </Button>
+          <Button variant="outline" onClick={() => setConfirmOpen(true)} className="gap-2 text-red-500 hover:text-red-600">
+            <Trash2 className="h-4 w-4" /> Clear all finance data
+          </Button>
+        </div>
+      </div>
+
+      <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Clear all finance data?</DialogTitle>
+            <DialogDescription>
+              This permanently deletes every income, expense, budget, SIP, stock and mutual fund — on all devices. Make sure you've exported a backup first.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
+            <Button variant="outline" onClick={() => setConfirmOpen(false)}>Cancel</Button>
+            <Button
+              variant="destructive"
+              className="gap-2"
+              onClick={() => {
+                clearAll()
+                setConfirmOpen(false)
+              }}
+            >
+              <Trash2 className="h-4 w-4" /> Yes, clear everything
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  )
+}
+
 // ─── Main Finance Panel ───────────────────────────────────
 
 export function FinancePanel() {
@@ -786,6 +894,7 @@ export function FinancePanel() {
           {tab === "income" && <IncomeTab />}
           {tab === "expenses" && <ExpensesTab />}
           {tab === "budget" && <BudgetTab />}
+          {tab === "archive" && <ArchiveTab />}
         </motion.div>
       </AnimatePresence>
     </div>

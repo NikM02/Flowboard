@@ -39,6 +39,7 @@ type FinanceStore = {
   clearSIPs: () => void
   clearStocks: () => void
   clearMutualFunds: () => void
+  clearAll: () => void
 }
 
 export const useFinanceStore = create<FinanceStore>((set) => ({
@@ -126,4 +127,12 @@ export const useFinanceStore = create<FinanceStore>((set) => ({
   clearSIPs: () => set({ sips: [] }),
   clearStocks: () => set({ stocks: [] }),
   clearMutualFunds: () => set({ mutualFunds: [] }),
+  clearAll: () => set({
+    incomes: [],
+    expenses: [],
+    budgets: [],
+    sips: [],
+    stocks: [],
+    mutualFunds: [],
+  }),
 }))

@@ -16,6 +16,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select"
 import { useSkillStore } from "@/store/use-skill-store"
+import { downloadCSV } from "@/lib/csv"
 import type { SkillSource } from "@/types"
 
 const sourceConfig: Record<SkillSource, { label: string; icon: typeof Book }> = {
@@ -61,7 +62,7 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
             <Label htmlFor="create-skill-name">Skill name</Label>
             <Input id="create-skill-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. TypeScript" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="create-skill-source">Source</Label>
               <Select value={source} onValueChange={(v) => setSource(v as SkillSource)}>
@@ -85,7 +86,7 @@ function CreateSkillDialog({ open, onOpenChange }: { open: boolean; onOpenChange
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="create-skill-start-date">Start date</Label>
               <Input id="create-skill-start-date" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
@@ -153,7 +154,7 @@ function EditSkillDialog({
             <Label htmlFor="edit-skill-name">Skill name</Label>
             <Input id="edit-skill-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. TypeScript" />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="edit-skill-source">Source</Label>
               <Select value={source} onValueChange={(v) => setSource(v as SkillSource)}>
@@ -173,7 +174,7 @@ function EditSkillDialog({
               <Input id="edit-skill-source-detail" value={sourceDetail} onChange={(e) => setSourceDetail(e.target.value)} placeholder="Title, channel, name..." />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="edit-skill-start-date">Start date</Label>
               <Input id="edit-skill-start-date" type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
@@ -313,67 +314,79 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
 
 export function SkillPanel() {
   const [createOpen, setCreateOpen] = useState(false)
-  const [showArchive, setShowArchive] = useState(false)
-  const skills = useSkillStore((s) => s.skills)
+  const [tab, setTab] = useState<"active" | "archive">("active")
   const { getActive, getCompleted, clearCompleted } = useSkillStore()
 
   const active = getActive()
   const completed = getCompleted()
 
   const handleExport = () => {
-    const data = completed.map((s) => ({
-      Name: s.name,
-      Source: sourceConfig[s.source].label,
-      "Source Detail": s.sourceDetail,
-      "Start Date": s.startDate,
-      "End Date": s.endDate,
-      Progress: `${s.progress}%`,
-      Notes: s.notes,
-    }))
-    const ws = { sheet: data }
-    import("xlsx").then((XLSX) => {
-      const wb = XLSX.utils.book_new()
-      const sheet = XLSX.utils.json_to_sheet(data)
-      XLSX.utils.book_append_sheet(wb, sheet, "Skills")
-      XLSX.writeFile(wb, "skill-archive.xlsx")
-    })
+    const header = ["Name", "Source", "Source Detail", "Start Date", "End Date", "Progress %", "Notes"]
+    const rows = completed.map((s) => [
+      s.name,
+      sourceConfig[s.source].label,
+      s.sourceDetail,
+      s.startDate,
+      s.endDate,
+      `${s.progress}%`,
+      s.notes,
+    ])
+    downloadCSV(`skill-archive-${new Date().toISOString().slice(0, 10)}.csv`, header, rows)
   }
 
   return (
     <div>
-      <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-2 self-start">
-          <Link href="/skills/bucket-list">
-            <Button variant="outline" className="gap-2">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row">
+          <Link href="/skills/bucket-list" className="w-full sm:w-auto">
+            <Button variant="outline" className="w-full gap-2 sm:w-auto">
               <List className="h-4 w-4" />
               Bucket List
             </Button>
           </Link>
-          <Button onClick={() => setCreateOpen(true)} className="gap-2">
+          <Button onClick={() => setCreateOpen(true)} className="w-full gap-2 sm:w-auto">
             <Plus className="h-4 w-4" />
             New Skill
           </Button>
         </div>
+
+        <div className="flex gap-1 self-start rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800 sm:self-auto">
+          {(["active", "archive"] as const).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={cn(
+                "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
+                tab === t
+                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
+                  : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+              )}
+            >
+              {t === "archive" && <Archive className="h-3.5 w-3.5" />}
+              {t} ({t === "active" ? active.length : completed.length})
+            </button>
+          ))}
+        </div>
       </div>
 
-      {active.length === 0 && completed.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800"
-        >
-          <GraduationCap className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">No skills yet</p>
-          <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
-            Start tracking something you're learning
-          </p>
-          <Button onClick={() => setCreateOpen(true)} variant="outline" className="mt-4 gap-2">
-            <Plus className="h-4 w-4" />
-            Add your first skill
-          </Button>
-        </motion.div>
-      ) : (
-        <>
+      {tab === "active" ? (
+        active.length === 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800"
+          >
+            <GraduationCap className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
+            <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">No skills yet</p>
+            <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
+              Start tracking something you're learning
+            </p>
+            <Button onClick={() => setCreateOpen(true)} variant="outline" className="mt-4 gap-2">
+              <Plus className="h-4 w-4" />
+              Add your first skill
+            </Button>
+          </motion.div>
+        ) : (
           <div className="grid gap-4 sm:grid-cols-2">
             <AnimatePresence mode="popLayout">
               {active.map((skill) => (
@@ -381,57 +394,59 @@ export function SkillPanel() {
               ))}
             </AnimatePresence>
           </div>
-
-          {completed.length > 0 && (
-            <div className="mt-10">
-              <button
-                onClick={() => setShowArchive(!showArchive)}
-                className="flex items-center gap-2 text-sm font-medium text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50"
-              >
-                <Archive className="h-4 w-4" />
-                Completed Skills ({completed.length})
-              </button>
-
-              <AnimatePresence>
-                {showArchive && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="mt-4 overflow-hidden"
-                  >
-                    <div className="mb-3 flex gap-2">
-                      <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
-                        <Download className="h-3.5 w-3.5" />
-                        Export
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Clear
-                      </Button>
-                    </div>
-                    <div className="grid gap-3 sm:grid-cols-2">
-                      {completed.map((skill) => (
-                        <div
-                          key={skill.id}
-                          className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Check className="h-4 w-4 text-green-500" />
-                            <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.name}</span>
-                          </div>
-                          <p className="mt-1 text-xs text-neutral-500">
-                            {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-          )}
-        </>
+        )
+      ) : completed.length === 0 ? (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 text-center dark:border-neutral-800"
+        >
+          <Archive className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
+          <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">Archive is empty</p>
+          <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
+            Skills you mark as complete will show up here.
+          </p>
+        </motion.div>
+      ) : (
+        <div>
+          <div className="mb-3 flex flex-col gap-2 sm:flex-row">
+            <Button variant="outline" size="sm" onClick={handleExport} className="gap-2">
+              <Download className="h-3.5 w-3.5" />
+              Export (.csv)
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { if (confirm(`Clear all ${completed.length} completed skills?`)) clearCompleted() }}
+              className="gap-2 text-red-500 hover:text-red-600"
+            >
+              <Trash2 className="h-3.5 w-3.5" />
+              Clear all
+            </Button>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <AnimatePresence mode="popLayout">
+              {completed.map((skill) => (
+                <div
+                  key={skill.id}
+                  className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 dark:border-neutral-800 dark:bg-neutral-900/50"
+                >
+                  <div className="flex items-center gap-2">
+                    <Check className="h-4 w-4 shrink-0 text-green-500" />
+                    <span className="font-medium text-neutral-700 dark:text-neutral-300">{skill.name}</span>
+                  </div>
+                  <p className="mt-1 truncate text-xs text-neutral-500">
+                    {sourceConfig[skill.source].label} &middot; {skill.sourceDetail}
+                  </p>
+                  <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[10px] text-neutral-400">
+                    <span>{skill.startDate} &rarr; {skill.endDate}</span>
+                    <span className="font-semibold text-green-600 dark:text-green-400">{skill.progress}%</span>
+                  </div>
+                </div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </div>
       )}
 
       <CreateSkillDialog open={createOpen} onOpenChange={setCreateOpen} />
