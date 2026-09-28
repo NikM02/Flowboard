@@ -4,9 +4,10 @@ import { useMemo, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   ChevronDown, CheckCircle2, Circle, Calendar,
-  Clock, ListChecks, Edit3, Trash2,
+  Clock, ListChecks, Edit3, Trash2, Plus, X,
 } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
+import { Input } from "@/components/ui/input"
 import { useTaskStore } from "@/store/use-task-store"
 import { formatDate } from "@/lib/utils"
 import { getTaskStatus, TASK_STATUS_STYLES } from "@/lib/task-status"
@@ -26,32 +27,42 @@ const PROJECT_DOTS = [
 ]
 
 function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
-  const { toggleSubtask } = useTaskStore()
+  const { toggleSubtask, removeSubtask } = useTaskStore()
 
   return (
-    <button
-      onClick={() => toggleSubtask(taskId, subtask.id)}
-      className="group flex shrink-0 items-center gap-2 rounded-lg px-2 py-1.5 text-left transition-colors hover:bg-neutral-100/70 dark:hover:bg-neutral-800/70"
-    >
-      <span className={cn("shrink-0 transition-colors", subtask.completed ? "text-green-500" : "text-neutral-300 dark:text-neutral-600")}>
-        {subtask.completed ? (
-          <CheckCircle2 className="h-4 w-4" />
-        ) : (
-          <Circle className="h-4 w-4" />
-        )}
-      </span>
-      <span className={cn(
-        "truncate text-xs",
-        subtask.completed ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-600 dark:text-neutral-300"
-      )}>
-        {subtask.title}
-      </span>
-    </button>
+    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70 dark:hover:bg-neutral-800/70">
+      <button
+        onClick={() => toggleSubtask(taskId, subtask.id)}
+        className="flex min-w-0 flex-1 items-center gap-2 text-left"
+      >
+        <span className={cn("shrink-0 transition-colors", subtask.completed ? "text-green-500" : "text-neutral-300 dark:text-neutral-600")}>
+          {subtask.completed ? (
+            <CheckCircle2 className="h-4 w-4" />
+          ) : (
+            <Circle className="h-4 w-4" />
+          )}
+        </span>
+        <span className={cn(
+          "truncate text-xs",
+          subtask.completed ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-600 dark:text-neutral-300"
+        )}>
+          {subtask.title}
+        </span>
+      </button>
+      <button
+        onClick={() => removeSubtask(taskId, subtask.id)}
+        className="shrink-0 rounded p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 dark:text-neutral-600"
+        aria-label="Remove subtask"
+      >
+        <X className="h-3 w-3" />
+      </button>
+    </div>
   )
 }
 
 function TaskNode({ task, index }: { task: Task; index: number }) {
-  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask, requestComplete } = useTaskStore()
+  const { setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen, updateTask, addSubtask, requestComplete } = useTaskStore()
+  const [newSub, setNewSub] = useState("")
   const priority = priorityConfig[task.priority]
   const doneCount = task.subtasks.filter((s) => s.completed).length
   const status = getTaskStatus(task)
@@ -59,6 +70,13 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
   const handleToggleComplete = () => {
     if (task.completed) updateTask(task.id, { completed: false })
     else requestComplete(task.id)
+  }
+
+  const addSub = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!newSub.trim()) return
+    addSubtask(task.id, newSub.trim())
+    setNewSub("")
   }
 
   return (
@@ -139,19 +157,37 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
               ))}
             </div>
           )}
+
+          {/* Quick add subtask */}
+          <form onSubmit={addSub} className="mt-1.5 flex items-center gap-1.5">
+            <Input
+              value={newSub}
+              onChange={(e) => setNewSub(e.target.value)}
+              placeholder="+ Add subtask…"
+              className="h-7 min-w-0 flex-1 rounded-md text-xs"
+            />
+            <button
+              type="submit"
+              disabled={!newSub.trim()}
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 dark:bg-white dark:text-neutral-900"
+              aria-label="Add subtask"
+            >
+              <Plus className="h-3.5 w-3.5" />
+            </button>
+          </form>
         </div>
 
         {/* Actions */}
         <div className="flex shrink-0 justify-end gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:hover:bg-neutral-800 sm:opacity-0"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-950/50 sm:opacity-0"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-red-950/50"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -173,6 +209,7 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
   const pct = groupTasks.length > 0 ? Math.round((done / groupTasks.length) * 100) : 0
   const allDone = done === groupTasks.length
   const totalPoints = groupTasks.reduce((s, t) => s + (t.storyPoints ?? 0), 0)
+  const totalSubs = groupTasks.reduce((n, t) => n + t.subtasks.length, 0)
   const icon = getProjectIcon(name)
 
   const toggleAll = () => {
@@ -217,7 +254,9 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
               {name}
             </span>
             <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">
-              {done}/{groupTasks.length} done · {pct}%{totalPoints > 0 ? ` · ${totalPoints} pts` : ""}
+              {done}/{groupTasks.length} done · {pct}%
+              {totalSubs > 0 ? ` · ${totalSubs} subtasks` : ""}
+              {totalPoints > 0 ? ` · ${totalPoints} pts` : ""}
             </span>
           </span>
           <span className="hidden w-24 sm:block">

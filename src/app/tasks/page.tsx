@@ -4,14 +4,14 @@ import { useState, useCallback, Suspense, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import {
-  Download, Trash2, Plus, Archive, ListTodo, LayoutGrid, List,
-  FolderKanban, BarChart3, ChevronDown, X, FolderPlus, ListTree,
-  Zap, Flame, Minus,
+  Download, Trash2, Plus, Archive, ListTodo,
+  FolderKanban, BarChart3, ChevronDown, FolderPlus, ListTree,
 } from "lucide-react"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { StatsCards } from "@/components/dashboard/stats-cards"
 import { Filters } from "@/components/dashboard/filters"
-import { TaskCardView } from "@/components/dashboard/task-card-view"
+import { TodayPanel } from "@/components/dashboard/today-panel"
+import { TaskCheckList } from "@/components/dashboard/task-check-list"
 import { TaskListView } from "@/components/dashboard/task-list-view"
 import { TaskTreeView } from "@/components/dashboard/task-tree-view"
 import { TaskCharts } from "@/components/dashboard/task-charts"
@@ -26,7 +26,6 @@ import {
 } from "@/components/ui/select"
 import { useTaskStore } from "@/store/use-task-store"
 import { usePageTitleStore } from "@/store/use-page-title-store"
-import { useMediaQuery } from "@/hooks/use-media-query"
 import { cn } from "@/lib/shadcn-utils"
 import { PROJECT_ICONS, defaultProjectColor } from "@/lib/project-icons"
 import type { Task, Priority } from "@/types"
@@ -44,76 +43,7 @@ const PROJECT_GRADIENTS = [
   "from-red-500 to-orange-400",
 ]
 
-/* ── Focus slots: 3 urgent / 2 medium / 3 low ────────── */
-const FOCUS_SLOTS: { priority: Priority; label: string; capacity: number; color: string; bar: string; icon: typeof Flame }[] = [
-  { priority: "high", label: "Urgent", capacity: 3, color: "text-red-500", bar: "bg-gradient-to-r from-red-500 to-orange-400", icon: Flame },
-  { priority: "medium", label: "Medium", capacity: 2, color: "text-amber-500", bar: "bg-gradient-to-r from-amber-500 to-yellow-400", icon: Zap },
-  { priority: "low", label: "Low", capacity: 3, color: "text-blue-500", bar: "bg-gradient-to-r from-blue-500 to-cyan-400", icon: Minus },
-]
-
-function FocusSlots() {
-  const tasks = useTaskStore((s) => s.tasks)
-  const openCreateModal = useTaskStore((s) => s.openCreateModal)
-  const setSelectedTask = useTaskStore((s) => s.setSelectedTask)
-  const setIsEditSheetOpen = useTaskStore((s) => s.setIsEditSheetOpen)
-
-  return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-      {FOCUS_SLOTS.map((slot) => {
-        const active = tasks.filter((t) => !t.completed && t.priority === slot.priority)
-        const full = active.length >= slot.capacity
-        const Icon = slot.icon
-        return (
-          <div
-            key={slot.priority}
-            className="rounded-2xl border border-neutral-200 bg-white p-3.5 dark:border-neutral-800 dark:bg-neutral-900"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <span className={cn("flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide", slot.color)}>
-                <Icon className="h-3.5 w-3.5" /> {slot.label}
-              </span>
-              <span className="text-[11px] font-semibold tabular-nums text-neutral-500 dark:text-neutral-400">
-                {active.length}/{slot.capacity} slots
-              </span>
-            </div>
-            <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
-              <div
-                className={cn("h-full rounded-full transition-all", slot.bar)}
-                style={{ width: `${Math.min(100, (active.length / slot.capacity) * 100)}%` }}
-              />
-            </div>
-            {active.length > 0 && (
-              <div className="mt-2.5 space-y-1">
-                {active.slice(0, slot.capacity).map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => { setSelectedTask(t); setIsEditSheetOpen(true) }}
-                    className="block w-full truncate text-left text-[11px] text-neutral-500 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-200"
-                    title={`${t.title} — tap to edit`}
-                  >
-                    • {t.title}{t.storyPoints != null ? ` (${t.storyPoints} pts)` : ""}
-                  </button>
-                ))}
-                {active.length > slot.capacity && (
-                  <p className="text-[10px] font-medium text-neutral-400">+{active.length - slot.capacity} over capacity</p>
-                )}
-              </div>
-            )}
-            <Button
-              variant={full ? "outline" : "secondary"}
-              size="sm"
-              onClick={() => openCreateModal(slot.priority)}
-              className="mt-2.5 w-full gap-1.5 rounded-xl text-xs"
-            >
-              <Plus className="h-3.5 w-3.5" />
-              {slot.priority === "high" ? "Push urgent task" : `Add ${slot.label.toLowerCase()} task`}
-            </Button>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
+/* ── Today panel — daily 3 / 2 / 3 planner ────────────── */
 
 function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (o: boolean) => void }) {
   const { addProject } = useTaskStore()
@@ -298,9 +228,27 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                 {preview.length > 0 && (
                   <div className="mt-3 space-y-1">
                     {preview.map((t: Task) => (
-                      <div key={t.id} className="flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
-                        <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", t.completed ? "bg-emerald-500" : "bg-amber-400")} />
-                        <span className="truncate">{t.title}</span>
+                      <div key={t.id}>
+                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                          <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", t.completed ? "bg-emerald-500" : "bg-amber-400")} />
+                          <span className="truncate">{t.title}</span>
+                          {t.subtasks.length > 0 && (
+                            <span className="ml-auto shrink-0 rounded bg-neutral-100 px-1 py-px text-[9px] font-semibold text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+                              {t.subtasks.filter((x) => x.completed).length}/{t.subtasks.length}
+                            </span>
+                          )}
+                        </div>
+                        {t.subtasks.length > 0 && (
+                          <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-neutral-100 pl-2 dark:border-neutral-800">
+                            {t.subtasks.slice(0, 2).map((sb) => (
+                              <div key={sb.id} className="flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
+                                <span className={cn("h-1 w-1 shrink-0 rounded-full", sb.completed ? "bg-emerald-500" : "bg-neutral-300 dark:bg-neutral-600")} />
+                                <span className="truncate">{sb.title}</span>
+                              </div>
+                            ))}
+                            {t.subtasks.length > 2 && <p className="pl-2 text-[9px] text-neutral-400">+{t.subtasks.length - 2} more</p>}
+                          </div>
+                        )}
                       </div>
                     ))}
                     {s.total > 3 && <p className="pl-3 text-[10px] text-neutral-400">+{s.total - 3} more</p>}
@@ -343,9 +291,7 @@ function TasksPageContent() {
   const searchParams = useSearchParams()
   const viewParam = searchParams.get("view")
   const view: ViewMode = viewParam === "projects" ? "projects" : viewParam === "archive" ? "archive" : viewParam === "tree" ? "tree" : "tasks"
-  const [taskViewMode, setTaskViewMode] = useState<"card" | "list">("card")
-  const isMobile = useMediaQuery("(max-width: 768px)")
-  const [analyticsOpen, setAnalyticsOpen] = useState(false)
+  const [analyticsOpen, setAnalyticsOpen] = useState(true)
   const { setFilterStatus, clearCompleted, openCreateModal, projectFilter, setProjectFilter, getProjects } = useTaskStore()
   const projects = getProjects()
 
@@ -441,30 +387,6 @@ function TasksPageContent() {
                 </SelectContent>
               </Select>
             )}
-            <div className="hidden gap-1 rounded-lg bg-neutral-100 p-0.5 dark:bg-neutral-800 md:flex">
-              <button
-                onClick={() => setTaskViewMode("card")}
-                className={cn(
-                  "rounded-md p-1.5 transition-all",
-                  taskViewMode === "card"
-                    ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                    : "text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-                )}
-              >
-                <LayoutGrid className="h-4 w-4" />
-              </button>
-              <button
-                onClick={() => setTaskViewMode("list")}
-                className={cn(
-                  "rounded-md p-1.5 transition-all",
-                  taskViewMode === "list"
-                    ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                    : "text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-300"
-                )}
-              >
-                <List className="h-4 w-4" />
-              </button>
-            </div>
             <Filters />
             <Button onClick={() => openCreateModal()} className="ml-auto gap-2 rounded-xl">
               <Plus className="h-4 w-4" /> New Task
@@ -483,13 +405,13 @@ function TasksPageContent() {
           >
             {view === "tasks" && (
               <div className="space-y-6">
-                {/* Focus slots — urgent push board with 3 / 2 / 3 capacity */}
-                <FocusSlots />
+                {/* Today — daily 3 urgent / 2 focus / 3 easy planner */}
+                <TodayPanel />
 
-                {/* Tasks first — the focus of the page */}
-                {!isMobile && taskViewMode === "list" ? <TaskListView /> : <TaskCardView />}
+                {/* Tasks — checkbox tree, subtasks nested under each task */}
+                <TaskCheckList />
 
-                {/* Analytics — collapsed by default so tasks stay front and center */}
+                {/* Analytics — colored charts, responsive on mobile */}
                 <div className="card-modern overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
                   <button
                     onClick={() => setAnalyticsOpen((v) => !v)}

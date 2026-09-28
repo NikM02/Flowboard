@@ -81,15 +81,16 @@ export function StatsCards() {
                   suffix={isProgress ? "%" : undefined}
                 />
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-                <config.icon className="h-4 w-4 text-neutral-600 dark:text-neutral-300" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px]" style={{ backgroundColor: `${config.color}1a` }}>
+                <config.icon className="h-4 w-4" style={{ color: config.color }} />
               </div>
             </div>
             <div className="mt-2">
               {isProgress ? (
                 <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                   <motion.div
-                    className="absolute inset-y-0 left-0 rounded-full bg-blue-600 dark:bg-blue-500"
+                    className="absolute inset-y-0 left-0 rounded-full"
+                    style={{ background: `linear-gradient(90deg, ${config.color}, ${config.gauge[1]})` }}
                     initial={{ width: 0 }}
                     animate={{ width: `${stats.progress}%` }}
                     transition={{ duration: 1, delay: 0.3 }}
