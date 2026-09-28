@@ -1,5 +1,7 @@
 import { create } from "zustand"
 
+export type NotificationIcon = "add" | "edit" | "delete" | "done" | "info"
+
 export type Notification = {
   id: string
   title: string
@@ -7,6 +9,7 @@ export type Notification = {
   time: number
   read: boolean
   href?: string
+  icon?: NotificationIcon
 }
 
 let counter = 0

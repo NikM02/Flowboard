@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Menu, Sun, Moon, LogOut } from "lucide-react"
-import { NotificationCenter } from "./notification-center"
+import { NotificationBell } from "./notification-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { useThemeStore } from "@/store/use-theme-store"
 import { usePageTitleStore } from "@/store/use-page-title-store"
@@ -97,7 +97,7 @@ export function Header({
               {colorTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
 
-            <NotificationCenter />
+            <NotificationBell />
 
             <button
               onClick={onLogout}

@@ -1,6 +1,7 @@
 "use client"
 
 import { useNotificationStore } from "@/store/use-notification-store"
+import type { NotificationIcon } from "@/store/use-notification-store"
 import { useToastStore } from "@/store/use-toast-store"
 import { isPushDeliveryActive } from "@/lib/push-client"
 
@@ -48,6 +49,14 @@ type NotifyOpts = {
   /** Reminder context — turns on the "Done / +5 min" buttons in the OS. */
   kind?: string
   id?: string
+  /** Visual category shown on the toast and in the notification center. */
+  icon?: NotificationIcon
+}
+
+function toastTypeFor(icon?: NotificationIcon): "success" | "error" | "info" {
+  if (icon === "add" || icon === "done") return "success"
+  if (icon === "delete") return "error"
+  return "info"
 }
 
 // Fire a notification across every channel at once:
@@ -57,9 +66,14 @@ export function notify(title: string, description = "", opts?: NotifyOpts) {
 
   if (opts?.sound !== false) playTone()
   if (opts?.toast !== false) {
-    useToastStore.getState().show({ type: "info", title, description: description || undefined })
+    useToastStore.getState().show({
+      type: toastTypeFor(opts?.icon),
+      title,
+      description: description || undefined,
+      icon: opts?.icon,
+    })
   }
-  useNotificationStore.getState().add({ title, description, href: opts?.href })
+  useNotificationStore.getState().add({ title, description, href: opts?.href, icon: opts?.icon })
 
   if (opts?.browser !== false) {
     if (typeof Notification !== "undefined" && Notification.permission === "granted") {

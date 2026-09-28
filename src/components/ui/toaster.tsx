@@ -1,12 +1,21 @@
 "use client"
 
 import { motion, AnimatePresence } from "framer-motion"
-import { CheckCircle2, XCircle, Info, X } from "lucide-react"
+import { CheckCircle2, XCircle, Info, X, Plus, Pencil, Trash2 } from "lucide-react"
 import { useToastStore } from "@/store/use-toast-store"
+import type { NotificationIcon } from "@/store/use-notification-store"
 
 const icons = {
   success: CheckCircle2,
   error: XCircle,
+  info: Info,
+}
+
+const actionIcons: Record<NotificationIcon, typeof Info> = {
+  add: Plus,
+  edit: Pencil,
+  delete: Trash2,
+  done: CheckCircle2,
   info: Info,
 }
 
@@ -23,7 +32,7 @@ export function Toaster() {
     <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-3 left-3 z-[100] flex flex-col gap-2 sm:left-auto sm:right-4">
       <AnimatePresence>
         {toasts.map((toast) => {
-          const Icon = icons[toast.type]
+          const Icon = toast.icon ? actionIcons[toast.icon] : icons[toast.type]
           return (
             <motion.div
               key={toast.id}
@@ -33,7 +42,9 @@ export function Toaster() {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className={`flex w-full items-start gap-3 rounded-[18px] border p-4 shadow-lg shadow-neutral-900/5 backdrop-blur-xl sm:w-80 ${colors[toast.type]}`}
             >
-              <Icon className="mt-0.5 h-4 w-4 shrink-0" />
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] bg-white/60 dark:bg-white/10">
+                <Icon className="h-3.5 w-3.5" />
+              </span>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold">{toast.title}</p>
                 {toast.description && (
