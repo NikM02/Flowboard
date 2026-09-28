@@ -273,19 +273,27 @@
     transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease, border-color 0.25s ease;
   }
 
-  .card-hover:hover {
-    transform: translateY(-2px);
-    border-color: rgba(0, 0, 0, 0.16);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.04),
-      0 12px 28px rgba(0, 0, 0, 0.08);
+  @media (hover: hover) and (pointer: fine) {
+    .card-hover:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0, 0, 0, 0.16);
+      box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.04),
+        0 12px 28px rgba(0, 0, 0, 0.08);
+    }
+
+    .dark .card-hover:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      box-shadow:
+        0 4px 8px rgba(0, 0, 0, 0.4),
+        0 16px 32px rgba(0, 0, 0, 0.4);
+    }
   }
 
-  .dark .card-hover:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    box-shadow:
-      0 4px 8px rgba(0, 0, 0, 0.4),
-      0 16px 32px rgba(0, 0, 0, 0.4);
+  @media (hover: none), (pointer: coarse) {
+    .card-hover:active {
+      transform: scale(0.985);
+    }
   }
 
   .text-gradient {

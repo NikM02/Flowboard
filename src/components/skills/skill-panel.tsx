@@ -223,7 +223,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="card-modern card-hover glass group rounded-2xl p-5"
+      className="card-modern card-hover glass group rounded-2xl p-4 sm:p-5"
     >
 <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">

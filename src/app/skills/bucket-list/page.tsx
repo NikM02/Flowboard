@@ -273,7 +273,7 @@ function WishCard({
           </div>
         </div>
       ) : (
-        <div className="relative flex h-32 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20">
+        <div className="relative flex h-44 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 sm:h-48">
           <Star className="h-10 w-10 text-amber-300 dark:text-amber-600" />
           {item.completed && (
             <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
@@ -322,19 +322,21 @@ function WishCard({
             {item.description}
           </p>
         )}
-        <div className="mt-3 flex items-center justify-between">
-          <div className="flex items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
+        <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
             {item.expectedDate && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-3.5 w-3.5" />
-                {new Date(item.expectedDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+              <span className="flex min-w-0 items-center gap-1">
+                <Calendar className="h-3.5 w-3.5 shrink-0" />
+                <span className="truncate">
+                  {new Date(item.expectedDate).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                </span>
               </span>
             )}
           </div>
           <button
             onClick={() => toggleComplete(item.id)}
             className={cn(
-              "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium transition-all",
+              "flex h-8 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-all",
               item.completed
                 ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
                 : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
