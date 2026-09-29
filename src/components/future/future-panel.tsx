@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis,
@@ -12,8 +12,8 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import {
-  ChartTooltip, ChartGlow,
-  CHART_GRID_STYLES, CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
+  ChartTooltip,
+  CHART_AXIS_STYLES, CHART_CURSOR_STYLES,
 } from "@/components/charts/chart-components"
 import { format, startOfMonth, endOfMonth, subMonths, startOfQuarter, endOfQuarter, subQuarters, startOfYear, endOfYear, subYears, parseISO } from "date-fns"
 import { Button } from "@/components/ui/button"
@@ -30,12 +30,12 @@ import { useSkillStore } from "@/store/use-skill-store"
 import { useFinanceStore } from "@/store/use-finance-store"
 import type { GrowthPeriod, GrowthCategory } from "@/types"
 
-const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string }> = {
-  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-neutral-700", hex: "#404040" },
-  habits: { label: "Habits", icon: Target, color: "bg-neutral-500", hex: "#737373" },
-  skills: { label: "Skills", icon: Sparkles, color: "bg-neutral-600", hex: "#525252" },
-  dopamine: { label: "Wellness", icon: Brain, color: "bg-neutral-400", hex: "#a3a3a3" },
-  finance: { label: "Finance", icon: Wallet, color: "bg-neutral-800", hex: "#262626" },
+const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain; color: string; hex: string; soft: string }> = {
+  tasks: { label: "Tasks", icon: CheckCircle2, color: "bg-blue-500", hex: "#2b8bf7", soft: "rgba(43,139,247,0.16)" },
+  habits: { label: "Habits", icon: Target, color: "bg-emerald-500", hex: "#34c759", soft: "rgba(52,199,89,0.16)" },
+  skills: { label: "Skills", icon: Sparkles, color: "bg-violet-500", hex: "#af52de", soft: "rgba(175,82,222,0.16)" },
+  dopamine: { label: "Wellness", icon: Brain, color: "bg-pink-500", hex: "#ff375f", soft: "rgba(255,55,95,0.16)" },
+  finance: { label: "Finance", icon: Wallet, color: "bg-amber-500", hex: "#ff9f0a", soft: "rgba(255,159,10,0.16)" },
 }
 
 type PeriodMetrics = Record<GrowthCategory, { value: number; label: string }>
@@ -90,7 +90,7 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
   const totalCurrent = sips.reduce((s, si) => s + si.currentValue, 0) + stocks.reduce((s, st) => s + st.currentPrice * st.quantity, 0) + mutualFunds.reduce((s, mf) => s + mf.currentValue, 0)
   const gainPct = totalInvested > 0 ? Math.round(((totalCurrent - totalInvested) / totalInvested) * 100) : 0
   const hasFinanceData = incomes.length > 0 || expenses.length > 0 || sips.length > 0 || stocks.length > 0 || mutualFunds.length > 0
-  const financeValue = hasFinanceData ? Math.max(0, 50 + gainPct + Math.round(netCashFlow / 1000)) : 0
+  const financeValue = hasFinanceData ? Math.min(100, Math.max(0, 50 + gainPct + Math.round(netCashFlow / 1000))) : 0
 
   return {
     tasks: { value: taskScore, label: `${tasksCompleted}/${tasksInRange.length} done` },
@@ -121,9 +121,25 @@ function SimulatorTab() {
   const [period, setPeriod] = useState<GrowthPeriod>("monthly")
   const [selectedDate, setSelectedDate] = useState(() => new Date())
 
-  const currentMetrics = useMemo(() => computeMetrics(period, selectedDate), [period, selectedDate])
+  // The metrics read straight from the stores, so bump a version counter on any
+  // store write to keep the charts live instead of stale until the period changes.
+  const [dataVersion, setDataVersion] = useState(0)
+  useEffect(() => {
+    const bump = () => setDataVersion((v) => v + 1)
+    const unsubs = [
+      useTaskStore.subscribe(bump),
+      useHabitStore.subscribe(bump),
+      useChallengeStore.subscribe(bump),
+      useDopamineStore.subscribe(bump),
+      useSkillStore.subscribe(bump),
+      useFinanceStore.subscribe(bump),
+    ]
+    return () => unsubs.forEach((u) => u())
+  }, [])
+
+  const currentMetrics = useMemo(() => computeMetrics(period, selectedDate), [period, selectedDate, dataVersion])
   const prevDate = getPreviousDate(period, selectedDate)
-  const prevMetrics = useMemo(() => computeMetrics(period, prevDate), [period, prevDate])
+  const prevMetrics = useMemo(() => computeMetrics(period, prevDate), [period, prevDate, dataVersion])
   const currentLabel = getPeriodLabel(period, selectedDate)
   const prevLabel = getPeriodLabel(period, prevDate)
 
@@ -172,6 +188,7 @@ function SimulatorTab() {
       current: currentMetrics[cat].value,
       previous: prevMetrics[cat].value,
       color: categoryConfig[cat].hex,
+      soft: categoryConfig[cat].soft,
     })),
     [currentMetrics, prevMetrics]
   )
@@ -237,12 +254,31 @@ function SimulatorTab() {
           <div className="mt-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="72%">
-                <ChartGlow id="future-radar-glow" />
-                <PolarGrid stroke="#a3a3a3" strokeOpacity={0.25} />
-                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#a3a3a3" }} />
+                <defs>
+                  <filter id="future-radar-glow" x="-40%" y="-40%" width="180%" height="180%">
+                    <feGaussianBlur stdDeviation="3.5" result="blur" />
+                    <feFlood floodColor="#2b8bf7" floodOpacity="0.3" result="color" />
+                    <feComposite in="color" in2="blur" operator="in" result="shadow" />
+                    <feMerge>
+                      <feMergeNode in="shadow" />
+                      <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                  </filter>
+                  <linearGradient id="futureRadarGrad" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#2b8bf7" stopOpacity={0.55} />
+                    <stop offset="50%" stopColor="#af52de" stopOpacity={0.4} />
+                    <stop offset="100%" stopColor="#ff375f" stopOpacity={0.5} />
+                  </linearGradient>
+                  <linearGradient id="futureRadarPrev" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="#8e8e93" stopOpacity={0.25} />
+                    <stop offset="100%" stopColor="#aeaeb2" stopOpacity={0.15} />
+                  </linearGradient>
+                </defs>
+                <PolarGrid stroke="#a3a3a3" strokeOpacity={0.2} />
+                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#aeaeb2" }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Previous" dataKey="previous" stroke="#a3a3a3" fill="#a3a3a3" fillOpacity={0.12} strokeWidth={1.5} strokeDasharray="4 4" />
-                <Radar name="Current" dataKey="current" stroke="#404040" fill="#404040" fillOpacity={0.22} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
+                <Radar name="Previous" dataKey="previous" stroke="#8e8e93" fill="url(#futureRadarPrev)" fillOpacity={0.5} strokeWidth={1.5} strokeDasharray="4 4" />
+                <Radar name="Current" dataKey="current" stroke="#2b8bf7" fill="url(#futureRadarGrad)" fillOpacity={0.6} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
               </RadarChart>
             </ResponsiveContainer>
@@ -264,21 +300,30 @@ function SimulatorTab() {
                 <defs>
                   {barData.map((entry, i) => (
                     <linearGradient key={i} id={`futureBarGrad${i}`} x1="0" y1="0" x2="1" y2="0">
-                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.4} />
-                      <stop offset="100%" stopColor={entry.color} stopOpacity={0.95} />
+                      <stop offset="0%" stopColor={entry.color} stopOpacity={0.45} />
+                      <stop offset="100%" stopColor={entry.color} stopOpacity={1} />
                     </linearGradient>
                   ))}
                 </defs>
                 <XAxis type="number" domain={[0, 100]} {...CHART_AXIS_STYLES} />
                 <YAxis type="category" dataKey="name" width={70} {...CHART_AXIS_STYLES} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={CHART_CURSOR_STYLES} />
-                <Bar dataKey="current" radius={[0, 9, 9, 0]} barSize={18} name="Current">
+                <Bar dataKey="previous" radius={[0, 9, 9, 0]} barSize={18} name="Previous" fill="rgba(142,142,147,0.28)" />
+                <Bar dataKey="current" radius={[0, 9, 9, 0]} barSize={18} name="Current" background={{ fill: "rgba(255,255,255,0.05)", radius: 9 }}>
                   {barData.map((entry, i) => (
-                    <Cell key={i} fill={`url(#futureBarGrad${i})`} style={{ filter: `drop-shadow(0 4px 8px ${entry.color}33)` }} />
+                    <Cell key={i} fill={`url(#futureBarGrad${i})`} style={{ filter: `drop-shadow(0 4px 10px ${entry.color}55)` }} />
                   ))}
                 </Bar>
               </BarChart>
             </ResponsiveContainer>
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
+            {barData.map((e) => (
+              <span key={e.name} className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500 dark:text-neutral-400">
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: e.color, boxShadow: `0 0 6px ${e.color}88` }} />
+                {e.name}
+              </span>
+            ))}
           </div>
         </motion.div>
       </div>
@@ -300,8 +345,11 @@ function SimulatorTab() {
               className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
             >
               <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
-                  <Icon className="h-4 w-4" style={{ color: cfg.hex }} />
+                <div
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]"
+                  style={{ backgroundColor: cfg.soft, color: cfg.hex }}
+                >
+                  <Icon className="h-4 w-4" />
                 </div>
                 <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{cfg.label}</span>
               </div>
@@ -320,7 +368,10 @@ function SimulatorTab() {
               <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
                 <motion.div
                   className="h-full rounded-full"
-                  style={{ backgroundColor: cfg.hex }}
+                  style={{
+                    backgroundImage: `linear-gradient(90deg, ${cfg.hex}66, ${cfg.hex})`,
+                    boxShadow: `0 0 8px ${cfg.hex}66`,
+                  }}
                   initial={{ width: 0 }}
                   animate={{ width: `${Math.min(curr.value, 100)}%` }}
                   transition={{ duration: 0.5, delay: 0.1 * i }}
