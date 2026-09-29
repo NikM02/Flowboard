@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import { ThemeChromeSync } from "@/components/theme/theme-chrome-sync"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -16,7 +17,10 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#000000",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
+  ],
 }
 
 export const metadata: Metadata = {
@@ -60,7 +64,10 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <ThemeChromeSync />
+        {children}
+      </body>
     </html>
   )
 }
