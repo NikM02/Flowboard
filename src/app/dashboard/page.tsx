@@ -823,7 +823,7 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="obsidian mx-auto w-full max-w-6xl space-y-6 bg-background dark:bg-black"
+        className="mx-auto w-full max-w-6xl space-y-6"
       >
         <MissionSection />
 

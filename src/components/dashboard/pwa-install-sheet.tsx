@@ -41,7 +41,7 @@ export function PwaInstallSheet({ open, onClose, isIOS, canPrompt, onPrompt }: P
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 40 }}
             transition={{ type: "spring", damping: 30, stiffness: 340 }}
-            className="fixed inset-x-0 bottom-0 z-[190] mx-auto max-w-lg rounded-t-3xl border border-b-0 border-neutral-200/60 bg-white p-5 pb-safe dark:border-neutral-800/60 dark:bg-neutral-900 md:bottom-6 md:rounded-3xl md:border"
+            className="obsidian fixed inset-x-0 bottom-0 z-[190] mx-auto max-w-lg rounded-t-3xl border border-b-0 border-neutral-200/60 bg-white p-5 pb-safe dark:border-neutral-800/60 dark:bg-neutral-900 md:bottom-6 md:rounded-3xl md:border"
           >
             <div className="mx-auto mb-4 h-1.5 w-12 rounded-full bg-neutral-200 dark:bg-neutral-700" />
             <div className="flex items-start justify-between">

@@ -59,7 +59,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900 md:hidden"
+                className="obsidian fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900 md:hidden"
               >
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Theme</span>
@@ -124,7 +124,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
+            className="obsidian absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">

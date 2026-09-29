@@ -27,7 +27,7 @@ const SheetOverlay = React.forwardRef<
 SheetOverlay.displayName = SheetPrimitive.Overlay.displayName
 
 const sheetVariants = cva(
-  "fixed z-[90] gap-4 border border-neutral-200/80 bg-white p-6 shadow-xl shadow-neutral-900/10 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 dark:border-neutral-700/80 dark:bg-neutral-900",
+  "obsidian fixed z-[90] gap-4 border border-neutral-200/80 bg-white p-6 shadow-xl shadow-neutral-900/10 transition ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:duration-300 data-[state=open]:duration-500 dark:border-neutral-700/80 dark:bg-neutral-900",
   {
     variants: {
       side: {
