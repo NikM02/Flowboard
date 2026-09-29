@@ -309,6 +309,16 @@ html.dark {
   background: #000000;
 }
 
+/* On an all-black canvas, surfaces that once read as "lifted" by their
+   colour alone now need an edge. Give every neutral-800/900 surface a
+   1px hairline, matching the modern card border, unless it already
+   declares a border. Rounded-full chips are skipped so count badges and
+   avatars stay clean. */
+.dark .obsidian [class*="dark:bg-neutral-800"]:not([class*="border"]):not([class*="rounded-full"]),
+.dark .obsidian [class*="dark:bg-neutral-900"]:not([class*="border"]):not([class*="rounded-full"]) {
+  border: 1px solid var(--obsidian-hairline);
+}
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.72);
