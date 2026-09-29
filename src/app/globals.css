@@ -297,6 +297,12 @@ html.dark {
   background-color: rgb(255 255 255 / 0.07);
 }
 
+/* Translucent white row/card fills (e.g. dark:bg-white/[0.03]) render as
+   near-black grey rather than true black. Force them fully opaque. */
+.dark .obsidian [class*="dark:bg-white/"] {
+  background-color: #000000;
+}
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.72);

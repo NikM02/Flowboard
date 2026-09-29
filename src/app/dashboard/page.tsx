@@ -393,7 +393,7 @@ function HabitsChallengesSection() {
                   return (
                     <button key={h.id} onClick={() => toggleDay(h.id, today)} className={rowBase}>
                       <span className={cn(
-                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all",
                         done ? c.check : c.box
                       )}>
                         {done && <Check className="h-3 w-3" />}
@@ -422,7 +422,7 @@ function HabitsChallengesSection() {
             </div>
             <button onClick={toggleSleep} className={rowBase}>
               <span className={cn(
-                "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all",
                 todaySleep ? "border-indigo-400 bg-indigo-500 text-white" : "border-indigo-400/70"
               )}>
                 {todaySleep && <Check className="h-3 w-3" />}
@@ -456,7 +456,7 @@ function HabitsChallengesSection() {
                   return (
                     <button key={c.id} onClick={() => toggleDayC(c.id, todayDay!.day)} className={rowBase}>
                       <span className={cn(
-                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[9px] border-2 transition-all",
+                        "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[5px] border-2 transition-all",
                         done ? "border-rose-400 bg-rose-500 text-white" : "border-rose-400/70"
                       )}>
                         {done && <Check className="h-3 w-3" />}
@@ -823,7 +823,7 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-6xl space-y-6"
+        className="obsidian mx-auto w-full max-w-6xl space-y-6 bg-background dark:bg-black"
       >
         <MissionSection />
 
