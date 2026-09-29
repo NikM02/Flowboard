@@ -262,6 +262,41 @@ html.dark {
    APPLE DESIGN LANGUAGE
    ══════════════════════════════════════════════════════ */
 
+/* Full-black surface mode. Opt in per page with class="obsidian":
+   every card, section, row and form control inside resolves to pure
+   #000, with hairline borders (and translucent hovers) preserved so
+   structure stays readable on an all-black canvas. */
+.obsidian {
+  --obsidian-hairline: #26262c;
+}
+
+.dark .obsidian {
+  --color-neutral-950: #000000;
+  --color-neutral-900: #000000;
+  --color-neutral-800: #000000;
+}
+
+/* Neutral-800 borders would vanish once the surfaces go black, so lift
+   them to a visible hairline. */
+.dark .obsidian .dark\:border-neutral-800,
+.dark .obsidian .dark\:border-neutral-800\/50,
+.dark .obsidian .dark\:border-neutral-800\/60,
+.dark .obsidian .dark\:border-neutral-800\/80 {
+  border-color: var(--obsidian-hairline);
+}
+
+.dark .obsidian .dark\:border-neutral-800\/50 { border-color: rgb(38 38 44 / 0.5); }
+.dark .obsidian .dark\:border-neutral-800\/60 { border-color: rgb(38 38 44 / 0.6); }
+.dark .obsidian .dark\:border-neutral-800\/80 { border-color: rgb(38 38 44 / 0.8); }
+
+/* Neutral-800 translucent hovers would also vanish — use a faint white lift. */
+.dark .obsidian .dark\:hover\:bg-neutral-800\/60:hover,
+.dark .obsidian .dark\:hover\:bg-neutral-800\/50:hover,
+.dark .obsidian .dark\:hover\:bg-neutral-800\/30:hover,
+.dark .obsidian .dark\:hover\:bg-neutral-800:hover {
+  background-color: rgb(255 255 255 / 0.07);
+}
+
 @layer utilities {
   .glass {
     background: rgba(255, 255, 255, 0.72);
