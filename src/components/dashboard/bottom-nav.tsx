@@ -79,8 +79,8 @@ export function BottomNav() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden ">
-        <div className="flex items-center justify-around px-1 pb-safe pt-1.5">
+      <nav className="fixed bottom-[calc(env(safe-area-inset-bottom,0px)+0.75rem)] left-3 right-3 z-40 overflow-hidden rounded-[10px] border border-neutral-200 bg-white/90 shadow-lg shadow-neutral-900/5 backdrop-blur-xl md:hidden">
+        <div className="flex items-center justify-around px-1 py-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon
             const isActive = pathname === item.href || pathname.startsWith(item.href + "/")
