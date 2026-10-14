@@ -39,11 +39,11 @@ export function Sidebar({
 
   const navLinkClass = (href: string) =>
     cn(
-      "group relative flex w-full items-center rounded-[10px] text-sm font-medium transition-all duration-200",
+      "group relative flex w-full items-center rounded-lg text-sm font-medium transition-colors duration-150",
       isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
       (pathname === href || (href !== "/" && pathname.startsWith(href + "/")))
-        ? "bg-blue-50 font-semibold text-blue-700  "
-        : "text-neutral-500 hover:bg-neutral-100 hover:text-neutral-900  :bg-neutral-800 :text-neutral-50"
+        ? "bg-blue-50/80 font-medium text-blue-700 shadow-sm"
+        : "text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900"
     )
 
   const labelClass = cn("truncate", isCollapsed && "sr-only")
@@ -57,7 +57,7 @@ export function Sidebar({
           isCollapsed ? "justify-center px-0" : "gap-3 px-1"
         )}
       >
-        <Image src="/King.png" alt="King logo" width={28} height={28} className="rounded-[10px]" />
+        <Image src="/King.png" alt="King logo" width={28} height={28} className="rounded-lg" />
         <span
           className={cn(
             "text-base font-extrabold tracking-tight text-neutral-900  whitespace-nowrap transition-all",
@@ -98,7 +98,7 @@ export function Sidebar({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-40 bg-neutral-950/60 backdrop-blur-sm"
+              className="fixed inset-0 z-40 bg-neutral-950/50 backdrop-blur-[2px]"
               onClick={onClose}
             />
             <motion.aside
@@ -106,12 +106,12 @@ export function Sidebar({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "-100%", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 border-r border-neutral-200/50 bg-white/95 backdrop-blur-xl  "
+              className="fixed inset-y-0 left-0 z-50 w-72 border-r border-neutral-200 bg-white/98 backdrop-blur-sm"
             >
               <div className="flex h-full flex-col gap-1 p-4 pt-safe">
                 <button
                   onClick={onClose}
-                  className="absolute right-4 top-4 rounded-[10px] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300"
+                  className="absolute right-4 top-4 rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-50 hover:text-neutral-600"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -129,7 +129,7 @@ export function Sidebar({
       initial={false}
       animate={{ width: isCollapsed ? 72 : 256 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="hidden md:flex h-screen shrink-0 flex-col border-r border-neutral-200/50 bg-white  "
+      className="hidden md:flex h-screen shrink-0 flex-col border-r border-neutral-200 bg-white"
     >
       <div className={cn("flex h-full flex-col gap-1", isCollapsed ? "p-3" : "p-4")}>
         {content}
@@ -139,7 +139,7 @@ export function Sidebar({
             onClick={onToggleCollapse}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             className={cn(
-              "flex w-full items-center rounded-[10px] text-sm font-medium text-neutral-400 transition-all hover:bg-neutral-100 hover:text-neutral-900  :bg-neutral-800 :text-neutral-50",
+              "flex w-full items-center rounded-lg text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900",
               isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5"
             )}
           >
