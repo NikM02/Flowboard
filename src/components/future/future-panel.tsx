@@ -92,8 +92,8 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
   const gainPct = totalInvested > 0 ? Math.round(((totalCurrent - totalInvested) / totalInvested) * 100) : 0
   const hasFinanceData = incomes.length > 0 || expenses.length > 0 || sips.length > 0 || stocks.length > 0 || mutualFunds.length > 0
   const financeValue = hasFinanceData ? Math.min(100, Math.max(0, 50 + gainPct + Math.round(netCashFlow / 1000))) : 0
-  const investmentsValue = Math.min(100, Math.max(0, 50 + gainPct))
   const hasInvestments = (sips.length + stocks.length + mutualFunds.length) > 0
+  const investmentsValue = hasInvestments && totalInvested > 0 ? Math.min(100, Math.max(0, 50 + gainPct)) : 0
   const investmentsLabel = hasInvestments ? (totalInvested>0 ? `+${gainPct}%` : "No positions") : "No data"
 
   return {
