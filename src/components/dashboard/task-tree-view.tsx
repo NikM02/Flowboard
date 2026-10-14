@@ -169,7 +169,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
             <button
               type="submit"
               disabled={!newSub.trim()}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[10px] bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[10px] bg-blue-600 text-white transition-colors hover:bg-blue-700 disabled:opacity-30 "
               aria-label="Add subtask"
             >
               <Plus className="h-3.5 w-3.5" />

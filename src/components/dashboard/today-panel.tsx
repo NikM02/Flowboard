@@ -58,20 +58,20 @@ function TodayRing({ pct }: { pct: number }) {
   return (
     <div className="relative h-14 w-14 shrink-0">
       <svg width={56} height={56} viewBox="0 0 56 56" className="-rotate-90">
-        <circle cx={28} cy={28} r={R} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth={5} />
+        <circle cx={28} cy={28} r={R} fill="none" stroke="#e5e5e5" strokeWidth={5} />
         <circle
           cx={28}
           cy={28}
           r={R}
           fill="none"
-          stroke="#f59e0b"
+          stroke="#0066cc"
           strokeWidth={5}
           strokeLinecap="round"
           strokeDasharray={C}
           strokeDashoffset={C * (1 - Math.min(100, Math.max(0, pct)) / 100)}
         />
       </svg>
-      <span className="absolute inset-0 flex items-center justify-center text-[12px] font-black text-white">
+      <span className="absolute inset-0 flex items-center justify-center text-[12px] font-bold text-neutral-900 tabular-nums">
         {pct}%
       </span>
     </div>
@@ -136,39 +136,37 @@ export function TodayPanel() {
   return (
     <section className="overflow-hidden rounded-[10px] border border-neutral-200 bg-white ">
       {/* Header */}
-      <div className="relative bg-neutral-900 px-4 py-4 sm:px-5 ">
-        <div className="relative flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white/50">
-              <CalendarDays className="h-3 w-3" /> Today
+      <div className="flex items-center justify-between gap-3 border-b border-neutral-100 px-4 py-4 sm:px-5">
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
+            <CalendarDays className="h-3 w-3" /> Today
+          </p>
+          <h2 className="mt-1 truncate text-base font-bold tracking-tight text-neutral-900 sm:text-lg">
+            {dateLabel}
+          </h2>
+          {todayCount > 0 && (
+            <p className="mt-0.5 text-xs font-medium text-neutral-500">
+              {todayCount} task{todayCount === 1 ? "" : "s"} due today
             </p>
-            <h2 className="mt-1 truncate text-base font-black tracking-tight text-white sm:text-xl">
-              {dateLabel}
-            </h2>
-            {todayCount > 0 && (
-              <p className="mt-0.5 text-[11px] font-medium text-white/60">
-                {todayCount} task{todayCount === 1 ? "" : "s"} due today
-              </p>
-            )}
-          </div>
-          <TodayRing pct={stats.progress} />
+          )}
         </div>
+        <TodayRing pct={stats.progress} />
+      </div>
 
-        <div className="relative mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
-          {SLOTS.map((s) => {
-            const Icon = s.icon
-            const used = buckets[s.priority].length
-            return (
-              <span key={s.priority} className="flex items-center gap-1.5 text-[10px] font-semibold text-white/70">
-                <Icon className={cn("h-3 w-3", s.accent)} />
-                <span className="capitalize">{s.label}</span>
-                <span className="text-white/40">
-                  {Math.min(used, s.capacity)}/{s.capacity}
-                </span>
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-neutral-100 px-4 pb-3 sm:px-5">
+        {SLOTS.map((s) => {
+          const Icon = s.icon
+          const used = buckets[s.priority].length
+          return (
+            <span key={s.priority} className="flex items-center gap-1.5 text-[11px] font-semibold text-neutral-500">
+              <Icon className={cn("h-3.5 w-3.5", s.accent)} />
+              <span>{s.label}</span>
+              <span className="text-neutral-400 tabular-nums">
+                {Math.min(used, s.capacity)}/{s.capacity}
               </span>
-            )
-          })}
-        </div>
+            </span>
+          )
+        })}
       </div>
 
       {/* Columns */}
@@ -186,39 +184,26 @@ export function TodayPanel() {
               transition={{ duration: 0.25 }}
               className="flex flex-col overflow-hidden rounded-[10px] border border-neutral-200 "
             >
-              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 bg-neutral-50/70 px-3 py-2.5 ">
-                <span className={cn("flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide", slot.accent)}>
+              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 px-3 py-2.5">
+                <span className={cn("flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide", slot.accent)}>
                   <Icon className="h-3.5 w-3.5" />
                   {slot.label}
                 </span>
-                <span className="flex items-center gap-1">
-                  {Array.from({ length: slot.capacity }).map((_, i) => {
-                    const filled = i < Math.min(shown.length, slot.capacity)
-                    return (
-                      <span
-                        key={i}
-                        className={cn(
-                          "h-1.5 w-4 rounded-full transition-all",
-                          filled ? cn(slot.bar) : "bg-neutral-200 "
-                        )}
-                      />
-                    )
-                  })}
+                <span className="text-[10px] font-semibold text-neutral-400 tabular-nums">
+                  {Math.min(shown.length, slot.capacity)}/{slot.capacity}
                 </span>
               </div>
 
               <div className="flex-1 space-y-0.5 p-2">
                 {shown.length === 0
-                  ? Array.from({ length: slot.capacity }).map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => openCreateModal(slot.priority)}
-                        className="flex w-full items-center gap-2 rounded-[10px] border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
-                      >
-                        <Plus className="h-3.5 w-3.5 shrink-0 opacity-50" />
-                        <span className="truncate text-[11px]">Empty {slot.label.toLowerCase()} slot — add</span>
-                      </button>
-                    ))
+                  ? (
+                    <button
+                      onClick={() => openCreateModal(slot.priority)}
+                      className="flex h-full min-h-[40px] w-full items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-neutral-200 px-2 py-2 text-[11px] font-medium text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
+                    >
+                      <Plus className="h-3.5 w-3.5 shrink-0 opacity-60" /> Nothing here yet
+                    </button>
+                  )
                   : shown.map((t) => {
                       const dueToday = t.dueDate === todayKey
                       const overdue = t.dueDate && t.dueDate < todayKey

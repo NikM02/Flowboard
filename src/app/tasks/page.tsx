@@ -92,7 +92,7 @@ function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-[10px] text-lg transition-all",
                     icon === emoji
-                      ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2 "
+                      ? "bg-blue-600 text-white ring-2 ring-blue-600 ring-offset-2 "
                       : "bg-neutral-100 hover:bg-neutral-200 "
                   )}
                 >
@@ -211,7 +211,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                         className={cn(
                           "flex h-8 w-8 items-center justify-center rounded-[10px] text-base transition-all",
                           icon === emoji
-                            ? "bg-neutral-900 text-white "
+                            ? "bg-blue-600 text-white "
                             : "bg-neutral-100 hover:bg-neutral-200 "
                         )}
                       >
@@ -315,84 +315,88 @@ function TasksPageContent() {
         transition={{ duration: 0.3 }}
         className="space-y-6"
       >
-        {/* Archive actions */}
-        {view === "archive" && (
-          <div className="flex gap-2 self-start">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={async () => {
-                  const completed = useTaskStore.getState().tasks.filter((t) => t.completed)
-                  const XLSX = await import("xlsx")
-                  const data = completed.map((t) => ({
-                    Title: t.title,
-                    Description: t.description,
-                    Project: t.project,
-                    Priority: t.priority,
-                    "Due Date": t.dueDate,
-                    Progress: `${t.progress}%`,
-                    Subtasks: t.subtasks.filter((s) => s.completed).length + "/" + t.subtasks.length,
-                  }))
-                  const wb = XLSX.utils.book_new()
-                  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Completed Tasks")
-                  XLSX.writeFile(wb, "completed-tasks.xlsx")
-                }}
-                className="gap-2"
+        {/* Toolbar */}
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          {/* View tabs */}
+          <div className="flex w-full gap-1 overflow-x-auto rounded-[10px] border border-neutral-200 bg-neutral-100 p-1 lg:w-auto">
+            {([
+              { key: "tasks" as const, label: "Tasks", icon: ListTodo },
+              { key: "tree" as const, label: "Tree", icon: ListTree },
+              { key: "projects" as const, label: "Projects", icon: FolderKanban },
+              { key: "archive" as const, label: "Archive", icon: Archive },
+            ]).map((t) => (
+              <button
+                key={t.key}
+                onClick={() => handleViewChange(t.key)}
+                className={cn(
+                  "flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] px-3 py-2 text-sm font-medium transition-all lg:flex-none",
+                  view === t.key
+                    ? "bg-white text-neutral-900 shadow-sm "
+                    : "text-neutral-500 hover:text-neutral-800 "
+                )}
               >
-                <Download className="h-3.5 w-3.5" /> Export
-              </Button>
-              <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
-                <Trash2 className="h-3.5 w-3.5" /> Clear
-              </Button>
+                <t.icon className="h-4 w-4" /> {t.label}
+              </button>
+            ))}
           </div>
-        )}
 
-        {/* View tabs */}
-        <div className="flex gap-1 rounded-[10px] bg-neutral-100 p-1 ">
-          {([
-            { key: "tasks" as const, label: "Tasks", icon: ListTodo },
-            { key: "tree" as const, label: "Tree", icon: ListTree },
-            { key: "projects" as const, label: "Projects", icon: FolderKanban },
-            { key: "archive" as const, label: "Archive", icon: Archive },
-          ]).map((t) => (
-            <button
-              key={t.key}
-              onClick={() => handleViewChange(t.key)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-[10px] px-3 py-2 text-sm font-medium transition-all",
-                view === t.key
-                  ? "bg-white text-neutral-900 shadow-sm "
-                  : "text-neutral-500 hover:text-neutral-700 "
-              )}
-            >
-              <t.icon className="h-4 w-4" /> {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Tasks controls */}
-        {view === "tasks" && (
-          <div className="flex items-center gap-2">
-            {projects.length > 0 && (
-              <Select value={projectFilter} onValueChange={setProjectFilter}>
-                <SelectTrigger className="h-9 w-[104px] gap-1 border-neutral-200/60 bg-white text-xs sm:w-[160px] sm:text-sm">
-                  <FolderKanban className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
-                  <SelectValue placeholder="All Projects" />
-                </SelectTrigger>
-                <SelectContent align="end">
-                  <SelectItem value="all">All Projects</SelectItem>
-                  {projects.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+          {/* Controls */}
+          <div className="flex flex-wrap items-center justify-end gap-2">
+            {view === "tasks" && (
+              <>
+                {projects.length > 0 && (
+                  <Select value={projectFilter} onValueChange={setProjectFilter}>
+                    <SelectTrigger className="h-9 w-[120px] gap-1 border-neutral-200 bg-white text-sm sm:w-[160px]">
+                      <FolderKanban className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
+                      <SelectValue placeholder="All Projects" />
+                    </SelectTrigger>
+                    <SelectContent align="end">
+                      <SelectItem value="all">All Projects</SelectItem>
+                      {projects.map((p) => (
+                        <SelectItem key={p} value={p}>{p}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                <Filters />
+                <Button onClick={() => openCreateModal()} className="gap-2 sm:ml-0 ml-auto">
+                  <Plus className="h-4 w-4" /> New Task
+                </Button>
+              </>
             )}
-            <Filters />
-            <Button onClick={() => openCreateModal()} className="ml-auto max-sm:h-9 max-sm:px-3 max-sm:text-xs gap-2 rounded-[10px]">
-              <Plus className="h-4 w-4" /> New Task
-            </Button>
+
+            {view === "archive" && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={async () => {
+                    const completed = useTaskStore.getState().tasks.filter((t) => t.completed)
+                    const XLSX = await import("xlsx")
+                    const data = completed.map((t) => ({
+                      Title: t.title,
+                      Description: t.description,
+                      Project: t.project,
+                      Priority: t.priority,
+                      "Due Date": t.dueDate,
+                      Progress: `${t.progress}%`,
+                      Subtasks: t.subtasks.filter((s) => s.completed).length + "/" + t.subtasks.length,
+                    }))
+                    const wb = XLSX.utils.book_new()
+                    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(data), "Completed Tasks")
+                    XLSX.writeFile(wb, "completed-tasks.xlsx")
+                  }}
+                  className="ml-auto gap-2 sm:ml-0"
+                >
+                  <Download className="h-4 w-4" /> Export
+                </Button>
+                <Button variant="outline" size="sm" onClick={clearCompleted} className="gap-2 text-red-500 hover:text-red-600">
+                  <Trash2 className="h-4 w-4" /> Clear
+                </Button>
+              </>
+            )}
           </div>
-        )}
+        </div>
 
         {/* Content */}
         <AnimatePresence mode="wait">
@@ -404,7 +408,7 @@ function TasksPageContent() {
             transition={{ duration: 0.2 }}
           >
             {view === "tasks" && (
-              <div className="space-y-6">
+              <div className="space-y-5">
                 {/* Today — daily 3 urgent / 2 focus / 3 easy planner */}
                 <TodayPanel />
 
@@ -412,22 +416,17 @@ function TasksPageContent() {
                 <TaskCheckList />
 
                 {/* Analytics — colored charts, responsive on mobile */}
-                <div className="card-modern overflow-hidden rounded-[10px] border border-neutral-200 bg-white ">
+                <div className="overflow-hidden rounded-[10px] border border-neutral-200 bg-white">
                   <button
                     onClick={() => setAnalyticsOpen((v) => !v)}
                     className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
                   >
                     <span className="flex items-center gap-2.5">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
-                        <BarChart3 className="h-4 w-4 text-indigo-500" />
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-blue-50">
+                        <BarChart3 className="h-4 w-4 text-blue-600" />
                       </span>
-                      <span>
-                        <span className="block text-sm font-bold tracking-tight text-neutral-900 ">
-                          Analytics & Insights
-                        </span>
-                        <span className="block text-[11px] text-neutral-500 ">
-                          {analyticsOpen ? "Hide stats and charts" : "View task statistics and charts"}
-                        </span>
+                      <span className="text-sm font-bold tracking-tight text-neutral-900">
+                        Analytics &amp; Insights
                       </span>
                     </span>
                     <ChevronDown

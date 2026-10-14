@@ -8,6 +8,7 @@ import {
   CheckCircle2, Flame, ArrowUpRight, ArrowDownRight,
   Lock, Moon, Check, Calendar, Zap, Trophy,
   Dumbbell, Brain, Book, Target, Palette, Users, Sun, Coffee, Music, Code,
+  Quote, ArrowRight,
 } from "lucide-react"
 import {
   PieChart, Pie, Cell, ResponsiveContainer,
@@ -46,7 +47,7 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.3 }}
       className={cn(
-        "relative overflow-hidden rounded-[10px] bg-white p-4 sm:p-5",
+        "relative overflow-hidden rounded-[10px] border border-neutral-200 bg-white p-4 shadow-sm shadow-neutral-900/[0.03] sm:p-5",
         className
       )}
       style={{ animationDelay: `${delay * 1000}ms` }}
@@ -67,36 +68,62 @@ function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: t
   )
 }
 
-/* ── Hero ────────────────────────────────────────────── */
-function DashboardHero() {
+/* ── Welcome / overview hero ─────────────────────────── */
+function WelcomeHero() {
+  const tasks = useTaskStore((s) => s.tasks)
+  const habits = useHabitStore((s) => s.habits)
+  const getStreak = useHabitStore((s) => s.getStreak)
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
-  const net = useMemo(
-    () =>
-      incomes.reduce((s, i) => s + i.amount, 0) -
-      expenses.reduce((s, e) => s + e.amount, 0),
-    [incomes, expenses]
-  )
+  const pending = tasks.filter((t) => !t.completed).length
+  const net = incomes.reduce((s, i) => s + i.amount, 0) - expenses.reduce((s, e) => s + e.amount, 0)
+  const bestStreak = habits.length ? Math.max(...habits.map((h) => getStreak(h.id))) : 0
+
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? "Good morning" : hour < 18 ? "Good afternoon" : "Good evening"
+
+  const kpis = [
+    { label: "Pending", value: String(pending), href: "/tasks" },
+    { label: "Net flow", value: `₹${net.toLocaleString("en-IN")}`, href: "/finance" },
+    { label: "Best streak", value: `${bestStreak}d`, href: "/habits" },
+  ]
 
   return (
-    <Link
-      href="/finance"
-      className="flex items-center gap-3 rounded-[10px] bg-white p-4 transition-colors hover:bg-neutral-50 "
+    <motion.div
+      initial={{ opacity: 0, y: 14 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="relative overflow-hidden rounded-[10px] bg-gradient-to-br from-blue-600 via-blue-500 to-indigo-500 p-5 text-white shadow-sm sm:p-6"
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-green-100 text-green-600 ">
-        <Wallet className="h-4 w-4" />
+      <div className="pointer-events-none absolute -right-12 -top-20 h-52 w-52 rounded-full bg-white/10 blur-3xl" />
+      <div className="pointer-events-none absolute -bottom-20 right-24 h-44 w-44 rounded-full bg-white/10 blur-3xl" />
+      <div className="relative flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+        <div className="min-w-0">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/70">
+            {format(new Date(), "EEEE, d MMMM")}
+          </p>
+          <h1 className="mt-1.5 text-2xl font-extrabold tracking-tight sm:text-3xl">{greeting}</h1>
+          <p className="mt-1 text-sm text-white/75">
+            {pending > 0
+              ? `${pending} task${pending === 1 ? "" : "s"} waiting for you today.`
+              : "You're all caught up — nicely done."}
+          </p>
+        </div>
+        <div className="grid grid-cols-3 gap-2.5 sm:flex sm:flex-wrap">
+          {kpis.map((k) => (
+            <Link
+              key={k.label}
+              href={k.href}
+              className="rounded-[10px] bg-white/10 px-3 py-2.5 ring-1 ring-inset ring-white/20 backdrop-blur-sm transition-colors hover:bg-white/20 sm:min-w-[100px]"
+            >
+              <p className="text-[10px] font-medium uppercase tracking-wide text-white/70">{k.label}</p>
+              <p className="mt-0.5 truncate text-lg font-bold tracking-tight tabular-nums">{k.value}</p>
+            </Link>
+          ))}
+        </div>
       </div>
-      <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase tracking-wide text-neutral-500 ">
-          Net cash flow
-        </p>
-        <p className="truncate text-lg font-extrabold tracking-tight text-neutral-900 ">
-          ₹{net.toLocaleString("en-IN")}
-        </p>
-      </div>
-      <ArrowUpRight className="ml-auto h-4 w-4 shrink-0 text-neutral-300 " />
-    </Link>
+    </motion.div>
   )
 }
 
@@ -105,22 +132,31 @@ function MissionSection() {
   const mission = useNorthStarStore((s) => s.mission)
 
   return (
-    <Card delay={0}>
-      {mission ? (
-        <p className="text-sm font-medium text-neutral-600 sm:text-[15px]">
-          &ldquo;{mission}&rdquo;
-        </p>
-      ) : (
-        <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600">
-          Set your mission in North Star →
-        </Link>
-      )}
+    <Card delay={0.03} className="bg-gradient-to-r from-blue-50/70 to-white">
+      <div className="absolute inset-y-0 left-0 w-1 bg-blue-500" />
+      <div className="flex items-start gap-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] bg-blue-100">
+          <Quote className="h-4 w-4 text-blue-600" />
+        </div>
+        {mission ? (
+          <p className="text-sm font-medium italic tracking-tight text-neutral-700 sm:text-[15px]">
+            {mission}
+          </p>
+        ) : (
+          <Link
+            href="/north-star"
+            className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-neutral-500 transition-colors hover:text-blue-600"
+          >
+            Set your mission in North Star <ArrowRight className="h-3.5 w-3.5" />
+          </Link>
+        )}
+      </div>
     </Card>
   )
 }
 
 /* ── Focus Flow (urgent → medium → low) ──────────────── */
-function FocusFlowSection() {
+function FocusFlowSection({ className }: { className?: string }) {
   const tasks = useTaskStore((s) => s.tasks)
   const updateTask = useTaskStore((s) => s.updateTask)
 
@@ -178,7 +214,7 @@ function FocusFlowSection() {
   }
 
   return (
-    <Card delay={0.05} className="overflow-visible">
+    <Card delay={0.05} className={cn("overflow-visible", className)}>
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-amber-100 ">
@@ -275,7 +311,7 @@ function FocusFlowSection() {
 const rowBase =
   "flex w-full items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2 text-left transition-colors hover:bg-neutral-50 .03]"
 
-function HabitsChallengesSection() {
+function HabitsChallengesSection({ className }: { className?: string }) {
   const habits = useHabitStore((s) => s.habits)
   const toggleDay = useHabitStore((s) => s.toggleDay)
   const getStreak = useHabitStore((s) => s.getStreak)
@@ -320,7 +356,7 @@ function HabitsChallengesSection() {
   const CIRC = 2 * Math.PI * R
 
   return (
-    <Card delay={0.1} className="overflow-visible">
+    <Card delay={0.1} className={cn("overflow-visible", className)}>
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-pink-100 ">
@@ -488,7 +524,7 @@ function HabitsChallengesSection() {
 }
 
 /* ── Cash Flow ───────────────────────────────────────── */
-function FinanceSection() {
+function FinanceSection({ className }: { className?: string }) {
   const incomes = useFinanceStore((s) => s.incomes)
   const expenses = useFinanceStore((s) => s.expenses)
 
@@ -531,7 +567,7 @@ function FinanceSection() {
   const isPositive = net >= 0
 
   return (
-    <Card delay={0.15} className="overflow-hidden">
+    <Card delay={0.15} className={cn("overflow-hidden", className)}>
       <CardHeader icon={Wallet} label="Cash Flow" color="text-green-600 " />
       <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1">
         <span className={cn("text-2xl font-bold tracking-tight", isPositive ? "text-neutral-900 " : "text-rose-500 ")}>
@@ -634,7 +670,7 @@ const investmentGrads: Record<string, { grad: string; solid: string }> = {
   SIPs: { grad: "url(#inv-sip)", solid: "#22c55e" },
 }
 
-function InvestmentsSection() {
+function InvestmentsSection({ className }: { className?: string }) {
   const sips = useFinanceStore((s) => s.sips)
   const stocks = useFinanceStore((s) => s.stocks)
   const mutualFunds = useFinanceStore((s) => s.mutualFunds)
@@ -672,7 +708,7 @@ function InvestmentsSection() {
   [stocks])
 
   return (
-    <Card delay={0.2} className="overflow-hidden">
+    <Card delay={0.2} className={cn("overflow-hidden", className)}>
       <CardHeader icon={TrendingUp} label="Investments" color="text-violet-600 " />
 
       {allocationData.length === 0 ? (
@@ -823,17 +859,17 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-6xl space-y-6"
+        className="mx-auto w-full max-w-6xl space-y-4 sm:space-y-5"
       >
+        <WelcomeHero />
+
         <MissionSection />
 
-        <DashboardHero />
-
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:gap-5">
-          <FocusFlowSection />
-          <HabitsChallengesSection />
-          <FinanceSection />
-          <InvestmentsSection />
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-5 xl:gap-5">
+          <FocusFlowSection className="lg:col-span-2" />
+          <HabitsChallengesSection className="lg:col-span-3" />
+          <FinanceSection className="lg:col-span-3" />
+          <InvestmentsSection className="lg:col-span-2" />
         </div>
       </motion.div>
     </DashboardShell>
