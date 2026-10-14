@@ -1,31 +1,33 @@
+"use client"
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/shadcn-utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white :ring-blue-400/60 :ring-offset-neutral-950 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 press",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-blue-600/20 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "rounded-full bg-blue-600 text-white shadow-none hover:bg-blue-500 active:scale-[0.97]   :bg-blue-500",
+          "rounded-lg bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-600",
         destructive:
-          "rounded-full bg-red-600 text-white shadow-none hover:bg-red-500 active:scale-[0.97]  :bg-red-500",
+          "rounded-lg bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-600",
         outline:
-          "rounded-full border border-neutral-200 bg-white/60 text-neutral-900 shadow-none backdrop-blur-sm hover:bg-neutral-100 hover:border-neutral-300    :bg-neutral-800",
+          "rounded-lg border border-neutral-200 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50 focus-visible:ring-neutral-400",
         secondary:
-          "rounded-full bg-blue-50 text-blue-700 shadow-none hover:bg-blue-100   :bg-blue-500/25",
+          "rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 focus-visible:ring-blue-600",
         ghost:
-          "text-neutral-600 shadow-none hover:bg-neutral-100 hover:text-neutral-900  :bg-neutral-800 :text-neutral-50",
+          "rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-400",
         link:
-          "text-blue-600 underline-offset-4 hover:underline ",
+          "text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-600 rounded-md px-1",
       },
       size: {
-        default: "h-9 px-5",
-        sm: "h-8 px-3.5 text-xs",
-        lg: "h-11 px-8",
-        icon: "h-10 w-10",
+        default: "h-9 px-4",
+        sm: "h-8 px-3 text-xs",
+        lg: "h-11 px-6",
+        icon: "h-9 w-9",
       },
     },
     defaultVariants: {
@@ -34,7 +36,6 @@ const buttonVariants = cva(
     },
   }
 )
-
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
