@@ -36,6 +36,7 @@ const categoryConfig: Record<GrowthCategory, { label: string; icon: typeof Brain
   skills: { label: "Skills", icon: Sparkles, color: "bg-violet-500", hex: "#af52de", soft: "rgba(175,82,222,0.16)" },
   dopamine: { label: "Wellness", icon: Brain, color: "bg-pink-500", hex: "#ff375f", soft: "rgba(255,55,95,0.16)" },
   finance: { label: "Finance", icon: Wallet, color: "bg-amber-500", hex: "#ff9f0a", soft: "rgba(255,159,10,0.16)" },
+  investments: { label: "Investments", icon: TrendingUp, color: "bg-cyan-500", hex: "#06b6d4", soft: "rgba(6,182,212,0.16)" },
 }
 
 type PeriodMetrics = Record<GrowthCategory, { value: number; label: string }>
@@ -91,6 +92,9 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
   const gainPct = totalInvested > 0 ? Math.round(((totalCurrent - totalInvested) / totalInvested) * 100) : 0
   const hasFinanceData = incomes.length > 0 || expenses.length > 0 || sips.length > 0 || stocks.length > 0 || mutualFunds.length > 0
   const financeValue = hasFinanceData ? Math.min(100, Math.max(0, 50 + gainPct + Math.round(netCashFlow / 1000))) : 0
+  const investmentsValue = Math.min(100, Math.max(0, 50 + gainPct))
+  const hasInvestments = (sips.length + stocks.length + mutualFunds.length) > 0
+  const investmentsLabel = hasInvestments ? (totalInvested>0 ? `+${gainPct}%` : "No positions") : "No data"
 
   return {
     tasks: { value: taskScore, label: `${tasksCompleted}/${tasksInRange.length} done` },
@@ -98,6 +102,7 @@ function computeMetrics(period: GrowthPeriod, date: Date): PeriodMetrics {
     skills: { value: avgSkillProgress, label: `${skillsCompleted} done, ${skillsInRange.length - skillsCompleted} active` },
     dopamine: { value: Math.min(100, checkInCount * 10), label: `${checkInCount} check-ins` },
     finance: { value: financeValue, label: hasFinanceData ? `₹${netCashFlow.toLocaleString()} flow` : "No data" },
+    investments: { value: investmentsValue, label: investmentsLabel },
   }
 }
 
@@ -253,7 +258,7 @@ function SimulatorTab() {
           <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Current vs Previous period</p>
           <div className="mt-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
-              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="72%">
+              <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="76%">
                 <defs>
                   <filter id="future-radar-glow" x="-40%" y="-40%" width="180%" height="180%">
                     <feGaussianBlur stdDeviation="3.5" result="blur" />
@@ -274,11 +279,11 @@ function SimulatorTab() {
                     <stop offset="100%" stopColor="#aeaeb2" stopOpacity={0.15} />
                   </linearGradient>
                 </defs>
-                <PolarGrid stroke="#a3a3a3" strokeOpacity={0.2} />
-                <PolarAngleAxis dataKey="category" tick={{ fontSize: 11, fill: "#aeaeb2" }} />
+                <PolarGrid stroke="#e5e5e5" strokeOpacity={0.6} />
+                <PolarAngleAxis dataKey="category" tick={{ fontSize: 10, fill: "#6b6b6b", letterSpacing: "0.02em" }} />
                 <PolarRadiusAxis angle={90} domain={[0, 100]} tick={false} axisLine={false} />
-                <Radar name="Previous" dataKey="previous" stroke="#8e8e93" fill="url(#futureRadarPrev)" fillOpacity={0.5} strokeWidth={1.5} strokeDasharray="4 4" />
-                <Radar name="Current" dataKey="current" stroke="#2b8bf7" fill="url(#futureRadarGrad)" fillOpacity={0.6} strokeWidth={2.5} style={{ filter: "url(#future-radar-glow)" }} />
+                <Radar name="Previous" dataKey="previous" stroke="#a1a1aa" fill="url(#futureRadarPrev)" fillOpacity={0.35} strokeWidth={1.2} strokeDasharray="3 3" />
+                <Radar name="Current" dataKey="current" stroke="#2563eb" fill="url(#futureRadarGrad)" fillOpacity={0.7} strokeWidth={2.2} style={{ filter: "url(#future-radar-glow)" }} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} />
               </RadarChart>
             </ResponsiveContainer>

@@ -207,7 +207,7 @@ export type GrowthPeriod = "monthly" | "quarterly" | "yearly"
 export type FutureGoal = {
   id: string
   title: string
-  category: "tasks" | "habits" | "skills" | "dopamine" | "finance"
+  category: "tasks" | "habits" | "skills" | "dopamine" | "finance" | "investments"
   targetValue: number
   currentValue: number
   period: GrowthPeriod
@@ -217,7 +217,7 @@ export type FutureGoal = {
   createdAt: number
 }
 
-export type GrowthCategory = "tasks" | "habits" | "skills" | "dopamine" | "finance"
+export type GrowthCategory = "tasks" | "habits" | "skills" | "dopamine" | "finance" | "investments"
 
 export type BucketListItem = {
   id: string
