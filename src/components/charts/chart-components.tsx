@@ -41,9 +41,9 @@ interface ChartTooltipProps {
 export function ChartTooltip({ active, payload, label, formatter, labelFormatter }: ChartTooltipProps) {
   if (!active || !payload?.length) return null
   return (
-    <div className="animate-fade-in rounded-[10px] border border-neutral-200 bg-white px-3 py-2.5 shadow-xl dark:border-neutral-800 dark:bg-neutral-900">
+    <div className="animate-fade-in rounded-[10px] border border-neutral-200 bg-white px-3 py-2.5 shadow-xl  ">
       {label && (
-        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 dark:text-neutral-400">
+        <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 ">
           {labelFormatter ? labelFormatter(String(label)) : String(label)}
         </p>
       )}
@@ -51,8 +51,8 @@ export function ChartTooltip({ active, payload, label, formatter, labelFormatter
         {payload.map((p, i) => (
           <div key={i} className="flex items-center gap-2 text-xs">
             <span className="h-2 w-2 shrink-0 rounded-full shadow-sm" style={{ backgroundColor: p.color }} />
-            <span className="text-neutral-600 dark:text-neutral-400">{p.name}</span>
-            <span className="ml-auto font-bold tabular-nums text-neutral-900 dark:text-white">
+            <span className="text-neutral-600 ">{p.name}</span>
+            <span className="ml-auto font-bold tabular-nums text-neutral-900 ">
               {formatter ? formatter(p.value, p.name) : String(p.value)}
             </span>
           </div>
@@ -178,9 +178,9 @@ export function RadialGauge({
 export function GradientIconTile({ color, children }: { color: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800"
+      className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 "
     >
-      <div className="text-neutral-600 dark:text-neutral-300">{children}</div>
+      <div className="text-neutral-600 ">{children}</div>
     </div>
   )
 }

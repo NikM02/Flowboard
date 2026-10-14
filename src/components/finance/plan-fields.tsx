@@ -44,18 +44,18 @@ export function PlanFields({
   const dates = preview ? enumerateInstallments(preview) : []
 
   return (
-    <div className="space-y-3 rounded-xl border border-neutral-200 p-3 dark:border-neutral-800">
+    <div className="space-y-3 rounded-xl border border-neutral-200 p-3 ">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">Recurring installment plan</p>
-          <p className="text-[11px] text-neutral-400 dark:text-neutral-500">Track paid installments with a progress bar</p>
+          <p className="text-sm font-medium text-neutral-900 ">Recurring installment plan</p>
+          <p className="text-[11px] text-neutral-400 ">Track paid installments with a progress bar</p>
         </div>
         <button
           type="button"
           role="switch"
           aria-checked={draft.enabled}
           onClick={() => onChange({ ...draft, enabled: !draft.enabled })}
-          className={cn("relative h-6 w-11 shrink-0 rounded-full transition-colors", draft.enabled ? "bg-green-500" : "bg-neutral-300 dark:bg-neutral-700")}
+          className={cn("relative h-6 w-11 shrink-0 rounded-full transition-colors", draft.enabled ? "bg-green-500" : "bg-neutral-300 ")}
         >
           <span className={cn("absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all", draft.enabled ? "left-[22px]" : "left-0.5")} />
         </button>
@@ -76,13 +76,13 @@ export function PlanFields({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[11px] text-neutral-400">Frequency</Label>
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-neutral-100 p-0.5 dark:bg-neutral-800">
+              <div className="grid grid-cols-2 gap-1 rounded-lg bg-neutral-100 p-0.5 ">
                 {(["monthly", "quarterly"] as PlanFrequency[]).map((f) => (
                   <button
                     key={f}
                     type="button"
                     onClick={() => onChange({ ...draft, frequency: f })}
-                    className={cn("rounded-md py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50" : "text-neutral-500 dark:text-neutral-400")}
+                    className={cn("rounded-md py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm  " : "text-neutral-500 ")}
                   >
                     {f}
                   </button>
@@ -96,15 +96,15 @@ export function PlanFields({
           </div>
 
           {dates.length > 0 && (
-            <div className="rounded-lg bg-neutral-50 p-2.5 dark:bg-neutral-900">
+            <div className="rounded-lg bg-neutral-50 p-2.5 ">
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Schedule preview</p>
               <div className="flex flex-wrap gap-1">
                 {dates.slice(0, 6).map((d, i) => (
-                  <span key={d} className={cn("rounded-md px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700 dark:bg-green-950/40 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400")}>
+                  <span key={d} className={cn("rounded-md px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700  " : "bg-neutral-100 text-neutral-500  ")}>
                     {formatInstallmentDate(d)}
                   </span>
                 ))}
-                {dates.length > 6 && <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 dark:bg-neutral-800">…{dates.length - 6} more</span>}
+                {dates.length > 6 && <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 ">…{dates.length - 6} more</span>}
               </div>
             </div>
           )}

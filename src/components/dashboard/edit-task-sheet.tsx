@@ -184,8 +184,8 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
               onClick={() => setReminderMins(opt.mins)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                 reminderMins === opt.mins
-                  ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                  ? "bg-neutral-900 text-white  "
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200   :bg-neutral-700"
               }`}
             >
               {opt.label}
@@ -204,20 +204,20 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="flex items-center gap-2 rounded-lg bg-neutral-50 px-3 py-2 dark:bg-neutral-900"
+                className="flex items-center gap-2 rounded-lg bg-neutral-50 px-3 py-2 "
               >
                 <button type="button" onClick={() => toggleSubtask(task.id, sub.id)}>
                   {sub.completed ? (
                     <CheckCircle2 className="h-4 w-4 text-emerald-500" />
                   ) : (
-                    <Circle className="h-4 w-4 text-neutral-300 dark:text-neutral-600" />
+                    <Circle className="h-4 w-4 text-neutral-300 " />
                   )}
                 </button>
                 <span
                   className={`flex-1 text-sm ${
                     sub.completed
                       ? "text-neutral-400 line-through"
-                      : "text-neutral-700 dark:text-neutral-300"
+                      : "text-neutral-700 "
                   }`}
                 >
                   {sub.title}

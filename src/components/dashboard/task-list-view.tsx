@@ -10,9 +10,9 @@ import { EmptyState } from "./empty-state"
 import { cn } from "@/lib/shadcn-utils"
 
 const priorityConfig: Record<Priority, { label: string; variant: "low" | "medium" | "high"; color: string; bg: string }> = {
-  high: { label: "High", variant: "high", color: "text-red-500", bg: "bg-red-50 dark:bg-red-950/20" },
-  medium: { label: "Medium", variant: "medium", color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/20" },
-  low: { label: "Low", variant: "low", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/20" },
+  high: { label: "High", variant: "high", color: "text-red-500", bg: "bg-red-50 " },
+  medium: { label: "Medium", variant: "medium", color: "text-amber-500", bg: "bg-amber-50 " },
+  low: { label: "Low", variant: "low", color: "text-blue-500", bg: "bg-blue-50 " },
 }
 
 function ListRow({ task, index }: { task: Task; index: number }) {
@@ -34,8 +34,8 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       className={cn(
         "group flex items-center gap-3 rounded-xl border p-3.5 transition-all sm:grid sm:grid-cols-[1fr_100px_90px_110px_120px_80px] sm:items-center sm:gap-4",
         task.completed
-          ? "border-green-200/40 bg-green-50/30 dark:border-green-900/20 dark:bg-green-950/10"
-          : "border-neutral-200/60 bg-white hover:border-neutral-300/60 hover:shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900"
+          ? "border-green-200/40 bg-green-50/30  "
+          : "border-neutral-200/60 bg-white hover:border-neutral-300/60 hover:shadow-sm  "
       )}
     >
       {/* Title */}
@@ -44,18 +44,18 @@ function ListRow({ task, index }: { task: Task; index: number }) {
           {task.completed ? (
             <CheckCircle2 className="h-5 w-5 text-green-500" />
           ) : (
-            <Circle className="h-5 w-5 text-neutral-300 dark:text-neutral-600" />
+            <Circle className="h-5 w-5 text-neutral-300 " />
           )}
         </button>
         <div className="min-w-0">
           <span className={cn(
             "block truncate text-sm font-medium",
-            task.completed ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-900 dark:text-neutral-50"
+            task.completed ? "text-neutral-400 line-through " : "text-neutral-900 "
           )}>
             {task.title}
           </span>
           {task.description && (
-            <span className="block truncate text-[11px] text-neutral-400 dark:text-neutral-500">{task.description}</span>
+            <span className="block truncate text-[11px] text-neutral-400 ">{task.description}</span>
           )}
         </div>
       </div>
@@ -63,12 +63,12 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       {/* Project — hidden on mobile */}
       <div className="hidden sm:block">
         {task.project ? (
-          <span className="inline-flex items-center gap-1 truncate text-xs text-neutral-500 dark:text-neutral-400">
+          <span className="inline-flex items-center gap-1 truncate text-xs text-neutral-500 ">
             <FolderKanban className="h-3 w-3 shrink-0" />
             <span className="truncate">{task.project}</span>
           </span>
         ) : (
-          <span className="text-xs text-neutral-300 dark:text-neutral-600">—</span>
+          <span className="text-xs text-neutral-300 ">—</span>
         )}
       </div>
 
@@ -80,7 +80,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       </div>
 
       {/* Due date — hidden on mobile */}
-      <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-500 dark:text-neutral-400">
+      <div className="hidden sm:flex items-center gap-1.5 text-xs text-neutral-500 ">
         <Calendar className="h-3 w-3 shrink-0" />
         <span className="truncate">{formatDate(task.dueDate, task.dueTime)}</span>
       </div>
@@ -88,13 +88,13 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       {/* Progress — hidden on mobile */}
       <div className="hidden sm:flex items-center gap-2">
         <Progress value={task.progress} className="h-1.5 flex-1" />
-        <span className="w-8 text-right text-[11px] font-medium text-neutral-500 dark:text-neutral-400">{task.progress}%</span>
+        <span className="w-8 text-right text-[11px] font-medium text-neutral-500 ">{task.progress}%</span>
       </div>
 
       {/* Status — hidden on mobile */}
       <div className="hidden sm:block">
         {task.completed ? (
-          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+          <span className="inline-flex items-center gap-1 rounded-full bg-green-100 px-2 py-0.5 text-[10px] font-semibold text-green-700  ">
             <CheckCircle2 className="h-3 w-3" /> Done
           </span>
         ) : (
@@ -113,13 +113,13 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       <div className="flex justify-end gap-0.5 sm:justify-end">
         <button
           onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 dark:hover:bg-neutral-800 sm:opacity-0"
+          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 :bg-neutral-800 sm:opacity-0"
         >
           <Edit3 className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:hover:bg-red-950/50 sm:opacity-0"
+          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 :bg-red-950/50 sm:opacity-0"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>

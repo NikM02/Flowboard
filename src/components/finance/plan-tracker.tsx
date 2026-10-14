@@ -21,14 +21,14 @@ export function PlanTracker({
 
   if (!st.hasPlan) {
     return (
-      <div className="mt-3 flex items-center justify-between rounded-xl border border-dashed border-neutral-200 px-3 py-2 dark:border-neutral-800">
-        <span className="flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
+      <div className="mt-3 flex items-center justify-between rounded-xl border border-dashed border-neutral-200 px-3 py-2 ">
+        <span className="flex items-center gap-1.5 text-[10px] text-neutral-400 ">
           <CalendarClock className="h-3 w-3" /> No installment plan
         </span>
         {onEdit && (
           <button
             onClick={onEdit}
-            className="flex items-center gap-1 text-[10px] font-semibold text-neutral-500 underline-offset-2 hover:underline dark:text-neutral-400"
+            className="flex items-center gap-1 text-[10px] font-semibold text-neutral-500 underline-offset-2 hover:underline "
           >
             <Play className="h-3 w-3" /> Set plan
           </button>
@@ -43,17 +43,17 @@ export function PlanTracker({
   const dueNow = !!st.nextPayable
 
   return (
-    <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 dark:border-neutral-800 dark:bg-neutral-800/40">
+    <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3  ">
       <div className="flex items-center justify-between">
-        <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">
+        <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 ">
           <CalendarClock className="h-3 w-3" /> {label}
         </span>
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
-            completed ? "bg-green-100 text-green-700 dark:bg-green-950/40 dark:text-green-400"
-            : st.overdue ? "bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400"
-            : "bg-neutral-100 text-neutral-600 dark:bg-neutral-800 dark:text-neutral-300"
+            completed ? "bg-green-100 text-green-700  "
+            : st.overdue ? "bg-red-100 text-red-600  "
+            : "bg-neutral-100 text-neutral-600  "
           )}
         >
           {completed ? <Check className="h-3 w-3" /> : st.overdue ? <X className="h-3 w-3" /> : <CalendarClock className="h-3 w-3" />}
@@ -61,7 +61,7 @@ export function PlanTracker({
         </span>
       </div>
 
-      <div className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-700/50">
+      <div className="mt-2 flex h-2 w-full overflow-hidden rounded-full bg-neutral-100 ">
         <motion.div
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
@@ -70,15 +70,15 @@ export function PlanTracker({
         />
       </div>
 
-      <div className="mt-1.5 flex items-center justify-between text-[10px] text-neutral-400 dark:text-neutral-500">
+      <div className="mt-1.5 flex items-center justify-between text-[10px] text-neutral-400 ">
         <span>{st.paid}/{st.total} paid</span>
         <span>{st.elapsed}%</span>
       </div>
 
-      <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 dark:bg-neutral-900">
+      <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 ">
         <div>
           <p className="text-[10px] text-neutral-400">Next payable</p>
-          <p className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">
+          <p className="text-xs font-semibold text-neutral-900 ">
             {formatInstallmentDate(payable)}
             {!completed && plan?.amount ? ` · ₹${plan.amount.toLocaleString()}` : ""}
           </p>
@@ -89,7 +89,7 @@ export function PlanTracker({
             disabled={!st.nextPayable && !st.latestDue}
             className={cn(
               "flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors",
-              dueNow ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-950/40 dark:text-green-400" : "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400"
+              dueNow ? "bg-green-100 text-green-700 hover:bg-green-200  " : "bg-neutral-100 text-neutral-500  "
             )}
           >
             {st.nextPayable ? <Play className="h-3 w-3" /> : st.latestPaid ? <Check className="h-3 w-3" /> : <Play className="h-3 w-3" />}
@@ -99,7 +99,7 @@ export function PlanTracker({
             <button
               onClick={onEdit}
               aria-label="Edit plan"
-              className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+              className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200   :bg-neutral-700"
             >
               <Pencil className="h-3 w-3" />
             </button>

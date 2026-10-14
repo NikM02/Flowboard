@@ -57,17 +57,17 @@ function Ring({ percent, size = 148, stroke = 13 }: { percent: number; size?: nu
   return (
     <div className="relative" style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-neutral-100 dark:stroke-neutral-800" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-neutral-100 " />
         <circle
           cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke}
-          className="stroke-neutral-900 dark:stroke-white transition-all duration-700"
+          className="stroke-neutral-900  transition-all duration-700"
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - (c * Math.min(percent, 100)) / 100}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-2xl font-bold text-neutral-900 dark:text-white">{percent}%</span>
+        <span className="text-2xl font-bold text-neutral-900 ">{percent}%</span>
         <span className="text-[10px] font-medium text-neutral-400">overall</span>
       </div>
     </div>
@@ -100,8 +100,8 @@ function GrowthChart({ roadmap }: { roadmap: Roadmap }) {
   if (totalFinished === 0) {
     return (
       <div className="flex h-40 flex-col items-center justify-center text-center">
-        <TrendingUp className="mb-2 h-8 w-8 text-neutral-300 dark:text-neutral-600" />
-        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">No growth data yet</p>
+        <TrendingUp className="mb-2 h-8 w-8 text-neutral-300 " />
+        <p className="text-sm font-medium text-neutral-500 ">No growth data yet</p>
         <p className="mt-0.5 text-xs text-neutral-400">Complete tasks and milestones to see progress over time.</p>
       </div>
     )
@@ -128,7 +128,7 @@ function GrowthChart({ roadmap }: { roadmap: Roadmap }) {
           </linearGradient>
         </defs>
         {[0.25, 0.5, 0.75, 1].map((g) => (
-          <line key={g} x1={PAD} x2={W - PAD} y1={y(maxY * g)} y2={y(maxY * g)} className="stroke-neutral-100 dark:stroke-neutral-800" strokeWidth="1" />
+          <line key={g} x1={PAD} x2={W - PAD} y1={y(maxY * g)} y2={y(maxY * g)} className="stroke-neutral-100 " strokeWidth="1" />
         ))}
         {weeks > 1 && phaseCum[weeks - 1] > 0 && (
           <>
@@ -139,7 +139,7 @@ function GrowthChart({ roadmap }: { roadmap: Roadmap }) {
         {taskCum[weeks - 1] > 0 && (
           <>
             <path d={area(taskCum)} fill={`url(#g-tasks-${roadmap.id})`} />
-            <path d={path(taskCum)} fill="none" stroke="#171717" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="dark:stroke-white" />
+            <path d={path(taskCum)} fill="none" stroke="#171717" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="" />
           </>
         )}
         {Array.from({ length: weeks }, (_, i) => i).map((i) =>
@@ -151,7 +151,7 @@ function GrowthChart({ roadmap }: { roadmap: Roadmap }) {
       <div className="flex items-center justify-between text-[10px] text-neutral-400">
         <span>Weeks since start</span>
         <span className="flex items-center gap-3">
-          <span className="flex items-center gap-1"><span className="h-1.5 w-3 rounded-full bg-neutral-900 dark:bg-white" /> tasks</span>
+          <span className="flex items-center gap-1"><span className="h-1.5 w-3 rounded-full bg-neutral-900 " /> tasks</span>
           <span className="flex items-center gap-1"><span className="h-1.5 w-3 rounded-full bg-violet-500" /> milestones</span>
         </span>
       </div>
@@ -172,21 +172,21 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
   return (
     <div>
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5  ">
           <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Progress</p>
           <div className="mt-4 flex items-center gap-6">
             <Ring percent={overall} />
             <div className="min-w-0 flex-1 space-y-3">
               <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-neutral-900 dark:text-white">{done}</span>
+                <span className="font-semibold text-neutral-900 ">{done}</span>
                 <span className="text-neutral-400">milestones done</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-neutral-900 dark:text-white">{total - done}</span>
+                <span className="font-semibold text-neutral-900 ">{total - done}</span>
                 <span className="text-neutral-400">to go</span>
               </div>
               <div className="flex items-center justify-between text-sm">
-                <span className="font-semibold text-neutral-900 dark:text-white">{totalFinished}</span>
+                <span className="font-semibold text-neutral-900 ">{totalFinished}</span>
                 <span className="text-neutral-400">tasks + milestones completed</span>
               </div>
               <div>
@@ -214,7 +214,7 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5  ">
           <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400">
             <TrendingUp className="h-3.5 w-3.5" /> Growth over time
           </p>
@@ -255,12 +255,12 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
 function Insight({ icon, label, value, tone = "normal" }: { icon: React.ReactNode; label: string; value: string; tone?: "normal" | "danger" }) {
   return (
     <div className={cn("rounded-2xl border p-4",
-      tone === "danger" ? "border-rose-200 bg-rose-50/60 dark:border-rose-500/30 dark:bg-rose-500/5" : "border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900")}>
+      tone === "danger" ? "border-rose-200 bg-rose-50/60  " : "border-neutral-200 bg-white  ")}>
       <div className="flex items-center gap-1.5 text-neutral-400">
         {icon}
         <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>
       </div>
-      <p className="mt-2 truncate text-lg font-bold text-neutral-900 dark:text-white">{value}</p>
+      <p className="mt-2 truncate text-lg font-bold text-neutral-900 ">{value}</p>
     </div>
   )
 }

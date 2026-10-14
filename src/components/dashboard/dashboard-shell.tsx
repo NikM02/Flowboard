@@ -169,10 +169,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   if (!authChecked) {
     return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white ">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 dark:text-neutral-500" />
-          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Loading...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 " />
+          <p className="text-sm font-medium text-neutral-500 ">Loading...</p>
         </div>
       </div>
     )
@@ -180,10 +180,10 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
   if (dataLoading) {
     return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white dark:bg-neutral-950">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white ">
         <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 dark:text-neutral-500" />
-          <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">Syncing data...</p>
+          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 " />
+          <p className="text-sm font-medium text-neutral-500 ">Syncing data...</p>
         </div>
       </div>
     )
@@ -195,7 +195,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-neutral-50 dark:bg-neutral-950">
+    <div className="flex h-screen overflow-hidden bg-neutral-50 ">
       <Sidebar
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
@@ -212,7 +212,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0">
-          <div className="obsidian mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 dark:bg-black">
+          <div className=" mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 ">
             {children}
           </div>
         </main>
@@ -222,7 +222,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       {offline && (
         <div className="fixed inset-x-0 top-16 z-30 flex items-center justify-center md:top-0">
-          <div className="flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-xs font-medium text-white shadow-xl dark:bg-white dark:text-neutral-900">
+          <div className="flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-xs font-medium text-white shadow-xl  ">
             <WifiOff className="h-3.5 w-3.5" />
             Offline — showing saved copy
           </div>

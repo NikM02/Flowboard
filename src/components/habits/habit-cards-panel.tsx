@@ -45,18 +45,18 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
       className="group relative card-modern card-hover glass rounded-2xl p-4"
     >
       <div className="flex items-start gap-3">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${colors.bg} dark:bg-opacity-20`}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${colors.bg} `}>
           <Icon className={`h-5 w-5 ${colors.text}`} />
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">{habit.name}</h3>
+              <h3 className="text-sm font-semibold text-neutral-900 ">{habit.name}</h3>
               {habit.description && <p className="text-xs text-neutral-400 mt-0.5">{habit.description}</p>}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {streak > 0 && (
-                <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600 dark:bg-amber-900/30 dark:text-amber-400">
+                <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600  ">
                   <Flame className="h-3 w-3" />{streak}
                 </div>
               )}
@@ -71,14 +71,14 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
           <div className="mt-3 flex items-center gap-3">
             <button onClick={() => toggleDay(habit.id, today)}
               className={`flex h-8 items-center gap-2 rounded-xl px-3 text-xs font-medium transition-all ${
-                isDoneToday ? "bg-neutral-900 text-white dark:bg-neutral-50 dark:text-neutral-900" : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400"
+                isDoneToday ? "bg-neutral-900 text-white  " : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200  "
               }`}
             >
               {isDoneToday ? "✓ Done" : "○ Mark done"}
             </button>
             <div className="flex-1">
               <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-1">
-                <span>This month</span><span className="font-medium text-neutral-600 dark:text-neutral-300">{monthRate}%</span>
+                <span>This month</span><span className="font-medium text-neutral-600 ">{monthRate}%</span>
               </div>
               <Progress value={monthRate} className="h-1.5" />
             </div>
@@ -95,7 +95,7 @@ export function HabitCardsPanel({ onEdit, onViewHistory }: { onEdit: (h: Habit) 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">All Habits</h3>
+        <h3 className="text-sm font-semibold text-neutral-900 ">All Habits</h3>
         <Button size="sm" onClick={() => setIsCreateModalOpen(true)} className="gap-1 rounded-xl text-xs h-8">
           <Plus className="h-3.5 w-3.5" />New
         </Button>

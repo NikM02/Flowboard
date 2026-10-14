@@ -176,15 +176,15 @@ function WishCard({
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        "group relative overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-md dark:bg-neutral-900",
+        "group relative overflow-hidden rounded-2xl border bg-white transition-shadow hover:shadow-md ",
         item.completed
-          ? "border-green-200/60 dark:border-green-900/40"
-          : "border-neutral-200/60 dark:border-neutral-800/60"
+          ? "border-green-200/60 "
+          : "border-neutral-200/60 "
       )}
     >
       {/* Cover */}
-      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 sm:h-44">
-        <Star className="h-10 w-10 text-amber-300 dark:text-amber-600" />
+      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50   sm:h-44">
+        <Star className="h-10 w-10 text-amber-300 " />
         {item.completed && (
           <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
             <Check className="h-4 w-4 text-white" />
@@ -196,14 +196,14 @@ function WishCard({
               <button
                 onClick={(e) => { e.stopPropagation(); onEdit() }}
                 aria-label="Edit wish"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90 dark:text-neutral-300"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white  "
               >
                 <Pencil className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
                 aria-label="Delete wish"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white dark:bg-neutral-800/90"
+                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -211,7 +211,7 @@ function WishCard({
           )}
         </div>
         <div className="absolute bottom-3 left-3">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm dark:bg-neutral-800/90 dark:text-neutral-300">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm  ">
             <Clock className="h-3 w-3" />
             {item.timeframe}
           </span>
@@ -223,18 +223,18 @@ function WishCard({
         <h3 className={cn(
           "text-base font-semibold tracking-tight",
           item.completed
-            ? "text-neutral-400 line-through dark:text-neutral-600"
-            : "text-neutral-900 dark:text-neutral-50"
+            ? "text-neutral-400 line-through "
+            : "text-neutral-900 "
         )}>
           {item.title}
         </h3>
         {item.description && (
-          <p className="mt-1 text-sm leading-relaxed text-neutral-500 dark:text-neutral-400 line-clamp-2">
+          <p className="mt-1 text-sm leading-relaxed text-neutral-500  line-clamp-2">
             {item.description}
           </p>
         )}
         <div className="mt-3 flex flex-wrap items-center justify-between gap-2">
-          <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-400 dark:text-neutral-500">
+          <div className="flex min-w-0 items-center gap-3 text-xs text-neutral-400 ">
             {item.expectedDate && (
               <span className="flex min-w-0 items-center gap-1">
                 <Calendar className="h-3.5 w-3.5 shrink-0" />
@@ -249,8 +249,8 @@ function WishCard({
             className={cn(
               "flex h-8 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-all",
               item.completed
-                ? "bg-green-100 text-green-700 hover:bg-green-200 dark:bg-green-900/30 dark:text-green-400"
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                ? "bg-green-100 text-green-700 hover:bg-green-200  "
+                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200   :bg-neutral-700"
             )}
           >
             {item.completed ? (
@@ -290,7 +290,7 @@ export default function BucketListPage() {
           <div>
             <Link
               href="/skills"
-              className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50"
+              className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900  :text-neutral-50"
             >
               <ArrowLeft className="h-4 w-4" />
               Skills
@@ -304,22 +304,22 @@ export default function BucketListPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4  ">
             <p className="text-xs text-neutral-500">Total Wishes</p>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{items.length}</p>
+            <p className="text-2xl font-bold text-neutral-900 ">{items.length}</p>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900/40 dark:bg-amber-950/20">
-            <p className="text-xs text-amber-600 dark:text-amber-400">Pending</p>
-            <p className="text-2xl font-bold text-amber-600 dark:text-amber-400">{pendingCount}</p>
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4  ">
+            <p className="text-xs text-amber-600 ">Pending</p>
+            <p className="text-2xl font-bold text-amber-600 ">{pendingCount}</p>
           </div>
-          <div className="rounded-2xl border border-green-200 bg-green-50 p-4 dark:border-green-900/40 dark:bg-green-950/20">
-            <p className="text-xs text-green-600 dark:text-green-400">Achieved</p>
-            <p className="text-2xl font-bold text-green-600 dark:text-green-400">{completedCount}</p>
+          <div className="rounded-2xl border border-green-200 bg-green-50 p-4  ">
+            <p className="text-xs text-green-600 ">Achieved</p>
+            <p className="text-2xl font-bold text-green-600 ">{completedCount}</p>
           </div>
         </div>
 
         {/* Filter */}
-        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 ">
           {(["all", "pending", "completed"] as const).map((f) => (
             <button
               key={f}
@@ -327,19 +327,19 @@ export default function BucketListPage() {
               className={cn(
                 "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
                 filter === f
-                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                  : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                  ? "bg-white text-neutral-900 shadow-sm  "
+                  : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
               )}
             >
               {f === "all" && <Filter className="h-3.5 w-3.5" />}
               {f}
               {f === "pending" && pendingCount > 0 && (
-                <span className="ml-1 rounded-full bg-amber-100 px-1.5 text-[10px] font-semibold text-amber-700 dark:bg-amber-900/30 dark:text-amber-400">
+                <span className="ml-1 rounded-full bg-amber-100 px-1.5 text-[10px] font-semibold text-amber-700  ">
                   {pendingCount}
                 </span>
               )}
               {f === "completed" && completedCount > 0 && (
-                <span className="ml-1 rounded-full bg-green-100 px-1.5 text-[10px] font-semibold text-green-700 dark:bg-green-900/30 dark:text-green-400">
+                <span className="ml-1 rounded-full bg-green-100 px-1.5 text-[10px] font-semibold text-green-700  ">
                   {completedCount}
                 </span>
               )}
@@ -352,13 +352,13 @@ export default function BucketListPage() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800"
+            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 "
           >
-            <Sparkles className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
-            <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">
+            <Sparkles className="mb-4 h-12 w-12 text-neutral-300 " />
+            <p className="text-lg font-medium text-neutral-500 ">
               {filter === "all" ? "No wishes yet" : `No ${filter} wishes`}
             </p>
-            <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">
+            <p className="mt-1 text-sm text-neutral-400 ">
               {filter === "all"
                 ? "Start dreaming — add your first bucket list item"
                 : "Try a different filter"}

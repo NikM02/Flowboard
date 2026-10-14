@@ -13,9 +13,9 @@ export function getTaskStatus(task: Task): { key: TaskStatusKey; label: string }
 }
 
 export const TASK_STATUS_STYLES: Record<TaskStatusKey, string> = {
-  done: "bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400",
-  overdue: "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400",
-  "due-today": "bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400",
-  "in-progress": "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400",
-  todo: "bg-neutral-100 text-neutral-500 dark:bg-neutral-800 dark:text-neutral-400",
+  done: "bg-green-100 text-green-700  ",
+  overdue: "bg-red-100 text-red-700  ",
+  "due-today": "bg-amber-100 text-amber-700  ",
+  "in-progress": "bg-blue-100 text-blue-700  ",
+  todo: "bg-neutral-100 text-neutral-500  ",
 }

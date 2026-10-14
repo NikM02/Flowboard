@@ -57,17 +57,17 @@ export function CalendarTab() {
     <div className="space-y-3">
       {/* Navigation */}
       <div className="flex items-center justify-between">
-        <button onClick={goToToday} className="text-xs font-medium text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300 px-2 py-1">
+        <button onClick={goToToday} className="text-xs font-medium text-neutral-500 hover:text-neutral-700 :text-neutral-300 px-2 py-1">
           Today
         </button>
         <div className="flex items-center gap-1">
-          <button onClick={navigatePrev} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <button onClick={navigatePrev} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 :bg-neutral-800">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h2 className="min-w-[150px] text-center text-sm sm:text-base font-semibold text-neutral-900 dark:text-neutral-50 select-none">
+          <h2 className="min-w-[150px] text-center text-sm sm:text-base font-semibold text-neutral-900  select-none">
             {format(baseDate, "MMMM yyyy")}
           </h2>
-          <button onClick={navigateNext} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 dark:hover:bg-neutral-800">
+          <button onClick={navigateNext} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 :bg-neutral-800">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -81,10 +81,10 @@ export function CalendarTab() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.15 }}
-          className="rounded-xl border border-neutral-200 bg-white dark:border-neutral-700 dark:bg-neutral-800/50 overflow-hidden"
+          className="rounded-xl border border-neutral-200 bg-white   overflow-hidden"
         >
           {/* Day headers */}
-          <div className="grid grid-cols-7 border-b border-neutral-200 dark:border-neutral-700">
+          <div className="grid grid-cols-7 border-b border-neutral-200 ">
             {["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].map((d) => (
               <div key={d} className="py-1.5 sm:py-2 text-center text-[10px] sm:text-xs font-medium text-neutral-400">
                 <span className="hidden sm:inline">{d}</span>
@@ -94,7 +94,7 @@ export function CalendarTab() {
           </div>
           {/* Day cells */}
           {weeks.map((week, wi) => (
-            <div key={wi} className="grid grid-cols-7 border-b border-neutral-100 dark:border-neutral-700/50 last:border-b-0">
+            <div key={wi} className="grid grid-cols-7 border-b border-neutral-100  last:border-b-0">
               {week.map((d) => {
                 const isCurrentMonth = isSameMonth(d, baseDate)
                 const isTodayDate = isToday(d)
@@ -107,18 +107,18 @@ export function CalendarTab() {
                     onClick={() => setSelectedDate(isSelected ? null : dateKey)}
                     className={cn(
                       "flex flex-col items-start p-0.5 sm:p-1 text-sm transition-colors relative min-h-[52px] sm:min-h-[72px]",
-                      isSelected && "bg-neutral-100 dark:bg-neutral-700/50",
+                      isSelected && "bg-neutral-100 ",
                       isTodayDate
-                        ? "text-neutral-900 dark:text-neutral-50"
+                        ? "text-neutral-900 "
                         : isCurrentMonth
-                          ? "text-neutral-700 dark:text-neutral-300"
-                          : "text-neutral-300 dark:text-neutral-600"
+                          ? "text-neutral-700 "
+                          : "text-neutral-300 "
                     )}
                   >
                     <span
                       className={cn(
                         "flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full text-[10px] sm:text-xs font-medium mx-auto",
-                        isTodayDate && "bg-neutral-900 text-white dark:bg-neutral-100 dark:text-neutral-900"
+                        isTodayDate && "bg-neutral-900 text-white  "
                       )}
                     >
                       {format(d, "d")}
@@ -128,7 +128,7 @@ export function CalendarTab() {
                         <div
                           key={task.id}
                           title={task.title}
-                          className="text-[7px] sm:text-[9px] leading-tight truncate text-neutral-600 dark:text-neutral-400 border-l-2 pl-1"
+                          className="text-[7px] sm:text-[9px] leading-tight truncate text-neutral-600  border-l-2 pl-1"
                           style={{ borderLeftColor: task.priority === "high" ? "#171717" : task.priority === "medium" ? "#737373" : "#525252" }}
                         >
                           {task.title}
@@ -153,26 +153,26 @@ export function CalendarTab() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4 dark:border-neutral-700 dark:bg-neutral-800/50 space-y-2"
+          className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4   space-y-2"
         >
-          <h3 className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">
+          <h3 className="text-sm font-semibold text-neutral-900 ">
             Tasks due {format(new Date(selectedDate + "T00:00:00"), "MMM d, yyyy")}
           </h3>
           <div className="space-y-1">
             {selectedTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-2 rounded-lg border border-neutral-100 dark:border-neutral-700 bg-neutral-50 dark:bg-neutral-800/30 px-2.5 py-2"
+                className="flex items-center gap-2 rounded-lg border border-neutral-100  bg-neutral-50  px-2.5 py-2"
               >
                 <span className={cn("h-2 w-2 rounded-full shrink-0", priorityColors[task.priority])} />
-                <span className="flex-1 text-xs sm:text-sm text-neutral-700 dark:text-neutral-300 truncate">
+                <span className="flex-1 text-xs sm:text-sm text-neutral-700  truncate">
                   {task.title}
                 </span>
                 <span className={cn(
                   "text-[10px] font-medium px-1.5 py-0.5 rounded",
-                  task.priority === "high" ? "text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950/30" :
-                  task.priority === "medium" ? "text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-950/30" :
-                  "text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-950/30"
+                  task.priority === "high" ? "text-red-600 bg-red-50  " :
+                  task.priority === "medium" ? "text-amber-600 bg-amber-50  " :
+                  "text-blue-600 bg-blue-50  "
                 )}>
                   {task.priority}
                 </span>

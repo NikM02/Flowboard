@@ -92,8 +92,8 @@ function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
                   className={cn(
                     "flex h-9 w-9 items-center justify-center rounded-xl text-lg transition-all",
                     icon === emoji
-                      ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2 dark:bg-white dark:text-neutral-900 dark:ring-white"
-                      : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                      ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2   "
+                      : "bg-neutral-100 hover:bg-neutral-200  :bg-neutral-700"
                   )}
                 >
                   {emoji}
@@ -132,7 +132,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <p className="text-sm text-neutral-500 dark:text-neutral-400">
+        <p className="text-sm text-neutral-500 ">
           {projectNames.length} {projectNames.length === 1 ? "project" : "projects"} · tasks grouped by project
         </p>
         <Button onClick={() => setNewOpen(true)} className="gap-2 rounded-xl">
@@ -141,8 +141,8 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
       </div>
 
       {projectNames.length === 0 && uncategorizedTasks.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 dark:border-neutral-700">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 ">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
             <FolderKanban className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No projects yet.</p>
@@ -171,7 +171,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card-modern card-hover group relative cursor-pointer rounded-2xl border border-neutral-200 bg-white p-4 text-left dark:border-neutral-800 dark:bg-neutral-900"
+                className="card-modern card-hover group relative cursor-pointer rounded-2xl border border-neutral-200 bg-white p-4 text-left  "
                 onClick={() => openProject(name)}
               >
                 <div className="flex items-start justify-between gap-2">
@@ -185,8 +185,8 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                       {icon}
                     </button>
                     <div>
-                      <h3 className="text-sm font-bold tracking-tight text-neutral-900 dark:text-neutral-50">{name}</h3>
-                      <p className="text-[11px] text-neutral-500 dark:text-neutral-400">
+                      <h3 className="text-sm font-bold tracking-tight text-neutral-900 ">{name}</h3>
+                      <p className="text-[11px] text-neutral-500 ">
                         {s.total} tasks · {pct}% done{points > 0 ? ` · ${points} pts` : ""}
                       </p>
                     </div>
@@ -194,7 +194,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   {isCreated && (
                     <button
                       onClick={(e) => { e.stopPropagation(); deleteProject(name) }}
-                      className="rounded-lg p-1.5 text-neutral-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 dark:text-neutral-600 dark:hover:bg-red-950/40"
+                      className="rounded-lg p-1.5 text-neutral-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100  :bg-red-950/40"
                       title="Delete project"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -211,8 +211,8 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                         className={cn(
                           "flex h-8 w-8 items-center justify-center rounded-lg text-base transition-all",
                           icon === emoji
-                            ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                            : "bg-neutral-100 hover:bg-neutral-200 dark:bg-neutral-800 dark:hover:bg-neutral-700"
+                            ? "bg-neutral-900 text-white  "
+                            : "bg-neutral-100 hover:bg-neutral-200  :bg-neutral-700"
                         )}
                       >
                         {emoji}
@@ -221,7 +221,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   </div>
                 )}
 
-                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 ">
                   <div className={cn("h-full rounded-full transition-all", gradient)} style={{ width: `${progress}%` }} />
                 </div>
 
@@ -229,20 +229,20 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   <div className="mt-3 space-y-1">
                     {preview.map((t: Task) => (
                       <div key={t.id}>
-                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 dark:text-neutral-400">
+                        <div className="flex items-center gap-1.5 text-[11px] text-neutral-500 ">
                           <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", t.completed ? "bg-emerald-500" : "bg-amber-400")} />
                           <span className="truncate">{t.title}</span>
                           {t.subtasks.length > 0 && (
-                            <span className="ml-auto shrink-0 rounded bg-neutral-100 px-1 py-px text-[9px] font-semibold text-neutral-400 dark:bg-neutral-800 dark:text-neutral-500">
+                            <span className="ml-auto shrink-0 rounded bg-neutral-100 px-1 py-px text-[9px] font-semibold text-neutral-400  ">
                               {t.subtasks.filter((x) => x.completed).length}/{t.subtasks.length}
                             </span>
                           )}
                         </div>
                         {t.subtasks.length > 0 && (
-                          <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-neutral-100 pl-2 dark:border-neutral-800">
+                          <div className="ml-3 mt-0.5 space-y-0.5 border-l-2 border-neutral-100 pl-2 ">
                             {t.subtasks.slice(0, 2).map((sb) => (
-                              <div key={sb.id} className="flex items-center gap-1.5 text-[10px] text-neutral-400 dark:text-neutral-500">
-                                <span className={cn("h-1 w-1 shrink-0 rounded-full", sb.completed ? "bg-emerald-500" : "bg-neutral-300 dark:bg-neutral-600")} />
+                              <div key={sb.id} className="flex items-center gap-1.5 text-[10px] text-neutral-400 ">
+                                <span className={cn("h-1 w-1 shrink-0 rounded-full", sb.completed ? "bg-emerald-500" : "bg-neutral-300 ")} />
                                 <span className="truncate">{sb.title}</span>
                               </div>
                             ))}
@@ -255,7 +255,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   </div>
                 )}
 
-                <div className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-2.5 text-[10px] font-medium text-neutral-400 dark:border-neutral-800">
+                <div className="mt-3 flex items-center gap-2 border-t border-neutral-100 pt-2.5 text-[10px] font-medium text-neutral-400 ">
                   <span className="flex items-center gap-1 text-emerald-500"><CheckDot /> {s.completed} done</span>
                   <span className="flex items-center gap-1 text-amber-500"><Dot /> {s.active} active</span>
                 </div>
@@ -348,7 +348,7 @@ function TasksPageContent() {
         )}
 
         {/* View tabs */}
-        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 ">
           {([
             { key: "tasks" as const, label: "Tasks", icon: ListTodo },
             { key: "tree" as const, label: "Tree", icon: ListTree },
@@ -361,8 +361,8 @@ function TasksPageContent() {
               className={cn(
                 "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all",
                 view === t.key
-                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                  : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                  ? "bg-white text-neutral-900 shadow-sm  "
+                  : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
               )}
             >
               <t.icon className="h-4 w-4" /> {t.label}
@@ -375,7 +375,7 @@ function TasksPageContent() {
           <div className="flex items-center gap-2">
             {projects.length > 0 && (
               <Select value={projectFilter} onValueChange={setProjectFilter}>
-                <SelectTrigger className="h-9 w-[104px] gap-1 border-neutral-200/60 bg-white text-xs dark:border-neutral-800/60 dark:bg-neutral-950 sm:w-[160px] sm:text-sm">
+                <SelectTrigger className="h-9 w-[104px] gap-1 border-neutral-200/60 bg-white text-xs   sm:w-[160px] sm:text-sm">
                   <FolderKanban className="h-3.5 w-3.5 shrink-0 text-neutral-500" />
                   <SelectValue placeholder="All Projects" />
                 </SelectTrigger>
@@ -412,20 +412,20 @@ function TasksPageContent() {
                 <TaskCheckList />
 
                 {/* Analytics — colored charts, responsive on mobile */}
-                <div className="card-modern overflow-hidden rounded-2xl border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900">
+                <div className="card-modern overflow-hidden rounded-2xl border border-neutral-200 bg-white  ">
                   <button
                     onClick={() => setAnalyticsOpen((v) => !v)}
                     className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
                   >
                     <span className="flex items-center gap-2.5">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
                         <BarChart3 className="h-4 w-4 text-indigo-500" />
                       </span>
                       <span>
-                        <span className="block text-sm font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                        <span className="block text-sm font-bold tracking-tight text-neutral-900 ">
                           Analytics & Insights
                         </span>
-                        <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">
+                        <span className="block text-[11px] text-neutral-500 ">
                           {analyticsOpen ? "Hide stats and charts" : "View task statistics and charts"}
                         </span>
                       </span>
@@ -443,7 +443,7 @@ function TasksPageContent() {
                         transition={{ duration: 0.25 }}
                         className="overflow-hidden"
                       >
-                        <div className="space-y-6 border-t border-neutral-100 p-4 dark:border-neutral-800">
+                        <div className="space-y-6 border-t border-neutral-100 p-4 ">
                           <StatsCards />
                           <TaskCharts />
                         </div>

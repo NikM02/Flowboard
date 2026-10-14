@@ -4,22 +4,22 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/shadcn-utils"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white dark:focus-visible:ring-blue-400/60 dark:focus-visible:ring-offset-neutral-950 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 press",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/60 focus-visible:ring-offset-2 focus-visible:ring-offset-white :ring-blue-400/60 :ring-offset-neutral-950 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 press",
   {
     variants: {
       variant: {
         default:
-          "rounded-full bg-blue-600 text-white shadow-none hover:bg-blue-500 active:scale-[0.97] dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500",
+          "rounded-full bg-blue-600 text-white shadow-none hover:bg-blue-500 active:scale-[0.97]   :bg-blue-500",
         destructive:
-          "rounded-full bg-red-600 text-white shadow-none hover:bg-red-500 active:scale-[0.97] dark:bg-red-600 dark:hover:bg-red-500",
+          "rounded-full bg-red-600 text-white shadow-none hover:bg-red-500 active:scale-[0.97]  :bg-red-500",
         outline:
-          "rounded-full border border-neutral-200 bg-white/60 text-neutral-900 shadow-none backdrop-blur-sm hover:bg-neutral-100 hover:border-neutral-300 dark:border-neutral-700 dark:bg-neutral-900 dark:text-neutral-50 dark:hover:bg-neutral-800",
+          "rounded-full border border-neutral-200 bg-white/60 text-neutral-900 shadow-none backdrop-blur-sm hover:bg-neutral-100 hover:border-neutral-300    :bg-neutral-800",
         secondary:
-          "rounded-full bg-blue-50 text-blue-700 shadow-none hover:bg-blue-100 dark:bg-blue-500/15 dark:text-blue-300 dark:hover:bg-blue-500/25",
+          "rounded-full bg-blue-50 text-blue-700 shadow-none hover:bg-blue-100   :bg-blue-500/25",
         ghost:
-          "text-neutral-600 shadow-none hover:bg-neutral-100 hover:text-neutral-900 dark:text-neutral-400 dark:hover:bg-neutral-800 dark:hover:text-neutral-50",
+          "text-neutral-600 shadow-none hover:bg-neutral-100 hover:text-neutral-900  :bg-neutral-800 :text-neutral-50",
         link:
-          "text-blue-600 underline-offset-4 hover:underline dark:text-blue-400",
+          "text-blue-600 underline-offset-4 hover:underline ",
       },
       size: {
         default: "h-9 px-5",

@@ -24,13 +24,13 @@ const QUALITY_LABELS = ["", "Poor", "Fair", "Okay", "Good", "Great"]
 
 function StatChip({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Moon }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3 dark:border-neutral-800 dark:bg-neutral-900">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+    <div className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3  ">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
         <Icon className="h-4 w-4" />
       </div>
       <div className="min-w-0">
-        <p className="truncate text-[11px] text-neutral-500 dark:text-neutral-400">{label}</p>
-        <p className="truncate text-sm font-bold text-neutral-900 dark:text-neutral-50">{value}</p>
+        <p className="truncate text-[11px] text-neutral-500 ">{label}</p>
+        <p className="truncate text-sm font-bold text-neutral-900 ">{value}</p>
       </div>
     </div>
   )
@@ -44,7 +44,7 @@ function QualityDots({ quality }: { quality: number }) {
           key={q}
           className={cn(
             "h-2 w-2 rounded-full",
-            q <= quality ? "bg-indigo-500" : "bg-neutral-200 dark:bg-neutral-700"
+            q <= quality ? "bg-indigo-500" : "bg-neutral-200 "
           )}
         />
       ))}
@@ -116,12 +116,12 @@ function SleepFormDialog({
               <Input id="sleep-wake" type="time" value={wakeTime} onChange={(e) => setWakeTime(e.target.value)} required />
             </div>
           </div>
-          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-indigo-50/50 px-4 py-2.5 dark:border-neutral-800 dark:bg-indigo-500/5">
-            <span className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-indigo-50/50 px-4 py-2.5  ">
+            <span className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 ">
               <Clock className="h-3.5 w-3.5 text-indigo-500" />
               Sleep duration
             </span>
-            <span className="text-sm font-bold text-indigo-600 dark:text-indigo-300">
+            <span className="text-sm font-bold text-indigo-600 ">
               {hours} hrs
             </span>
           </div>
@@ -194,8 +194,8 @@ export function SleepPanel() {
       </div>
 
       {entries.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 dark:border-neutral-700">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 ">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
             <Moon className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No sleep logged yet.</p>
@@ -203,13 +203,13 @@ export function SleepPanel() {
         </div>
       ) : (
         <>
-          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5  ">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
                   <Moon className="h-4 w-4 text-indigo-500" />
                 </div>
-                <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+                <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 ">
                   Last 14 Nights
                 </h3>
               </div>
@@ -247,12 +247,12 @@ export function SleepPanel() {
             </div>
           </div>
 
-          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 dark:border-neutral-800 dark:bg-neutral-900">
+          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5  ">
             <div className="mb-3 flex items-center gap-2.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 dark:bg-neutral-800">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
                 <MoonStar className="h-4 w-4 text-indigo-500" />
               </div>
-              <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 dark:text-neutral-50">
+              <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 ">
                 Sleep History
               </h3>
             </div>
@@ -260,14 +260,14 @@ export function SleepPanel() {
               {recent.map((e) => (
                 <div
                   key={e.id}
-                  className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2.5 transition-colors hover:bg-neutral-50 dark:border-neutral-800 dark:bg-neutral-900 dark:hover:bg-neutral-800/60"
+                  className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2.5 transition-colors hover:bg-neutral-50   :bg-neutral-800/60"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-neutral-900 dark:text-neutral-50">
+                    <p className="text-sm font-medium text-neutral-900 ">
                       {e.date}
-                      <span className="ml-2 text-xs font-semibold text-indigo-500 dark:text-indigo-300">{e.hours}h</span>
+                      <span className="ml-2 text-xs font-semibold text-indigo-500 ">{e.hours}h</span>
                     </p>
-                    <p className="flex items-center gap-2 text-[11px] text-neutral-500 dark:text-neutral-400">
+                    <p className="flex items-center gap-2 text-[11px] text-neutral-500 ">
                       <Clock className="h-3 w-3" /> {e.bedtime} → {e.wakeTime}
                       {e.notes && <span className="truncate">· {e.notes}</span>}
                     </p>
@@ -277,14 +277,14 @@ export function SleepPanel() {
                     <button
                       onClick={() => openEdit(e)}
                       aria-label="Edit sleep entry"
-                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 dark:hover:bg-neutral-800 dark:hover:text-neutral-300"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => deleteEntry(e.id)}
                       aria-label="Delete sleep entry"
-                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 dark:hover:bg-red-950/40"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 :bg-red-950/40"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

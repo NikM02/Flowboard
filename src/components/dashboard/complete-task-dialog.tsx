@@ -29,7 +29,7 @@ export function CompleteTaskDialog() {
           <DialogTitle className="text-xl">Mark as done?</DialogTitle>
           <DialogDescription className="text-sm">
             Moving{" "}
-            <span className="font-medium text-neutral-900 dark:text-neutral-50">
+            <span className="font-medium text-neutral-900 ">
               {task?.title}
             </span>{" "}
             to the Archive. You can reopen it from the Archive anytime.

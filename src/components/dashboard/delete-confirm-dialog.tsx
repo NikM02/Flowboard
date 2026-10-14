@@ -28,7 +28,7 @@ export function DeleteConfirmDialog() {
           <DialogTitle className="text-xl">Delete Task</DialogTitle>
           <DialogDescription className="text-sm">
             Are you sure you want to delete{" "}
-            <span className="font-medium text-neutral-900 dark:text-neutral-50">
+            <span className="font-medium text-neutral-900 ">
               {selectedTask?.title}
             </span>
             ? This action cannot be undone.

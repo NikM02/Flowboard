@@ -81,7 +81,7 @@ export function CreateHabitModal() {
           </div>
           <div className="space-y-2">
             <Label>Frequency</Label>
-            <div className="grid grid-cols-2 gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+            <div className="grid grid-cols-2 gap-1 rounded-xl bg-neutral-100 p-1 ">
               {(["daily", "weekly"] as const).map((f) => (
                 <button
                   key={f}
@@ -89,8 +89,8 @@ export function CreateHabitModal() {
                   onClick={() => setFrequency(f)}
                   className={`rounded-lg py-2 text-sm font-medium capitalize transition-all ${
                     frequency === f
-                      ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                      : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                      ? "bg-white text-neutral-900 shadow-sm  "
+                      : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
                   }`}
                 >
                   {f}

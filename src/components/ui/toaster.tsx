@@ -20,9 +20,9 @@ const actionIcons: Record<NotificationIcon, typeof Info> = {
 }
 
 const colors = {
-  success: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-800 dark:bg-emerald-950/80 dark:text-emerald-300",
-  error: "border-red-200 bg-red-50 text-red-800 dark:border-red-800 dark:bg-red-950/80 dark:text-red-300",
-  info: "border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-800 dark:bg-blue-950/80 dark:text-blue-300",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-800   ",
+  error: "border-red-200 bg-red-50 text-red-800   ",
+  info: "border-blue-200 bg-blue-50 text-blue-800   ",
 }
 
 export function Toaster() {
@@ -42,7 +42,7 @@ export function Toaster() {
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
               className={`flex w-full items-start gap-3 rounded-[18px] border p-4 shadow-lg shadow-neutral-900/5 backdrop-blur-xl sm:w-80 ${colors[toast.type]}`}
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] bg-white/60 dark:bg-white/10">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] bg-white/60 ">
                 <Icon className="h-3.5 w-3.5" />
               </span>
               <div className="flex-1 min-w-0">

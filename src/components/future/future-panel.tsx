@@ -197,7 +197,7 @@ function SimulatorTab() {
     <div className="space-y-6">
       {/* Period selector + nav */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 dark:bg-neutral-800">
+        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 ">
           {(["monthly", "quarterly", "yearly"] as const).map((p) => (
             <button
               key={p}
@@ -205,16 +205,16 @@ function SimulatorTab() {
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-medium transition-all capitalize",
                 period === p
-                  ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                  : "text-neutral-500 hover:text-neutral-700 dark:hover:text-neutral-300"
+                  ? "bg-white text-neutral-900 shadow-sm  "
+                  : "text-neutral-500 hover:text-neutral-700 :text-neutral-300"
               )}
             >{p}</button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 dark:hover:bg-neutral-800">&larr;</button>
-          <span className="min-w-[140px] text-center text-sm font-medium text-neutral-900 dark:text-neutral-50">{currentLabel}</span>
-          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 dark:hover:bg-neutral-800">&rarr;</button>
+          <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 :bg-neutral-800">&larr;</button>
+          <span className="min-w-[140px] text-center text-sm font-medium text-neutral-900 ">{currentLabel}</span>
+          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 :bg-neutral-800">&rarr;</button>
         </div>
       </div>
 
@@ -225,16 +225,16 @@ function SimulatorTab() {
         className={cn(
           "relative overflow-hidden rounded-3xl border p-6 text-center",
           overallGrowth > 0
-            ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 dark:border-green-900/40 dark:from-green-950/30 dark:to-emerald-950/20"
+            ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50   "
             : overallGrowth < 0
-            ? "border-red-200 bg-gradient-to-br from-red-50 to-rose-50/50 dark:border-red-900/40 dark:from-red-950/30 dark:to-rose-950/20"
-            : "border-neutral-200 bg-gradient-to-br from-neutral-50 to-white dark:border-neutral-800 dark:from-neutral-900 dark:to-neutral-900"
+            ? "border-red-200 bg-gradient-to-br from-red-50 to-rose-50/50   "
+            : "border-neutral-200 bg-gradient-to-br from-neutral-50 to-white   "
         )}
       >
-        <p className="text-xs font-medium text-neutral-500 dark:text-neutral-400">Overall Growth vs {prevLabel}</p>
+        <p className="text-xs font-medium text-neutral-500 ">Overall Growth vs {prevLabel}</p>
         <div className="mt-2 flex items-center justify-center gap-2">
           {overallGrowth > 0 ? <ArrowUp className="h-5 w-5 text-green-500" /> : overallGrowth < 0 ? <ArrowDown className="h-5 w-5 text-red-500" /> : <Minus className="h-5 w-5 text-neutral-400" />}
-          <span className={cn("text-4xl font-bold tracking-tight", overallGrowth > 0 ? "text-green-600 dark:text-green-400" : overallGrowth < 0 ? "text-red-500 dark:text-red-400" : "text-neutral-600 dark:text-neutral-400")}>
+          <span className={cn("text-4xl font-bold tracking-tight", overallGrowth > 0 ? "text-green-600 " : overallGrowth < 0 ? "text-red-500 " : "text-neutral-600 ")}>
             {overallGrowth > 0 ? "+" : ""}{overallGrowth}%
           </span>
         </div>
@@ -249,8 +249,8 @@ function SimulatorTab() {
           transition={{ delay: 0.05 }}
           className="card-modern glass rounded-3xl p-5"
         >
-          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Growth Radar</h3>
-          <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current vs Previous period</p>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Growth Radar</h3>
+          <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Current vs Previous period</p>
           <div className="mt-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <RadarChart data={radarData} cx="50%" cy="50%" outerRadius="72%">
@@ -292,8 +292,8 @@ function SimulatorTab() {
           transition={{ delay: 0.1 }}
           className="card-modern glass rounded-3xl p-5"
         >
-          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 dark:text-neutral-400">Category Comparison</h3>
-          <p className="mt-0.5 text-[11px] text-neutral-400/70 dark:text-neutral-500/70">Current period breakdown</p>
+          <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Category Comparison</h3>
+          <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Current period breakdown</p>
           <div className="mt-4 h-[280px]">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={barData} layout="vertical" margin={{ left: 0, right: 16 }}>
@@ -319,7 +319,7 @@ function SimulatorTab() {
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
             {barData.map((e) => (
-              <span key={e.name} className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500 dark:text-neutral-400">
+              <span key={e.name} className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-500 ">
                 <span className="h-2 w-2 rounded-full" style={{ backgroundColor: e.color, boxShadow: `0 0 6px ${e.color}88` }} />
                 {e.name}
               </span>
@@ -342,7 +342,7 @@ function SimulatorTab() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i }}
-              className="rounded-2xl border border-neutral-200/60 bg-white p-4 dark:border-neutral-800/60 dark:bg-neutral-900"
+              className="rounded-2xl border border-neutral-200/60 bg-white p-4  "
             >
               <div className="flex items-center gap-2">
                 <div
@@ -351,10 +351,10 @@ function SimulatorTab() {
                 >
                   <Icon className="h-4 w-4" />
                 </div>
-                <span className="text-xs font-semibold text-neutral-900 dark:text-neutral-50">{cfg.label}</span>
+                <span className="text-xs font-semibold text-neutral-900 ">{cfg.label}</span>
               </div>
               <div className="mt-3 flex items-end justify-between">
-                <span className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+                <span className="text-2xl font-bold text-neutral-900 ">
                   {curr.value}<span className="text-xs text-neutral-400 font-normal">%</span>
                 </span>
                 {diff !== 0 && (
@@ -364,8 +364,8 @@ function SimulatorTab() {
                   </span>
                 )}
               </div>
-              <p className="mt-1 text-[11px] text-neutral-400 dark:text-neutral-500">{curr.label}</p>
-              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+              <p className="mt-1 text-[11px] text-neutral-400 ">{curr.label}</p>
+              <div className="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 ">
                 <motion.div
                   className="h-full rounded-full"
                   style={{

@@ -51,7 +51,7 @@ export function BottomNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/50 bg-white/95 backdrop-blur-xl p-3 shadow-2xl dark:border-neutral-800/50 dark:bg-neutral-900/95 md:hidden"
+              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/50 bg-white/95 backdrop-blur-xl p-3 shadow-2xl   md:hidden"
             >
               <div className="grid grid-cols-3 gap-2">
                 {moreItems.map((item) => {
@@ -64,8 +64,8 @@ export function BottomNav() {
                       className={cn(
                         "flex flex-col items-center gap-1.5 rounded-[10px] px-2 py-3 transition-all",
                         isActive
-                          ? "bg-blue-600 text-white shadow-none dark:bg-blue-600 dark:text-white"
-                          : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 dark:bg-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-700"
+                          ? "bg-blue-600 text-white shadow-none  "
+                          : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100   :bg-neutral-700"
                       )}
                     >
                       <Icon className="h-5 w-5" />
@@ -79,7 +79,7 @@ export function BottomNav() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden dark:border-neutral-800/50 dark:bg-neutral-950/90">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden  ">
         <div className="flex items-center justify-around px-1 pb-safe pt-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon
@@ -91,15 +91,15 @@ export function BottomNav() {
                 className={cn(
                   "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
                   isActive
-                    ? "text-neutral-900 dark:text-white"
-                    : "text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+                    ? "text-neutral-900 "
+                    : "text-neutral-400 hover:text-neutral-600  :text-neutral-300"
                 )}
               >
                 <Icon className={cn(
                   "h-5 w-5 transition-colors duration-200",
                   isActive
-                    ? "text-neutral-900 dark:text-white"
-                    : "text-neutral-400 dark:text-neutral-500"
+                    ? "text-neutral-900 "
+                    : "text-neutral-400 "
                 )} />
                 <span>{item.label}</span>
               </button>
@@ -111,15 +111,15 @@ export function BottomNav() {
             className={cn(
               "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
               open
-                ? "text-neutral-900 dark:text-white"
-                : "text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+                ? "text-neutral-900 "
+                : "text-neutral-400 hover:text-neutral-600  :text-neutral-300"
             )}
           >
             <div className={cn(
               "flex h-10 w-10 items-center justify-center rounded-full transition-all",
               open
-                ? "bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                : "bg-blue-600 text-white hover:bg-blue-500 dark:bg-blue-600 dark:hover:bg-blue-500"
+                ? "bg-neutral-900 text-white  "
+                : "bg-blue-600 text-white hover:bg-blue-500  :bg-blue-500"
             )}>
               {open ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
             </div>

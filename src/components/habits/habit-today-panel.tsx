@@ -33,11 +33,11 @@ export function HabitTodayPanel() {
         <div className="flex items-center gap-4 mb-4">
           <div className="relative flex h-16 w-16 items-center justify-center">
             <svg className="h-16 w-16 -rotate-90" viewBox="0 0 64 64">
-              <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e5e5" strokeWidth="4" className="dark:stroke-neutral-800" />
+              <circle cx="32" cy="32" r="28" fill="none" stroke="#e5e5e5" strokeWidth="4" className="" />
               <circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round"
-                strokeDasharray={`${stats.rate * 1.76} 176`} className="text-neutral-900 dark:text-neutral-50" />
+                strokeDasharray={`${stats.rate * 1.76} 176`} className="text-neutral-900 " />
             </svg>
-            <span className="absolute text-lg font-bold text-neutral-900 dark:text-neutral-50">{stats.rate}%</span>
+            <span className="absolute text-lg font-bold text-neutral-900 ">{stats.rate}%</span>
           </div>
           <div className="space-y-1.5">
             <div className="flex items-center gap-2 text-sm">
@@ -46,11 +46,11 @@ export function HabitTodayPanel() {
               ) : (
                 <Circle className="h-4 w-4 text-neutral-300" />
               )}
-              <span className="text-neutral-600 dark:text-neutral-400">{stats.completed}/{stats.total} habits done</span>
+              <span className="text-neutral-600 ">{stats.completed}/{stats.total} habits done</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
               <Flame className={`h-4 w-4 ${bestStreak > 0 ? "text-amber-500" : "text-neutral-300"}`} />
-              <span className="text-neutral-600 dark:text-neutral-400">Best streak: {bestStreak} days</span>
+              <span className="text-neutral-600 ">Best streak: {bestStreak} days</span>
             </div>
           </div>
         </div>
@@ -66,19 +66,19 @@ export function HabitTodayPanel() {
         </div>
         <div className="grid grid-cols-2 gap-3 mb-3">
           <div>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{challenges.length}</p>
+            <p className="text-2xl font-bold text-neutral-900 ">{challenges.length}</p>
             <p className="text-xs text-neutral-400">Active</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{avgChallengeProgress}%</p>
+            <p className="text-2xl font-bold text-neutral-900 ">{avgChallengeProgress}%</p>
             <p className="text-xs text-neutral-400">Avg progress</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">{completedChallengeDays}/{totalChallengeDays}</p>
+            <p className="text-2xl font-bold text-neutral-900 ">{completedChallengeDays}/{totalChallengeDays}</p>
             <p className="text-xs text-neutral-400">Days done</p>
           </div>
           <div>
-            <p className="text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+            <p className="text-2xl font-bold text-neutral-900 ">
               {challenges.filter((c) => c.joined).length}
             </p>
             <p className="text-xs text-neutral-400">Joined</p>

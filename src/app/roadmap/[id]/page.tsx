@@ -18,10 +18,10 @@ export default function RoadmapDetailPage() {
         {roadmap ? (
           <RoadmapDashboard roadmap={roadmap} />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800">
-            <Map className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
-            <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">Roadmap not found</p>
-            <p className="mt-1 text-sm text-neutral-400 dark:text-neutral-500">It may have been deleted.</p>
+          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 ">
+            <Map className="mb-4 h-12 w-12 text-neutral-300 " />
+            <p className="text-lg font-medium text-neutral-500 ">Roadmap not found</p>
+            <p className="mt-1 text-sm text-neutral-400 ">It may have been deleted.</p>
             <Button variant="outline" className="mt-4 gap-2" onClick={() => (window.location.href = "/roadmap")}>
               <Plus className="h-4 w-4" /> Go to roadmaps
             </Button>

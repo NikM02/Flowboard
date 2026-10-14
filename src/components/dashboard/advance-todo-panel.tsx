@@ -64,14 +64,14 @@ export function AdvanceTodoPanel() {
       {/* Progress bar */}
       {total > 0 && (
         <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-xs text-neutral-500 dark:text-neutral-400">
+          <div className="flex items-center justify-between text-xs text-neutral-500 ">
             <span>{completedCount}/{total} done</span>
             <span>{progressPct}%</span>
           </div>
-          <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-200 dark:bg-neutral-700">
+          <div className="h-2 w-full overflow-hidden rounded-full bg-neutral-200 ">
             <motion.div
               layout
-              className="h-full rounded-full bg-neutral-900 dark:bg-neutral-100"
+              className="h-full rounded-full bg-neutral-900 "
               style={{ width: `${progressPct}%` }}
               transition={{ type: "spring", stiffness: 300, damping: 25 }}
             />
@@ -104,7 +104,7 @@ export function AdvanceTodoPanel() {
 
       {/* List */}
       {total === 0 ? (
-        <div className="flex flex-col items-center gap-2 py-12 text-neutral-400 dark:text-neutral-500">
+        <div className="flex flex-col items-center gap-2 py-12 text-neutral-400 ">
           <ListTodo className="h-10 w-10" />
           <p className="text-sm">No advance todos for today</p>
         </div>
@@ -118,15 +118,15 @@ export function AdvanceTodoPanel() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="group flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 transition-colors dark:border-neutral-700 dark:bg-neutral-800/50"
+                className="group flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 transition-colors  "
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => toggleTodo(todo.id)}
                    className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border transition-all ${
                      todo.completed
-                       ? "border-neutral-900 bg-neutral-900 text-white dark:border-neutral-800 dark:bg-white dark:text-neutral-900"
-                       : "border-neutral-300 hover:border-neutral-500 dark:border-neutral-600 dark:hover:border-neutral-400"
+                       ? "border-neutral-900 bg-neutral-900 text-white   "
+                       : "border-neutral-300 hover:border-neutral-500  :border-neutral-400"
                    }`}
                 >
                   {todo.completed && <Check className="h-3 w-3" />}
@@ -156,8 +156,8 @@ export function AdvanceTodoPanel() {
                   <span
                     className={`flex-1 text-sm transition-all ${
                       todo.completed
-                        ? "text-neutral-400 line-through dark:text-neutral-500"
-                        : "text-neutral-800 dark:text-neutral-200"
+                        ? "text-neutral-400 line-through "
+                        : "text-neutral-800 "
                     }`}
                   >
                     {todo.title}

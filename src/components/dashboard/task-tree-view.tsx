@@ -16,9 +16,9 @@ import type { Task, Subtask, Priority } from "@/types"
 import { EmptyState } from "./empty-state"
 
 const priorityConfig: Record<Priority, { label: string; color: string; bg: string }> = {
-  high: { label: "High", color: "text-red-500", bg: "bg-red-50 dark:bg-red-950/20" },
-  medium: { label: "Medium", color: "text-amber-500", bg: "bg-amber-50 dark:bg-amber-950/20" },
-  low: { label: "Low", color: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/20" },
+  high: { label: "High", color: "text-red-500", bg: "bg-red-50 " },
+  medium: { label: "Medium", color: "text-amber-500", bg: "bg-amber-50 " },
+  low: { label: "Low", color: "text-blue-500", bg: "bg-blue-50 " },
 }
 
 const PROJECT_DOTS = [
@@ -30,12 +30,12 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
   const { toggleSubtask, removeSubtask } = useTaskStore()
 
   return (
-    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70 dark:hover:bg-neutral-800/70">
+    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70 :bg-neutral-800/70">
       <button
         onClick={() => toggleSubtask(taskId, subtask.id)}
         className="flex min-w-0 flex-1 items-center gap-2 text-left"
       >
-        <span className={cn("shrink-0 transition-colors", subtask.completed ? "text-green-500" : "text-neutral-300 dark:text-neutral-600")}>
+        <span className={cn("shrink-0 transition-colors", subtask.completed ? "text-green-500" : "text-neutral-300 ")}>
           {subtask.completed ? (
             <CheckCircle2 className="h-4 w-4" />
           ) : (
@@ -44,14 +44,14 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
         </span>
         <span className={cn(
           "truncate text-xs",
-          subtask.completed ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-600 dark:text-neutral-300"
+          subtask.completed ? "text-neutral-400 line-through " : "text-neutral-600 "
         )}>
           {subtask.title}
         </span>
       </button>
       <button
         onClick={() => removeSubtask(taskId, subtask.id)}
-        className="shrink-0 rounded p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 dark:text-neutral-600"
+        className="shrink-0 rounded p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 "
         aria-label="Remove subtask"
       >
         <X className="h-3 w-3" />
@@ -88,8 +88,8 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
       className={cn(
         "group rounded-xl border p-3.5 transition-all",
         task.completed
-          ? "border-green-200/40 bg-green-50/30 dark:border-green-900/20 dark:bg-green-950/10"
-          : "border-neutral-200/60 bg-white hover:border-neutral-300/70 hover:shadow-sm dark:border-neutral-800/60 dark:bg-neutral-900"
+          ? "border-green-200/40 bg-green-50/30  "
+          : "border-neutral-200/60 bg-white hover:border-neutral-300/70 hover:shadow-sm  "
       )}
     >
       <div className="flex items-start gap-2.5">
@@ -97,19 +97,19 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
           {task.completed ? (
             <CheckCircle2 className="h-5 w-5 text-green-500" />
           ) : (
-            <Circle className="h-5 w-5 text-neutral-300 dark:text-neutral-600" />
+            <Circle className="h-5 w-5 text-neutral-300 " />
           )}
         </button>
 
         <div className="min-w-0 flex-1">
           <span className={cn(
             "block truncate text-sm font-semibold tracking-tight",
-            task.completed ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-900 dark:text-neutral-50"
+            task.completed ? "text-neutral-400 line-through " : "text-neutral-900 "
           )}>
             {task.title}
           </span>
           {task.description && (
-            <span className="mt-0.5 block line-clamp-2 text-xs text-neutral-500 dark:text-neutral-400">{task.description}</span>
+            <span className="mt-0.5 block line-clamp-2 text-xs text-neutral-500 ">{task.description}</span>
           )}
 
           {/* Details row */}
@@ -121,37 +121,37 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
               {status.label}
             </span>
             {task.storyPoints != null && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 dark:bg-violet-900/30 dark:text-violet-300" title="Story points">
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700  " title="Story points">
                 {task.storyPoints} pts
               </span>
             )}
             {task.dueDate && (
-              <span className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
+              <span className="flex items-center gap-1 text-neutral-500 ">
                 <Calendar className="h-3 w-3" />
                 {formatDate(task.dueDate, task.dueTime)}
               </span>
             )}
             {task.reminder && (
-              <span className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400" title="Reminder set">
+              <span className="flex items-center gap-1 text-neutral-500 " title="Reminder set">
                 <Clock className="h-3 w-3" />
                 Reminder
               </span>
             )}
             {task.subtasks.length > 0 && (
-              <span className="flex items-center gap-1 text-neutral-500 dark:text-neutral-400">
+              <span className="flex items-center gap-1 text-neutral-500 ">
                 <ListChecks className="h-3 w-3" />
                 {doneCount}/{task.subtasks.length} subtasks
               </span>
             )}
             <span className="flex items-center gap-1.5">
               <Progress value={task.progress} className="h-1 w-16" />
-              <span className="w-7 text-right text-[11px] font-medium tabular-nums text-neutral-500 dark:text-neutral-400">{task.progress}%</span>
+              <span className="w-7 text-right text-[11px] font-medium tabular-nums text-neutral-500 ">{task.progress}%</span>
             </span>
           </div>
 
           {/* Subtasks */}
           {task.subtasks.length > 0 && (
-            <div className="mt-2 flex flex-col gap-0.5 border-l-2 border-neutral-100 pl-2 dark:border-neutral-800">
+            <div className="mt-2 flex flex-col gap-0.5 border-l-2 border-neutral-100 pl-2 ">
               {task.subtasks.map((s) => (
                 <SubtaskRow key={s.id} taskId={task.id} subtask={s} />
               ))}
@@ -169,7 +169,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
             <button
               type="submit"
               disabled={!newSub.trim()}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 dark:bg-white dark:text-neutral-900"
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30  "
               aria-label="Add subtask"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -181,13 +181,13 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 justify-end gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-neutral-800"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 :bg-neutral-800"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 dark:hover:bg-red-950/50"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 :bg-red-950/50"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -227,12 +227,12 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="card-modern overflow-hidden rounded-[18px] border border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-900"
+      className="card-modern overflow-hidden rounded-[18px] border border-neutral-200 bg-white  "
     >
       <div className="flex items-center gap-2.5 px-4 py-3">
         <button
           onClick={toggleAll}
-          className={cn("shrink-0 transition-colors", allDone ? "text-green-500" : "text-neutral-300 hover:text-neutral-400 dark:text-neutral-600 dark:hover:text-neutral-500")}
+          className={cn("shrink-0 transition-colors", allDone ? "text-green-500" : "text-neutral-300 hover:text-neutral-400  :text-neutral-500")}
           title={allDone ? "Reopen all tasks in this project" : "Mark all tasks in this project as done"}
         >
           {allDone ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
@@ -250,10 +250,10 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
             {icon}
           </span>
           <span className="min-w-0 flex-1">
-            <span className={cn("block truncate text-sm font-bold tracking-tight", allDone ? "text-neutral-400 line-through dark:text-neutral-600" : "text-neutral-900 dark:text-neutral-50")}>
+            <span className={cn("block truncate text-sm font-bold tracking-tight", allDone ? "text-neutral-400 line-through " : "text-neutral-900 ")}>
               {name}
             </span>
-            <span className="block text-[11px] text-neutral-500 dark:text-neutral-400">
+            <span className="block text-[11px] text-neutral-500 ">
               {done}/{groupTasks.length} done · {pct}%
               {totalSubs > 0 ? ` · ${totalSubs} subtasks` : ""}
               {totalPoints > 0 ? ` · ${totalPoints} pts` : ""}
@@ -281,8 +281,8 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
             transition={{ duration: 0.25 }}
             className="overflow-hidden"
           >
-            <div className="flex flex-col gap-2 border-t border-neutral-100 p-3 dark:border-neutral-800">
-              <div className="flex flex-col gap-2 border-l-2 border-neutral-100 pl-2 dark:border-neutral-800">
+            <div className="flex flex-col gap-2 border-t border-neutral-100 p-3 ">
+              <div className="flex flex-col gap-2 border-l-2 border-neutral-100 pl-2 ">
                 {groupTasks.map((t, i) => (
                   <TaskNode key={t.id} task={t} index={i} />
                 ))}
@@ -322,7 +322,7 @@ export function TaskTreeView() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center justify-between text-sm text-neutral-500 dark:text-neutral-400">
+      <div className="flex items-center justify-between text-sm text-neutral-500 ">
         <p>
           {taskCount} {taskCount === 1 ? "task" : "tasks"} · {projectCount} {projectCount === 1 ? "group" : "groups"}
         </p>

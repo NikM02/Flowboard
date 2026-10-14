@@ -30,7 +30,7 @@ function AnimatedNumber({ value, suffix }: { value: number; suffix?: string }) {
   }, [value])
 
   return (
-    <span className="text-[26px] font-black tracking-tight text-neutral-900 tabular-nums dark:text-white">
+    <span className="text-[26px] font-black tracking-tight text-neutral-900 tabular-nums ">
       {displayed}{suffix}
     </span>
   )
@@ -71,11 +71,11 @@ export function StatsCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.07, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className="relative overflow-hidden rounded-[18px] border border-neutral-200 bg-white p-4 shadow-sm dark:border-neutral-800 dark:bg-neutral-900"
+            className="relative overflow-hidden rounded-[18px] border border-neutral-200 bg-white p-4 shadow-sm  "
           >
             <div className="relative flex items-center justify-between">
               <div className="flex flex-col gap-1">
-                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 dark:text-neutral-500">{config.label}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-neutral-400 ">{config.label}</p>
                 <AnimatedNumber
                   value={values[config.key]}
                   suffix={isProgress ? "%" : undefined}
@@ -87,7 +87,7 @@ export function StatsCards() {
             </div>
             <div className="mt-2">
               {isProgress ? (
-                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 dark:bg-neutral-800">
+                <div className="relative h-1.5 w-full overflow-hidden rounded-full bg-neutral-100 ">
                   <motion.div
                     className="absolute inset-y-0 left-0 rounded-full"
                     style={{ background: config.color }}

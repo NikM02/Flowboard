@@ -30,8 +30,8 @@ function EmojiPicker({ value, onChange }: { value: string; onChange: (e: string)
           className={cn(
             "flex h-9 w-9 items-center justify-center rounded-xl border text-lg transition-all",
             value === e
-              ? "border-neutral-900 bg-neutral-900/5 dark:border-white dark:bg-white/10"
-              : "border-neutral-200 hover:bg-neutral-50 dark:border-neutral-800 dark:hover:bg-neutral-800/60"
+              ? "border-neutral-900 bg-neutral-900/5  "
+              : "border-neutral-200 hover:bg-neutral-50  :bg-neutral-800/60"
           )}
         >
           {e}
@@ -285,8 +285,8 @@ export function PhaseDialog({
                     className={cn(
                       "flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition-all",
                       status === st
-                        ? "border-transparent bg-neutral-900 text-white dark:bg-white dark:text-neutral-900"
-                        : "border-neutral-200 text-neutral-500 hover:bg-neutral-50 dark:border-neutral-800 dark:text-neutral-400 dark:hover:bg-neutral-800/60"
+                        ? "border-transparent bg-neutral-900 text-white  "
+                        : "border-neutral-200 text-neutral-500 hover:bg-neutral-50   :bg-neutral-800/60"
                     )}
                   >
                     <Icon className="h-3.5 w-3.5" />

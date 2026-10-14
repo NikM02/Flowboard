@@ -32,7 +32,7 @@ export function RoadmapPanel() {
             <Stat label="milestones" value={totalPhases} />
             {inProgress > 0 && <Stat label="in progress" value={inProgress} className="text-blue-500" />}
             {blocked > 0 && <Stat label="blocked" value={blocked} className="text-rose-500" />}
-            <Stat label="done" value={donePhases} className={donePhases > 0 ? "text-emerald-600 dark:text-emerald-400" : ""} />
+            <Stat label="done" value={donePhases} className={donePhases > 0 ? "text-emerald-600 " : ""} />
           </div>
         )}
       </div>
@@ -41,11 +41,11 @@ export function RoadmapPanel() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 dark:border-neutral-800"
+          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 "
         >
-          <Map className="mb-4 h-12 w-12 text-neutral-300 dark:text-neutral-600" />
-          <p className="text-lg font-medium text-neutral-500 dark:text-neutral-400">No roadmaps yet</p>
-          <p className="mt-1 max-w-md text-center text-sm text-neutral-400 dark:text-neutral-500">
+          <Map className="mb-4 h-12 w-12 text-neutral-300 " />
+          <p className="text-lg font-medium text-neutral-500 ">No roadmaps yet</p>
+          <p className="mt-1 max-w-md text-center text-sm text-neutral-400 ">
             Use the Roadmap Builder — tell it your end goal and milestones, and it generates a full roadmap with dates, briefs, and tasks.
           </p>
           <Button onClick={() => setCreateOpen(true)} variant="outline" className="mt-4 gap-2">
@@ -71,7 +71,7 @@ export function RoadmapPanel() {
 function Stat({ label, value, className }: { label: string; value: number; className?: string }) {
   return (
     <span className="flex items-center gap-1">
-      <span className={className ?? "text-neutral-900 dark:text-white"}>{value}</span>
+      <span className={className ?? "text-neutral-900 "}>{value}</span>
       <span className="text-neutral-400">{label}</span>
     </span>
   )

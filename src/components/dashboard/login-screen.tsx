@@ -48,7 +48,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-y-auto bg-neutral-50 px-6 py-12 dark:bg-black" style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
+    <div className="fixed inset-0 z-[200] flex flex-col items-center justify-center overflow-y-auto bg-neutral-50 px-6 py-12 " style={{ paddingBottom: "max(2.5rem, env(safe-area-inset-bottom))" }}>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -59,7 +59,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", damping: 14, stiffness: 160 }}
-          className="flex h-20 w-20 items-center justify-center rounded-full border border-neutral-200/80 bg-white shadow-lg shadow-neutral-900/5 dark:border-neutral-800 dark:bg-neutral-900"
+          className="flex h-20 w-20 items-center justify-center rounded-full border border-neutral-200/80 bg-white shadow-lg shadow-neutral-900/5  "
         >
           <Image src="/King.png" alt="King" width={44} height={44} className="rounded-full" />
         </motion.div>
@@ -68,7 +68,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.25, duration: 0.6 }}
-          className="mt-8 max-w-xs text-xl font-semibold italic leading-relaxed text-neutral-700 dark:text-neutral-300"
+          className="mt-8 max-w-xs text-xl font-semibold italic leading-relaxed text-neutral-700 "
         >
           “{QUOTE}”
         </motion.p>
@@ -102,7 +102,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-400"
+            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600   "
           >
             {error}
           </motion.div>

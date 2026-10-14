@@ -33,8 +33,8 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
           className={cn(
             "flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
             open
-              ? "text-neutral-900 dark:text-neutral-50"
-              : "text-neutral-400 hover:text-neutral-600 dark:text-neutral-500 dark:hover:text-neutral-300"
+              ? "text-neutral-900 "
+              : "text-neutral-400 hover:text-neutral-600  :text-neutral-300"
           )}
         >
           <div
@@ -59,10 +59,10 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className="obsidian fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl dark:border-neutral-800/60 dark:bg-neutral-900 md:hidden"
+                className=" fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl   md:hidden"
               >
                 <div className="mb-3 flex items-center justify-between">
-                  <span className="text-sm font-semibold text-neutral-900 dark:text-neutral-50">Theme</span>
+                  <span className="text-sm font-semibold text-neutral-900 ">Theme</span>
                   <button onClick={() => setOpen(false)} className="text-neutral-400 hover:text-neutral-600">
                     <X className="h-4 w-4" />
                   </button>
@@ -80,18 +80,18 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                         <div
                           className={cn(
                             "relative h-10 w-10 rounded-xl shadow-md transition-all",
-                            isActive && "ring-2 ring-neutral-900 dark:ring-neutral-100 ring-offset-2 ring-offset-white dark:ring-offset-neutral-900"
+                            isActive && "ring-2 ring-neutral-900  ring-offset-2 ring-offset-white "
                           )}
                           style={{ background: t.gradient }}
                         >
                           <Icon className="absolute inset-0 m-auto h-4 w-4 text-white drop-shadow-sm" />
                           {isActive && (
-                            <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 dark:bg-neutral-100">
-                              <Check className="h-2.5 w-2.5 text-white dark:text-neutral-900" />
+                            <div className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-neutral-900 ">
+                              <Check className="h-2.5 w-2.5 text-white " />
                             </div>
                           )}
                         </div>
-                        <span className="text-[9px] font-medium text-neutral-600 dark:text-neutral-400">{t.label}</span>
+                        <span className="text-[9px] font-medium text-neutral-600 ">{t.label}</span>
                       </button>
                     )
                   })}
@@ -108,7 +108,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl dark:bg-neutral-800 dark:border-neutral-700 dark:text-neutral-300"
+        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl   "
         title="Change theme"
       >
         <div
@@ -124,7 +124,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className="obsidian absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 dark:border-neutral-800 dark:bg-neutral-900"
+            className=" absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10  "
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">
@@ -138,14 +138,14 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                     className={cn(
                       "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all",
                       isActive
-                        ? "bg-neutral-100 dark:bg-neutral-800"
-                        : "hover:bg-neutral-50 dark:hover:bg-neutral-800/50"
+                        ? "bg-neutral-100 "
+                        : "hover:bg-neutral-50 :bg-neutral-800/50"
                     )}
                   >
                     <div
                       className={cn(
                         "h-7 w-7 shrink-0 rounded-lg shadow-md transition-all",
-                        isActive && "ring-2 ring-neutral-900 dark:ring-neutral-100 ring-offset-1 ring-offset-white dark:ring-offset-neutral-900"
+                        isActive && "ring-2 ring-neutral-900  ring-offset-1 ring-offset-white "
                       )}
                       style={{ background: t.gradient }}
                     >
@@ -153,8 +153,8 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                         <Icon className="h-3.5 w-3.5 text-white drop-shadow-sm" />
                       </div>
                     </div>
-                    <span className="text-xs font-medium text-neutral-900 dark:text-neutral-50">{t.label}</span>
-                    {isActive && <Check className="ml-auto h-3.5 w-3.5 text-neutral-900 dark:text-neutral-100" />}
+                    <span className="text-xs font-medium text-neutral-900 ">{t.label}</span>
+                    {isActive && <Check className="ml-auto h-3.5 w-3.5 text-neutral-900 " />}
                   </button>
                 )
               })}

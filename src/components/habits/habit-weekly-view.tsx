@@ -25,7 +25,7 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
         </p>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="text-xs font-medium text-neutral-600 hover:text-neutral-900 dark:text-neutral-400 dark:hover:text-neutral-50 transition-colors"
+          className="text-xs font-medium text-neutral-600 hover:text-neutral-900  :text-neutral-50 transition-colors"
         >
           + New Habit
         </button>
@@ -33,14 +33,14 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
 
       <div className="glass overflow-x-auto rounded-2xl p-4">
         <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-1 min-w-[320px]">
-          <div className="text-[10px] font-semibold text-neutral-300 dark:text-neutral-600" />
+          <div className="text-[10px] font-semibold text-neutral-300 " />
 
           {weekDays.map((d) => (
             <div key={d.toISOString()} className="flex flex-col items-center py-2">
-              <span className="text-[10px] font-semibold text-neutral-400 dark:text-neutral-500 uppercase">
+              <span className="text-[10px] font-semibold text-neutral-400  uppercase">
                 {format(d, "EEE")}
               </span>
-              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] text-xs font-bold text-neutral-700 dark:text-neutral-300">
+              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] text-xs font-bold text-neutral-700 ">
                 {format(d, "d")}
               </span>
             </div>
@@ -93,8 +93,8 @@ function HabitWeekRow({
           className={cn(
             "text-xs font-medium truncate text-left hover:underline",
             allDoneThisWeek
-              ? "text-neutral-900 dark:text-neutral-50"
-              : "text-neutral-600 dark:text-neutral-400"
+              ? "text-neutral-900 "
+              : "text-neutral-600 "
           )}
         >
           {habit.name}
@@ -117,10 +117,10 @@ function HabitWeekRow({
                 "flex items-center justify-center rounded-lg border-2 transition-all",
                 "h-9 w-9",
                 isDone
-                  ? "bg-neutral-900 border-neutral-900 text-white dark:bg-neutral-200 dark:border-neutral-200 dark:text-neutral-900"
+                  ? "bg-neutral-900 border-neutral-900 text-white   "
                   : isFuture
-                  ? "bg-neutral-50 border-neutral-100 text-neutral-200 cursor-default dark:bg-neutral-900 dark:border-neutral-800"
-                  : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500 dark:bg-neutral-950 dark:border-neutral-700 dark:hover:border-neutral-500"
+                  ? "bg-neutral-50 border-neutral-100 text-neutral-200 cursor-default  "
+                  : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500   :border-neutral-500"
               )}
             >
               {isDone && <Check className="h-5 w-5" strokeWidth={3} />}

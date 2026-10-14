@@ -63,7 +63,7 @@ export function HabitTrackerSection() {
 
   return (
     <div className="space-y-5">
-      <div className="flex gap-1.5 overflow-x-auto rounded-2xl bg-neutral-100/80 p-1.5 shadow-inner dark:bg-neutral-800/40">
+      <div className="flex gap-1.5 overflow-x-auto rounded-2xl bg-neutral-100/80 p-1.5 shadow-inner ">
         {tabs.map((t) => (
           <button
             key={t.key}
@@ -71,8 +71,8 @@ export function HabitTrackerSection() {
             className={cn(
               "flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-medium whitespace-nowrap transition-all sm:gap-2 sm:px-4 sm:py-2 sm:text-sm",
               tab === t.key
-                ? "bg-white text-neutral-900 shadow-sm dark:bg-neutral-900 dark:text-neutral-50"
-                : "text-neutral-500 hover:text-neutral-700 dark:text-neutral-400 dark:hover:text-neutral-200"
+                ? "bg-white text-neutral-900 shadow-sm  "
+                : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
             )}
           >
             <t.icon className="h-4 w-4" />

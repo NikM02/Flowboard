@@ -202,7 +202,7 @@ export function CreateTaskModal() {
                   animate={{ opacity: 1, x: 0 }}
                   className="flex items-center gap-2"
                 >
-                  <Circle className="h-4 w-4 shrink-0 text-neutral-300 dark:text-neutral-600" />
+                  <Circle className="h-4 w-4 shrink-0 text-neutral-300 " />
                   <Input
                     aria-label="New subtask"
                     placeholder={`Subtask ${i + 1}...`}
