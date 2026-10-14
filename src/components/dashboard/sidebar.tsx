@@ -102,13 +102,13 @@ export function Sidebar({
               onClick={onClose}
             />
             <motion.aside
-              initial={{ x: "-100%", opacity: 0 }}
+              initial={{ x: "calc(-100% - 0.75rem)", opacity: 0 }}
               animate={{ x: 0, opacity: 1 }}
-              exit={{ x: "-100%", opacity: 0 }}
+              exit={{ x: "calc(-100% - 0.75rem)", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed inset-y-0 left-0 z-50 w-72 border-r border-neutral-200 bg-white/98 backdrop-blur-sm"
+              className="fixed bottom-3 left-3 top-3 z-50 flex w-72 flex-col overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-xl shadow-neutral-900/5"
             >
-              <div className="flex h-full flex-col gap-1 p-4 pt-safe">
+              <div className="flex h-full flex-col gap-1 overflow-y-auto p-4">
                 <button
                   onClick={onClose}
                   className="absolute right-4 top-4 rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-50 hover:text-neutral-600"
@@ -127,11 +127,11 @@ export function Sidebar({
   return (
     <motion.aside
       initial={false}
-      animate={{ width: isCollapsed ? 72 : 256 }}
+      animate={{ width: isCollapsed ? 76 : 256 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="hidden md:flex h-screen shrink-0 flex-col border-r border-neutral-200 bg-white"
+      className="my-3 ml-3 hidden md:flex shrink-0 flex-col overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-sm shadow-neutral-900/5"
     >
-      <div className={cn("flex h-full flex-col gap-1", isCollapsed ? "p-3" : "p-4")}>
+      <div className={cn("flex h-full flex-col gap-1 overflow-y-auto", isCollapsed ? "p-3" : "p-4")}>
         {content}
 
         <div className="mt-auto space-y-0.5 border-t border-neutral-100 pt-2 ">
