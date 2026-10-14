@@ -13,7 +13,6 @@ import { CompleteTaskDialog } from "@/components/dashboard/complete-task-dialog"
 import { PwaInstallSheet } from "@/components/dashboard/pwa-install-sheet"
 import { LoginScreen } from "@/components/dashboard/login-screen"
 
-import { useNotificationGenerator } from "@/hooks/use-notification-generator"
 import { useReminderScheduler } from "@/hooks/use-reminder-scheduler"
 import { useSupabasePersistence } from "@/hooks/use-store-persistence"
 import { useThemeStore } from "@/store/use-theme-store"
@@ -34,7 +33,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const { colorTheme } = useThemeStore()
   const { loading: dataLoading } = useSupabasePersistence()
 
-  useNotificationGenerator()
   useReminderScheduler()
 
   // PWA install / alert state.

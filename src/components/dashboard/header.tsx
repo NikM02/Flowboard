@@ -3,7 +3,6 @@
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
 import { Search, Menu, LogOut } from "lucide-react"
-import { NotificationBell } from "./notification-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
 import { usePageTitleStore } from "@/store/use-page-title-store"
 
@@ -89,7 +88,6 @@ export function Header({
 
 
 
-            <NotificationBell />
 
             <button
               onClick={onLogout}

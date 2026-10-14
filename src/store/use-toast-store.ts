@@ -1,12 +1,11 @@
 import { create } from "zustand"
-import type { NotificationIcon } from "@/store/use-notification-store"
 
 export type Toast = {
   id: string
   type: "success" | "error" | "info"
   title: string
   description?: string
-  icon?: NotificationIcon
+  icon?: "add" | "edit" | "delete" | "done" | "info"
 }
 
 let counter = 0

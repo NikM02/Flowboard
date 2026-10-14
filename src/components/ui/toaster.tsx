@@ -3,7 +3,6 @@
 import { motion, AnimatePresence } from "framer-motion"
 import { CheckCircle2, XCircle, Info, X, Plus, Pencil, Trash2 } from "lucide-react"
 import { useToastStore } from "@/store/use-toast-store"
-import type { NotificationIcon } from "@/store/use-notification-store"
 
 const icons = {
   success: CheckCircle2,
@@ -11,13 +10,7 @@ const icons = {
   info: Info,
 }
 
-const actionIcons: Record<NotificationIcon, typeof Info> = {
-  add: Plus,
-  edit: Pencil,
-  delete: Trash2,
-  done: CheckCircle2,
-  info: Info,
-}
+
 
 const colors = {
   success: "border-emerald-200 bg-emerald-50 text-emerald-800   ",
@@ -32,7 +25,7 @@ export function Toaster() {
     <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+1rem)] right-3 left-3 z-[100] flex flex-col gap-2 sm:left-auto sm:right-4">
       <AnimatePresence>
         {toasts.map((toast) => {
-          const Icon = toast.icon ? actionIcons[toast.icon] : icons[toast.type]
+          const Icon = icons[toast.type]
           return (
             <motion.div
               key={toast.id}

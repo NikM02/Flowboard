@@ -1,44 +1,14 @@
 "use client"
 
-import { useNotificationStore } from "@/store/use-notification-store"
-import type { NotificationIcon } from "@/store/use-notification-store"
 import { useToastStore } from "@/store/use-toast-store"
 import { isPushDeliveryActive } from "@/lib/push-client"
 
 let audioCtx: AudioContext | null = null
 
-function vibrate() {
-  try {
-    if (typeof navigator !== "undefined" && "vibrate" in navigator && !isPushDeliveryActive()) {
-      navigator.vibrate([90, 40, 90])
-    }
-  } catch {}
-}
+function vibrate() {}
 
-function playTone() {
-  try {
-    if (typeof window === "undefined") return
-    vibrate()
-    const AC = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext
-    audioCtx = audioCtx || new AC()
-    const ctx = audioCtx
-    const o = ctx.createOscillator()
-    const g = ctx.createGain()
-    o.type = "sine"
-    o.frequency.value = 880
-    g.gain.value = 0.0001
-    o.connect(g)
-    g.connect(ctx.destination)
-    g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime + 0.02)
-    g.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.8)
-    o.start()
-    o.stop(ctx.currentTime + 0.9)
-    o.onended = () => {
-      o.disconnect()
-      g.disconnect()
-    }
-  } catch {}
-}
+function playTone() {}
+
 
 type NotifyOpts = {
   tag?: string
@@ -50,10 +20,10 @@ type NotifyOpts = {
   kind?: string
   id?: string
   /** Visual category shown on the toast and in the notification center. */
-  icon?: NotificationIcon
+  icon?: "add" | "edit" | "delete" | "done" | "info"
 }
 
-function toastTypeFor(icon?: NotificationIcon): "success" | "error" | "info" {
+function toastTypeFor(icon?: "add" | "edit" | "delete" | "done" | "info"): "success" | "error" | "info" {
   if (icon === "add" || icon === "done") return "success"
   if (icon === "delete") return "error"
   return "info"
@@ -67,13 +37,13 @@ export function notify(title: string, description = "", opts?: NotifyOpts) {
   if (opts?.sound !== false) playTone()
   if (opts?.toast !== false) {
     useToastStore.getState().show({
-      type: toastTypeFor(opts?.icon),
+      type: toastTypeFor(opts?.icon as any),
       title,
       description: description || undefined,
       icon: opts?.icon,
     })
   }
-  useNotificationStore.getState().add({ title, description, href: opts?.href, icon: opts?.icon })
+  
 
   if (opts?.browser !== false) {
     if (typeof Notification !== "undefined" && Notification.permission === "granted") {
