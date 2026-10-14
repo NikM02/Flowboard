@@ -28,7 +28,7 @@ export function RoadmapCard({ roadmap, onOpen }: { roadmap: Roadmap; onOpen: () 
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-lg hover:shadow-neutral-200/50   :border-neutral-700 :shadow-black/30"
+      className="group relative overflow-hidden rounded-2xl border border-neutral-200 bg-white p-5 transition-all hover:-translate-y-0.5 hover:border-neutral-300 hover:shadow-lg hover:shadow-neutral-200/50 "
     >
       <button onClick={onOpen} className="absolute inset-0 z-0" aria-label={`Open ${roadmap.title}`} />
 
@@ -39,17 +39,17 @@ export function RoadmapCard({ roadmap, onOpen }: { roadmap: Roadmap; onOpen: () 
             <h3 className="truncate font-semibold text-neutral-900 ">{roadmap.title}</h3>
             <div className="mt-1 flex flex-wrap items-center gap-1.5">
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[roadmap.priority].badge)}>{PRIORITY_META[roadmap.priority].label}</span>
-              <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500  ">{CATEGORY_META[roadmap.category].label}</span>
+              <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">{CATEGORY_META[roadmap.category].label}</span>
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", healthMeta.badge)}>{healthMeta.label}</span>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 flex items-center gap-1 opacity-0 transition-all group-hover:opacity-100 max-sm:opacity-100">
-          <button onClick={() => setEditOpen(true)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300">
+          <button onClick={() => setEditOpen(true)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
             <Pencil className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => { if (confirm(`Delete "${roadmap.title}" and all its milestones?`)) deleteRoadmap(roadmap.id) }} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 :bg-red-950/50">
+          <button onClick={() => { if (confirm(`Delete "${roadmap.title}" and all its milestones?`)) deleteRoadmap(roadmap.id) }} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -78,10 +78,10 @@ export function RoadmapCard({ roadmap, onOpen }: { roadmap: Roadmap; onOpen: () 
       </div>
 
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {inProgress > 0 && <span className="rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-600   ">{inProgress} in progress</span>}
-        {blocked > 0 && <span className="rounded-md border border-rose-200 bg-rose-50 px-1.5 py-0.5 text-[10px] font-medium text-rose-600   ">{blocked} blocked</span>}
+        {inProgress > 0 && <span className="rounded-md border border-blue-200 bg-blue-50 px-1.5 py-0.5 text-[10px] font-medium text-blue-600 ">{inProgress} in progress</span>}
+        {blocked > 0 && <span className="rounded-md border border-rose-200 bg-rose-50 px-1.5 py-0.5 text-[10px] font-medium text-rose-600 ">{blocked} blocked</span>}
         {totalTasks > 0 && (
-          <span className="rounded-md border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500   ">{doneTasks}/{totalTasks} tasks</span>
+          <span className="rounded-md border border-neutral-200 bg-neutral-50 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">{doneTasks}/{totalTasks} tasks</span>
         )}
       </div>
 

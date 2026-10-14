@@ -210,16 +210,16 @@ function SimulatorTab() {
               className={cn(
                 "rounded-lg px-3 py-1.5 text-xs font-medium transition-all capitalize",
                 period === p
-                  ? "bg-white text-neutral-900 shadow-sm  "
-                  : "text-neutral-500 hover:text-neutral-700 :text-neutral-300"
+                  ? "bg-white text-neutral-900 shadow-sm "
+                  : "text-neutral-500 hover:text-neutral-700"
               )}
             >{p}</button>
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 :bg-neutral-800">&larr;</button>
+          <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100">&larr;</button>
           <span className="min-w-[140px] text-center text-sm font-medium text-neutral-900 ">{currentLabel}</span>
-          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30 :bg-neutral-800">&rarr;</button>
+          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30">&rarr;</button>
         </div>
       </div>
 
@@ -230,10 +230,10 @@ function SimulatorTab() {
         className={cn(
           "relative overflow-hidden rounded-3xl border p-6 text-center",
           overallGrowth > 0
-            ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50   "
+            ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 "
             : overallGrowth < 0
-            ? "border-red-200 bg-gradient-to-br from-red-50 to-rose-50/50   "
-            : "border-neutral-200 bg-gradient-to-br from-neutral-50 to-white   "
+            ? "border-red-200 bg-gradient-to-br from-red-50 to-rose-50/50 "
+            : "border-neutral-200 bg-gradient-to-br from-neutral-50 to-white "
         )}
       >
         <p className="text-xs font-medium text-neutral-500 ">Overall Growth vs {prevLabel}</p>
@@ -347,11 +347,11 @@ function SimulatorTab() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i }}
-              className="rounded-2xl border border-neutral-200/60 bg-white p-4  "
+              className="rounded-2xl border border-neutral-200/60 bg-white p-4 "
             >
               <div className="flex items-center gap-2">
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                   style={{ backgroundColor: cfg.soft, color: cfg.hex }}
                 >
                   <Icon className="h-4 w-4" />

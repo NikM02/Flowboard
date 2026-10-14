@@ -43,8 +43,8 @@ export function HabitArchiveView() {
               className={cn(
                 "flex min-h-10 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium whitespace-nowrap transition-all shrink-0",
                 subTab === t.key
-                  ? "bg-white text-neutral-900 shadow-sm  "
-                  : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
+                  ? "bg-white text-neutral-900 shadow-sm "
+                  : "text-neutral-500 hover:text-neutral-700 "
               )}
             >
               <t.icon className="h-3 w-3" />{t.label}
@@ -111,7 +111,7 @@ function HabitsArchive() {
           <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50  :bg-red-950" onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
@@ -120,8 +120,8 @@ function HabitsArchive() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {stats.map((s) => (
           <div key={s.id} className="rounded-xl bg-neutral-50 p-3 ">
-            <p className="text-sm font-semibold text-neutral-900  truncate">{s.name}</p>
-            <p className="text-lg font-bold text-neutral-900  mt-1">{s.completed}/{s.total}</p>
+            <p className="text-sm font-semibold text-neutral-900 truncate">{s.name}</p>
+            <p className="text-lg font-bold text-neutral-900 mt-1">{s.completed}/{s.total}</p>
             <Progress value={s.rate} className="h-1.5 mt-1.5" />
             <p className="text-[10px] text-neutral-400 mt-1">{s.rate}%</p>
           </div>
@@ -137,7 +137,7 @@ function HabitsArchive() {
         ) : (
           <div className="divide-y divide-neutral-100 ">
             {allRecords.map((r, i) => (
-              <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 px-2 py-2 text-xs text-neutral-600 sm:grid-cols-4 sm:gap-2 hover:bg-neutral-50  :bg-neutral-900/50">
+              <div key={i} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 px-2 py-2 text-xs text-neutral-600 sm:grid-cols-4 sm:gap-2 hover:bg-neutral-50 ">
                 <div className="min-w-0">
                   <span className="block font-medium text-neutral-800 ">{format(parseISO(r.date), "MMM d, yyyy")}</span>
                   <span className="block truncate text-[11px] text-neutral-400 sm:hidden">
@@ -184,13 +184,13 @@ function DopamineArchive() {
           <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50  :bg-red-950" onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
       </div>
 
-      <div className="rounded-xl bg-neutral-50 p-3  mb-4">
+      <div className="rounded-xl bg-neutral-50 p-3 mb-4">
         <p className="text-lg font-bold text-neutral-900 ">{entries.length}</p>
         <p className="text-[10px] text-neutral-400">Total check-ins</p>
       </div>
@@ -201,7 +201,7 @@ function DopamineArchive() {
         ) : (
           <div className="divide-y divide-neutral-100 ">
             {sorted.map((e) => (
-              <div key={e.id} className="flex items-center gap-3 px-2 py-2 text-xs text-neutral-600  hover:bg-neutral-50 :bg-neutral-900/50">
+              <div key={e.id} className="flex items-center gap-3 px-2 py-2 text-xs text-neutral-600 hover:bg-neutral-50">
                 <span className="font-medium text-neutral-800 ">{format(parseISO(e.date), "EEE, MMM d, yyyy")}</span>
                 <span className="ml-auto text-emerald-600 font-medium">✓ Checked in</span>
               </div>
@@ -249,7 +249,7 @@ function SleepArchive() {
           <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50  :bg-red-950" onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
@@ -276,7 +276,7 @@ function SleepArchive() {
         ) : (
           <div className="divide-y divide-neutral-100 ">
             {sorted.map((e) => (
-              <div key={e.id} className="flex items-center gap-3 px-2 py-2 text-xs text-neutral-600  hover:bg-neutral-50 :bg-neutral-900/50">
+              <div key={e.id} className="flex items-center gap-3 px-2 py-2 text-xs text-neutral-600 hover:bg-neutral-50">
                 <span className="font-medium text-neutral-800 ">{format(parseISO(e.date), "EEE, MMM d, yyyy")}</span>
                 <span className="ml-auto inline-flex items-center gap-2">
                   <span className="text-neutral-400">{e.bedtime} → {e.wakeTime}</span>
@@ -341,7 +341,7 @@ function ChallengeArchive() {
           <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50  :bg-red-950" onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
@@ -352,11 +352,11 @@ function ChallengeArchive() {
           const done = c.days.filter((d) => d.completed).length
           const pct = getProgress(c.id)
           return (
-            <div key={c.id} className="rounded-xl border border-neutral-200/60 bg-white p-3.5  ">
+            <div key={c.id} className="rounded-xl border border-neutral-200/60 bg-white p-3.5 ">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold text-neutral-900 ">{c.title}</span>
-                <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-600  ">{c.type}-day</span>
-                {c.joined && <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-600  ">Joined</span>}
+                <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-600 ">{c.type}-day</span>
+                {c.joined && <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-600 ">Joined</span>}
                 <span className="ml-auto text-xs text-neutral-400">{format(parseISO(c.startDate), "MMM d")} → {format(parseISO(c.endDate), "MMM d, yyyy")}</span>
               </div>
               <div className="mt-2 flex items-center gap-3">

@@ -184,8 +184,8 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
               onClick={() => setReminderMins(opt.mins)}
               className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
                 reminderMins === opt.mins
-                  ? "bg-neutral-900 text-white  "
-                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200   :bg-neutral-700"
+                  ? "bg-neutral-900 text-white "
+                  : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
               }`}
             >
               {opt.label}

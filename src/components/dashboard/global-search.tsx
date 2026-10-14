@@ -167,7 +167,7 @@ export function GlobalSearch({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.96, y: -20 }}
             transition={{ duration: 0.15 }}
-            className=" fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-[18px] border border-neutral-200/80 bg-white shadow-xl shadow-neutral-900/10  "
+            className=" fixed inset-x-4 top-1/2 z-50 mx-auto max-w-lg -translate-y-1/2 overflow-hidden rounded-[18px] border border-neutral-200/80 bg-white shadow-xl shadow-neutral-900/10 "
           >
             <div className="flex items-center gap-3 border-b border-neutral-200 px-4 ">
               <Search className="h-4 w-4 shrink-0 text-neutral-400" />
@@ -182,7 +182,7 @@ export function GlobalSearch({
               />
               <button
                 onClick={onClose}
-                className="rounded-lg p-1 text-neutral-400 hover:text-neutral-600 :text-neutral-300"
+                className="rounded-lg p-1 text-neutral-400 hover:text-neutral-600"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -202,10 +202,10 @@ export function GlobalSearch({
                       className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm transition-all ${
                         i === selectedIndex
                           ? "bg-blue-50 "
-                          : "hover:bg-neutral-50 :bg-neutral-800/50"
+                          : "hover:bg-neutral-50"
                       }`}
                     >
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
                         <r.icon className="h-4 w-4 text-neutral-500" />
                       </div>
                       <div className="flex-1 min-w-0">

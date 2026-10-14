@@ -9,13 +9,13 @@ export function EmptyState({ archive }: { archive?: boolean }) {
   const { setIsCreateModalOpen } = useTaskStore()
 
   return (
-    <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-3xl border-2 border-dashed border-neutral-200 bg-white py-20  ">
+    <div className="relative flex flex-col items-center justify-center overflow-hidden rounded-3xl border-2 border-dashed border-neutral-200 bg-white py-20 ">
       <div className="glow-blob -top-10 left-1/2 h-40 w-72 -translate-x-1/2 animate-pulse-glow bg-indigo-400/10 " />
       <motion.div
         initial={{ scale: 0 }}
         animate={{ scale: 1 }}
         transition={{ type: "spring", damping: 15 }}
-        className="relative mb-4 flex h-16 w-16 items-center justify-center rounded-[10px] bg-neutral-100  shadow-inner"
+        className="relative mb-4 flex h-16 w-16 items-center justify-center rounded-lg bg-neutral-100 shadow-inner"
       >
         <ClipboardList className="h-8 w-8 text-indigo-400 " />
       </motion.div>

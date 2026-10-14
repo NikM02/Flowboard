@@ -60,7 +60,7 @@ export function Sidebar({
         <Image src="/King.png" alt="King logo" width={28} height={28} className="rounded-lg" />
         <span
           className={cn(
-            "text-base font-extrabold tracking-tight text-neutral-900  whitespace-nowrap transition-all",
+            "text-base font-extrabold tracking-tight text-neutral-900 whitespace-nowrap transition-all",
             isCollapsed && "hidden"
           )}
         >

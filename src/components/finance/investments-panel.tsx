@@ -152,25 +152,25 @@ function DashboardTab() {
     <div className="space-y-5">
       {/* Hero stats */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4  ">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 ">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 ">
               <Wallet className="h-4 w-4 text-neutral-600 " />
             </div>
             <span className="text-[11px] font-medium text-neutral-500 ">Invested</span>
           </div>
-          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900  sm:text-2xl">{fmt(totalInvested)}</p>
+          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900 sm:text-2xl">{fmt(totalInvested)}</p>
           <p className="text-[10px] text-neutral-400">{assetCount} active holding{assetCount === 1 ? "" : "s"}</p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4  ">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 ">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-50 ">
               <TrendingUp className="h-4 w-4 text-blue-600 " />
             </div>
             <span className="text-[11px] font-medium text-neutral-500 ">Current Value</span>
           </div>
-          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900  sm:text-2xl">{fmt(totalCurrent)}</p>
+          <p className="mt-2.5 text-lg font-bold tracking-tight text-neutral-900 sm:text-2xl">{fmt(totalCurrent)}</p>
           <p className="text-[10px] text-neutral-400">Your money today</p>
         </motion.div>
 
@@ -181,8 +181,8 @@ function DashboardTab() {
           className={cn(
             "rounded-2xl border p-4",
             totalGain >= 0
-              ? "border-green-200/60 bg-gradient-to-br from-green-50 to-emerald-50/30   "
-              : "border-red-200/60 bg-gradient-to-br from-red-50 to-rose-50/30   "
+              ? "border-green-200/60 bg-gradient-to-br from-green-50 to-emerald-50/30 "
+              : "border-red-200/60 bg-gradient-to-br from-red-50 to-rose-50/30 "
           )}
         >
           <div className="flex items-center gap-2">
@@ -197,7 +197,7 @@ function DashboardTab() {
           <p className={cn("text-[10px] font-semibold", totalGain >= 0 ? "text-green-600/70" : "text-red-500/70")}>{fmtPct(totalGainPct)} overall</p>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4  ">
+        <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 ">
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-violet-50 ">
               <Sparkles className="h-4 w-4 text-violet-600 " />
@@ -210,7 +210,7 @@ function DashboardTab() {
       </div>
 
       {/* Allocation stack bar */}
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4  ">
+      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="rounded-2xl border border-neutral-200/60 bg-white p-4 ">
         <h3 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 ">Allocation by class</h3>
         <div className="mt-3 flex h-3 w-full overflow-hidden rounded-full bg-neutral-100 ">
           {allocationData.map((d, i) => (
@@ -236,7 +236,7 @@ function DashboardTab() {
 
       {/* Charts */}
       <div className="grid gap-4 md:grid-cols-2">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5  ">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 ">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Allocation</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Where your money is</p>
           <div className="mt-3 h-[220px] sm:h-[240px]">
@@ -259,7 +259,7 @@ function DashboardTab() {
           </div>
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5  ">
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 ">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Invested vs Current</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Portfolio comparison</p>
           <div className="mt-3 h-[220px] sm:h-[240px]">
@@ -281,7 +281,7 @@ function DashboardTab() {
       {/* Leaders & laggards */}
       {holdings.length > 0 && (
         <div className="grid gap-4 md:grid-cols-2">
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5  ">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 ">
             <div className="flex items-center gap-2">
               <TrendingUp className="h-4 w-4 text-green-600 " />
               <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Top Performers</h3>
@@ -289,7 +289,7 @@ function DashboardTab() {
             <div className="mt-3 space-y-2">
               {leaders.map((h) => (
                 <div key={h.name + h.type} className="flex items-center gap-3 rounded-xl bg-neutral-50 px-3 py-2 ">
-                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600  " : "bg-red-100 text-red-500  ")}>
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600 " : "bg-red-100 text-red-500 ")}>
                     {h.pct >= 0 ? "▲" : "▼"}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -305,7 +305,7 @@ function DashboardTab() {
             </div>
           </motion.div>
 
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5  ">
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.35 }} className="rounded-2xl border border-neutral-200/60 bg-white p-5 ">
             <div className="flex items-center gap-2">
               <TrendingDown className="h-4 w-4 text-red-500 " />
               <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Needs Attention</h3>
@@ -313,7 +313,7 @@ function DashboardTab() {
             <div className="mt-3 space-y-2">
               {laggards.map((h) => (
                 <div key={h.name + h.type + h.pct} className="flex items-center gap-3 rounded-xl bg-neutral-50 px-3 py-2 ">
-                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600  " : "bg-red-100 text-red-500  ")}>
+                  <span className={cn("flex h-7 w-7 items-center justify-center rounded-lg text-[10px] font-bold", h.pct >= 0 ? "bg-green-100 text-green-600 " : "bg-red-100 text-red-500 ")}>
                     {h.pct >= 0 ? "▲" : "▼"}
                   </span>
                   <div className="min-w-0 flex-1">
@@ -348,7 +348,7 @@ function DashboardTab() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4 + i * 0.05 }}
-              className="rounded-2xl border border-neutral-200/60 bg-white p-4  "
+              className="rounded-2xl border border-neutral-200/60 bg-white p-4 "
             >
               <div className="flex items-center gap-2">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ backgroundColor: `${sec.color}15` }}>
@@ -430,7 +430,7 @@ function SipsTab() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md   "
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md "
               >
                 <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
@@ -439,8 +439,8 @@ function SipsTab() {
                     <p className="mt-0.5 text-[11px] text-neutral-400 ">{fmt(s.amount)}/{s.frequency} · Since {s.startDate || "—"}</p>
                   </div>
                   <div className="flex gap-1">
-                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800   :bg-neutral-700 :text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteSIP(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600   :bg-red-950/60 :text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 "><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteSIP(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 "><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -614,12 +614,12 @@ function StocksTab() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md   "
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md "
               >
                 <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
                   <div className="flex min-w-0 items-center gap-2">
-                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", pct >= 0 ? "bg-green-100 text-green-600  " : "bg-red-100 text-red-500  ")}>
+                    <div className={cn("flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold", pct >= 0 ? "bg-green-100 text-green-600 " : "bg-red-100 text-red-500 ")}>
                       {s.ticker ? s.ticker.slice(0, 4).toUpperCase() : "—"}
                     </div>
                     <div className="min-w-0">
@@ -628,8 +628,8 @@ function StocksTab() {
                     </div>
                   </div>
                   <div className="flex items-center gap-1">
-                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800   :bg-neutral-700 :text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteStock(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600   :bg-red-950/60 :text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => openEdit(s)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 "><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteStock(s.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 "><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -693,7 +693,7 @@ function StockForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClo
         </DialogHeader>
         <div className="space-y-4 pt-2">
           {!editId && form.buyPrice > 0 && form.quantity > 0 && (
-            <div className={cn("rounded-xl px-4 py-2.5 text-xs font-semibold", gainPct >= 0 ? "bg-green-50 text-green-700  " : "bg-red-50 text-red-600  ")}>
+            <div className={cn("rounded-xl px-4 py-2.5 text-xs font-semibold", gainPct >= 0 ? "bg-green-50 text-green-700 " : "bg-red-50 text-red-600 ")}>
               Current live P&L estimate: {fmtPct(gainPct)} ({fmt(invested)} → {fmt(form.currentPrice * form.quantity)})
             </div>
           )}
@@ -818,7 +818,7 @@ function FundsTab() {
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.03 }}
-                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md   "
+                className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md "
               >
                 <div className={cn("absolute inset-x-0 top-0 h-0.5", pct >= 0 ? "bg-gradient-to-r from-green-400/60 to-transparent" : "bg-gradient-to-r from-red-400/60 to-transparent")} />
                 <div className="flex items-start justify-between">
@@ -827,8 +827,8 @@ function FundsTab() {
                     <p className="mt-0.5 text-[11px] text-neutral-400 ">{mf.fundHouse} · {mf.units} units @ ₹{mf.nav.toLocaleString("en-IN")}</p>
                   </div>
                   <div className="flex gap-1">
-                    <button onClick={() => openEdit(mf)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800   :bg-neutral-700 :text-neutral-100"><Pencil className="h-3.5 w-3.5" /></button>
-                    <button onClick={() => deleteMutualFund(mf.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600   :bg-red-950/60 :text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => openEdit(mf)} aria-label="Edit" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-800 "><Pencil className="h-3.5 w-3.5" /></button>
+                    <button onClick={() => deleteMutualFund(mf.id)} aria-label="Delete" className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-red-100 hover:text-red-600 "><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </div>
                 <div className="mt-3 grid grid-cols-3 gap-2 text-center">
@@ -919,7 +919,7 @@ function FundForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClos
             </div>
           </div>
           {!editId && implied > 0 && (
-            <p className="rounded-xl bg-neutral-50 px-3 py-2 text-[11px] text-neutral-500  ">
+            <p className="rounded-xl bg-neutral-50 px-3 py-2 text-[11px] text-neutral-500 ">
               Value at current NAV: <span className="font-semibold">{fmt(implied)}</span> — filled in below automatically.
             </p>
           )}
@@ -975,7 +975,7 @@ function ArchiveTab() {
           <p className="text-sm font-medium text-neutral-500 ">No investments to archive</p>
         </div>
       ) : (
-        <div className="space-y-4 rounded-3xl border border-neutral-200/60 bg-white p-5  ">
+        <div className="space-y-4 rounded-3xl border border-neutral-200/60 bg-white p-5 ">
           {sips.length > 0 && (
             <div>
               <h4 className="mb-2 text-xs font-bold uppercase tracking-widest text-neutral-500 ">SIPs ({sips.length})</h4>
@@ -1042,14 +1042,14 @@ export function InvestmentsPanel() {
               onClick={() => setTab(t.key)}
               className={cn(
                 "flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-lg px-2.5 py-2 text-xs font-medium transition-all sm:px-3 sm:text-sm",
-                tab === t.key ? "bg-white text-neutral-900 shadow-sm  " : "text-neutral-500 hover:text-neutral-700 :text-neutral-300"
+                tab === t.key ? "bg-white text-neutral-900 shadow-sm " : "text-neutral-500 hover:text-neutral-700"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" /> {t.label}
               {count > 0 && (
                 <span className={cn(
                   "flex h-4 min-w-[16px] items-center justify-center rounded-full px-1 text-[9px] font-bold tabular-nums",
-                  tab === t.key ? "bg-neutral-900 text-white  " : "bg-neutral-300/70 text-neutral-600  "
+                  tab === t.key ? "bg-neutral-900 text-white " : "bg-neutral-300/70 text-neutral-600 "
                 )}>
                   {count}
                 </span>

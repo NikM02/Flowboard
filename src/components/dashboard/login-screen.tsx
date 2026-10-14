@@ -59,7 +59,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", damping: 14, stiffness: 160 }}
-          className="flex h-20 w-20 items-center justify-center rounded-full border border-neutral-200/80 bg-white shadow-lg shadow-neutral-900/5  "
+          className="flex h-20 w-20 items-center justify-center rounded-full border border-neutral-200/80 bg-white shadow-lg shadow-neutral-900/5 "
         >
           <Image src="/King.png" alt="King" width={44} height={44} className="rounded-full" />
         </motion.div>
@@ -102,7 +102,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600   "
+            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600 "
           >
             {error}
           </motion.div>

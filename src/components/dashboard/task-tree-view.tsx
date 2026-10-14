@@ -30,7 +30,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
   const { toggleSubtask, removeSubtask } = useTaskStore()
 
   return (
-    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70 :bg-neutral-800/70">
+    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70">
       <button
         onClick={() => toggleSubtask(taskId, subtask.id)}
         className="flex min-w-0 flex-1 items-center gap-2 text-left"
@@ -88,8 +88,8 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
       className={cn(
         "group rounded-xl border p-3.5 transition-all",
         task.completed
-          ? "border-green-200/40 bg-green-50/30  "
-          : "border-neutral-200/60 bg-white hover:border-neutral-300/70 hover:shadow-sm  "
+          ? "border-green-200/40 bg-green-50/30 "
+          : "border-neutral-200/60 bg-white hover:border-neutral-300/70 hover:shadow-sm "
       )}
     >
       <div className="flex items-start gap-2.5">
@@ -121,7 +121,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
               {status.label}
             </span>
             {task.storyPoints != null && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700  " title="Story points">
+              <span className="inline-flex items-center gap-1 rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 " title="Story points">
                 {task.storyPoints} pts
               </span>
             )}
@@ -169,7 +169,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
             <button
               type="submit"
               disabled={!newSub.trim()}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30  "
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
               aria-label="Add subtask"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -181,13 +181,13 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 justify-end gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 :bg-neutral-800"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100 :bg-red-950/50"
+            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -227,12 +227,12 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="card-modern overflow-hidden rounded-[18px] border border-neutral-200 bg-white  "
+      className="card-modern overflow-hidden rounded-[18px] border border-neutral-200 bg-white "
     >
       <div className="flex items-center gap-2.5 px-4 py-3">
         <button
           onClick={toggleAll}
-          className={cn("shrink-0 transition-colors", allDone ? "text-green-500" : "text-neutral-300 hover:text-neutral-400  :text-neutral-500")}
+          className={cn("shrink-0 transition-colors", allDone ? "text-green-500" : "text-neutral-300 hover:text-neutral-400 ")}
           title={allDone ? "Reopen all tasks in this project" : "Mark all tasks in this project as done"}
         >
           {allDone ? <CheckCircle2 className="h-5 w-5" /> : <Circle className="h-5 w-5" />}
@@ -243,7 +243,7 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
           className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
         >
           <span
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-base"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
             style={{ backgroundColor: `${dot}1a` }}
             title={name}
           >

@@ -62,12 +62,12 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
               {priority.label}
             </span>
             {task.storyPoints != null && (
-              <span className="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700  ">
+              <span className="inline-flex items-center rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-semibold text-violet-700 ">
                 {task.storyPoints} pts
               </span>
             )}
             {task.project && (
-              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500  ">
+              <span className="inline-flex items-center gap-1 rounded-full bg-neutral-100 px-2 py-0.5 text-[10px] font-medium text-neutral-500 ">
                 {getProjectIcon(task.project)} {task.project}
               </span>
             )}
@@ -81,14 +81,14 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800"
+            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
             aria-label="Edit task"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 :bg-red-950/50"
+            className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500"
             aria-label="Delete task"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(-25)}
               disabled={task.progress <= 0}
-              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30  :bg-neutral-800"
+              className="flex h-5 w-5 items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
             >
               <Minus className="h-3 w-3" />
             </button>
@@ -131,7 +131,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(25)}
               disabled={task.progress >= 100}
-              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30  :bg-neutral-800"
+              className="flex h-5 w-5 items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
             >
               <Plus className="h-3 w-3" />
             </button>
@@ -152,7 +152,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
         <>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="mt-3 flex items-center gap-1 text-[11px] font-medium text-neutral-400 transition-colors hover:text-neutral-600 :text-neutral-300"
+            className="mt-3 flex items-center gap-1 text-[11px] font-medium text-neutral-400 transition-colors hover:text-neutral-600"
           >
             {expanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
             {completedSubs}/{totalSubs} subtasks

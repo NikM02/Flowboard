@@ -118,15 +118,15 @@ export function AdvanceTodoPanel() {
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="group flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 transition-colors  "
+                className="group flex items-center gap-3 rounded-lg border border-neutral-200 bg-white px-3 py-2.5 transition-colors "
               >
                 {/* Checkbox */}
                 <button
                   onClick={() => toggleTodo(todo.id)}
-                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border transition-all ${
+                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border transition-all ${
                      todo.completed
-                       ? "border-neutral-900 bg-neutral-900 text-white   "
-                       : "border-neutral-300 hover:border-neutral-500  :border-neutral-400"
+                       ? "border-neutral-900 bg-neutral-900 text-white "
+                       : "border-neutral-300 hover:border-neutral-500 "
                    }`}
                 >
                   {todo.completed && <Check className="h-3 w-3" />}

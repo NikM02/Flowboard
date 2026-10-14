@@ -60,7 +60,7 @@ function Ring({ percent, size = 148, stroke = 13 }: { percent: number; size?: nu
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-neutral-100 " />
         <circle
           cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke}
-          className="stroke-neutral-900  transition-all duration-700"
+          className="stroke-neutral-900 transition-all duration-700"
           strokeLinecap="round"
           strokeDasharray={c}
           strokeDashoffset={c - (c * Math.min(percent, 100)) / 100}
@@ -172,7 +172,7 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
   return (
     <div>
       <div className="mt-6 grid gap-4 lg:grid-cols-2">
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5  ">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5 ">
           <p className="text-xs font-semibold uppercase tracking-wide text-neutral-400">Progress</p>
           <div className="mt-4 flex items-center gap-6">
             <Ring percent={overall} />
@@ -214,7 +214,7 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
           </div>
         </div>
 
-        <div className="rounded-3xl border border-neutral-200 bg-white p-5  ">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-5 ">
           <p className="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-neutral-400">
             <TrendingUp className="h-3.5 w-3.5" /> Growth over time
           </p>
@@ -255,7 +255,7 @@ export function RoadmapAnalytics({ roadmap }: { roadmap: Roadmap }) {
 function Insight({ icon, label, value, tone = "normal" }: { icon: React.ReactNode; label: string; value: string; tone?: "normal" | "danger" }) {
   return (
     <div className={cn("rounded-2xl border p-4",
-      tone === "danger" ? "border-rose-200 bg-rose-50/60  " : "border-neutral-200 bg-white  ")}>
+      tone === "danger" ? "border-rose-200 bg-rose-50/60 " : "border-neutral-200 bg-white ")}>
       <div className="flex items-center gap-1.5 text-neutral-400">
         {icon}
         <span className="text-[10px] font-semibold uppercase tracking-wide">{label}</span>

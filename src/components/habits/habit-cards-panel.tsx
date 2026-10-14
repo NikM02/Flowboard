@@ -45,7 +45,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
       className="group relative card-modern card-hover glass rounded-2xl p-4"
     >
       <div className="flex items-start gap-3">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${colors.bg} `}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${colors.bg} `}>
           <Icon className={`h-5 w-5 ${colors.text}`} />
         </div>
         <div className="flex-1 min-w-0">
@@ -56,7 +56,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {streak > 0 && (
-                <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600  ">
+                <div className="flex items-center gap-1 rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-600 ">
                   <Flame className="h-3 w-3" />{streak}
                 </div>
               )}
@@ -71,7 +71,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
           <div className="mt-3 flex items-center gap-3">
             <button onClick={() => toggleDay(habit.id, today)}
               className={`flex h-8 items-center gap-2 rounded-xl px-3 text-xs font-medium transition-all ${
-                isDoneToday ? "bg-neutral-900 text-white  " : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200  "
+                isDoneToday ? "bg-neutral-900 text-white " : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
               }`}
             >
               {isDoneToday ? "✓ Done" : "○ Mark done"}

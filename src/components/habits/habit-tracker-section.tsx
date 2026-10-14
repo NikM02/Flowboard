@@ -71,8 +71,8 @@ export function HabitTrackerSection() {
             className={cn(
               "flex min-h-10 shrink-0 items-center justify-center gap-1.5 rounded-xl px-2.5 text-xs font-medium whitespace-nowrap transition-all sm:gap-2 sm:px-4 sm:py-2 sm:text-sm",
               tab === t.key
-                ? "bg-white text-neutral-900 shadow-sm  "
-                : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
+                ? "bg-white text-neutral-900 shadow-sm "
+                : "text-neutral-500 hover:text-neutral-700 "
             )}
           >
             <t.icon className="h-4 w-4" />

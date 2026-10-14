@@ -28,7 +28,7 @@ const SLOTS: SlotDef[] = [
     accent: "text-red-500",
     check: "bg-red-500",
     bar: "bg-red-500",
-    chip: "bg-red-100 text-red-600  ",
+    chip: "bg-red-100 text-red-600 ",
   },
   {
     priority: "medium",
@@ -38,7 +38,7 @@ const SLOTS: SlotDef[] = [
     accent: "text-amber-500",
     check: "bg-amber-500",
     bar: "bg-amber-500",
-    chip: "bg-amber-100 text-amber-700  ",
+    chip: "bg-amber-100 text-amber-700 ",
   },
   {
     priority: "low",
@@ -48,7 +48,7 @@ const SLOTS: SlotDef[] = [
     accent: "text-blue-500",
     check: "bg-blue-500",
     bar: "bg-blue-500",
-    chip: "bg-blue-100 text-blue-600  ",
+    chip: "bg-blue-100 text-blue-600 ",
   },
 ]
 
@@ -85,7 +85,7 @@ function SlotCheck({ done, check }: { done: boolean; check: string }) {
         "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
         done
           ? cn("border-transparent", check)
-          : "border-neutral-200 bg-white group-hover:border-neutral-300   :border-neutral-500"
+          : "border-neutral-200 bg-white group-hover:border-neutral-300 "
       )}
     >
       {done && <Check className="h-3 w-3 text-white" strokeWidth={3.5} />}
@@ -134,7 +134,7 @@ export function TodayPanel() {
   const todayCount = active.filter((t) => t.dueDate === todayKey).length
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white  ">
+    <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white ">
       {/* Header */}
       <div className="relative bg-neutral-900 px-4 py-4 sm:px-5 ">
         <div className="relative flex items-center justify-between gap-3">
@@ -186,7 +186,7 @@ export function TodayPanel() {
               transition={{ duration: 0.25 }}
               className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200 "
             >
-              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 bg-neutral-50/70 px-3 py-2.5  ">
+              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 bg-neutral-50/70 px-3 py-2.5 ">
                 <span className={cn("flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide", slot.accent)}>
                   <Icon className="h-3.5 w-3.5" />
                   {slot.label}
@@ -213,7 +213,7 @@ export function TodayPanel() {
                       <button
                         key={i}
                         onClick={() => openCreateModal(slot.priority)}
-                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50  :border-neutral-600 :bg-neutral-800/40"
+                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
                       >
                         <Plus className="h-3.5 w-3.5 shrink-0 opacity-50" />
                         <span className="truncate text-[11px]">Empty {slot.label.toLowerCase()} slot — add</span>
@@ -224,7 +224,7 @@ export function TodayPanel() {
                       const overdue = t.dueDate && t.dueDate < todayKey
                       const subsDone = t.subtasks.filter((s) => s.completed).length
                       return (
-                        <div key={t.id} className="group flex items-start gap-2 rounded-lg border border-transparent px-2 py-1.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50 :border-neutral-800 :bg-neutral-800/40">
+                        <div key={t.id} className="group flex items-start gap-2 rounded-lg border border-transparent px-2 py-1.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50">
                           <button onClick={() => toggle(t)} aria-label={`Complete ${t.title}`}>
                             <SlotCheck done={t.completed} check={slot.check} />
                           </button>

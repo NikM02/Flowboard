@@ -183,7 +183,7 @@ function WishCard({
       )}
     >
       {/* Cover */}
-      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50   sm:h-44">
+      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-amber-50 to-orange-50 sm:h-44">
         <Star className="h-10 w-10 text-amber-300 " />
         {item.completed && (
           <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
@@ -196,14 +196,14 @@ function WishCard({
               <button
                 onClick={(e) => { e.stopPropagation(); onEdit() }}
                 aria-label="Edit wish"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white  "
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
               >
                 <Pencil className="h-3.5 w-3.5" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); deleteItem(item.id) }}
                 aria-label="Delete wish"
-                className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
+                className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -211,7 +211,7 @@ function WishCard({
           )}
         </div>
         <div className="absolute bottom-3 left-3">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm  ">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm ">
             <Clock className="h-3 w-3" />
             {item.timeframe}
           </span>
@@ -229,7 +229,7 @@ function WishCard({
           {item.title}
         </h3>
         {item.description && (
-          <p className="mt-1 text-sm leading-relaxed text-neutral-500  line-clamp-2">
+          <p className="mt-1 text-sm leading-relaxed text-neutral-500 line-clamp-2">
             {item.description}
           </p>
         )}
@@ -249,8 +249,8 @@ function WishCard({
             className={cn(
               "flex h-8 items-center gap-1.5 rounded-full px-3.5 text-xs font-medium transition-all",
               item.completed
-                ? "bg-green-100 text-green-700 hover:bg-green-200  "
-                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200   :bg-neutral-700"
+                ? "bg-green-100 text-green-700 hover:bg-green-200 "
+                : "bg-neutral-100 text-neutral-600 hover:bg-neutral-200 "
             )}
           >
             {item.completed ? (
@@ -290,7 +290,7 @@ export default function BucketListPage() {
           <div>
             <Link
               href="/skills"
-              className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900  :text-neutral-50"
+              className="mb-2 inline-flex items-center gap-1.5 text-sm text-neutral-500 transition-colors hover:text-neutral-900 "
             >
               <ArrowLeft className="h-4 w-4" />
               Skills
@@ -304,15 +304,15 @@ export default function BucketListPage() {
 
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-2xl border border-neutral-200 bg-white p-4  ">
+          <div className="rounded-2xl border border-neutral-200 bg-white p-4 ">
             <p className="text-xs text-neutral-500">Total Wishes</p>
             <p className="text-2xl font-bold text-neutral-900 ">{items.length}</p>
           </div>
-          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4  ">
+          <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 ">
             <p className="text-xs text-amber-600 ">Pending</p>
             <p className="text-2xl font-bold text-amber-600 ">{pendingCount}</p>
           </div>
-          <div className="rounded-2xl border border-green-200 bg-green-50 p-4  ">
+          <div className="rounded-2xl border border-green-200 bg-green-50 p-4 ">
             <p className="text-xs text-green-600 ">Achieved</p>
             <p className="text-2xl font-bold text-green-600 ">{completedCount}</p>
           </div>
@@ -327,19 +327,19 @@ export default function BucketListPage() {
               className={cn(
                 "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium capitalize transition-all sm:flex-none",
                 filter === f
-                  ? "bg-white text-neutral-900 shadow-sm  "
-                  : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
+                  ? "bg-white text-neutral-900 shadow-sm "
+                  : "text-neutral-500 hover:text-neutral-700 "
               )}
             >
               {f === "all" && <Filter className="h-3.5 w-3.5" />}
               {f}
               {f === "pending" && pendingCount > 0 && (
-                <span className="ml-1 rounded-full bg-amber-100 px-1.5 text-[10px] font-semibold text-amber-700  ">
+                <span className="ml-1 rounded-full bg-amber-100 px-1.5 text-[10px] font-semibold text-amber-700 ">
                   {pendingCount}
                 </span>
               )}
               {f === "completed" && completedCount > 0 && (
-                <span className="ml-1 rounded-full bg-green-100 px-1.5 text-[10px] font-semibold text-green-700  ">
+                <span className="ml-1 rounded-full bg-green-100 px-1.5 text-[10px] font-semibold text-green-700 ">
                   {completedCount}
                 </span>
               )}

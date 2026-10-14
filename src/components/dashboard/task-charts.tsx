@@ -27,7 +27,7 @@ const SERIES_COLORS: Record<string, string> = {
 function ChartTooltip({ active, payload, label }: any) {
   if (!active || !payload?.length) return null
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs shadow-lg shadow-neutral-200/40   ">
+    <div className="rounded-xl border border-neutral-200 bg-white px-3 py-2 text-xs shadow-lg shadow-neutral-200/40 ">
       {label && <p className="mb-1 font-semibold text-neutral-900 ">{label}</p>}
       {payload.map((entry: any, i: number) => (
         <p key={i} className="flex items-center gap-1.5 text-neutral-600 ">
@@ -70,7 +70,7 @@ export function TaskCompletionChart() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
-      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5  "
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5 "
     >
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <h3 className="text-sm font-bold tracking-tight text-neutral-900 ">Task Activity</h3>
@@ -148,7 +148,7 @@ export function CategoryPieChart() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4 }}
-      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5  "
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5 "
     >
       <h3 className="mb-4 text-sm font-bold tracking-tight text-neutral-900 ">Categories</h3>
       <div className="flex flex-col items-center gap-4 sm:flex-row">
@@ -230,7 +230,7 @@ export function PriorityBarChart() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.5 }}
-      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5  "
+      className="rounded-[14px] border border-neutral-200/50 bg-white p-4 shadow-sm sm:p-5 "
     >
       <h3 className="mb-1 text-sm font-bold tracking-tight text-neutral-900 ">Priority Distribution</h3>
       <p className="mb-3 text-[11px] font-medium text-neutral-400 ">Active backlog by urgency</p>

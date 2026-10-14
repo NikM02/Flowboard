@@ -43,7 +43,7 @@ export function BottomNav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-neutral-950/60 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-50 bg-neutral-950/50 backdrop-blur-[2px] md:hidden"
               onClick={() => setOpen(false)}
             />
             <motion.div
@@ -51,7 +51,7 @@ export function BottomNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/50 bg-white/95 backdrop-blur-xl p-3 shadow-2xl   md:hidden"
+              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl p-3 shadow-2xl md:hidden"
             >
               <div className="grid grid-cols-3 gap-2">
                 {moreItems.map((item) => {
@@ -62,10 +62,10 @@ export function BottomNav() {
                       key={item.href}
                       onClick={() => navigate(item.href)}
                       className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-[10px] px-2 py-3 transition-all",
+                        "flex flex-col items-center gap-1.5 rounded-lg px-2 py-3 transition-all",
                         isActive
-                          ? "bg-blue-600 text-white shadow-none  "
-                          : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100   :bg-neutral-700"
+                          ? "bg-blue-600 text-white shadow-none "
+                          : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 "
                       )}
                     >
                       <Icon className="h-5 w-5" />
@@ -79,7 +79,7 @@ export function BottomNav() {
         )}
       </AnimatePresence>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden  ">
+      <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-neutral-100 bg-white/90 backdrop-blur-xl md:hidden ">
         <div className="flex items-center justify-around px-1 pb-safe pt-1.5">
           {primaryItems.map((item) => {
             const Icon = item.icon
@@ -89,10 +89,10 @@ export function BottomNav() {
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
+                  "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
                   isActive
                     ? "text-neutral-900 "
-                    : "text-neutral-400 hover:text-neutral-600  :text-neutral-300"
+                    : "text-neutral-400 hover:text-neutral-600 "
                 )}
               >
                 <Icon className={cn(
@@ -109,17 +109,17 @@ export function BottomNav() {
           <button
             onClick={() => setOpen(!open)}
             className={cn(
-              "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
+              "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
               open
                 ? "text-neutral-900 "
-                : "text-neutral-400 hover:text-neutral-600  :text-neutral-300"
+                : "text-neutral-400 hover:text-neutral-600 "
             )}
           >
             <div className={cn(
               "flex h-10 w-10 items-center justify-center rounded-full transition-all",
               open
-                ? "bg-neutral-900 text-white  "
-                : "bg-blue-600 text-white hover:bg-blue-500  :bg-blue-500"
+                ? "bg-neutral-900 text-white "
+                : "bg-blue-600 text-white hover:bg-blue-500 "
             )}>
               {open ? <X className="h-3 w-3" /> : <Plus className="h-3 w-3" />}
             </div>

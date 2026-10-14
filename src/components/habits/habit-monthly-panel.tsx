@@ -45,7 +45,7 @@ export function HabitMonthlyPanel() {
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCurrent((p) => subMonths(p, 1))}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
-          <span className="text-sm font-medium text-neutral-700  min-w-[120px] text-center">
+          <span className="text-sm font-medium text-neutral-700 min-w-[120px] text-center">
             {format(current, "MMMM yyyy")}
           </span>
           <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setCurrent((p) => addMonths(p, 1))}>
@@ -56,7 +56,7 @@ export function HabitMonthlyPanel() {
 
       <div className="grid grid-cols-7 gap-1 mb-1">
         {["M", "T", "W", "T", "F", "S", "S"].map((d) => (
-          <div key={d} className="text-center text-[10px] font-semibold text-neutral-300  py-1">{d}</div>
+          <div key={d} className="text-center text-[10px] font-semibold text-neutral-300 py-1">{d}</div>
         ))}
       </div>
 
@@ -105,7 +105,7 @@ export function HabitMonthlyPanel() {
                   <span className="text-neutral-700 ">{r.name}</span>
                   <button onClick={() => toggleDay(r.habitId, selectedDate)}
                     className={`text-xs font-medium px-2 py-0.5 rounded-md ${
-                      r.completed ? "bg-emerald-100 text-emerald-700  " : "bg-neutral-100 text-neutral-400 "
+                      r.completed ? "bg-emerald-100 text-emerald-700 " : "bg-neutral-100 text-neutral-400 "
                     }`}
                   >
                     {r.completed ? "Done" : "Missed"}

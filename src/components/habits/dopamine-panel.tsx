@@ -72,7 +72,7 @@ export function DopaminePanel() {
                     ? "opacity-30 cursor-not-allowed"
                     : checked
                       ? "bg-emerald-50 "
-                      : "bg-neutral-50 hover:bg-neutral-100  :bg-neutral-800"
+                      : "bg-neutral-50 hover:bg-neutral-100 "
                 )}
               >
                 <span className="text-[10px] font-medium text-neutral-500 ">
@@ -83,7 +83,7 @@ export function DopaminePanel() {
                 </span>
                 {day.isToday ? (
                   <div className={cn(
-                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-[10px] border-2 transition-all",
+                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-lg border-2 transition-all",
                     checked
                       ? "border-emerald-500 bg-emerald-500"
                       : "border-neutral-300 "
@@ -92,7 +92,7 @@ export function DopaminePanel() {
                   </div>
                 ) : (
                   <div className={cn(
-                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-[10px] transition-all",
+                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-lg transition-all",
                     checked
                       ? "bg-emerald-500"
                       : "bg-neutral-200 "
@@ -139,7 +139,7 @@ export function DopaminePanel() {
                 day.isToday && "ring-1 ring-neutral-300 ",
                 day.checked
                   ? "bg-emerald-100 "
-                  : "bg-neutral-50 hover:bg-neutral-100  :bg-neutral-800"
+                  : "bg-neutral-50 hover:bg-neutral-100 "
               )}
               title={`${day.month} ${day.dayNum}${day.checked ? " (checked)" : ""}`}
             >

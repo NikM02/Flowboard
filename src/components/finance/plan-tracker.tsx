@@ -43,7 +43,7 @@ export function PlanTracker({
   const dueNow = !!st.nextPayable
 
   return (
-    <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3  ">
+    <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 ">
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 ">
           <CalendarClock className="h-3 w-3" /> {label}
@@ -51,9 +51,9 @@ export function PlanTracker({
         <span
           className={cn(
             "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold",
-            completed ? "bg-green-100 text-green-700  "
-            : st.overdue ? "bg-red-100 text-red-600  "
-            : "bg-neutral-100 text-neutral-600  "
+            completed ? "bg-green-100 text-green-700 "
+            : st.overdue ? "bg-red-100 text-red-600 "
+            : "bg-neutral-100 text-neutral-600 "
           )}
         >
           {completed ? <Check className="h-3 w-3" /> : st.overdue ? <X className="h-3 w-3" /> : <CalendarClock className="h-3 w-3" />}
@@ -89,7 +89,7 @@ export function PlanTracker({
             disabled={!st.nextPayable && !st.latestDue}
             className={cn(
               "flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors",
-              dueNow ? "bg-green-100 text-green-700 hover:bg-green-200  " : "bg-neutral-100 text-neutral-500  "
+              dueNow ? "bg-green-100 text-green-700 hover:bg-green-200 " : "bg-neutral-100 text-neutral-500 "
             )}
           >
             {st.nextPayable ? <Play className="h-3 w-3" /> : st.latestPaid ? <Check className="h-3 w-3" /> : <Play className="h-3 w-3" />}
@@ -99,7 +99,7 @@ export function PlanTracker({
             <button
               onClick={onEdit}
               aria-label="Edit plan"
-              className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200   :bg-neutral-700"
+              className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 "
             >
               <Pencil className="h-3 w-3" />
             </button>

@@ -117,19 +117,19 @@ function PillarCard({
       className="card-modern card-hover glass group relative rounded-2xl p-5"
     >
       <div className="absolute right-3 top-3 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-        <button onClick={onEdit} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300">
+        <button onClick={onEdit} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
           <Pencil className="h-3.5 w-3.5" />
         </button>
-        <button onClick={onDelete} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500 :bg-red-950/50">
+        <button onClick={onDelete} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500">
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
-      <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100  shadow-inner">
+      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 shadow-inner">
         <IconDisplay name={pillar.icon} className="h-4 w-4 text-neutral-600 " />
       </div>
       <h3 className="mt-3.5 text-[15px] font-bold tracking-tight text-neutral-900 ">{pillar.title}</h3>
       {pillar.description && (
-        <p className="mt-1.5 text-xs leading-relaxed text-neutral-500  line-clamp-3">{pillar.description}</p>
+        <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 line-clamp-3">{pillar.description}</p>
       )}
     </motion.div>
   )
@@ -172,7 +172,7 @@ function PillarDialog({
             exit={{ opacity: 0, scale: 0.95, y: 8 }}
             transition={{ duration: 0.15 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl  "
+            className="w-full max-w-md rounded-2xl border border-neutral-200 bg-white p-6 shadow-xl "
           >
             <h3 className="text-lg font-semibold text-neutral-900 ">
               {pillar ? "Edit Pillar" : "New Pillar"}
@@ -189,10 +189,10 @@ function PillarDialog({
                       key={key}
                       onClick={() => setIcon(key)}
                       className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-[10px] border transition-all",
+                        "flex h-10 w-10 items-center justify-center rounded-lg border transition-all",
                         icon === key
-                          ? "border-neutral-900 bg-neutral-900 text-white shadow-sm   "
-                          : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50   :border-neutral-600 :bg-neutral-800"
+                          ? "border-neutral-900 bg-neutral-900 text-white shadow-sm "
+                          : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50 "
                       )}
                     >
                       <IconDisplay name={key} className="h-4 w-4" />
@@ -245,12 +245,12 @@ export function NorthStarPanel() {
     <div className="space-y-8">
       {/* Vision — full-width hero */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
-        <div className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8  ">
+        <div className="relative overflow-hidden rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8 ">
           {/* decorative dot grid */}
           <div className="pointer-events-none absolute inset-0 opacity-[0.035] " style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
           <div className="relative">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100  shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 shadow-sm">
                 <Eye className="h-4 w-4 text-neutral-600 " />
               </div>
               <div>
@@ -272,9 +272,9 @@ export function NorthStarPanel() {
 
       {/* Mission */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.08 }}>
-        <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8  ">
+        <div className="rounded-3xl border border-neutral-200 bg-white p-6 sm:p-8 ">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100  shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 shadow-sm">
               <Target className="h-4 w-4 text-neutral-600 " />
             </div>
             <div>
@@ -295,10 +295,10 @@ export function NorthStarPanel() {
 
       {/* Core Pillars */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }}>
-        <div className="rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8  ">
+        <div className="rounded-3xl border border-neutral-200/60 bg-white p-6 sm:p-8 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100  shadow-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 shadow-sm">
                 <Gem className="h-4 w-4 text-neutral-600 " />
               </div>
               <div>
@@ -313,7 +313,7 @@ export function NorthStarPanel() {
 
           {pillars.length === 0 ? (
             <div className="mt-8 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-12 ">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
+              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 ">
                 <Gem className="h-4 w-4 text-neutral-400 " />
               </div>
               <p className="text-sm font-medium text-neutral-500 ">No pillars yet</p>

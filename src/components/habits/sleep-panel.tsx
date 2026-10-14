@@ -24,8 +24,8 @@ const QUALITY_LABELS = ["", "Poor", "Fair", "Okay", "Good", "Great"]
 
 function StatChip({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Moon }) {
   return (
-    <div className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3  ">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+    <div className="flex items-center gap-2.5 rounded-2xl border border-neutral-200 bg-white p-3 ">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
         <Icon className="h-4 w-4" />
       </div>
       <div className="min-w-0">
@@ -116,7 +116,7 @@ function SleepFormDialog({
               <Input id="sleep-wake" type="time" value={wakeTime} onChange={(e) => setWakeTime(e.target.value)} required />
             </div>
           </div>
-          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-indigo-50/50 px-4 py-2.5  ">
+          <div className="flex items-center justify-between rounded-xl border border-neutral-200 bg-indigo-50/50 px-4 py-2.5 ">
             <span className="flex items-center gap-1.5 text-xs font-medium text-neutral-500 ">
               <Clock className="h-3.5 w-3.5 text-indigo-500" />
               Sleep duration
@@ -195,7 +195,7 @@ export function SleepPanel() {
 
       {entries.length === 0 ? (
         <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 ">
-          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 ">
             <Moon className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No sleep logged yet.</p>
@@ -203,10 +203,10 @@ export function SleepPanel() {
         </div>
       ) : (
         <>
-          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5  ">
+          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 ">
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
                   <Moon className="h-4 w-4 text-indigo-500" />
                 </div>
                 <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 ">
@@ -247,9 +247,9 @@ export function SleepPanel() {
             </div>
           </div>
 
-          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5  ">
+          <div className="card-modern rounded-2xl border border-neutral-200 bg-white p-4 sm:p-5 ">
             <div className="mb-3 flex items-center gap-2.5">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
                 <MoonStar className="h-4 w-4 text-indigo-500" />
               </div>
               <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 ">
@@ -260,7 +260,7 @@ export function SleepPanel() {
               {recent.map((e) => (
                 <div
                   key={e.id}
-                  className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2.5 transition-colors hover:bg-neutral-50   :bg-neutral-800/60"
+                  className="group flex items-center gap-3 rounded-xl border border-neutral-200 bg-white px-3 py-2.5 transition-colors hover:bg-neutral-50 "
                 >
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-neutral-900 ">
@@ -277,14 +277,14 @@ export function SleepPanel() {
                     <button
                       onClick={() => openEdit(e)}
                       aria-label="Edit sleep entry"
-                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
                     >
                       <Pencil className="h-3.5 w-3.5" />
                     </button>
                     <button
                       onClick={() => deleteEntry(e.id)}
                       aria-label="Delete sleep entry"
-                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500 :bg-red-950/40"
+                      className="flex h-10 w-10 items-center justify-center rounded-lg text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>

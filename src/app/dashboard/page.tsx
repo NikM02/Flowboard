@@ -30,13 +30,13 @@ const habitIconMap: Record<HabitIcon, typeof Heart> = {
 }
 
 const habitColors: Record<string, { check: string; box: string; tile: string }> = {
-  health: { check: "border-rose-400 bg-rose-500 text-white", box: "border-rose-400/70", tile: "bg-rose-100 text-rose-600  " },
-  fitness: { check: "border-emerald-400 bg-emerald-500 text-white", box: "border-emerald-400/70", tile: "bg-emerald-100 text-emerald-600  " },
-  mindfulness: { check: "border-violet-400 bg-violet-500 text-white", box: "border-violet-400/70", tile: "bg-violet-100 text-violet-600  " },
-  learning: { check: "border-blue-400 bg-blue-500 text-white", box: "border-blue-400/70", tile: "bg-blue-100 text-blue-600  " },
-  productivity: { check: "border-amber-400 bg-amber-500 text-white", box: "border-amber-400/70", tile: "bg-amber-100 text-amber-600  " },
-  creative: { check: "border-pink-400 bg-pink-500 text-white", box: "border-pink-400/70", tile: "bg-pink-100 text-pink-600  " },
-  social: { check: "border-cyan-400 bg-cyan-500 text-white", box: "border-cyan-400/70", tile: "bg-cyan-100 text-cyan-600  " },
+  health: { check: "border-rose-400 bg-rose-500 text-white", box: "border-rose-400/70", tile: "bg-rose-100 text-rose-600 " },
+  fitness: { check: "border-emerald-400 bg-emerald-500 text-white", box: "border-emerald-400/70", tile: "bg-emerald-100 text-emerald-600 " },
+  mindfulness: { check: "border-violet-400 bg-violet-500 text-white", box: "border-violet-400/70", tile: "bg-violet-100 text-violet-600 " },
+  learning: { check: "border-blue-400 bg-blue-500 text-white", box: "border-blue-400/70", tile: "bg-blue-100 text-blue-600 " },
+  productivity: { check: "border-amber-400 bg-amber-500 text-white", box: "border-amber-400/70", tile: "bg-amber-100 text-amber-600 " },
+  creative: { check: "border-pink-400 bg-pink-500 text-white", box: "border-pink-400/70", tile: "bg-pink-100 text-pink-600 " },
+  social: { check: "border-cyan-400 bg-cyan-500 text-white", box: "border-cyan-400/70", tile: "bg-cyan-100 text-cyan-600 " },
 }
 
 function Card({ children, className, delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -46,7 +46,7 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.3 }}
       className={cn(
-        "relative overflow-hidden rounded-[14px] bg-white  p-4 sm:p-5",
+        "relative overflow-hidden rounded-[14px] bg-white p-4 sm:p-5",
         className
       )}
       style={{ animationDelay: `${delay * 1000}ms` }}
@@ -59,7 +59,7 @@ function Card({ children, className, delay = 0 }: { children: React.ReactNode; c
 function CardHeader({ icon: Icon, label, color = "text-neutral-500" }: { icon: typeof Compass; label: string; color?: string }) {
   return (
     <div className="mb-3 flex items-center gap-2.5">
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
         <Icon className={cn("h-4 w-4", color)} />
       </div>
       <h3 className="text-[13px] font-bold tracking-tight text-neutral-900 ">{label}</h3>
@@ -82,9 +82,9 @@ function DashboardHero() {
   return (
     <Link
       href="/finance"
-      className="flex items-center gap-3 rounded-[14px] bg-white p-4 transition-colors hover:bg-neutral-50  :bg-neutral-800/70"
+      className="flex items-center gap-3 rounded-[14px] bg-white p-4 transition-colors hover:bg-neutral-50 "
     >
-      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-green-100 text-green-600  ">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-green-100 text-green-600 ">
         <Wallet className="h-4 w-4" />
       </div>
       <div className="min-w-0">
@@ -107,11 +107,11 @@ function MissionSection() {
   return (
     <Card delay={0}>
       {mission ? (
-        <p className="text-sm font-medium text-neutral-600  sm:text-[15px]">
+        <p className="text-sm font-medium text-neutral-600 sm:text-[15px]">
           &ldquo;{mission}&rdquo;
         </p>
       ) : (
-        <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600 :text-neutral-300">
+        <Link href="/north-star" className="text-xs text-neutral-400 transition-colors hover:text-neutral-600">
           Set your mission in North Star →
         </Link>
       )}
@@ -181,7 +181,7 @@ function FocusFlowSection() {
     <Card delay={0.05} className="overflow-visible">
       <div className="mb-3 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-amber-100 ">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-amber-100 ">
             <Zap className="h-4 w-4 text-amber-500" />
           </div>
           <div>
@@ -190,7 +190,7 @@ function FocusFlowSection() {
           </div>
         </div>
         {pendingTotal > 0 ? (
-          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white  ">
+          <span className="flex h-5 min-w-[20px] items-center justify-center rounded-full bg-neutral-900 px-1.5 text-[10px] font-bold text-white ">
             {pendingTotal}
           </span>
         ) : (
@@ -241,10 +241,10 @@ function FocusFlowSection() {
                       initial={{ opacity: 0, y: 6 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, y: -6 }}
-                      className="mb-1.5 flex items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2  .03]"
+                      className="mb-1.5 flex items-center gap-2.5 rounded-lg border border-neutral-100 bg-white px-3 py-2 .03]"
                     >
                       <button onClick={() => handleComplete(t)} className="shrink-0">
-                        <span className={cn("flex h-4 w-4 items-center justify-center rounded-[10px] border transition-colors", g.box)} />
+                        <span className={cn("flex h-4 w-4 items-center justify-center rounded-lg border transition-colors", g.box)} />
                       </button>
                       <button
                         onClick={() => handleComplete(t)}
@@ -273,7 +273,7 @@ function FocusFlowSection() {
 
 /* ── Health Track (habits + sleep + challenges) ──────── */
 const rowBase =
-  "flex w-full items-center gap-2.5 rounded-[10px] border border-neutral-100 bg-white px-3 py-2 text-left transition-colors hover:bg-neutral-50  .03] :bg-neutral-800/60"
+  "flex w-full items-center gap-2.5 rounded-lg border border-neutral-100 bg-white px-3 py-2 text-left transition-colors hover:bg-neutral-50 .03]"
 
 function HabitsChallengesSection() {
   const habits = useHabitStore((s) => s.habits)
@@ -323,14 +323,14 @@ function HabitsChallengesSection() {
     <Card delay={0.1} className="overflow-visible">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-pink-100 ">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-pink-100 ">
             <Heart className="h-4 w-4 text-pink-500" />
           </div>
           <h3 className="text-sm font-bold tracking-tight text-neutral-900 ">Health Track</h3>
           <span className="text-[10px] text-neutral-400 ">{format(new Date(), "MMM d, yyyy")}</span>
         </div>
         {bestStreak > 0 && (
-          <span className="flex shrink-0 items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-600  ">
+          <span className="flex shrink-0 items-center gap-1 rounded-full bg-orange-100 px-2 py-0.5 text-[10px] font-bold text-orange-600 ">
             <Flame className="h-3 w-3" /> {bestStreak}d streak
           </span>
         )}
@@ -343,7 +343,7 @@ function HabitsChallengesSection() {
         </Link>
       ) : (
         <>
-          <div className="mb-4 flex items-center gap-3 rounded-[12px] border border-pink-100 bg-pink-50/60 px-3.5 py-3  ">
+          <div className="mb-4 flex items-center gap-3 rounded-[12px] border border-pink-100 bg-pink-50/60 px-3.5 py-3 ">
             <div className="relative h-12 w-12 shrink-0">
               <svg viewBox="0 0 48 48" className="h-12 w-12 -rotate-90">
                 <circle cx="24" cy="24" r={R} fill="none" strokeWidth="5" className="stroke-pink-100 " />
@@ -379,7 +379,7 @@ function HabitsChallengesSection() {
               <div className="mb-1.5 flex items-center justify-between px-0.5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-neutral-400 ">Habits</span>
                 {habits.length > 6 && (
-                  <Link href="/habits" className="text-[10px] font-medium text-neutral-400 hover:text-neutral-600 :text-neutral-300">
+                  <Link href="/habits" className="text-[10px] font-medium text-neutral-400 hover:text-neutral-600">
                     +{habits.length - 6} more
                   </Link>
                 )}
@@ -427,7 +427,7 @@ function HabitsChallengesSection() {
               )}>
                 {todaySleep && <Check className="h-3 w-3" />}
               </span>
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600  ">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 ">
                 <Moon className="h-3 w-3" />
               </span>
               <span className={cn("min-w-0 flex-1 truncate text-[13px] font-medium", todaySleep ? "text-neutral-400 line-through " : "text-neutral-800 ")}>
@@ -436,8 +436,8 @@ function HabitsChallengesSection() {
               <span className={cn(
                 "shrink-0 rounded-full px-2 py-px text-[10px] font-semibold",
                 todaySleep
-                  ? "bg-indigo-100 text-indigo-600  "
-                  : "bg-neutral-100 text-neutral-400  "
+                  ? "bg-indigo-100 text-indigo-600 "
+                  : "bg-neutral-100 text-neutral-400 "
               )}>
                 {todaySleep ? `${todaySleep.hours}h · ${todaySleep.quality}/5` : "Tap to log"}
               </span>
@@ -461,7 +461,7 @@ function HabitsChallengesSection() {
                       )}>
                         {done && <Check className="h-3 w-3" />}
                       </span>
-                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600  ">
+                      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-pink-100 text-pink-600 ">
                         <Trophy className="h-3 w-3" />
                       </span>
                       <span className="min-w-0 flex-1">
@@ -542,8 +542,8 @@ function FinanceSection() {
             className={cn(
               "flex h-6 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
               changePct >= 0
-                ? "bg-green-100 text-green-700  "
-                : "bg-rose-100 text-rose-600  "
+                ? "bg-green-100 text-green-700 "
+                : "bg-rose-100 text-rose-600 "
             )}
           >
             {changePct >= 0 ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
@@ -553,13 +553,13 @@ function FinanceSection() {
       </div>
 
       <div className="mt-3 mb-4 grid grid-cols-2 gap-2.5">
-        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3  ">
+        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3 ">
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400">
             <ArrowUpRight className="h-3 w-3 text-green-500" /> Income
           </div>
           <p className="mt-1 truncate text-sm font-bold text-neutral-900 ">₹{totalIncome.toLocaleString("en-IN")}</p>
         </div>
-        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3  ">
+        <div className="rounded-[12px] border border-neutral-100 bg-neutral-50/60 p-3 ">
           <div className="flex items-center gap-1.5 text-[10px] font-medium text-neutral-400">
             <ArrowDownRight className="h-3 w-3 text-rose-500" /> Expenses
           </div>
@@ -616,7 +616,7 @@ function FinanceSection() {
         <div className="mt-3 space-y-1">
           <span className="text-[10px] font-medium text-neutral-400">Recent</span>
           {recentExpenses.map((e) => (
-            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 :bg-white/5">
+            <div key={e.id} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50">
               <span className="text-xs text-neutral-600 truncate ">{e.description}</span>
               <span className="text-xs font-medium text-neutral-600 shrink-0 ml-2 ">-₹{e.amount.toLocaleString("en-IN")}</span>
             </div>
@@ -726,7 +726,7 @@ function InvestmentsSection() {
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                 <span className="text-[8px] font-medium text-neutral-400 sm:text-[9px]">Total</span>
-                <span className="text-[11px] font-bold text-neutral-900  sm:text-sm">₹{(totalCurrent / 1000).toFixed(1)}k</span>
+                <span className="text-[11px] font-bold text-neutral-900 sm:text-sm">₹{(totalCurrent / 1000).toFixed(1)}k</span>
                 <span className={cn("flex items-center gap-0.5 rounded-full px-1 text-[8px] font-bold sm:text-[9px]", isGain ? "text-green-600 " : "text-rose-500 ")}>
                   {isGain ? "+" : "−"}{Math.abs(totalGainPct)}%
                 </span>
@@ -741,8 +741,8 @@ function InvestmentsSection() {
                   className={cn(
                     "flex h-6 shrink-0 items-center gap-1 rounded-full px-2 text-[11px] font-bold",
                     isGain
-                      ? "bg-green-100 text-green-700  "
-                      : "bg-rose-100 text-rose-600  "
+                      ? "bg-green-100 text-green-700 "
+                      : "bg-rose-100 text-rose-600 "
                   )}
                 >
                   {isGain ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
@@ -775,7 +775,7 @@ function InvestmentsSection() {
                     </span>
                     <span className="flex items-center gap-2">
                       <span className="text-neutral-400">₹{(d.value / 1000).toFixed(1)}k</span>
-                      <span className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", dGain >= 0 ? "bg-green-100 text-green-700  " : "bg-rose-100 text-rose-600  ")}>
+                      <span className={cn("rounded-full px-1.5 py-px text-[10px] font-bold", dGain >= 0 ? "bg-green-100 text-green-700 " : "bg-rose-100 text-rose-600 ")}>
                         {dGain >= 0 ? "+" : "−"}{Math.abs(Math.round((dGain / (d.invested || 1)) * 100))}%
                       </span>
                     </span>
@@ -796,12 +796,12 @@ function InvestmentsSection() {
               <span className="mb-1.5 block px-0.5 text-[10px] font-medium text-neutral-400">Top Stocks</span>
               <div className="space-y-1">
                 {topMovers.map((s) => (
-                  <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50 :bg-white/5">
+                  <div key={s.name} className="flex items-center justify-between rounded-lg px-2 py-1.5 transition-colors hover:bg-neutral-50">
                     <div className="min-w-0">
                       <p className="truncate text-xs font-medium text-neutral-700 ">{s.name}</p>
                       <p className="text-[10px] text-neutral-400">₹{s.inv.toLocaleString("en-IN")} invested</p>
                     </div>
-                    <span className={cn("ml-2 shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold", s.pct >= 0 ? "bg-green-100 text-green-700  " : "bg-rose-100 text-rose-600  ")}>
+                    <span className={cn("ml-2 shrink-0 rounded-md px-1.5 py-0.5 text-[10px] font-bold", s.pct >= 0 ? "bg-green-100 text-green-700 " : "bg-rose-100 text-rose-600 ")}>
                       {s.pct >= 0 ? "+" : "−"}{Math.abs(s.pct)}%
                     </span>
                   </div>

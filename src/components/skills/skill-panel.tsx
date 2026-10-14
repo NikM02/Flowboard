@@ -169,10 +169,10 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md  "
+      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md "
     >
       {/* Cover */}
-      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50   sm:h-44">
+      <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 sm:h-44">
         <GraduationCap className="h-10 w-10 text-teal-300 " />
         {skill.progress === 100 && (
           <div className="absolute right-3 top-3 flex h-7 w-7 items-center justify-center rounded-full bg-green-500 shadow-lg">
@@ -183,20 +183,20 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
           <button
             onClick={() => setEditOpen(true)}
             aria-label="Edit skill"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white  "
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => deleteSkill(skill.id)}
             aria-label="Delete skill"
-            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
+            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
         <div className="absolute bottom-3 left-3">
-          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm  ">
+          <span className="inline-flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-xs font-medium text-neutral-700 shadow-sm backdrop-blur-sm ">
             <Clock className="h-3 w-3" />
             {formatSkillDate(skill.startDate)} – {formatSkillDate(skill.endDate)}
           </span>
@@ -207,7 +207,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       <div className="p-4 sm:p-5">
         <h3 className="truncate text-base font-semibold tracking-tight text-neutral-900 ">{skill.name}</h3>
         {skill.notes && (
-          <p className="mt-1 text-sm leading-relaxed text-neutral-500  line-clamp-2">
+          <p className="mt-1 text-sm leading-relaxed text-neutral-500 line-clamp-2">
             {skill.notes}
           </p>
         )}
@@ -299,7 +299,7 @@ export function SkillPanel() {
           </Button>
         </div>
 
-        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1  sm:w-auto">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 sm:w-auto">
           {(["active", "archive"] as const).map((t) => (
             <button
               key={t}
@@ -307,8 +307,8 @@ export function SkillPanel() {
               className={cn(
                 "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium capitalize transition-all sm:flex-none",
                 tab === t
-                  ? "bg-white text-neutral-900 shadow-sm  "
-                  : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
+                  ? "bg-white text-neutral-900 shadow-sm "
+                  : "text-neutral-500 hover:text-neutral-700 "
               )}
             >
               {t === "archive" && <Archive className="h-3.5 w-3.5" />}
@@ -378,7 +378,7 @@ export function SkillPanel() {
               {completed.map((skill) => (
                 <div
                   key={skill.id}
-                  className="rounded-xl border border-neutral-200 bg-neutral-50 p-4  "
+                  className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 "
                 >
                   <div className="flex min-w-0 items-center gap-2">
                     <Check className="h-4 w-4 shrink-0 text-green-500" />

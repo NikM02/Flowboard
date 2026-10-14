@@ -50,11 +50,11 @@ export type Habit = {
 
 export type SleepEntry = {
   id: string
-  date: string        // "yyyy-MM-dd"
-  bedtime: string     // "HH:mm" (24h)
-  wakeTime: string    // "HH:mm" (24h)
-  hours: number       // computed duration
-  quality: number     // 1-5
+  date: string // "yyyy-MM-dd"
+  bedtime: string // "HH:mm" (24h)
+  wakeTime: string // "HH:mm" (24h)
+  hours: number // computed duration
+  quality: number // 1-5
   notes: string
   createdAt: number
 }

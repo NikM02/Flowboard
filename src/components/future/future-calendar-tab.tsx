@@ -57,17 +57,17 @@ export function CalendarTab() {
     <div className="space-y-3">
       {/* Navigation */}
       <div className="flex items-center justify-between">
-        <button onClick={goToToday} className="text-xs font-medium text-neutral-500 hover:text-neutral-700 :text-neutral-300 px-2 py-1">
+        <button onClick={goToToday} className="text-xs font-medium text-neutral-500 hover:text-neutral-700 px-2 py-1">
           Today
         </button>
         <div className="flex items-center gap-1">
-          <button onClick={navigatePrev} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 :bg-neutral-800">
+          <button onClick={navigatePrev} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
             <ChevronLeft className="h-4 w-4" />
           </button>
-          <h2 className="min-w-[150px] text-center text-sm sm:text-base font-semibold text-neutral-900  select-none">
+          <h2 className="min-w-[150px] text-center text-sm sm:text-base font-semibold text-neutral-900 select-none">
             {format(baseDate, "MMMM yyyy")}
           </h2>
-          <button onClick={navigateNext} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100 :bg-neutral-800">
+          <button onClick={navigateNext} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -81,7 +81,7 @@ export function CalendarTab() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.15 }}
-          className="rounded-xl border border-neutral-200 bg-white   overflow-hidden"
+          className="rounded-xl border border-neutral-200 bg-white overflow-hidden"
         >
           {/* Day headers */}
           <div className="grid grid-cols-7 border-b border-neutral-200 ">
@@ -94,7 +94,7 @@ export function CalendarTab() {
           </div>
           {/* Day cells */}
           {weeks.map((week, wi) => (
-            <div key={wi} className="grid grid-cols-7 border-b border-neutral-100  last:border-b-0">
+            <div key={wi} className="grid grid-cols-7 border-b border-neutral-100 last:border-b-0">
               {week.map((d) => {
                 const isCurrentMonth = isSameMonth(d, baseDate)
                 const isTodayDate = isToday(d)
@@ -118,7 +118,7 @@ export function CalendarTab() {
                     <span
                       className={cn(
                         "flex h-5 w-5 sm:h-6 sm:w-6 items-center justify-center rounded-full text-[10px] sm:text-xs font-medium mx-auto",
-                        isTodayDate && "bg-neutral-900 text-white  "
+                        isTodayDate && "bg-neutral-900 text-white "
                       )}
                     >
                       {format(d, "d")}
@@ -128,7 +128,7 @@ export function CalendarTab() {
                         <div
                           key={task.id}
                           title={task.title}
-                          className="text-[7px] sm:text-[9px] leading-tight truncate text-neutral-600  border-l-2 pl-1"
+                          className="text-[7px] sm:text-[9px] leading-tight truncate text-neutral-600 border-l-2 pl-1"
                           style={{ borderLeftColor: task.priority === "high" ? "#171717" : task.priority === "medium" ? "#737373" : "#525252" }}
                         >
                           {task.title}
@@ -153,7 +153,7 @@ export function CalendarTab() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4   space-y-2"
+          className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4 space-y-2"
         >
           <h3 className="text-sm font-semibold text-neutral-900 ">
             Tasks due {format(new Date(selectedDate + "T00:00:00"), "MMM d, yyyy")}
@@ -162,17 +162,17 @@ export function CalendarTab() {
             {selectedTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-2 rounded-lg border border-neutral-100  bg-neutral-50  px-2.5 py-2"
+                className="flex items-center gap-2 rounded-lg border border-neutral-100 bg-neutral-50 px-2.5 py-2"
               >
                 <span className={cn("h-2 w-2 rounded-full shrink-0", priorityColors[task.priority])} />
-                <span className="flex-1 text-xs sm:text-sm text-neutral-700  truncate">
+                <span className="flex-1 text-xs sm:text-sm text-neutral-700 truncate">
                   {task.title}
                 </span>
                 <span className={cn(
                   "text-[10px] font-medium px-1.5 py-0.5 rounded",
-                  task.priority === "high" ? "text-red-600 bg-red-50  " :
-                  task.priority === "medium" ? "text-amber-600 bg-amber-50  " :
-                  "text-blue-600 bg-blue-50  "
+                  task.priority === "high" ? "text-red-600 bg-red-50 " :
+                  task.priority === "medium" ? "text-amber-600 bg-amber-50 " :
+                  "text-blue-600 bg-blue-50 "
                 )}>
                   {task.priority}
                 </span>

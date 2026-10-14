@@ -144,8 +144,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener("keydown", handler)
   }, [])
 
-  // A notification action button (e.g. "✓ Done") mutates data server-side; the
-  // service worker broadcasts this when the app is open so the UI stays in sync.
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return
     const onMessage = (event: MessageEvent) => {
@@ -210,7 +208,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0">
-          <div className=" mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8 ">
+          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
             {children}
           </div>
         </main>
@@ -220,7 +218,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
 
       {offline && (
         <div className="fixed inset-x-0 top-16 z-30 flex items-center justify-center md:top-0">
-          <div className="flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-xs font-medium text-white shadow-xl  ">
+          <div className="flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-xs font-medium text-white shadow-xl ">
             <WifiOff className="h-3.5 w-3.5" />
             Offline — showing saved copy
           </div>

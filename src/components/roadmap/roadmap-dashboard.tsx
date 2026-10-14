@@ -50,12 +50,12 @@ function PhaseTasks({ roadmapId, phase }: { roadmapId: string; phase: RoadmapPha
   return (
     <div className="space-y-1.5">
       {phase.tasks.map((t) => (
-        <div key={t.id} className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-neutral-50 :bg-neutral-800/60">
+        <div key={t.id} className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-neutral-50">
           <button
             onClick={() => toggleTask(roadmapId, phase.id, t.id)}
             className={cn(
               "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border transition-all",
-              t.completed ? "border-neutral-900 bg-neutral-900  " : "border-neutral-300 hover:border-neutral-500 "
+              t.completed ? "border-neutral-900 bg-neutral-900 " : "border-neutral-300 hover:border-neutral-500 "
             )}
           >
             {t.completed && <svg viewBox="0 0 12 12" className="h-3 w-3 text-white "><path d="M2 6l2.5 2.5L10 3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>}
@@ -175,7 +175,7 @@ function PhaseRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
-      className="rounded-2xl border border-neutral-200 bg-white  "
+      className="rounded-2xl border border-neutral-200 bg-white "
     >
       <div className="flex items-start gap-3 p-4 pb-2.5">
         <button
@@ -201,7 +201,7 @@ function PhaseRow({
             <span className="text-[10px] font-bold text-neutral-300 ">{String(index + 1).padStart(2, "0")}</span>
             <button onClick={onOpen} className="flex min-w-0 flex-1 items-center gap-1.5 text-left">
               <span className="truncate text-sm font-semibold text-neutral-900 ">{phase.title}</span>
-              {overdue && <span className="shrink-0 rounded bg-red-100 px-1 py-px text-[9px] font-bold text-red-600  ">OVERDUE</span>}
+              {overdue && <span className="shrink-0 rounded bg-red-100 px-1 py-px text-[9px] font-bold text-red-600 ">OVERDUE</span>}
             </button>
             <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-300 " />
           </div>
@@ -211,7 +211,7 @@ function PhaseRow({
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[phase.priority].badge)}>{PRIORITY_META[phase.priority].label}</span>
             )}
             {(phase.startDate || phase.dueDate) && (
-              <span className="flex items-center gap-1 rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500  ">
+              <span className="flex items-center gap-1 rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">
                 <CalendarDays className="h-3 w-3" />
                 {phase.startDate ? formatShortDate(phase.startDate) : "…"} – {phase.dueDate ? formatShortDate(phase.dueDate) : "…"}
               </span>
@@ -220,7 +220,7 @@ function PhaseRow({
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => setExpanded((v) => !v)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300">
+          <button onClick={() => setExpanded((v) => !v)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
             {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
@@ -350,14 +350,14 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6  ">
+      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 ">
         <div className="flex items-start gap-3 sm:gap-4">
           <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-2xl sm:h-16 sm:w-16 sm:text-3xl ">{roadmap.emoji}</div>
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-bold text-neutral-900 sm:text-xl ">{roadmap.title}</h1>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[roadmap.priority].badge)}>{PRIORITY_META[roadmap.priority].label} priority</span>
-              <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500  ">{CATEGORY_META[roadmap.category].label}</span>
+              <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">{CATEGORY_META[roadmap.category].label}</span>
               <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", healthMeta.badge)}>{healthMeta.label}</span>
             </div>
             {roadmap.description && <p className="mt-2 text-sm text-neutral-500 ">{roadmap.description}</p>}
@@ -370,7 +370,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
 
         <div className="mt-4 flex flex-wrap gap-1.5">
           {STATUS_LIST.filter((st) => counts[st] > 0).map((st) => (
-            <span key={st} className="inline-flex items-center gap-1 rounded-full bg-neutral-50 px-2 py-0.5 text-[10px] font-medium text-neutral-500  ">
+            <span key={st} className="inline-flex items-center gap-1 rounded-full bg-neutral-50 px-2 py-0.5 text-[10px] font-medium text-neutral-500 ">
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_META[st].dot }} />
               {counts[st]} {STATUS_META[st].label}
             </span>
@@ -398,7 +398,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
       <div className="mt-6">
         <button
           onClick={() => setAnalyticsOpen((v) => !v)}
-          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400 transition-colors hover:text-neutral-600 :text-neutral-300"
+          className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400 transition-colors hover:text-neutral-600"
         >
           <Gauge className="h-4 w-4" /> Analytics & growth
           {analyticsOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
@@ -422,7 +422,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
           <button
             onClick={() => setFilter("all")}
             className={cn("shrink-0 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-              filter === "all" ? "border-neutral-900 bg-neutral-900 text-white   " : "border-neutral-200 text-neutral-500 hover:bg-neutral-50   :bg-neutral-800/60")}
+              filter === "all" ? "border-neutral-900 bg-neutral-900 text-white " : "border-neutral-200 text-neutral-500 hover:bg-neutral-50 ")}
           >
             All ({roadmap.phases.length})
           </button>
@@ -431,7 +431,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
               key={st}
               onClick={() => setFilter(st)}
               className={cn("flex shrink-0 items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-all",
-                filter === st ? "border-neutral-900 bg-neutral-900 text-white   " : "border-neutral-200 text-neutral-500 hover:bg-neutral-50   :bg-neutral-800/60")}
+                filter === st ? "border-neutral-900 bg-neutral-900 text-white " : "border-neutral-200 text-neutral-500 hover:bg-neutral-50 ")}
             >
               <span className="h-1.5 w-1.5 rounded-full" style={{ background: STATUS_META[st].dot }} />
               {STATUS_META[st].label} ({counts[st]})

@@ -82,7 +82,7 @@ export function PlanFields({
                     key={f}
                     type="button"
                     onClick={() => onChange({ ...draft, frequency: f })}
-                    className={cn("rounded-md py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm  " : "text-neutral-500 ")}
+                    className={cn("rounded-md py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm " : "text-neutral-500 ")}
                   >
                     {f}
                   </button>
@@ -100,7 +100,7 @@ export function PlanFields({
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Schedule preview</p>
               <div className="flex flex-wrap gap-1">
                 {dates.slice(0, 6).map((d, i) => (
-                  <span key={d} className={cn("rounded-md px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700  " : "bg-neutral-100 text-neutral-500  ")}>
+                  <span key={d} className={cn("rounded-md px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700 " : "bg-neutral-100 text-neutral-500 ")}>
                     {formatInstallmentDate(d)}
                   </span>
                 ))}

@@ -140,15 +140,15 @@ function OverviewTab() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-5  ">
+        <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-5 ">
           <p className="text-xs text-emerald-600 ">Total Income</p>
           <p className="text-2xl font-bold text-emerald-600 ">₹{totalIncome.toLocaleString()}</p>
         </div>
-        <div className="rounded-[14px] border border-red-200 bg-red-50 p-5  ">
+        <div className="rounded-[14px] border border-red-200 bg-red-50 p-5 ">
           <p className="text-xs text-red-500">Total Expenses</p>
           <p className="text-2xl font-bold text-red-500">₹{totalExpenses.toLocaleString()}</p>
         </div>
-        <div className={cn("rounded-[14px] border p-5", net >= 0 ? "border-emerald-200 bg-emerald-50  " : "border-red-200 bg-red-50  ")}>
+        <div className={cn("rounded-[14px] border p-5", net >= 0 ? "border-emerald-200 bg-emerald-50 " : "border-red-200 bg-red-50 ")}>
           <p className="text-xs text-neutral-500">Net Cash Flow</p>
           <p className={cn("text-2xl font-bold", net >= 0 ? "text-emerald-600 " : "text-red-500")}>
             ₹{net.toLocaleString()}
@@ -158,7 +158,7 @@ function OverviewTab() {
 
       {categoryData.length > 0 && (
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5  ">
+          <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5 ">
             <h3 className="mb-4 font-semibold text-neutral-900 ">Expense Breakdown</h3>
             <ResponsiveContainer width="100%" height={240}>
               <PieChart>
@@ -185,7 +185,7 @@ function OverviewTab() {
           </div>
 
           {monthlyData.length > 0 && (
-            <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5  ">
+            <div className="rounded-[14px] border border-neutral-200/50 bg-white p-5 ">
               <h3 className="mb-4 font-semibold text-neutral-900 ">Monthly Trend</h3>
               <ResponsiveContainer width="100%" height={240}>
                 <BarChart data={monthlyData}>
@@ -255,20 +255,20 @@ function IncomeTab() {
       ) : (
         <div className="space-y-2">
           {incomes.map((inc) => (
-            <div key={inc.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3  ">
+            <div key={inc.id} className="flex items-center justify-between rounded-lg border border-neutral-200/50 bg-white p-3 ">
               <div className="flex items-center gap-3 min-w-0">
                 <IncomeChip source={inc.source} />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-neutral-900  truncate">{inc.description || inc.source}</p>
+                  <p className="text-sm font-medium text-neutral-900 truncate">{inc.description || inc.source}</p>
                   <p className="text-xs text-neutral-400">{inc.date}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-sm font-semibold text-emerald-600 ">₹{inc.amount.toLocaleString()}</span>
-                <button onClick={() => openEdit(inc)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800">
+                <button onClick={() => openEdit(inc)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => deleteIncome(inc.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300">
+                <button onClick={() => deleteIncome(inc.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -276,7 +276,7 @@ function IncomeTab() {
           ))}
         </div>
       )}
-      <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-4  ">
+      <div className="rounded-[14px] border border-emerald-200 bg-emerald-50 p-4 ">
         <p className="text-xs text-emerald-600 ">Total Income</p>
         <p className="text-2xl font-bold text-emerald-600 ">₹{totalIncome.toLocaleString()}</p>
       </div>
@@ -397,7 +397,7 @@ function ExpensesTab() {
   return (
     <div className="space-y-4">
       {catData.length > 0 && (
-        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5  ">
+        <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 ">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Spending Breakdown</h3>
             <span className="text-lg font-bold text-red-500">₹{totalExpenses.toLocaleString()}</span>
@@ -455,20 +455,20 @@ function ExpensesTab() {
       ) : (
         <div className="space-y-2">
           {expenses.map((e) => (
-            <div key={e.id} className="flex items-center justify-between rounded-[10px] border border-neutral-200/50 bg-white p-3  ">
+            <div key={e.id} className="flex items-center justify-between rounded-lg border border-neutral-200/50 bg-white p-3 ">
               <div className="flex items-center gap-3 min-w-0">
                 <CategoryChip category={e.category} label={e.category} />
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-neutral-900  truncate">{e.description || e.category}</p>
+                  <p className="text-sm font-medium text-neutral-900 truncate">{e.description || e.category}</p>
                   <p className="text-xs text-neutral-400">{e.date}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-sm font-semibold text-red-500">₹{e.amount.toLocaleString()}</span>
-                <button onClick={() => openEdit(e)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800">
+                <button onClick={() => openEdit(e)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
                   <Pencil className="h-3.5 w-3.5" />
                 </button>
-                <button onClick={() => deleteExpense(e.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600 :bg-neutral-800 :text-neutral-300">
+                <button onClick={() => deleteExpense(e.id)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
               </div>
@@ -476,7 +476,7 @@ function ExpensesTab() {
           ))}
         </div>
       )}
-      <div className="rounded-[14px] border border-red-200 bg-red-50 p-4  ">
+      <div className="rounded-[14px] border border-red-200 bg-red-50 p-4 ">
         <p className="text-xs text-red-500">Total Expenses</p>
         <p className="text-2xl font-bold text-red-500">₹{totalExpenses.toLocaleString()}</p>
       </div>
@@ -600,15 +600,15 @@ function BudgetTab() {
     <div className="space-y-4">
       {/* Summary */}
       <div className="grid grid-cols-3 gap-2">
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3  ">
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 ">
           <p className="text-[10px] font-medium text-neutral-400">Budgeted</p>
           <p className="mt-0.5 truncate text-sm font-bold text-neutral-900 ">₹{totalBudget.toLocaleString()}</p>
         </div>
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3  ">
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 ">
           <p className="text-[10px] font-medium text-neutral-400">Spent</p>
           <p className="mt-0.5 truncate text-sm font-bold text-neutral-900 ">₹{totalSpent.toLocaleString()}</p>
         </div>
-        <div className={cn("rounded-2xl border p-3", totalRemaining >= 0 ? "border-neutral-200/60 bg-white  " : "border-red-200/60 bg-red-50/60  ")}>
+        <div className={cn("rounded-2xl border p-3", totalRemaining >= 0 ? "border-neutral-200/60 bg-white " : "border-red-200/60 bg-red-50/60 ")}>
           <p className="text-[10px] font-medium text-neutral-400">Remaining</p>
           <p className={cn("mt-0.5 truncate text-sm font-bold", totalRemaining >= 0 ? "text-neutral-900 " : "text-red-500")}>
             {totalRemaining >= 0 ? "" : "-"}₹{Math.abs(totalRemaining).toLocaleString()}
@@ -617,7 +617,7 @@ function BudgetTab() {
       </div>
 
       {/* Overall progress */}
-      <div className="rounded-2xl border border-neutral-200/60 bg-white p-3  ">
+      <div className="rounded-2xl border border-neutral-200/60 bg-white p-3 ">
         <div className="flex items-center justify-between text-xs">
           <span className="font-medium text-neutral-500 ">Overall used</span>
           <span className={cn("font-bold", totalPct > 100 ? "text-red-500" : totalPct > 80 ? "text-amber-500" : "text-neutral-900 ")}>{totalPct}%</span>
@@ -634,7 +634,7 @@ function BudgetTab() {
 
       {/* Colourful chart */}
       {budgetChartData.length > 0 && (
-        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4  ">
+        <div className="rounded-2xl border border-neutral-200/60 bg-white p-4 ">
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Budget vs Spend</h3>
           <div className="mt-2 h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
@@ -666,7 +666,7 @@ function BudgetTab() {
       ) : (
         <div className="space-y-2">
           {rows.map((bgt) => (
-            <div key={bgt.id} className="group rounded-xl border border-neutral-200/50 bg-white p-2.5  ">
+            <div key={bgt.id} className="group rounded-xl border border-neutral-200/50 bg-white p-2.5 ">
               <div className="flex items-center gap-2">
                 <CategoryChip category={bgt.category} label={bgt.label} />
                 <span className="text-[10px] text-neutral-400">{bgt.month}</span>
@@ -675,10 +675,10 @@ function BudgetTab() {
                     ₹{bgt.spent.toLocaleString()}
                     <span className="font-normal text-neutral-400"> / ₹{bgt.limit.toLocaleString()}</span>
                   </span>
-                  <button onClick={() => { setEditId(bgt.id); setForm({ category: bgt.category, limit: bgt.limit, month: bgt.month }); setDialogOpen(true) }} aria-label="Edit budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100  :bg-neutral-800 :text-neutral-300">
+                  <button onClick={() => { setEditId(bgt.id); setForm({ category: bgt.category, limit: bgt.limit, month: bgt.month }); setDialogOpen(true) }} aria-label="Edit budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 ">
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
-                  <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100  :bg-neutral-800 :text-neutral-300">
+                  <button onClick={() => deleteBudget(bgt.id)} aria-label="Delete budget" className="rounded-md p-1 text-neutral-300 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100 ">
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -798,7 +798,7 @@ function ArchiveTab() {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-3xl border border-neutral-200/60 bg-white p-5  ">
+      <div className="rounded-3xl border border-neutral-200/60 bg-white p-5 ">
         <h3 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-neutral-500 ">
           <Archive className="h-4 w-4" /> Finance Archive
         </h3>
@@ -808,7 +808,7 @@ function ArchiveTab() {
 
         <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
           {stats.map((s) => (
-            <div key={s.label} className="rounded-2xl border border-neutral-200/60 bg-neutral-50/60 p-3  ">
+            <div key={s.label} className="rounded-2xl border border-neutral-200/60 bg-neutral-50/60 p-3 ">
               <p className="truncate text-[10px] font-medium uppercase tracking-wide text-neutral-400">{s.label}</p>
               <p className="mt-0.5 text-lg font-bold text-neutral-900 ">{s.value}</p>
               {s.sub && <p className="truncate text-[10px] text-neutral-400">{s.sub}</p>}
@@ -871,8 +871,8 @@ export function FinancePanel() {
               className={cn(
                 "flex items-center gap-1.5 rounded-lg px-2 sm:px-3 py-2 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap shrink-0",
                 tab === t.key
-                  ? "bg-white text-neutral-900 shadow-sm  "
-                  : "text-neutral-500 hover:text-neutral-700 :text-neutral-300"
+                  ? "bg-white text-neutral-900 shadow-sm "
+                  : "text-neutral-500 hover:text-neutral-700"
               )}
             >
               <Icon className="h-4 w-4 shrink-0" />

@@ -37,8 +37,8 @@ function ChallengeTodayButton({ challenge, className }: { challenge: Challenge; 
       className={cn(
         "flex items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-all",
         done
-          ? "bg-emerald-50 border-emerald-300 text-emerald-700   "
-          : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400   :border-neutral-500",
+          ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
+          : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 ",
         className ?? "h-9 sm:h-7 px-2.5 sm:px-2"
       )}
     >
@@ -62,11 +62,11 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
     >
       <div className="mb-2.5 flex min-w-0 items-start justify-between gap-1 sm:gap-3 sm:mb-3">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100  sm:h-11 sm:w-11">
-            <Icon className="h-4 w-4 text-neutral-600  sm:h-5 sm:w-5" />
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 sm:h-11 sm:w-11">
+            <Icon className="h-4 w-4 text-neutral-600 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
-            <h4 className="truncate text-sm font-semibold text-neutral-900  sm:text-[15px]">{challenge.title}</h4>
+            <h4 className="truncate text-sm font-semibold text-neutral-900 sm:text-[15px]">{challenge.title}</h4>
             {challenge.description && <p className="truncate text-[11px] text-neutral-400 sm:text-xs">{challenge.description}</p>}
             <p className="mt-0.5 truncate whitespace-nowrap text-[10px] text-neutral-400 sm:text-[11px]">
               {format(new Date(challenge.startDate), "MMM d, yyyy")} → {format(new Date(challenge.endDate), "MMM d, yyyy")}
@@ -74,10 +74,10 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => onEdit(challenge)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200  :bg-neutral-700 :text-neutral-300 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
+          <button onClick={() => onEdit(challenge)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 transition-colors sm:h-10 sm:w-10 sm:rounded-lg">
             <Edit3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
-          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50  :bg-red-950/30 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors sm:h-10 sm:w-10 sm:rounded-lg">
             <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
           {allDone && (
@@ -96,7 +96,7 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
       <ChallengeDayGrid challenge={challenge} toggleDay={toggleDay} />
 
-      <div className="mt-2.5 flex items-center justify-between border-t border-neutral-100 pt-2  sm:mt-3">
+      <div className="mt-2.5 flex items-center justify-between border-t border-neutral-100 pt-2 sm:mt-3">
         <div className="flex items-center gap-1.5 sm:gap-2">
           <ChallengeTodayButton challenge={challenge} className="h-8 px-2 sm:h-9 sm:px-2.5" />
           <span className="text-[11px] text-neutral-400">{completed}/{challenge.days.length}</span>
@@ -128,8 +128,8 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
             className={cn(
               "relative flex h-8 items-center justify-center rounded-lg border text-[11px] font-semibold transition-all sm:h-9 sm:rounded-lg sm:border-2 sm:text-xs",
               d.completed
-                ? "bg-neutral-900 border-neutral-900 text-white   "
-                : "bg-neutral-50 border-neutral-200 text-neutral-500 hover:border-neutral-900/30   :border-neutral-50/30",
+                ? "bg-neutral-900 border-neutral-900 text-white "
+                : "bg-neutral-50 border-neutral-200 text-neutral-500 hover:border-neutral-900/30 ",
               isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 "
             )}
             title={`Day ${d.day} - ${d.date}${isToday ? " (Today)" : ""}`}
@@ -161,7 +161,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
       className="card-modern card-hover glass rounded-xl p-3"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
           <Icon className="h-4 w-4 text-neutral-600 " />
         </div>
 
@@ -184,8 +184,8 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
           className={cn(
             "flex h-9 shrink-0 items-center justify-center rounded-lg border px-2.5 text-xs font-medium transition-all gap-1",
             challenge.days.some((d) => d.date === todayDate && d.completed)
-              ? "bg-emerald-50 border-emerald-300 text-emerald-700   "
-              : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400   :border-neutral-500"
+              ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
+              : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 "
           )}
         >
           {challenge.days.some((d) => d.date === todayDate && d.completed) ? (
@@ -197,15 +197,15 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
         </button>
 
         <div className="flex shrink-0 gap-0.5">
-          <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600  :bg-neutral-700 :text-neutral-300">
+          <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 ">
             <Edit3 className="h-4 w-4" />
           </button>
           {allDone ? (
-            <Button size="sm" className="h-10 gap-1 rounded-[10px] bg-emerald-600 px-2.5 text-xs text-white hover:bg-emerald-700" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-10 gap-1 rounded-lg bg-emerald-600 px-2.5 text-xs text-white hover:bg-emerald-700" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-4 w-4" />Done
             </Button>
           ) : (
-            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500  :bg-red-950/30">
+            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 ">
               <Trash2 className="h-4 w-4" />
             </button>
           )}
@@ -222,8 +222,8 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
               className={cn(
                 "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-[11px] font-medium transition-all",
                 d.completed
-                  ? "bg-neutral-900 border-neutral-900 text-white   "
-                  : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400   :border-neutral-500",
+                  ? "bg-neutral-900 border-neutral-900 text-white "
+                  : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400 ",
                 isToday && !d.completed && "ring-2 ring-amber-400 ring-offset-1 "
               )}
             >
@@ -278,14 +278,14 @@ export function ChallengeSliderPanel() {
             <button
               onClick={() => setViewMode("card")}
               aria-label="Card view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900  " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode("list")}
               aria-label="List view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900  " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <List className="h-3.5 w-3.5" />
             </button>
@@ -347,8 +347,8 @@ export function ChallengeSliderPanel() {
                     onClick={() => setEditType(t)}
                     className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${
                       editType === t
-                        ? "bg-neutral-900 text-white  "
-                        : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200  "
+                        ? "bg-neutral-900 text-white "
+                        : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
                     }`}
                   >
                     {t} Days
@@ -423,8 +423,8 @@ function CreateChallengeModal() {
                   onClick={() => setType(t)}
                   className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${
                     type === t
-                      ? "bg-neutral-900 text-white  "
-                      : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200  "
+                      ? "bg-neutral-900 text-white "
+                      : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
                   }`}
                 >
                   {t} Days

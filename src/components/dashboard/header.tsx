@@ -40,13 +40,13 @@ export function Header({
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-[60] border-b border-neutral-200/60 bg-white/70 backdrop-blur-2xl  "
+        className="sticky top-0 z-[60] border-b border-neutral-200/60 bg-white/80 backdrop-blur-xl "
       >
         <div className="flex min-h-14 items-center px-safe pt-safe lg:px-6">
           {isMobile && (
             <button
               onClick={onMenuToggle}
-              className="mr-3 flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900   :bg-neutral-700 :text-neutral-50"
+              className="mr-3 flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-500 transition-colors hover:bg-neutral-200 hover:text-neutral-900 "
             >
               <Menu className="h-4 w-4" />
             </button>
@@ -60,7 +60,7 @@ export function Header({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 6 }}
                 transition={{ duration: 0.18 }}
-                className="text-base font-bold tracking-tight text-neutral-900  sm:text-lg"
+                className="text-base font-bold tracking-tight text-neutral-900 sm:text-lg"
               >
                 {pageTitle}
               </motion.h1>
@@ -70,18 +70,18 @@ export function Header({
           <div className="ml-auto flex items-center gap-1">
             <button
               onClick={onSearchOpen}
-              className="relative hidden sm:flex h-10 items-center gap-2 rounded-[10px] border border-neutral-200 bg-neutral-50 pl-3 pr-2.5 text-xs text-neutral-400 transition-all hover:border-neutral-300 hover:bg-white hover:text-neutral-600   :border-neutral-700 :bg-neutral-800 :text-neutral-300"
+              className="relative hidden sm:flex h-10 items-center gap-2 rounded-lg border border-neutral-200 bg-neutral-50 pl-3 pr-2.5 text-xs text-neutral-400 transition-all hover:border-neutral-300 hover:bg-white hover:text-neutral-600 "
             >
               <Search className="h-3.5 w-3.5" />
               <span>Search...</span>
-              <kbd className="ml-2 hidden rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-neutral-400 shadow-sm    md:inline-block">
+              <kbd className="ml-2 hidden rounded-md border border-neutral-200 bg-white px-1.5 py-0.5 text-[10px] font-semibold text-neutral-400 shadow-sm md:inline-block">
                 {"\u2318K"}
               </kbd>
             </button>
 
             <button
               onClick={onSearchOpen}
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 sm:hidden   :bg-neutral-700 :text-neutral-50"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 sm:hidden "
             >
               <Search className="h-4 w-4" />
             </button>
@@ -91,7 +91,7 @@ export function Header({
 
             <button
               onClick={onLogout}
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900   :bg-neutral-700 :text-neutral-50"
+              className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 "
               title="Logout"
             >
               <LogOut className="h-4 w-4" />

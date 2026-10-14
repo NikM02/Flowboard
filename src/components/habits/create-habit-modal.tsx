@@ -89,8 +89,8 @@ export function CreateHabitModal() {
                   onClick={() => setFrequency(f)}
                   className={`rounded-lg py-2 text-sm font-medium capitalize transition-all ${
                     frequency === f
-                      ? "bg-white text-neutral-900 shadow-sm  "
-                      : "text-neutral-500 hover:text-neutral-700  :text-neutral-200"
+                      ? "bg-white text-neutral-900 shadow-sm "
+                      : "text-neutral-500 hover:text-neutral-700 "
                   }`}
                 >
                   {f}

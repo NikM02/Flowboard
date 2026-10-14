@@ -25,7 +25,7 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
         </p>
         <button
           onClick={() => setIsCreateModalOpen(true)}
-          className="text-xs font-medium text-neutral-600 hover:text-neutral-900  :text-neutral-50 transition-colors"
+          className="text-xs font-medium text-neutral-600 hover:text-neutral-900 transition-colors"
         >
           + New Habit
         </button>
@@ -37,10 +37,10 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
 
           {weekDays.map((d) => (
             <div key={d.toISOString()} className="flex flex-col items-center py-2">
-              <span className="text-[10px] font-semibold text-neutral-400  uppercase">
+              <span className="text-[10px] font-semibold text-neutral-400 uppercase">
                 {format(d, "EEE")}
               </span>
-              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] text-xs font-bold text-neutral-700 ">
+              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold text-neutral-700 ">
                 {format(d, "d")}
               </span>
             </div>
@@ -117,10 +117,10 @@ function HabitWeekRow({
                 "flex items-center justify-center rounded-lg border-2 transition-all",
                 "h-9 w-9",
                 isDone
-                  ? "bg-neutral-900 border-neutral-900 text-white   "
+                  ? "bg-neutral-900 border-neutral-900 text-white "
                   : isFuture
-                  ? "bg-neutral-50 border-neutral-100 text-neutral-200 cursor-default  "
-                  : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500   :border-neutral-500"
+                  ? "bg-neutral-50 border-neutral-100 text-neutral-200 cursor-default "
+                  : "bg-white border-neutral-200 text-neutral-300 hover:border-neutral-400 hover:text-neutral-500 "
               )}
             >
               {isDone && <Check className="h-5 w-5" strokeWidth={3} />}
