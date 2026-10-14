@@ -2,10 +2,9 @@
 
 import { usePathname } from "next/navigation"
 import { motion, AnimatePresence } from "framer-motion"
-import { Search, Menu, Sun, Moon, LogOut } from "lucide-react"
+import { Search, Menu, LogOut } from "lucide-react"
 import { NotificationBell } from "./notification-panel"
 import { useMediaQuery } from "@/hooks/use-media-query"
-import { useThemeStore } from "@/store/use-theme-store"
 import { usePageTitleStore } from "@/store/use-page-title-store"
 
 const PAGE_TITLES: Record<string, string> = {
@@ -33,7 +32,6 @@ export function Header({
   sidebarCollapsed?: boolean
 }) {
   const isMobile = useMediaQuery("(max-width: 768px)")
-  const { colorTheme, setColorTheme } = useThemeStore()
   const pathname = usePathname()
   const { override } = usePageTitleStore()
   const pageTitle = override ?? PAGE_TITLES[pathname] ?? ""
@@ -89,13 +87,7 @@ export function Header({
               <Search className="h-4 w-4" />
             </button>
 
-            <button
-              onClick={() => setColorTheme(colorTheme === "dark" ? "light" : "dark")}
-              className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 transition-colors hover:bg-neutral-200 hover:text-neutral-900 dark:bg-neutral-800 dark:text-neutral-500 dark:hover:bg-neutral-700 dark:hover:text-neutral-50"
-              title="Toggle theme"
-            >
-              {colorTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
+
 
             <NotificationBell />
 

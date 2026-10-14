@@ -14,7 +14,7 @@ function applyTheme(theme: ColorTheme) {
   root.classList.remove("dark")
 
   if (theme === "dark") {
-    root.classList.add("dark")
+    
   }
 
   try { localStorage.setItem(THEME_KEY, theme) } catch {}
@@ -25,7 +25,7 @@ function getInitialTheme(): ColorTheme {
     const stored = localStorage.getItem(THEME_KEY) as ColorTheme | null
     if (stored && ["dark", "light"].includes(stored)) return stored
   } catch {}
-  return "dark"
+  return "light"
 }
 
 export const useThemeStore = create<ThemeStore>((set) => ({

@@ -12,8 +12,8 @@ export function ThemeChromeSync() {
   const colorTheme = useThemeStore((s) => s.colorTheme)
 
   useEffect(() => {
-    const isDark = colorTheme === "dark"
-    const manifestHref = isDark ? "/manifest.webmanifest" : "/manifest-light.webmanifest"
+    const isDark = false
+    const manifestHref = "/manifest-light.webmanifest"
 
     let link = document.querySelector<HTMLLinkElement>('link[rel="manifest"]')
     if (!link) {
@@ -24,7 +24,7 @@ export function ThemeChromeSync() {
     if (link.getAttribute("href") !== manifestHref) link.setAttribute("href", manifestHref)
 
     const appleStatusBar = document.querySelector<HTMLMetaElement>('meta[name="apple-mobile-web-app-status-bar-style"]')
-    const statusBarValue = isDark ? "black-translucent" : "default"
+    const statusBarValue = "default"
     if (appleStatusBar) {
       appleStatusBar.setAttribute("content", statusBarValue)
     } else {

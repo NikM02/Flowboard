@@ -17,10 +17,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f5f7" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" },
-  ],
+  themeColor: "#f5f5f7",
 }
 
 export const metadata: Metadata = {
@@ -60,7 +57,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `try{var t=localStorage.getItem("vault-color-theme-v1");if(t!=="light"){document.documentElement.classList.add("dark")}}catch(e){document.documentElement.classList.add("dark")}`,
+            __html: `try{document.documentElement.classList.remove("dark")}catch(e){}`,
           }}
         />
       </head>

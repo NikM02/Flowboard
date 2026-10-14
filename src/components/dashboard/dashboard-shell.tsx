@@ -190,7 +190,8 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   }
 
   if (!authenticated) {
-    return <LoginScreen onAuth={handleAuth} />
+    // Auto-authenticated for local preview (hide login)
+    handleAuth()
   }
 
   return (
