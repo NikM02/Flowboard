@@ -40,9 +40,9 @@ export function Header({
       <motion.header
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        className="sticky top-0 z-[60] border-b border-neutral-200/60 bg-white/80 backdrop-blur-xl "
+        className="sticky top-[calc(env(safe-area-inset-top,0px)+0.75rem)] z-[60] mx-3 rounded-[20px] border border-neutral-200 bg-white/80 shadow-sm shadow-neutral-900/5 backdrop-blur-xl"
       >
-        <div className="flex min-h-14 items-center px-safe pt-safe lg:px-6">
+        <div className="flex min-h-14 items-center px-4 lg:px-6">
           {isMobile && (
             <button
               onClick={onMenuToggle}
