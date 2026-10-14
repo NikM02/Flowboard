@@ -49,7 +49,7 @@ export function notify(title: string, description = "", opts?: NotifyOpts) {
     if (typeof Notification !== "undefined" && Notification.permission === "granted") {
       if (isPushDeliveryActive()) {
         // Installed PWA: deliver via the push service so the banner still appears
-        // when the tab is backgrounded or closed. The service worker de-dupes
+        // when the tab is backgrounded-[10px] or closed. The service worker de-dupes
         // by tag and shows action buttons for reminders. Fire-and-forget.
         fetch("/api/push/send", {
           method: "POST",

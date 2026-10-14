@@ -24,7 +24,7 @@ function persistFired(set: Set<string>) {
 
 // Fires reminders at their exact time (bell + toast + sound + OS push).
 // The periodic catch-up poll also catches reminders whose time passed while the
-// tab was suspended/backgrounded on mobile. Fired keys persist so reminders
+// tab was suspended/backgrounded-[10px] on mobile. Fired keys persist so reminders
 // never double-fire across reloads.
 export function useReminderScheduler() {
   const firedRef = useRef(new Set<string>())

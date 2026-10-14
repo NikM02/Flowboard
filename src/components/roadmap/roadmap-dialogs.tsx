@@ -28,7 +28,7 @@ function EmojiPicker({ value, onChange }: { value: string; onChange: (e: string)
           key={e}
           onClick={() => onChange(e)}
           className={cn(
-            "flex h-9 w-9 items-center justify-center rounded-xl border text-lg transition-all",
+            "flex h-9 w-9 items-center justify-center rounded-[10px] border text-lg transition-all",
             value === e
               ? "border-neutral-900 bg-neutral-900/5 "
               : "border-neutral-200 hover:bg-neutral-50 "
@@ -283,7 +283,7 @@ export function PhaseDialog({
                     key={st}
                     onClick={() => setStatus(st)}
                     className={cn(
-                      "flex items-center gap-2 rounded-xl border px-3 py-2 text-xs font-medium transition-all",
+                      "flex items-center gap-2 rounded-[10px] border px-3 py-2 text-xs font-medium transition-all",
                       status === st
                         ? "border-transparent bg-neutral-900 text-white "
                         : "border-neutral-200 text-neutral-500 hover:bg-neutral-50 "

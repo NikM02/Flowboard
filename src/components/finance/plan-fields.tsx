@@ -44,7 +44,7 @@ export function PlanFields({
   const dates = preview ? enumerateInstallments(preview) : []
 
   return (
-    <div className="space-y-3 rounded-xl border border-neutral-200 p-3 ">
+    <div className="space-y-3 rounded-[10px] border border-neutral-200 p-3 ">
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-neutral-900 ">Recurring installment plan</p>
@@ -76,13 +76,13 @@ export function PlanFields({
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label className="text-[11px] text-neutral-400">Frequency</Label>
-              <div className="grid grid-cols-2 gap-1 rounded-lg bg-neutral-100 p-0.5 ">
+              <div className="grid grid-cols-2 gap-1 rounded-[10px] bg-neutral-100 p-0.5 ">
                 {(["monthly", "quarterly"] as PlanFrequency[]).map((f) => (
                   <button
                     key={f}
                     type="button"
                     onClick={() => onChange({ ...draft, frequency: f })}
-                    className={cn("rounded-md py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm " : "text-neutral-500 ")}
+                    className={cn("rounded-[10px] py-1.5 text-xs font-semibold capitalize transition-colors", draft.frequency === f ? "bg-white text-neutral-900 shadow-sm " : "text-neutral-500 ")}
                   >
                     {f}
                   </button>
@@ -96,15 +96,15 @@ export function PlanFields({
           </div>
 
           {dates.length > 0 && (
-            <div className="rounded-lg bg-neutral-50 p-2.5 ">
+            <div className="rounded-[10px] bg-neutral-50 p-2.5 ">
               <p className="mb-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Schedule preview</p>
               <div className="flex flex-wrap gap-1">
                 {dates.slice(0, 6).map((d, i) => (
-                  <span key={d} className={cn("rounded-md px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700 " : "bg-neutral-100 text-neutral-500 ")}>
+                  <span key={d} className={cn("rounded-[10px] px-1.5 py-0.5 text-[10px]", i === 0 ? "bg-green-100 font-semibold text-green-700 " : "bg-neutral-100 text-neutral-500 ")}>
                     {formatInstallmentDate(d)}
                   </span>
                 ))}
-                {dates.length > 6 && <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 ">…{dates.length - 6} more</span>}
+                {dates.length > 6 && <span className="rounded-[10px] bg-neutral-100 px-1.5 py-0.5 text-[10px] text-neutral-400 ">…{dates.length - 6} more</span>}
               </div>
             </div>
           )}

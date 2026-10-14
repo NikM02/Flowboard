@@ -42,7 +42,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ delay: index * 0.03, duration: 0.25 }}
       className={cn(
-        "card-modern card-hover group relative rounded-2xl p-5",
+        "card-modern card-hover group relative rounded-[10px] p-5",
         task.completed
           ? "border border-green-200/60 "
           : "glass"
@@ -81,14 +81,14 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
             aria-label="Edit task"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500"
             aria-label="Delete task"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -123,7 +123,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(-25)}
               disabled={task.progress <= 0}
-              className="flex h-5 w-5 items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
+              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
             >
               <Minus className="h-3 w-3" />
             </button>
@@ -131,7 +131,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
             <button
               onClick={() => adjustProgress(25)}
               disabled={task.progress >= 100}
-              className="flex h-5 w-5 items-center justify-center rounded-lg border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
+              className="flex h-5 w-5 items-center justify-center rounded-[10px] border border-neutral-200 text-neutral-400 hover:bg-neutral-100 disabled:opacity-30 "
             >
               <Plus className="h-3 w-3" />
             </button>
@@ -167,7 +167,7 @@ export function TaskCard({ task, index }: { task: Task; index: number }) {
               {task.subtasks.map((sub) => (
                 <div
                   key={sub.id}
-                  className="flex items-center gap-2 rounded-lg bg-neutral-50 px-2.5 py-1.5 "
+                  className="flex items-center gap-2 rounded-[10px] bg-neutral-50 px-2.5 py-1.5 "
                 >
                   <button onClick={() => toggleSubtask(task.id, sub.id)} className="shrink-0">
                     {sub.completed ? (

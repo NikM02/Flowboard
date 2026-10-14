@@ -202,13 +202,13 @@ function SimulatorTab() {
     <div className="space-y-6">
       {/* Period selector + nav */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 ">
+        <div className="flex gap-1 rounded-[10px] bg-neutral-100 p-1 ">
           {(["monthly", "quarterly", "yearly"] as const).map((p) => (
             <button
               key={p}
               onClick={() => { setPeriod(p); setSelectedDate(new Date()) }}
               className={cn(
-                "rounded-lg px-3 py-1.5 text-xs font-medium transition-all capitalize",
+                "rounded-[10px] px-3 py-1.5 text-xs font-medium transition-all capitalize",
                 period === p
                   ? "bg-white text-neutral-900 shadow-sm "
                   : "text-neutral-500 hover:text-neutral-700"
@@ -217,9 +217,9 @@ function SimulatorTab() {
           ))}
         </div>
         <div className="flex items-center gap-2">
-          <button onClick={handlePrev} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100">&larr;</button>
+          <button onClick={handlePrev} className="rounded-[10px] px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100">&larr;</button>
           <span className="min-w-[140px] text-center text-sm font-medium text-neutral-900 ">{currentLabel}</span>
-          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-lg px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30">&rarr;</button>
+          <button onClick={handleNext} disabled={!canGoNext()} className="rounded-[10px] px-2 py-1 text-sm text-neutral-500 hover:bg-neutral-100 disabled:opacity-30">&rarr;</button>
         </div>
       </div>
 
@@ -228,7 +228,7 @@ function SimulatorTab() {
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         className={cn(
-          "relative overflow-hidden rounded-3xl border p-6 text-center",
+          "relative overflow-hidden rounded-[10px] border p-6 text-center",
           overallGrowth > 0
             ? "border-green-200 bg-gradient-to-br from-green-50 to-emerald-50/50 "
             : overallGrowth < 0
@@ -252,7 +252,7 @@ function SimulatorTab() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="card-modern glass rounded-3xl p-5"
+          className="card-modern glass rounded-[10px] p-5"
         >
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Growth Radar</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Current vs Previous period</p>
@@ -295,7 +295,7 @@ function SimulatorTab() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="card-modern glass rounded-3xl p-5"
+          className="card-modern glass rounded-[10px] p-5"
         >
           <h3 className="text-xs font-bold uppercase tracking-widest text-neutral-500 ">Category Comparison</h3>
           <p className="mt-0.5 text-[11px] text-neutral-400/70 ">Current period breakdown</p>
@@ -313,8 +313,8 @@ function SimulatorTab() {
                 <XAxis type="number" domain={[0, 100]} {...CHART_AXIS_STYLES} />
                 <YAxis type="category" dataKey="name" width={70} {...CHART_AXIS_STYLES} />
                 <Tooltip content={<ChartTooltip formatter={(v) => `${v}%`} />} cursor={CHART_CURSOR_STYLES} />
-                <Bar dataKey="previous" radius={[0, 9, 9, 0]} barSize={18} name="Previous" fill="rgba(142,142,147,0.28)" />
-                <Bar dataKey="current" radius={[0, 9, 9, 0]} barSize={18} name="Current" background={{ fill: "rgba(255,255,255,0.05)", radius: 9 }}>
+                <Bar dataKey="previous" radius={[0, 10, 10, 0]} barSize={18} name="Previous" fill="rgba(142,142,147,0.28)" />
+                <Bar dataKey="current" radius={[0, 10, 10, 0]} barSize={18} name="Current" background={{ fill: "rgba(255,255,255,0.05)", radius: 10 }}>
                   {barData.map((entry, i) => (
                     <Cell key={i} fill={`url(#futureBarGrad${i})`} style={{ filter: `drop-shadow(0 4px 10px ${entry.color}55)` }} />
                   ))}
@@ -347,11 +347,11 @@ function SimulatorTab() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.05 * i }}
-              className="rounded-2xl border border-neutral-200/60 bg-white p-4 "
+              className="rounded-[10px] border border-neutral-200/60 bg-white p-4 "
             >
               <div className="flex items-center gap-2">
                 <div
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px]"
                   style={{ backgroundColor: cfg.soft, color: cfg.hex }}
                 >
                   <Icon className="h-4 w-4" />

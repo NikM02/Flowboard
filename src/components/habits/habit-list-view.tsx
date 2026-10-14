@@ -25,25 +25,25 @@ export function HabitListView({ onEdit }: { onEdit?: (habit: Habit) => void }) {
           Week of {format(weekDays[0], "MMM d")} – {format(weekDays[6], "MMM d, yyyy")}
         </p>
         <div className="flex shrink-0 items-center gap-2">
-          <div className="flex rounded-lg border border-neutral-200 p-0.5 ">
+          <div className="flex rounded-[10px] border border-neutral-200 p-0.5 ">
             <button
               onClick={() => setHabitViewMode("card")}
               aria-label="Card view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", habitViewMode === "card" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] transition-colors", habitViewMode === "card" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setHabitViewMode("list")}
               aria-label="List view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", habitViewMode === "list" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] transition-colors", habitViewMode === "list" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <List className="h-3.5 w-3.5" />
             </button>
           </div>
           <button
             onClick={() => setIsCreateModalOpen(true)}
-            className="flex h-9 items-center gap-1 rounded-lg px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 "
+            className="flex h-9 items-center gap-1 rounded-[10px] px-2 text-xs font-medium text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 "
           >
             <Plus className="h-3.5 w-3.5" />New Habit
           </button>
@@ -51,7 +51,7 @@ export function HabitListView({ onEdit }: { onEdit?: (habit: Habit) => void }) {
       </div>
 
       {habits.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400 ">
+        <div className="rounded-[10px] border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400 ">
           No habits yet
         </div>
       ) : habitViewMode === "card" ? (
@@ -84,7 +84,7 @@ function HabitCard({
   const today = format(new Date(), "yyyy-MM-dd")
 
   return (
-    <div className="group card-modern card-hover glass rounded-2xl p-4 sm:p-5">
+    <div className="group card-modern card-hover glass rounded-[10px] p-4 sm:p-5">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
           <h4 className="text-sm font-semibold text-neutral-900 truncate">{habit.name}</h4>
@@ -93,10 +93,10 @@ function HabitCard({
           )}
         </div>
         <div className="flex gap-0.5 shrink-0 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
-          <button onClick={() => onEdit?.(habit)} className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 ">
+          <button onClick={() => onEdit?.(habit)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 ">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 ">
+          <button onClick={() => deleteHabit(habit.id)} className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 ">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -128,7 +128,7 @@ function HabitCard({
               <span className="text-[10px] font-medium text-neutral-400 uppercase">{dayLabels[i]}</span>
               <div
                 className={cn(
-                  "flex h-8 w-8 items-center justify-center rounded-lg border-2 transition-all",
+                  "flex h-8 w-8 items-center justify-center rounded-[10px] border-2 transition-all",
                   done
                     ? "bg-neutral-900 border-neutral-900 text-white "
                     : "bg-white border-neutral-200 "
@@ -146,7 +146,7 @@ function HabitCard({
           <button
             onClick={() => toggleDay(habit.id, today)}
             className={cn(
-              "flex h-9 items-center justify-center rounded-lg border-2 px-2 text-xs font-medium transition-all",
+              "flex h-9 items-center justify-center rounded-[10px] border-2 px-2 text-xs font-medium transition-all",
               habit.records.some((r) => r.date === today && r.completed)
                 ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
                 : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 "
@@ -155,7 +155,7 @@ function HabitCard({
             {habit.records.some((r) => r.date === today && r.completed) ? (
               <Check className="h-3.5 w-3.5" strokeWidth={3} />
             ) : (
-              <span className="h-3.5 w-3.5 rounded-sm border border-current" />
+              <span className="h-3.5 w-3.5 rounded-[10px] border border-current" />
             )}
             Today
           </button>
@@ -186,13 +186,13 @@ function HabitListItem({
   const doneToday = habit.records.some((r) => r.date === today && r.completed)
 
   return (
-    <div className="group card-modern card-hover glass rounded-2xl p-3">
+    <div className="group card-modern card-hover glass rounded-[10px] p-3">
       <div className="flex items-center gap-3">
         <button
           onClick={() => toggleDay(habit.id, today)}
           aria-label="Toggle today"
           className={cn(
-            "flex shrink-0 items-center justify-center rounded-xl border-2 transition-all",
+            "flex shrink-0 items-center justify-center rounded-[10px] border-2 transition-all",
             "h-10 w-10",
             doneToday
               ? "bg-neutral-900 border-neutral-900 text-white "
@@ -219,21 +219,21 @@ function HabitListItem({
         <button
           onClick={() => toggleDay(habit.id, today)}
           className={cn(
-            "flex h-9 shrink-0 items-center justify-center rounded-lg border-2 px-2 text-xs font-medium transition-all",
+            "flex h-9 shrink-0 items-center justify-center rounded-[10px] border-2 px-2 text-xs font-medium transition-all",
             doneToday
               ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
               : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 "
           )}
         >
-          {doneToday ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-sm border border-current" />}
+          {doneToday ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-[10px] border border-current" />}
           Today
         </button>
 
         <div className="flex shrink-0 gap-0.5 sm:opacity-0 sm:group-hover:opacity-100 sm:transition-opacity">
-          <button onClick={() => onEdit?.(habit)} aria-label="Edit habit" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 ">
+          <button onClick={() => onEdit?.(habit)} aria-label="Edit habit" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 ">
             <Edit3 className="h-3.5 w-3.5" />
           </button>
-          <button onClick={() => deleteHabit(habit.id)} aria-label="Delete habit" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 ">
+          <button onClick={() => deleteHabit(habit.id)} aria-label="Delete habit" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 ">
             <Trash2 className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -251,7 +251,7 @@ function HabitListItem({
               disabled={isFuture}
               aria-label={`Toggle ${format(d, "EEEE")}`}
               className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] transition-all",
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-[11px] transition-all",
                 done
                   ? "bg-neutral-900 text-white "
                   : isFuture

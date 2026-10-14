@@ -182,7 +182,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
               key={opt.label}
               type="button"
               onClick={() => setReminderMins(opt.mins)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`rounded-[10px] px-3 py-1.5 text-xs font-medium transition-all ${
                 reminderMins === opt.mins
                   ? "bg-neutral-900 text-white "
                   : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
@@ -204,7 +204,7 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -10 }}
-                className="flex items-center gap-2 rounded-lg bg-neutral-50 px-3 py-2 "
+                className="flex items-center gap-2 rounded-[10px] bg-neutral-50 px-3 py-2 "
               >
                 <button type="button" onClick={() => toggleSubtask(task.id, sub.id)}>
                   {sub.completed ? (
@@ -272,7 +272,7 @@ export function EditTaskSheet() {
 
   return (
     <Sheet open={isEditSheetOpen} onOpenChange={setIsEditSheetOpen}>
-      <SheetContent side={isMobile ? "bottom" : "right"} className={cn("overflow-y-auto", isMobile ? "max-h-[85vh] rounded-t-2xl" : "sm:max-w-lg")}>
+      <SheetContent side={isMobile ? "bottom" : "right"} className={cn("overflow-y-auto", isMobile ? "max-h-[85vh] rounded-t-[10px]" : "sm:max-w-lg")}>
         <SheetHeader className="mb-6">
           <SheetTitle className="text-xl">Edit Task</SheetTitle>
           <SheetDescription>

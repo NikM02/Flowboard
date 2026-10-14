@@ -18,7 +18,7 @@ export default function RoadmapDetailPage() {
         {roadmap ? (
           <RoadmapDashboard roadmap={roadmap} />
         ) : (
-          <div className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 ">
+          <div className="flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-20 ">
             <Map className="mb-4 h-12 w-12 text-neutral-300 " />
             <p className="text-lg font-medium text-neutral-500 ">Roadmap not found</p>
             <p className="mt-1 text-sm text-neutral-400 ">It may have been deleted.</p>

@@ -102,7 +102,7 @@ export function LoginScreen({ onAuth }: { onAuth: () => void }) {
           <motion.div
             initial={{ opacity: 0, y: -6 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600 "
+            className="mt-4 rounded-[10px] border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-600 "
           >
             {error}
           </motion.div>

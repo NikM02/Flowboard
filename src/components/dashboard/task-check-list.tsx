@@ -41,7 +41,7 @@ function Checkbox({ done, priority }: { done: boolean; priority: Priority }) {
   return (
     <span
       className={cn(
-        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border-2 transition-all",
         done
           ? cn("border-transparent", meta.check)
           : "border-neutral-300 bg-white hover:border-neutral-400 "
@@ -55,11 +55,11 @@ function Checkbox({ done, priority }: { done: boolean; priority: Priority }) {
 function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: { id: string; title: string; completed: boolean } }) {
   const { toggleSubtask, removeSubtask } = useTaskStore()
   return (
-    <div className="group/sub flex items-center gap-2 rounded-lg px-1.5 py-1 transition-colors hover:bg-neutral-100/70">
+    <div className="group/sub flex items-center gap-2 rounded-[10px] px-1.5 py-1 transition-colors hover:bg-neutral-100/70">
       <button onClick={() => toggleSubtask(taskId, subtask.id)} aria-label="Toggle subtask">
         <span
           className={cn(
-            "flex h-4 w-4 shrink-0 items-center justify-center rounded-[5px] border-2 transition-all",
+            "flex h-4 w-4 shrink-0 items-center justify-center rounded-[10px] border-2 transition-all",
             subtask.completed
               ? "border-transparent bg-emerald-500"
               : "border-neutral-300 bg-white hover:border-neutral-400 "
@@ -73,7 +73,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: { id: string
       </span>
       <button
         onClick={() => removeSubtask(taskId, subtask.id)}
-        className="rounded p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 "
+        className="rounded-[10px] p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 "
         aria-label="Remove subtask"
       >
         <X className="h-3 w-3" />
@@ -114,7 +114,7 @@ function CheckRow({ task, index }: { task: Task; index: number }) {
       exit={{ opacity: 0, x: -20 }}
       transition={{ delay: index * 0.02, duration: 0.2 }}
       className={cn(
-        "group rounded-xl border p-3 transition-all",
+        "group rounded-[10px] border p-3 transition-all",
         task.completed
           ? "border-green-200/50 bg-green-50/40 "
           : "border-neutral-200/80 bg-white hover:border-neutral-300/80 hover:shadow-sm "
@@ -147,14 +147,14 @@ function CheckRow({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 items-center gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600"
             aria-label="Edit task"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500"
+            className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500"
             aria-label="Delete task"
           >
             <Trash2 className="h-3.5 w-3.5" />
@@ -188,7 +188,7 @@ function CheckRow({ task, index }: { task: Task; index: number }) {
           </span>
         )}
         {task.storyPoints != null && (
-          <span className="rounded bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold text-violet-600 ">
+          <span className="rounded-[10px] bg-violet-50 px-1.5 py-0.5 text-[10px] font-semibold text-violet-600 ">
             {task.storyPoints} pts
           </span>
         )}
@@ -220,12 +220,12 @@ function CheckRow({ task, index }: { task: Task; index: number }) {
                   value={newSub}
                   onChange={(e) => setNewSub(e.target.value)}
                   placeholder="+ Add subtask…"
-                  className="h-7 flex-1 rounded-md text-xs"
+                  className="h-7 flex-1 rounded-[10px] text-xs"
                 />
                 <button
                   type="submit"
                   disabled={!newSub.trim()}
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
+                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[10px] bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
                   aria-label="Add subtask"
                 >
                   <Plus className="h-3.5 w-3.5" />

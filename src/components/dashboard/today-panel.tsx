@@ -82,7 +82,7 @@ function SlotCheck({ done, check }: { done: boolean; check: string }) {
   return (
     <span
       className={cn(
-        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md border-2 transition-all",
+        "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border-2 transition-all",
         done
           ? cn("border-transparent", check)
           : "border-neutral-200 bg-white group-hover:border-neutral-300 "
@@ -134,7 +134,7 @@ export function TodayPanel() {
   const todayCount = active.filter((t) => t.dueDate === todayKey).length
 
   return (
-    <section className="overflow-hidden rounded-3xl border border-neutral-200 bg-white ">
+    <section className="overflow-hidden rounded-[10px] border border-neutral-200 bg-white ">
       {/* Header */}
       <div className="relative bg-neutral-900 px-4 py-4 sm:px-5 ">
         <div className="relative flex items-center justify-between gap-3">
@@ -184,7 +184,7 @@ export function TodayPanel() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex flex-col overflow-hidden rounded-2xl border border-neutral-200 "
+              className="flex flex-col overflow-hidden rounded-[10px] border border-neutral-200 "
             >
               <div className="flex items-center justify-between gap-2 border-b border-neutral-100 bg-neutral-50/70 px-3 py-2.5 ">
                 <span className={cn("flex items-center gap-1.5 text-[11px] font-black uppercase tracking-wide", slot.accent)}>
@@ -213,7 +213,7 @@ export function TodayPanel() {
                       <button
                         key={i}
                         onClick={() => openCreateModal(slot.priority)}
-                        className="flex w-full items-center gap-2 rounded-lg border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
+                        className="flex w-full items-center gap-2 rounded-[10px] border border-dashed border-neutral-200 px-2 py-1.5 text-left text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
                       >
                         <Plus className="h-3.5 w-3.5 shrink-0 opacity-50" />
                         <span className="truncate text-[11px]">Empty {slot.label.toLowerCase()} slot — add</span>
@@ -224,7 +224,7 @@ export function TodayPanel() {
                       const overdue = t.dueDate && t.dueDate < todayKey
                       const subsDone = t.subtasks.filter((s) => s.completed).length
                       return (
-                        <div key={t.id} className="group flex items-start gap-2 rounded-lg border border-transparent px-2 py-1.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50">
+                        <div key={t.id} className="group flex items-start gap-2 rounded-[10px] border border-transparent px-2 py-1.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50">
                           <button onClick={() => toggle(t)} aria-label={`Complete ${t.title}`}>
                             <SlotCheck done={t.completed} check={slot.check} />
                           </button>
@@ -250,7 +250,7 @@ export function TodayPanel() {
                               )}
                             </div>
                           </div>
-                          <span className={cn("mt-0.5 hidden rounded py-0.5 text-[10px] font-semibold sm:inline-flex", slot.chip)}>
+                          <span className={cn("mt-0.5 hidden rounded-[10px] py-0.5 text-[10px] font-semibold sm:inline-flex", slot.chip)}>
                             {slot.label}
                           </span>
                         </div>
@@ -266,7 +266,7 @@ export function TodayPanel() {
                   variant="outline"
                   size="sm"
                   onClick={() => openCreateModal(slot.priority)}
-                  className={cn("h-8 w-full gap-1.5 rounded-xl text-xs")}
+                  className={cn("h-8 w-full gap-1.5 rounded-[10px] text-xs")}
                 >
                   <Plus className="h-3.5 w-3.5" /> Add {slot.label.toLowerCase()}
                 </Button>

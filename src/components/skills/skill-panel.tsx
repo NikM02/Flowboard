@@ -169,7 +169,7 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.95 }}
-      className="group relative overflow-hidden rounded-2xl border border-neutral-200/60 bg-white transition-shadow hover:shadow-md "
+      className="group relative overflow-hidden rounded-[10px] border border-neutral-200/60 bg-white transition-shadow hover:shadow-md "
     >
       {/* Cover */}
       <div className="relative flex h-40 items-center justify-center bg-gradient-to-br from-teal-50 to-emerald-50 sm:h-44">
@@ -183,14 +183,14 @@ function SkillCard({ skill }: { skill: { id: string; name: string; source: Skill
           <button
             onClick={() => setEditOpen(true)}
             aria-label="Edit skill"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
+            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
           >
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => deleteSkill(skill.id)}
             aria-label="Delete skill"
-            className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
+            className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-white/90 text-red-500 shadow-sm backdrop-blur-sm transition-colors hover:bg-white "
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -299,13 +299,13 @@ export function SkillPanel() {
           </Button>
         </div>
 
-        <div className="flex w-full gap-1 overflow-x-auto rounded-xl bg-neutral-100 p-1 sm:w-auto">
+        <div className="flex w-full gap-1 overflow-x-auto rounded-[10px] bg-neutral-100 p-1 sm:w-auto">
           {(["active", "archive"] as const).map((t) => (
             <button
               key={t}
               onClick={() => setTab(t)}
               className={cn(
-                "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium capitalize transition-all sm:flex-none",
+                "flex min-h-10 flex-1 items-center justify-center gap-1.5 whitespace-nowrap rounded-[10px] px-4 py-2.5 text-sm font-medium capitalize transition-all sm:flex-none",
                 tab === t
                   ? "bg-white text-neutral-900 shadow-sm "
                   : "text-neutral-500 hover:text-neutral-700 "
@@ -323,7 +323,7 @@ export function SkillPanel() {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 "
+            className="flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-20 "
           >
             <GraduationCap className="mb-4 h-12 w-12 text-neutral-300 " />
             <p className="text-lg font-medium text-neutral-500 ">No skills yet</p>
@@ -348,7 +348,7 @@ export function SkillPanel() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 text-center "
+          className="flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-20 text-center "
         >
           <Archive className="mb-4 h-12 w-12 text-neutral-300 " />
           <p className="text-lg font-medium text-neutral-500 ">Archive is empty</p>
@@ -378,7 +378,7 @@ export function SkillPanel() {
               {completed.map((skill) => (
                 <div
                   key={skill.id}
-                  className="rounded-xl border border-neutral-200 bg-neutral-50 p-4 "
+                  className="rounded-[10px] border border-neutral-200 bg-neutral-50 p-4 "
                 >
                   <div className="flex min-w-0 items-center gap-2">
                     <Check className="h-4 w-4 shrink-0 text-green-500" />

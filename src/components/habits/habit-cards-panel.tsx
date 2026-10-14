@@ -42,10 +42,10 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="group relative card-modern card-hover glass rounded-2xl p-4"
+      className="group relative card-modern card-hover glass rounded-[10px] p-4"
     >
       <div className="flex items-start gap-3">
-        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${colors.bg} `}>
+        <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] ${colors.bg} `}>
           <Icon className={`h-5 w-5 ${colors.text}`} />
         </div>
         <div className="flex-1 min-w-0">
@@ -70,7 +70,7 @@ function HabitCard({ habit, onEdit, onViewHistory }: { habit: Habit; onEdit: (h:
 
           <div className="mt-3 flex items-center gap-3">
             <button onClick={() => toggleDay(habit.id, today)}
-              className={`flex h-8 items-center gap-2 rounded-xl px-3 text-xs font-medium transition-all ${
+              className={`flex h-8 items-center gap-2 rounded-[10px] px-3 text-xs font-medium transition-all ${
                 isDoneToday ? "bg-neutral-900 text-white " : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
               }`}
             >
@@ -96,7 +96,7 @@ export function HabitCardsPanel({ onEdit, onViewHistory }: { onEdit: (h: Habit) 
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold text-neutral-900 ">All Habits</h3>
-        <Button size="sm" onClick={() => setIsCreateModalOpen(true)} className="gap-1 rounded-xl text-xs h-8">
+        <Button size="sm" onClick={() => setIsCreateModalOpen(true)} className="gap-1 rounded-[10px] text-xs h-8">
           <Plus className="h-3.5 w-3.5" />New
         </Button>
       </div>

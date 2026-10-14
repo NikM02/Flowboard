@@ -52,7 +52,7 @@ export function HabitHistoryPanel() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="card-modern glass rounded-2xl p-5"
+      className="card-modern glass rounded-[10px] p-5"
     >
       <div className="flex items-center gap-2 mb-4">
         <BarChart3 className="h-4 w-4 text-neutral-500" />
@@ -60,19 +60,19 @@ export function HabitHistoryPanel() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
-        <div className="rounded-xl bg-neutral-50 p-3 ">
+        <div className="rounded-[10px] bg-neutral-50 p-3 ">
           <p className="text-xl font-bold text-neutral-900 ">{bestStreak}</p>
           <p className="text-[10px] text-neutral-400">Current Streak</p>
         </div>
-        <div className="rounded-xl bg-neutral-50 p-3 ">
+        <div className="rounded-[10px] bg-neutral-50 p-3 ">
           <p className="text-xl font-bold text-neutral-900 ">{longestStreak}</p>
           <p className="text-[10px] text-neutral-400">Longest Streak</p>
         </div>
-        <div className="rounded-xl bg-neutral-50 p-3 ">
+        <div className="rounded-[10px] bg-neutral-50 p-3 ">
           <p className="text-xl font-bold text-neutral-900 ">{overallRate}%</p>
           <p className="text-[10px] text-neutral-400">Success Rate</p>
         </div>
-        <div className="rounded-xl bg-neutral-50 p-3 ">
+        <div className="rounded-[10px] bg-neutral-50 p-3 ">
           <p className="text-xl font-bold text-neutral-900 ">{totalCompleted}</p>
           <p className="text-[10px] text-neutral-400">Total Days</p>
         </div>
@@ -105,7 +105,7 @@ export function HabitHistoryPanel() {
           return (
             <div key={h.id}>
               <button onClick={() => setExpandedHabit(isExpanded ? null : h.id)}
-                className="flex w-full items-center gap-3 rounded-xl bg-neutral-50 p-3 text-left "
+                className="flex w-full items-center gap-3 rounded-[10px] bg-neutral-50 p-3 text-left "
               >
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
@@ -142,15 +142,15 @@ export function HabitHistoryPanel() {
         <div className="mt-4 pt-4 border-t border-neutral-100 ">
           <p className="text-xs font-medium text-neutral-500 mb-2">Challenge Summary</p>
           <div className="grid grid-cols-3 gap-2">
-            <div className="rounded-xl bg-neutral-50 p-2.5 text-center ">
+            <div className="rounded-[10px] bg-neutral-50 p-2.5 text-center ">
               <p className="text-lg font-bold text-neutral-900 ">{challengeTotal}</p>
               <p className="text-[10px] text-neutral-400">Days done</p>
             </div>
-            <div className="rounded-xl bg-neutral-50 p-2.5 text-center ">
+            <div className="rounded-[10px] bg-neutral-50 p-2.5 text-center ">
               <p className="text-lg font-bold text-neutral-900 ">{challengeRate}%</p>
               <p className="text-[10px] text-neutral-400">Rate</p>
             </div>
-            <div className="rounded-xl bg-neutral-50 p-2.5 text-center ">
+            <div className="rounded-[10px] bg-neutral-50 p-2.5 text-center ">
               <p className="text-lg font-bold text-neutral-900 ">{challenges.length}</p>
               <p className="text-[10px] text-neutral-400">Challenges</p>
             </div>

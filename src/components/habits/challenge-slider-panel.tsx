@@ -35,14 +35,14 @@ function ChallengeTodayButton({ challenge, className }: { challenge: Challenge; 
         if (todayDay) toggleDay(challenge.id, todayDay.day)
       }}
       className={cn(
-        "flex items-center justify-center gap-1 rounded-lg border text-xs font-medium transition-all",
+        "flex items-center justify-center gap-1 rounded-[10px] border text-xs font-medium transition-all",
         done
           ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
           : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 ",
         className ?? "h-9 sm:h-7 px-2.5 sm:px-2"
       )}
     >
-      {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-sm border border-current" />}
+      {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} /> : <span className="h-3.5 w-3.5 rounded-[10px] border border-current" />}
       Today
     </button>
   )
@@ -58,11 +58,11 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-      className="card-modern card-hover glass w-full min-w-0 overflow-hidden rounded-2xl p-3.5 sm:p-5"
+      className="card-modern card-hover glass w-full min-w-0 overflow-hidden rounded-[10px] p-3.5 sm:p-5"
     >
       <div className="mb-2.5 flex min-w-0 items-start justify-between gap-1 sm:gap-3 sm:mb-3">
         <div className="flex min-w-0 flex-1 items-center gap-2 sm:gap-3">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 sm:h-11 sm:w-11">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 sm:h-11 sm:w-11">
             <Icon className="h-4 w-4 text-neutral-600 sm:h-5 sm:w-5" />
           </div>
           <div className="min-w-0">
@@ -74,14 +74,14 @@ function ChallengeCard({ challenge, onEdit }: { challenge: Challenge; onEdit: (c
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => onEdit(challenge)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 transition-colors sm:h-10 sm:w-10 sm:rounded-lg">
+          <button onClick={() => onEdit(challenge)} className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-200 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
             <Edit3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
-          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-8 w-8 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors sm:h-10 sm:w-10 sm:rounded-lg">
+          <button onClick={() => deleteChallenge(challenge.id)} className="flex h-8 w-8 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:text-red-500 hover:bg-red-50 transition-colors sm:h-10 sm:w-10 sm:rounded-[10px]">
             <Trash2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
           </button>
           {allDone && (
-            <Button size="sm" className="h-7 gap-1 text-xs rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white sm:h-7" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-7 gap-1 text-xs rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white sm:h-7" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-3.5 w-3.5" />Done
             </Button>
           )}
@@ -126,7 +126,7 @@ function ChallengeDayGrid({ challenge, toggleDay }: { challenge: Challenge; togg
             key={d.day}
             onClick={() => toggleDay(challenge.id, d.day)}
             className={cn(
-              "relative flex h-8 items-center justify-center rounded-lg border text-[11px] font-semibold transition-all sm:h-9 sm:rounded-lg sm:border-2 sm:text-xs",
+              "relative flex h-8 items-center justify-center rounded-[10px] border text-[11px] font-semibold transition-all sm:h-9 sm:rounded-[10px] sm:border-2 sm:text-xs",
               d.completed
                 ? "bg-neutral-900 border-neutral-900 text-white "
                 : "bg-neutral-50 border-neutral-200 text-neutral-500 hover:border-neutral-900/30 ",
@@ -158,10 +158,10 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
 
   return (
     <motion.div layout initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
-      className="card-modern card-hover glass rounded-xl p-3"
+      className="card-modern card-hover glass rounded-[10px] p-3"
     >
       <div className="flex items-center gap-3">
-        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
           <Icon className="h-4 w-4 text-neutral-600 " />
         </div>
 
@@ -182,7 +182,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
             if (todayDay) toggleDay(challenge.id, todayDay.day)
           }}
           className={cn(
-            "flex h-9 shrink-0 items-center justify-center rounded-lg border px-2.5 text-xs font-medium transition-all gap-1",
+            "flex h-9 shrink-0 items-center justify-center rounded-[10px] border px-2.5 text-xs font-medium transition-all gap-1",
             challenge.days.some((d) => d.date === todayDate && d.completed)
               ? "bg-emerald-50 border-emerald-300 text-emerald-700 "
               : "bg-white border-neutral-200 text-neutral-500 hover:border-neutral-400 "
@@ -191,21 +191,21 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
           {challenge.days.some((d) => d.date === todayDate && d.completed) ? (
             <Check className="h-3.5 w-3.5" strokeWidth={3} />
           ) : (
-            <span className="h-3.5 w-3.5 rounded-sm border border-current" />
+            <span className="h-3.5 w-3.5 rounded-[10px] border border-current" />
           )}
           Today
         </button>
 
         <div className="flex shrink-0 gap-0.5">
-          <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 ">
+          <button onClick={() => onEdit(challenge)} aria-label="Edit challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-neutral-200 hover:text-neutral-600 ">
             <Edit3 className="h-4 w-4" />
           </button>
           {allDone ? (
-            <Button size="sm" className="h-10 gap-1 rounded-lg bg-emerald-600 px-2.5 text-xs text-white hover:bg-emerald-700" onClick={() => deleteChallenge(challenge.id)}>
+            <Button size="sm" className="h-10 gap-1 rounded-[10px] bg-emerald-600 px-2.5 text-xs text-white hover:bg-emerald-700" onClick={() => deleteChallenge(challenge.id)}>
               <Check className="h-4 w-4" />Done
             </Button>
           ) : (
-            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 ">
+            <button onClick={() => deleteChallenge(challenge.id)} aria-label="Delete challenge" className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 text-neutral-400 hover:bg-red-50 hover:text-red-500 ">
               <Trash2 className="h-4 w-4" />
             </button>
           )}
@@ -220,7 +220,7 @@ function ChallengeListItem({ challenge, onEdit }: { challenge: Challenge; onEdit
               key={d.day}
               onClick={() => toggleDay(challenge.id, d.day)}
               className={cn(
-                "flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border text-[11px] font-medium transition-all",
+                "flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] border text-[11px] font-medium transition-all",
                 d.completed
                   ? "bg-neutral-900 border-neutral-900 text-white "
                   : "bg-neutral-50 border-neutral-200 text-neutral-400 hover:border-neutral-400 ",
@@ -274,30 +274,30 @@ export function ChallengeSliderPanel() {
           <h3 className="text-base font-semibold text-neutral-900 ">Challenges</h3>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-          <div className="flex rounded-lg border border-neutral-200 p-0.5 ">
+          <div className="flex rounded-[10px] border border-neutral-200 p-0.5 ">
             <button
               onClick={() => setViewMode("card")}
               aria-label="Card view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] transition-colors", viewMode === "card" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
             </button>
             <button
               onClick={() => setViewMode("list")}
               aria-label="List view"
-              className={cn("flex h-9 w-9 items-center justify-center rounded-md transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
+              className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] transition-colors", viewMode === "list" ? "bg-neutral-100 text-neutral-900 " : "text-neutral-400 hover:text-neutral-600")}
             >
               <List className="h-3.5 w-3.5" />
             </button>
           </div>
-          <Button onClick={() => setIsCreateModalOpen(true)} className="h-9 gap-1.5 rounded-xl px-3 text-xs">
+          <Button onClick={() => setIsCreateModalOpen(true)} className="h-9 gap-1.5 rounded-[10px] px-3 text-xs">
             <Plus className="h-4 w-4 sm:h-3.5 sm:w-3.5" />New Challenge
           </Button>
         </div>
       </div>
 
       {challenges.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400 ">
+        <div className="rounded-[10px] border border-dashed border-neutral-200 p-12 text-center text-sm text-neutral-400 ">
           No challenges yet
         </div>
       ) : viewMode === "card" ? (
@@ -345,7 +345,7 @@ export function ChallengeSliderPanel() {
                     key={t}
                     type="button"
                     onClick={() => setEditType(t)}
-                    className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${
+                    className={`flex-1 rounded-[10px] py-2 text-xs font-semibold transition-all ${
                       editType === t
                         ? "bg-neutral-900 text-white "
                         : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "
@@ -421,7 +421,7 @@ function CreateChallengeModal() {
                   key={t}
                   type="button"
                   onClick={() => setType(t)}
-                  className={`flex-1 rounded-xl py-2 text-xs font-semibold transition-all ${
+                  className={`flex-1 rounded-[10px] py-2 text-xs font-semibold transition-all ${
                     type === t
                       ? "bg-neutral-900 text-white "
                       : "bg-neutral-100 text-neutral-500 hover:bg-neutral-200 "

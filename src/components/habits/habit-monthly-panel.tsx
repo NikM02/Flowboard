@@ -37,7 +37,7 @@ export function HabitMonthlyPanel() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="overflow-x-hidden card-modern glass rounded-2xl p-5"
+      className="overflow-x-hidden card-modern glass rounded-[10px] p-5"
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-sm font-semibold text-neutral-900 ">Monthly Overview</h3>
@@ -79,7 +79,7 @@ export function HabitMonthlyPanel() {
 
             return (
               <button key={day} onClick={() => setSelectedDate(dateStr)}
-                className={`flex flex-col items-center justify-center rounded-lg py-1.5 text-[11px] font-medium transition-all ${bg} ${
+                className={`flex flex-col items-center justify-center rounded-[10px] py-1.5 text-[11px] font-medium transition-all ${bg} ${
                   isSelected ? "ring-2 ring-neutral-900 " : ""
                 } ${isT ? "ring-1 ring-dashed ring-neutral-300 " : ""}`}
               >
@@ -104,7 +104,7 @@ export function HabitMonthlyPanel() {
                 <div key={r.habitId} className="flex items-center justify-between text-sm">
                   <span className="text-neutral-700 ">{r.name}</span>
                   <button onClick={() => toggleDay(r.habitId, selectedDate)}
-                    className={`text-xs font-medium px-2 py-0.5 rounded-md ${
+                    className={`text-xs font-medium px-2 py-0.5 rounded-[10px] ${
                       r.completed ? "bg-emerald-100 text-emerald-700 " : "bg-neutral-100 text-neutral-400 "
                     }`}
                   >

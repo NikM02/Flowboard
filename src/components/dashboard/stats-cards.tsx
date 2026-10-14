@@ -71,7 +71,7 @@ export function StatsCards() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.07, duration: 0.3 }}
             whileHover={{ y: -3 }}
-            className="relative overflow-hidden rounded-[18px] border border-neutral-200 bg-white p-4 shadow-sm "
+            className="relative overflow-hidden rounded-[10px] border border-neutral-200 bg-white p-4 shadow-sm "
           >
             <div className="relative flex items-center justify-between">
               <div className="flex flex-col gap-1">
@@ -81,7 +81,7 @@ export function StatsCards() {
                   suffix={isProgress ? "%" : undefined}
                 />
               </div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg" style={{ backgroundColor: `${config.color}1a` }}>
+              <div className="flex h-10 w-10 items-center justify-center rounded-[10px]" style={{ backgroundColor: `${config.color}1a` }}>
                 <config.icon className="h-4 w-4" style={{ color: config.color }} />
               </div>
             </div>

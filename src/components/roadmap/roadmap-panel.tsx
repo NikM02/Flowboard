@@ -41,7 +41,7 @@ export function RoadmapPanel() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-20 "
+          className="flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-20 "
         >
           <Map className="mb-4 h-12 w-12 text-neutral-300 " />
           <p className="text-lg font-medium text-neutral-500 ">No roadmaps yet</p>

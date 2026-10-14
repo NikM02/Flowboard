@@ -90,7 +90,7 @@ function NewProjectDialog({ open, onOpenChange }: { open: boolean; onOpenChange:
                   type="button"
                   onClick={() => setIcon(emoji)}
                   className={cn(
-                    "flex h-9 w-9 items-center justify-center rounded-xl text-lg transition-all",
+                    "flex h-9 w-9 items-center justify-center rounded-[10px] text-lg transition-all",
                     icon === emoji
                       ? "bg-neutral-900 text-white ring-2 ring-neutral-900 ring-offset-2 "
                       : "bg-neutral-100 hover:bg-neutral-200 "
@@ -135,14 +135,14 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
         <p className="text-sm text-neutral-500 ">
           {projectNames.length} {projectNames.length === 1 ? "project" : "projects"} · tasks grouped by project
         </p>
-        <Button onClick={() => setNewOpen(true)} className="gap-2 rounded-xl">
+        <Button onClick={() => setNewOpen(true)} className="gap-2 rounded-[10px]">
           <Plus className="h-4 w-4" /> New Project
         </Button>
       </div>
 
       {projectNames.length === 0 && uncategorizedTasks.length === 0 ? (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-dashed border-neutral-300 py-12 text-neutral-400 ">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 ">
+        <div className="flex flex-col items-center gap-3 rounded-[10px] border border-dashed border-neutral-300 py-12 text-neutral-400 ">
+          <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
             <FolderKanban className="h-4 w-4 text-indigo-500" />
           </div>
           <p className="text-sm">No projects yet.</p>
@@ -171,14 +171,14 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                 layout
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="card-modern card-hover group relative cursor-pointer rounded-2xl border border-neutral-200 bg-white p-4 text-left "
+                className="card-modern card-hover group relative cursor-pointer rounded-[10px] border border-neutral-200 bg-white p-4 text-left "
                 onClick={() => openProject(name)}
               >
                 <div className="flex items-start justify-between gap-2">
                   <div className="flex items-center gap-2.5">
                     <button
                       onClick={(e) => { e.stopPropagation(); setIconEdit(iconEdit === name ? null : name) }}
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-lg transition-transform hover:scale-105"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] text-lg transition-transform hover:scale-105"
                       style={{ backgroundColor: `${tileColor}1a` }}
                       title="Change project icon"
                     >
@@ -194,7 +194,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                   {isCreated && (
                     <button
                       onClick={(e) => { e.stopPropagation(); deleteProject(name) }}
-                      className="rounded-lg p-1.5 text-neutral-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 "
+                      className="rounded-[10px] p-1.5 text-neutral-300 opacity-0 transition-all hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 "
                       title="Delete project"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -209,7 +209,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                         key={emoji}
                         onClick={() => { setProjectIcon(name, emoji); setIconEdit(null) }}
                         className={cn(
-                          "flex h-8 w-8 items-center justify-center rounded-lg text-base transition-all",
+                          "flex h-8 w-8 items-center justify-center rounded-[10px] text-base transition-all",
                           icon === emoji
                             ? "bg-neutral-900 text-white "
                             : "bg-neutral-100 hover:bg-neutral-200 "
@@ -233,7 +233,7 @@ function ProjectsPanel({ onOpenProject }: { onOpenProject: () => void }) {
                           <span className={cn("h-1.5 w-1.5 shrink-0 rounded-full", t.completed ? "bg-emerald-500" : "bg-amber-400")} />
                           <span className="truncate">{t.title}</span>
                           {t.subtasks.length > 0 && (
-                            <span className="ml-auto shrink-0 rounded bg-neutral-100 px-1 py-px text-[9px] font-semibold text-neutral-400 ">
+                            <span className="ml-auto shrink-0 rounded-[10px] bg-neutral-100 px-1 py-px text-[9px] font-semibold text-neutral-400 ">
                               {t.subtasks.filter((x) => x.completed).length}/{t.subtasks.length}
                             </span>
                           )}
@@ -348,7 +348,7 @@ function TasksPageContent() {
         )}
 
         {/* View tabs */}
-        <div className="flex gap-1 rounded-xl bg-neutral-100 p-1 ">
+        <div className="flex gap-1 rounded-[10px] bg-neutral-100 p-1 ">
           {([
             { key: "tasks" as const, label: "Tasks", icon: ListTodo },
             { key: "tree" as const, label: "Tree", icon: ListTree },
@@ -359,7 +359,7 @@ function TasksPageContent() {
               key={t.key}
               onClick={() => handleViewChange(t.key)}
               className={cn(
-                "flex items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium transition-all",
+                "flex items-center gap-1.5 rounded-[10px] px-3 py-2 text-sm font-medium transition-all",
                 view === t.key
                   ? "bg-white text-neutral-900 shadow-sm "
                   : "text-neutral-500 hover:text-neutral-700 "
@@ -388,7 +388,7 @@ function TasksPageContent() {
               </Select>
             )}
             <Filters />
-            <Button onClick={() => openCreateModal()} className="ml-auto max-sm:h-9 max-sm:px-3 max-sm:text-xs gap-2 rounded-xl">
+            <Button onClick={() => openCreateModal()} className="ml-auto max-sm:h-9 max-sm:px-3 max-sm:text-xs gap-2 rounded-[10px]">
               <Plus className="h-4 w-4" /> New Task
             </Button>
           </div>
@@ -412,13 +412,13 @@ function TasksPageContent() {
                 <TaskCheckList />
 
                 {/* Analytics — colored charts, responsive on mobile */}
-                <div className="card-modern overflow-hidden rounded-2xl border border-neutral-200 bg-white ">
+                <div className="card-modern overflow-hidden rounded-[10px] border border-neutral-200 bg-white ">
                   <button
                     onClick={() => setAnalyticsOpen((v) => !v)}
                     className="flex w-full items-center justify-between gap-3 px-4 py-3.5 text-left"
                   >
                     <span className="flex items-center gap-2.5">
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-100 ">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 ">
                         <BarChart3 className="h-4 w-4 text-indigo-500" />
                       </span>
                       <span>

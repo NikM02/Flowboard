@@ -11,17 +11,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "rounded-lg bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-600",
+          "rounded-[10px] bg-blue-600 text-white shadow-sm hover:bg-blue-700 focus-visible:ring-blue-600",
         destructive:
-          "rounded-lg bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-600",
+          "rounded-[10px] bg-red-600 text-white shadow-sm hover:bg-red-700 focus-visible:ring-red-600",
         outline:
-          "rounded-lg border border-neutral-200 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50 focus-visible:ring-neutral-400",
+          "rounded-[10px] border border-neutral-200 bg-white text-neutral-900 shadow-sm hover:bg-neutral-50 focus-visible:ring-neutral-400",
         secondary:
-          "rounded-lg bg-blue-50 text-blue-700 hover:bg-blue-100 focus-visible:ring-blue-600",
+          "rounded-[10px] bg-blue-50 text-blue-700 hover:bg-blue-100 focus-visible:ring-blue-600",
         ghost:
-          "rounded-lg text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-400",
+          "rounded-[10px] text-neutral-600 hover:bg-neutral-100 hover:text-neutral-900 focus-visible:ring-neutral-400",
         link:
-          "text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-600 rounded-md px-1",
+          "text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-600 rounded-[10px] px-1",
       },
       size: {
         default: "h-9 px-4",

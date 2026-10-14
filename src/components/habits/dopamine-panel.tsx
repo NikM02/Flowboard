@@ -49,7 +49,7 @@ export function DopaminePanel() {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="card-modern glass rounded-2xl p-4 sm:p-5"
+        className="card-modern glass rounded-[10px] p-4 sm:p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-neutral-900 ">This Week</h3>
@@ -67,7 +67,7 @@ export function DopaminePanel() {
                 onClick={() => !disabled && toggleCheckIn(day.date)}
                 disabled={disabled}
                 className={cn(
-                  "flex flex-col items-center gap-1 rounded-xl py-3 transition-all",
+                  "flex flex-col items-center gap-1 rounded-[10px] py-3 transition-all",
                   disabled
                     ? "opacity-30 cursor-not-allowed"
                     : checked
@@ -83,7 +83,7 @@ export function DopaminePanel() {
                 </span>
                 {day.isToday ? (
                   <div className={cn(
-                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-lg border-2 transition-all",
+                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-[10px] border-2 transition-all",
                     checked
                       ? "border-emerald-500 bg-emerald-500"
                       : "border-neutral-300 "
@@ -92,7 +92,7 @@ export function DopaminePanel() {
                   </div>
                 ) : (
                   <div className={cn(
-                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-lg transition-all",
+                    "mt-0.5 flex h-6 w-6 items-center justify-center rounded-[10px] transition-all",
                     checked
                       ? "bg-emerald-500"
                       : "bg-neutral-200 "
@@ -109,7 +109,7 @@ export function DopaminePanel() {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="mt-3 flex items-center justify-center gap-2 rounded-xl bg-emerald-50 py-2 "
+            className="mt-3 flex items-center justify-center gap-2 rounded-[10px] bg-emerald-50 py-2 "
           >
             <span className="text-sm">🔥</span>
             <span className="text-xs font-semibold text-emerald-700 ">Perfect week!</span>
@@ -122,7 +122,7 @@ export function DopaminePanel() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.05 }}
-        className="card-modern glass rounded-2xl p-4 sm:p-5"
+        className="card-modern glass rounded-[10px] p-4 sm:p-5"
       >
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold text-neutral-900 ">Last 30 Days</h3>
@@ -135,7 +135,7 @@ export function DopaminePanel() {
               key={day.date}
               onClick={() => toggleCheckIn(day.date)}
               className={cn(
-                "group flex flex-col items-center gap-0.5 rounded-lg py-1.5 transition-all",
+                "group flex flex-col items-center gap-0.5 rounded-[10px] py-1.5 transition-all",
                 day.isToday && "ring-1 ring-neutral-300 ",
                 day.checked
                   ? "bg-emerald-100 "

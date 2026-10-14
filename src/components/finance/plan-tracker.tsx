@@ -21,7 +21,7 @@ export function PlanTracker({
 
   if (!st.hasPlan) {
     return (
-      <div className="mt-3 flex items-center justify-between rounded-xl border border-dashed border-neutral-200 px-3 py-2 ">
+      <div className="mt-3 flex items-center justify-between rounded-[10px] border border-dashed border-neutral-200 px-3 py-2 ">
         <span className="flex items-center gap-1.5 text-[10px] text-neutral-400 ">
           <CalendarClock className="h-3 w-3" /> No installment plan
         </span>
@@ -43,7 +43,7 @@ export function PlanTracker({
   const dueNow = !!st.nextPayable
 
   return (
-    <div className="mt-3 rounded-xl border border-neutral-100 bg-neutral-50/70 p-3 ">
+    <div className="mt-3 rounded-[10px] border border-neutral-100 bg-neutral-50/70 p-3 ">
       <div className="flex items-center justify-between">
         <span className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-neutral-400 ">
           <CalendarClock className="h-3 w-3" /> {label}
@@ -75,7 +75,7 @@ export function PlanTracker({
         <span>{st.elapsed}%</span>
       </div>
 
-      <div className="mt-2 flex items-center justify-between rounded-lg bg-white px-2.5 py-1.5 ">
+      <div className="mt-2 flex items-center justify-between rounded-[10px] bg-white px-2.5 py-1.5 ">
         <div>
           <p className="text-[10px] text-neutral-400">Next payable</p>
           <p className="text-xs font-semibold text-neutral-900 ">
@@ -88,7 +88,7 @@ export function PlanTracker({
             onClick={onToggleLatest}
             disabled={!st.nextPayable && !st.latestDue}
             className={cn(
-              "flex items-center gap-1 rounded-lg px-2 py-1 text-[10px] font-semibold transition-colors",
+              "flex items-center gap-1 rounded-[10px] px-2 py-1 text-[10px] font-semibold transition-colors",
               dueNow ? "bg-green-100 text-green-700 hover:bg-green-200 " : "bg-neutral-100 text-neutral-500 "
             )}
           >
@@ -99,7 +99,7 @@ export function PlanTracker({
             <button
               onClick={onEdit}
               aria-label="Edit plan"
-              className="rounded-lg bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 "
+              className="rounded-[10px] bg-neutral-100 p-1.5 text-neutral-500 transition-colors hover:bg-neutral-200 "
             >
               <Pencil className="h-3 w-3" />
             </button>

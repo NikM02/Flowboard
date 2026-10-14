@@ -41,7 +41,7 @@ interface ChartTooltipProps {
 export function ChartTooltip({ active, payload, label, formatter, labelFormatter }: ChartTooltipProps) {
   if (!active || !payload?.length) return null
   return (
-    <div className="animate-fade-in rounded-lg border border-neutral-200 bg-white px-3 py-2.5 shadow-xl ">
+    <div className="animate-fade-in rounded-[10px] border border-neutral-200 bg-white px-3 py-2.5 shadow-xl ">
       {label && (
         <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-neutral-500 ">
           {labelFormatter ? labelFormatter(String(label)) : String(label)}
@@ -178,7 +178,7 @@ export function RadialGauge({
 export function GradientIconTile({ color, children }: { color: string; children: React.ReactNode }) {
   return (
     <div
-      className="flex h-10 w-10 items-center justify-center rounded-lg bg-neutral-100 "
+      className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 "
     >
       <div className="text-neutral-600 ">{children}</div>
     </div>

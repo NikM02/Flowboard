@@ -213,7 +213,7 @@ export function CreateTaskModal() {
                   <button
                     type="button"
                     onClick={() => removeSubtaskField(sub.id)}
-                    className="shrink-0 rounded-lg p-1 text-neutral-400 hover:text-red-500"
+                    className="shrink-0 rounded-[10px] p-1 text-neutral-400 hover:text-red-500"
                   >
                     <X className="h-4 w-4" />
                   </button>

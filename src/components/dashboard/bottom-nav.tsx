@@ -51,7 +51,7 @@ export function BottomNav() {
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 20, scale: 0.95 }}
               transition={{ type: "spring", damping: 25, stiffness: 350 }}
-              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200 bg-white/95 backdrop-blur-xl p-3 shadow-2xl md:hidden"
+              className="fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-[10px] border border-neutral-200 bg-white/95 backdrop-blur-xl p-3 shadow-2xl md:hidden"
             >
               <div className="grid grid-cols-3 gap-2">
                 {moreItems.map((item) => {
@@ -62,7 +62,7 @@ export function BottomNav() {
                       key={item.href}
                       onClick={() => navigate(item.href)}
                       className={cn(
-                        "flex flex-col items-center gap-1.5 rounded-lg px-2 py-3 transition-all",
+                        "flex flex-col items-center gap-1.5 rounded-[10px] px-2 py-3 transition-all",
                         isActive
                           ? "bg-blue-600 text-white shadow-none "
                           : "bg-neutral-50 text-neutral-600 hover:bg-neutral-100 "
@@ -89,7 +89,7 @@ export function BottomNav() {
                 key={item.href}
                 onClick={() => router.push(item.href)}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
+                  "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
                   isActive
                     ? "text-neutral-900 "
                     : "text-neutral-400 hover:text-neutral-600 "
@@ -109,7 +109,7 @@ export function BottomNav() {
           <button
             onClick={() => setOpen(!open)}
             className={cn(
-              "flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
+              "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
               open
                 ? "text-neutral-900 "
                 : "text-neutral-400 hover:text-neutral-600 "

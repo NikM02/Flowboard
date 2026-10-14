@@ -30,7 +30,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
   const { toggleSubtask, removeSubtask } = useTaskStore()
 
   return (
-    <div className="group/sub flex items-center gap-2 rounded-lg px-2 py-1 transition-colors hover:bg-neutral-100/70">
+    <div className="group/sub flex items-center gap-2 rounded-[10px] px-2 py-1 transition-colors hover:bg-neutral-100/70">
       <button
         onClick={() => toggleSubtask(taskId, subtask.id)}
         className="flex min-w-0 flex-1 items-center gap-2 text-left"
@@ -51,7 +51,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: Subtask }) {
       </button>
       <button
         onClick={() => removeSubtask(taskId, subtask.id)}
-        className="shrink-0 rounded p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 "
+        className="shrink-0 rounded-[10px] p-0.5 text-neutral-300 opacity-0 transition-opacity hover:text-red-500 group-hover/sub:opacity-100 max-sm:opacity-100 "
         aria-label="Remove subtask"
       >
         <X className="h-3 w-3" />
@@ -86,7 +86,7 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
       className={cn(
-        "group rounded-xl border p-3.5 transition-all",
+        "group rounded-[10px] border p-3.5 transition-all",
         task.completed
           ? "border-green-200/40 bg-green-50/30 "
           : "border-neutral-200/60 bg-white hover:border-neutral-300/70 hover:shadow-sm "
@@ -164,12 +164,12 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
               value={newSub}
               onChange={(e) => setNewSub(e.target.value)}
               placeholder="+ Add subtask…"
-              className="h-7 min-w-0 flex-1 rounded-md text-xs"
+              className="h-7 min-w-0 flex-1 rounded-[10px] text-xs"
             />
             <button
               type="submit"
               disabled={!newSub.trim()}
-              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
+              className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[10px] bg-neutral-900 text-white transition-opacity hover:opacity-80 disabled:opacity-30 "
               aria-label="Add subtask"
             >
               <Plus className="h-3.5 w-3.5" />
@@ -181,13 +181,13 @@ function TaskNode({ task, index }: { task: Task; index: number }) {
         <div className="flex shrink-0 justify-end gap-0.5">
           <button
             onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100"
+            className="rounded-[10px] p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 max-sm:opacity-100"
           >
             <Edit3 className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-            className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100"
+            className="rounded-[10px] p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 max-sm:opacity-100"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
@@ -227,7 +227,7 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
-      className="card-modern overflow-hidden rounded-[18px] border border-neutral-200 bg-white "
+      className="card-modern overflow-hidden rounded-[10px] border border-neutral-200 bg-white "
     >
       <div className="flex items-center gap-2.5 px-4 py-3">
         <button
@@ -243,7 +243,7 @@ function ProjectGroup({ name, groupTasks, dot, index }: {
           className="flex min-w-0 flex-1 items-center gap-2.5 text-left"
         >
           <span
-            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-base"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-[10px] text-base"
             style={{ backgroundColor: `${dot}1a` }}
             title={name}
           >

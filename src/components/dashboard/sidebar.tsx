@@ -39,7 +39,7 @@ export function Sidebar({
 
   const navLinkClass = (href: string) =>
     cn(
-      "group relative flex w-full items-center rounded-lg text-sm font-medium transition-colors duration-150",
+      "group relative flex w-full items-center rounded-[10px] text-sm font-medium transition-colors duration-150",
       isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5",
       (pathname === href || (href !== "/" && pathname.startsWith(href + "/")))
         ? "bg-blue-50/80 font-medium text-blue-700 shadow-sm"
@@ -57,7 +57,7 @@ export function Sidebar({
           isCollapsed ? "justify-center px-0" : "gap-3 px-1"
         )}
       >
-        <Image src="/King.png" alt="King logo" width={28} height={28} className="rounded-lg" />
+        <Image src="/King.png" alt="King logo" width={28} height={28} className="rounded-[10px]" />
         <span
           className={cn(
             "text-base font-extrabold tracking-tight text-neutral-900 whitespace-nowrap transition-all",
@@ -106,12 +106,12 @@ export function Sidebar({
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "calc(-100% - 0.75rem)", opacity: 0 }}
               transition={{ type: "spring", damping: 30, stiffness: 300 }}
-              className="fixed bottom-3 left-3 top-3 z-50 flex w-72 flex-col overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-xl shadow-neutral-900/5"
+              className="fixed bottom-3 left-3 top-3 z-50 flex w-72 flex-col overflow-hidden rounded-[10px] border border-neutral-200 bg-white shadow-xl shadow-neutral-900/5"
             >
               <div className="flex h-full flex-col gap-1 overflow-y-auto p-4">
                 <button
                   onClick={onClose}
-                  className="absolute right-4 top-4 rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-neutral-50 hover:text-neutral-600"
+                  className="absolute right-4 top-4 rounded-[10px] p-1.5 text-neutral-400 transition-colors hover:bg-neutral-50 hover:text-neutral-600"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -129,7 +129,7 @@ export function Sidebar({
       initial={false}
       animate={{ width: isCollapsed ? 76 : 256 }}
       transition={{ type: "spring", damping: 25, stiffness: 200 }}
-      className="my-3 ml-3 hidden md:flex shrink-0 flex-col overflow-hidden rounded-[20px] border border-neutral-200 bg-white shadow-sm shadow-neutral-900/5"
+      className="my-3 ml-3 hidden md:flex shrink-0 flex-col overflow-hidden rounded-[10px] border border-neutral-200 bg-white shadow-sm shadow-neutral-900/5"
     >
       <div className={cn("flex h-full flex-col gap-1 overflow-y-auto", isCollapsed ? "p-3" : "p-4")}>
         {content}
@@ -139,7 +139,7 @@ export function Sidebar({
             onClick={onToggleCollapse}
             title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
             className={cn(
-              "flex w-full items-center rounded-lg text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900",
+              "flex w-full items-center rounded-[10px] text-sm font-medium text-neutral-500 transition-colors hover:bg-neutral-50 hover:text-neutral-900",
               isCollapsed ? "justify-center px-0 py-3" : "gap-3 px-3 py-2.5"
             )}
           >

@@ -28,20 +28,20 @@ export function HabitArchiveView() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }}
-      className="card-modern glass rounded-2xl p-5"
+      className="card-modern glass rounded-[10px] p-5"
     >
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <BarChart3 className="h-4 w-4 text-neutral-500" />
           <h3 className="text-sm font-semibold text-neutral-900 ">Archive</h3>
         </div>
-        <div className="flex gap-1.5 overflow-x-auto rounded-xl bg-neutral-100/80 p-1 ">
+        <div className="flex gap-1.5 overflow-x-auto rounded-[10px] bg-neutral-100/80 p-1 ">
           {subTabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setSubTab(t.key)}
               className={cn(
-                "flex min-h-10 items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-medium whitespace-nowrap transition-all shrink-0",
+                "flex min-h-10 items-center gap-1.5 rounded-[10px] px-3 py-2 text-xs font-medium whitespace-nowrap transition-all shrink-0",
                 subTab === t.key
                   ? "bg-white text-neutral-900 shadow-sm "
                   : "text-neutral-500 hover:text-neutral-700 "
@@ -99,7 +99,7 @@ function HabitsArchive() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <Select value={filterHabitId} onValueChange={setFilterHabitId}>
-          <SelectTrigger aria-label="Filter by habit" className="h-9 w-full rounded-xl text-xs sm:w-44">
+          <SelectTrigger aria-label="Filter by habit" className="h-9 w-full rounded-[10px] text-xs sm:w-44">
             <Filter className="h-3 w-3 mr-1" /><SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -108,10 +108,10 @@ function HabitsArchive() {
           </SelectContent>
         </Select>
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
@@ -119,7 +119,7 @@ function HabitsArchive() {
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {stats.map((s) => (
-          <div key={s.id} className="rounded-xl bg-neutral-50 p-3 ">
+          <div key={s.id} className="rounded-[10px] bg-neutral-50 p-3 ">
             <p className="text-sm font-semibold text-neutral-900 truncate">{s.name}</p>
             <p className="text-lg font-bold text-neutral-900 mt-1">{s.completed}/{s.total}</p>
             <Progress value={s.rate} className="h-1.5 mt-1.5" />
@@ -181,16 +181,16 @@ function DopamineArchive() {
       <div className="flex items-center justify-between mb-4">
         <div />
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
       </div>
 
-      <div className="rounded-xl bg-neutral-50 p-3 mb-4">
+      <div className="rounded-[10px] bg-neutral-50 p-3 mb-4">
         <p className="text-lg font-bold text-neutral-900 ">{entries.length}</p>
         <p className="text-[10px] text-neutral-400">Total check-ins</p>
       </div>
@@ -246,25 +246,25 @@ function SleepArchive() {
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
       </div>
 
       <div className="mb-5 grid grid-cols-3 gap-3">
-        <div className="min-w-0 rounded-xl bg-neutral-50 p-3 ">
+        <div className="min-w-0 rounded-[10px] bg-neutral-50 p-3 ">
           <p className="truncate text-lg font-bold text-neutral-900 ">{stats.avgHours || 0}h</p>
           <p className="truncate text-[10px] text-neutral-400">Avg hrs (30d)</p>
         </div>
-        <div className="min-w-0 rounded-xl bg-neutral-50 p-3 ">
+        <div className="min-w-0 rounded-[10px] bg-neutral-50 p-3 ">
           <p className="truncate text-lg font-bold text-neutral-900 ">{stats.avgQuality || 0}/5</p>
           <p className="truncate text-[10px] text-neutral-400">Avg quality</p>
         </div>
-        <div className="min-w-0 rounded-xl bg-neutral-50 p-3 ">
+        <div className="min-w-0 rounded-[10px] bg-neutral-50 p-3 ">
           <p className="truncate text-lg font-bold text-neutral-900 ">{entries.length}</p>
           <p className="truncate text-[10px] text-neutral-400">Nights</p>
         </div>
@@ -323,7 +323,7 @@ function ChallengeArchive() {
         <div className="flex items-center justify-between mb-4">
           <div />
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport} disabled>
+            <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs" onClick={handleExport} disabled>
               <FileDown className="h-3.5 w-3.5" />Export
             </Button>
           </div>
@@ -338,10 +338,10 @@ function ChallengeArchive() {
       <div className="flex items-center justify-between mb-4">
         <div />
         <div className="flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs" onClick={handleExport}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs" onClick={handleExport}>
             <FileDown className="h-3.5 w-3.5" />Export
           </Button>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-xl px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5 rounded-[10px] px-3 text-xs text-red-500 border-red-200 hover:bg-red-50 " onClick={handleClean}>
             <Trash2 className="h-3.5 w-3.5" />Clean
           </Button>
         </div>
@@ -352,7 +352,7 @@ function ChallengeArchive() {
           const done = c.days.filter((d) => d.completed).length
           const pct = getProgress(c.id)
           return (
-            <div key={c.id} className="rounded-xl border border-neutral-200/60 bg-white p-3.5 ">
+            <div key={c.id} className="rounded-[10px] border border-neutral-200/60 bg-white p-3.5 ">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-sm font-semibold text-neutral-900 ">{c.title}</span>
                 <span className="rounded-full bg-violet-100 px-2 py-0.5 text-[10px] font-bold text-violet-600 ">{c.type}-day</span>
@@ -369,7 +369,7 @@ function ChallengeArchive() {
                     key={d.day}
                     title={`Day ${d.day} · ${d.date}${d.note ? ` · ${d.note}` : ""}`}
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-md text-[9px] font-bold",
+                      "flex h-5 w-5 items-center justify-center rounded-[10px] text-[9px] font-bold",
                       d.completed ? "bg-green-500 text-white" : "bg-neutral-100 text-neutral-400 "
                     )}
                   >

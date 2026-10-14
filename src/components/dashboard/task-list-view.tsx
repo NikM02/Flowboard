@@ -32,7 +32,7 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       exit={{ opacity: 0, x: -20 }}
       transition={{ delay: index * 0.02 }}
       className={cn(
-        "group flex items-center gap-3 rounded-xl border p-3.5 transition-all sm:grid sm:grid-cols-[1fr_100px_90px_110px_120px_80px] sm:items-center sm:gap-4",
+        "group flex items-center gap-3 rounded-[10px] border p-3.5 transition-all sm:grid sm:grid-cols-[1fr_100px_90px_110px_120px_80px] sm:items-center sm:gap-4",
         task.completed
           ? "border-green-200/40 bg-green-50/30 "
           : "border-neutral-200/60 bg-white hover:border-neutral-300/60 hover:shadow-sm "
@@ -113,13 +113,13 @@ function ListRow({ task, index }: { task: Task; index: number }) {
       <div className="flex justify-end gap-0.5 sm:justify-end">
         <button
           onClick={() => { setSelectedTask(task); setIsEditSheetOpen(true) }}
-          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 sm:opacity-0"
+          className="rounded-[10px] p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-neutral-100 hover:text-neutral-600 group-hover:opacity-100 sm:opacity-0"
         >
           <Edit3 className="h-3.5 w-3.5" />
         </button>
         <button
           onClick={() => { setSelectedTask(task); setIsDeleteDialogOpen(true) }}
-          className="rounded-lg p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 sm:opacity-0"
+          className="rounded-[10px] p-1.5 text-neutral-400 opacity-0 transition-opacity hover:bg-red-50 hover:text-red-500 group-hover:opacity-100 sm:opacity-0"
         >
           <Trash2 className="h-3.5 w-3.5" />
         </button>

@@ -33,9 +33,9 @@ export function Toaster() {
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 100, scale: 0.9 }}
               transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className={`flex w-full items-start gap-3 rounded-[18px] border p-4 shadow-lg shadow-neutral-900/5 backdrop-blur-xl sm:w-80 ${colors[toast.type]}`}
+              className={`flex w-full items-start gap-3 rounded-[10px] border p-4 shadow-lg shadow-neutral-900/5 backdrop-blur-xl sm:w-80 ${colors[toast.type]}`}
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[8px] bg-white/60 ">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-[10px] bg-white/60 ">
                 <Icon className="h-3.5 w-3.5" />
               </span>
               <div className="flex-1 min-w-0">
@@ -44,7 +44,7 @@ export function Toaster() {
                   <p className="mt-0.5 text-xs opacity-80 truncate">{toast.description}</p>
                 )}
               </div>
-              <button onClick={() => dismiss(toast.id)} className="shrink-0 rounded-lg p-0.5 opacity-60 hover:opacity-100">
+              <button onClick={() => dismiss(toast.id)} className="shrink-0 rounded-[10px] p-0.5 opacity-60 hover:opacity-100">
                 <X className="h-3.5 w-3.5" />
               </button>
             </motion.div>

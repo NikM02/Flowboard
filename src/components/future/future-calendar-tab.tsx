@@ -61,13 +61,13 @@ export function CalendarTab() {
           Today
         </button>
         <div className="flex items-center gap-1">
-          <button onClick={navigatePrev} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
+          <button onClick={navigatePrev} className="rounded-[10px] p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
             <ChevronLeft className="h-4 w-4" />
           </button>
           <h2 className="min-w-[150px] text-center text-sm sm:text-base font-semibold text-neutral-900 select-none">
             {format(baseDate, "MMMM yyyy")}
           </h2>
-          <button onClick={navigateNext} className="rounded-lg p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
+          <button onClick={navigateNext} className="rounded-[10px] p-1.5 text-neutral-400 hover:text-neutral-600 hover:bg-neutral-100">
             <ChevronRight className="h-4 w-4" />
           </button>
         </div>
@@ -81,7 +81,7 @@ export function CalendarTab() {
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.15 }}
-          className="rounded-xl border border-neutral-200 bg-white overflow-hidden"
+          className="rounded-[10px] border border-neutral-200 bg-white overflow-hidden"
         >
           {/* Day headers */}
           <div className="grid grid-cols-7 border-b border-neutral-200 ">
@@ -153,7 +153,7 @@ export function CalendarTab() {
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-xl border border-neutral-200 bg-white p-3 sm:p-4 space-y-2"
+          className="rounded-[10px] border border-neutral-200 bg-white p-3 sm:p-4 space-y-2"
         >
           <h3 className="text-sm font-semibold text-neutral-900 ">
             Tasks due {format(new Date(selectedDate + "T00:00:00"), "MMM d, yyyy")}
@@ -162,14 +162,14 @@ export function CalendarTab() {
             {selectedTasks.map((task) => (
               <div
                 key={task.id}
-                className="flex items-center gap-2 rounded-lg border border-neutral-100 bg-neutral-50 px-2.5 py-2"
+                className="flex items-center gap-2 rounded-[10px] border border-neutral-100 bg-neutral-50 px-2.5 py-2"
               >
                 <span className={cn("h-2 w-2 rounded-full shrink-0", priorityColors[task.priority])} />
                 <span className="flex-1 text-xs sm:text-sm text-neutral-700 truncate">
                   {task.title}
                 </span>
                 <span className={cn(
-                  "text-[10px] font-medium px-1.5 py-0.5 rounded",
+                  "text-[10px] font-medium px-1.5 py-0.5 rounded-[10px]",
                   task.priority === "high" ? "text-red-600 bg-red-50 " :
                   task.priority === "medium" ? "text-amber-600 bg-amber-50 " :
                   "text-blue-600 bg-blue-50 "

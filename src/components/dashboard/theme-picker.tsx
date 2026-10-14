@@ -31,7 +31,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
         <button
           onClick={() => setOpen(!open)}
           className={cn(
-            "flex flex-col items-center gap-0.5 rounded-xl px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
+            "flex flex-col items-center gap-0.5 rounded-[10px] px-3 py-1.5 text-[10px] font-medium transition-all duration-200",
             open
               ? "text-neutral-900 "
               : "text-neutral-400 hover:text-neutral-600 "
@@ -59,7 +59,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 20, scale: 0.9 }}
                 transition={{ type: "spring", damping: 25, stiffness: 350 }}
-                className=" fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-2xl border border-neutral-200/60 bg-white p-4 shadow-2xl md:hidden"
+                className=" fixed bottom-[calc(env(safe-area-inset-bottom)+5rem)] left-4 right-4 z-50 rounded-[10px] border border-neutral-200/60 bg-white p-4 shadow-2xl md:hidden"
               >
                 <div className="mb-3 flex items-center justify-between">
                   <span className="text-sm font-semibold text-neutral-900 ">Theme</span>
@@ -79,7 +79,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                       >
                         <div
                           className={cn(
-                            "relative h-10 w-10 rounded-xl shadow-md transition-all",
+                            "relative h-10 w-10 rounded-[10px] shadow-md transition-all",
                             isActive && "ring-2 ring-neutral-900 ring-offset-2 ring-offset-white "
                           )}
                           style={{ background: t.gradient }}
@@ -108,7 +108,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
     <div ref={ref} className="relative">
       <button
         onClick={() => setOpen(!open)}
-        className="flex h-10 w-10 items-center justify-center rounded-lg bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl "
+        className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-white shadow-lg border border-neutral-200 text-neutral-600 transition-all hover:shadow-xl "
         title="Change theme"
       >
         <div
@@ -124,7 +124,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 8 }}
             transition={{ type: "spring", damping: 25, stiffness: 350 }}
-            className=" absolute bottom-14 right-0 z-50 w-44 rounded-2xl border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 "
+            className=" absolute bottom-14 right-0 z-50 w-44 rounded-[10px] border border-neutral-200 bg-white p-2.5 shadow-xl shadow-neutral-900/10 "
           >
             <p className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider text-neutral-400">Theme</p>
             <div className="mt-1 space-y-0.5">
@@ -136,7 +136,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                     key={t.key}
                     onClick={() => { setColorTheme(t.key); setOpen(false) }}
                     className={cn(
-                      "flex w-full items-center gap-2.5 rounded-xl px-2.5 py-2 text-left transition-all",
+                      "flex w-full items-center gap-2.5 rounded-[10px] px-2.5 py-2 text-left transition-all",
                       isActive
                         ? "bg-neutral-100 "
                         : "hover:bg-neutral-50"
@@ -144,7 +144,7 @@ export function ThemePicker({ variant = "desktop" }: { variant?: "desktop" | "mo
                   >
                     <div
                       className={cn(
-                        "h-7 w-7 shrink-0 rounded-lg shadow-md transition-all",
+                        "h-7 w-7 shrink-0 rounded-[10px] shadow-md transition-all",
                         isActive && "ring-2 ring-neutral-900 ring-offset-1 ring-offset-white "
                       )}
                       style={{ background: t.gradient }}

@@ -81,7 +81,7 @@ export function Confetti({ trigger }: { trigger: number }) {
             times: [0, 0.2, 0.6, 1],
           }}
           className={`fixed top-0 left-0 z-[110] ${
-            p.shape === "circle" ? "rounded-full" : "rounded-sm"
+            p.shape === "circle" ? "rounded-full" : "rounded-[10px]"
           }`}
           style={{
             width: p.w,

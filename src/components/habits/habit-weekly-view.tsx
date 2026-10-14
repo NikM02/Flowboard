@@ -31,7 +31,7 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
         </button>
       </div>
 
-      <div className="glass overflow-x-auto rounded-2xl p-4">
+      <div className="glass overflow-x-auto rounded-[10px] p-4">
         <div className="grid grid-cols-[1fr_repeat(7,minmax(0,1fr))] gap-1 min-w-[320px]">
           <div className="text-[10px] font-semibold text-neutral-300 " />
 
@@ -40,7 +40,7 @@ export function HabitWeeklyView({ onEdit }: { onEdit?: (habit: Habit) => void })
               <span className="text-[10px] font-semibold text-neutral-400 uppercase">
                 {format(d, "EEE")}
               </span>
-              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold text-neutral-700 ">
+              <span className="mt-1 flex h-7 w-7 items-center justify-center rounded-[10px] text-xs font-bold text-neutral-700 ">
                 {format(d, "d")}
               </span>
             </div>
@@ -114,7 +114,7 @@ function HabitWeekRow({
               onClick={() => !isFuture && toggleDay(habit.id, dateStr)}
               disabled={isFuture}
               className={cn(
-                "flex items-center justify-center rounded-lg border-2 transition-all",
+                "flex items-center justify-center rounded-[10px] border-2 transition-all",
                 "h-9 w-9",
                 isDone
                   ? "bg-neutral-900 border-neutral-900 text-white "

@@ -101,12 +101,12 @@ export function RoadmapPhaseView({
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 ">
+      <div className="rounded-[10px] border border-neutral-200 bg-white p-4 sm:p-6 ">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-neutral-400">
               Milestone {String(index + 1).padStart(2, "0")} of {roadmap.phases.length}
-              {overdue && <span className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-red-600 ">Overdue</span>}
+              {overdue && <span className="rounded-[10px] bg-red-100 px-1.5 py-0.5 text-[9px] font-bold normal-case tracking-normal text-red-600 ">Overdue</span>}
             </p>
             <h1 className="mt-1 text-xl font-bold leading-tight text-neutral-900 sm:text-2xl ">{phase.title}</h1>
             {phase.description && <p className="mt-2 text-sm text-neutral-500 ">{phase.description}</p>}
@@ -114,12 +114,12 @@ export function RoadmapPhaseView({
         </div>
 
         <div className="mt-5 flex flex-wrap gap-2">
-          <span className={cn("inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-semibold", meta.badge)}>
+          <span className={cn("inline-flex items-center gap-1.5 rounded-[10px] px-2.5 py-1.5 text-xs font-semibold", meta.badge)}>
             <StatusIcon className="h-3.5 w-3.5" /> {meta.label}
           </span>
-          {phase.priority && <span className={cn("rounded-lg px-2.5 py-1.5 text-xs font-semibold", PRIORITY_META[phase.priority].badge)}>{PRIORITY_META[phase.priority].label} priority</span>}
+          {phase.priority && <span className={cn("rounded-[10px] px-2.5 py-1.5 text-xs font-semibold", PRIORITY_META[phase.priority].badge)}>{PRIORITY_META[phase.priority].label} priority</span>}
           {(phase.startDate || phase.dueDate) && (
-            <span className="flex items-center gap-1.5 rounded-lg bg-neutral-100 px-2.5 py-1.5 text-xs font-medium text-neutral-500 ">
+            <span className="flex items-center gap-1.5 rounded-[10px] bg-neutral-100 px-2.5 py-1.5 text-xs font-medium text-neutral-500 ">
               <CalendarDays className="h-3.5 w-3.5" />
               {phase.startDate ? formatShortDate(phase.startDate) : "…"} – {phase.dueDate ? formatShortDate(phase.dueDate) : "…"}
             </span>
@@ -142,7 +142,7 @@ export function RoadmapPhaseView({
         </div>
       </div>
 
-      <div className="mt-6 rounded-3xl border border-neutral-200 bg-white p-4 sm:p-5 ">
+      <div className="mt-6 rounded-[10px] border border-neutral-200 bg-white p-4 sm:p-5 ">
         <div className="flex items-center justify-between gap-2">
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
             <Target className="h-4 w-4" /> Tasks
@@ -159,11 +159,11 @@ export function RoadmapPhaseView({
             phase.tasks.map((t) => {
               const overdueTask = t.dueDate && !t.completed && new Date(t.dueDate).getTime() < Date.now()
               return (
-                <div key={t.id} className="group flex items-center gap-2.5 rounded-lg px-2 py-2 hover:bg-neutral-50">
+                <div key={t.id} className="group flex items-center gap-2.5 rounded-[10px] px-2 py-2 hover:bg-neutral-50">
                   <button
                     onClick={() => toggleTask(roadmap.id, phase.id, t.id)}
                     className={cn(
-                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition-all",
+                      "flex h-5 w-5 shrink-0 items-center justify-center rounded-[10px] border transition-all",
                       t.completed ? "border-neutral-900 bg-neutral-900 " : "border-neutral-300 hover:border-neutral-500 "
                     )}
                   >
@@ -174,7 +174,7 @@ export function RoadmapPhaseView({
                     {(t.priority && t.priority !== "medium") || t.dueDate ? (
                       <p className="mt-0.5 flex items-center gap-1.5 text-[10px] text-neutral-400">
                         {t.priority && t.priority !== "medium" && (
-                          <span className={cn("rounded px-1 py-px font-semibold", PRIORITY_META[t.priority].badge)}>{PRIORITY_META[t.priority].label}</span>
+                          <span className={cn("rounded-[10px] px-1 py-px font-semibold", PRIORITY_META[t.priority].badge)}>{PRIORITY_META[t.priority].label}</span>
                         )}
                         {t.dueDate && (
                           <span className={cn("flex items-center gap-0.5", overdueTask && "font-semibold text-red-500")}>
@@ -184,7 +184,7 @@ export function RoadmapPhaseView({
                       </p>
                     ) : null}
                   </div>
-                  <button onClick={() => deleteTask(roadmap.id, phase.id, t.id)} className="rounded p-1 text-neutral-300 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500 max-sm:opacity-100 ">
+                  <button onClick={() => deleteTask(roadmap.id, phase.id, t.id)} className="rounded-[10px] p-1 text-neutral-300 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500 max-sm:opacity-100 ">
                     <X className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -201,7 +201,7 @@ export function RoadmapPhaseView({
         </form>
       </div>
 
-      <div className="mt-4 rounded-3xl border border-neutral-200 bg-white p-4 sm:p-5 ">
+      <div className="mt-4 rounded-[10px] border border-neutral-200 bg-white p-4 sm:p-5 ">
         <button onClick={() => setNotesOpen((v) => !v)} className="flex w-full items-center justify-between">
           <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wide text-neutral-400">
             <StickyNote className="h-4 w-4" /> Log & notes ({phase.notes.length})
@@ -218,10 +218,10 @@ export function RoadmapPhaseView({
             >
               <div className="mt-3 space-y-2">
                 {phase.notes.map((n) => (
-                  <div key={n.id} className="flex items-start gap-2 rounded-lg bg-neutral-50 px-3 py-2.5 ">
+                  <div key={n.id} className="flex items-start gap-2 rounded-[10px] bg-neutral-50 px-3 py-2.5 ">
                     <p className="flex-1 whitespace-pre-wrap text-xs text-neutral-600 ">{n.text}</p>
                     <div className="flex shrink-0 flex-col items-end gap-1">
-                      <button onClick={() => deleteNote(roadmap.id, phase.id, n.id)} className="rounded p-0.5 text-neutral-300 hover:text-red-500 ">
+                      <button onClick={() => deleteNote(roadmap.id, phase.id, n.id)} className="rounded-[10px] p-0.5 text-neutral-300 hover:text-red-500 ">
                         <X className="h-3 w-3" />
                       </button>
                       <span className="text-[9px] text-neutral-400">{format(n.createdAt, "MMM d")}</span>
@@ -246,7 +246,7 @@ export function RoadmapPhaseView({
           {prev ? (
             <button
               onClick={() => onOpenPhase(prev.id)}
-              className="rounded-2xl border border-neutral-200 bg-white p-4 text-left hover:bg-neutral-50 "
+              className="rounded-[10px] border border-neutral-200 bg-white p-4 text-left hover:bg-neutral-50 "
             >
               <p className="flex items-center gap-1 text-[10px] font-semibold uppercase text-neutral-400"><ArrowLeft className="h-3 w-3" /> Previous</p>
               <p className="mt-1 truncate text-sm font-semibold text-neutral-700 ">{prev.title}</p>
@@ -255,7 +255,7 @@ export function RoadmapPhaseView({
           {next && (
             <button
               onClick={() => onOpenPhase(next.id)}
-              className="rounded-2xl border border-neutral-200 bg-white p-4 text-right hover:bg-neutral-50 "
+              className="rounded-[10px] border border-neutral-200 bg-white p-4 text-right hover:bg-neutral-50 "
             >
               <p className="flex items-center justify-end gap-1 text-[10px] font-semibold uppercase text-neutral-400">Next <ArrowLeft className="h-3 w-3 rotate-180" /></p>
               <p className="mt-1 truncate text-sm font-semibold text-neutral-700 ">{next.title}</p>

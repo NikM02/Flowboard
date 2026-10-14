@@ -257,7 +257,7 @@ export function CreateRoadmapDialog({ open, onOpenChange }: { open: boolean; onO
                 <div className="flex flex-wrap gap-2">
                   {EMOJIS.map((e) => (
                     <button key={e} onClick={() => setDraft((d) => ({ ...d, emoji: e }))}
-                      className={cn("flex h-9 w-9 items-center justify-center rounded-xl border text-lg transition-all",
+                      className={cn("flex h-9 w-9 items-center justify-center rounded-[10px] border text-lg transition-all",
                         draft.emoji === e ? "border-neutral-900 bg-neutral-900/5 " : "border-neutral-200 hover:bg-neutral-50 ")}>
                       {e}
                     </button>
@@ -272,17 +272,17 @@ export function CreateRoadmapDialog({ open, onOpenChange }: { open: boolean; onO
 
           {step === 2 && (
             <motion.div key="s2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-              <div className="rounded-xl bg-neutral-50 p-3 text-xs text-neutral-500 ">
+              <div className="rounded-[10px] bg-neutral-50 p-3 text-xs text-neutral-500 ">
                 We pre-filled milestones for <span className="font-semibold">{CATEGORY_META[draft.category].label}</span>. Edit, add, or remove them — dates auto-spread until your deadline.
               </div>
 
               <div className="max-h-56 space-y-2 overflow-y-auto pr-1">
                 {milestones.map((m, i) => (
-                  <div key={m.id} className="flex items-center gap-2 rounded-xl border border-neutral-200 p-2 ">
+                  <div key={m.id} className="flex items-center gap-2 rounded-[10px] border border-neutral-200 p-2 ">
                     <span className="w-5 shrink-0 text-center text-[10px] font-bold text-neutral-400">{i + 1}</span>
                     <Input value={m.title} onChange={(e) => setMilestones((ms) => ms.map((x) => x.id === m.id ? { ...x, title: e.target.value } : x))} placeholder="e.g. 5 videos" className="h-8 flex-1 text-sm" />
                     <Input type="date" value={m.dueDate} onChange={(e) => setMilestones((ms) => ms.map((x) => x.id === m.id ? { ...x, dueDate: e.target.value } : x))} className="h-8 w-[130px] text-xs max-sm:w-[110px]" />
-                    <button onClick={() => setMilestones((ms) => ms.filter((x) => x.id !== m.id))} className="rounded-lg p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500">
+                    <button onClick={() => setMilestones((ms) => ms.filter((x) => x.id !== m.id))} className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500">
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </div>
@@ -293,7 +293,7 @@ export function CreateRoadmapDialog({ open, onOpenChange }: { open: boolean; onO
                 <Plus className="h-4 w-4" /> Add milestone
               </Button>
 
-              <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-neutral-200 p-3 ">
+              <label className="flex cursor-pointer items-center gap-2.5 rounded-[10px] border border-neutral-200 p-3 ">
                 <button
                   onClick={() => setAutoTasks((v) => !v)}
                   className={cn("flex h-5 w-9 items-center rounded-full p-0.5 transition-all", autoTasks ? "bg-neutral-900 " : "bg-neutral-300 ")}
@@ -319,8 +319,8 @@ export function CreateRoadmapDialog({ open, onOpenChange }: { open: boolean; onO
 
           {step === 3 && (
             <motion.div key="s3" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
-              <div className="flex items-center gap-3 rounded-2xl border border-neutral-200 p-4 ">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-neutral-100 text-2xl ">{draft.emoji}</div>
+              <div className="flex items-center gap-3 rounded-[10px] border border-neutral-200 p-4 ">
+                <div className="flex h-12 w-12 items-center justify-center rounded-[10px] bg-neutral-100 text-2xl ">{draft.emoji}</div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate font-semibold text-neutral-900 ">{draft.title}</p>
                   <p className="truncate text-xs text-neutral-400">
@@ -336,16 +336,16 @@ export function CreateRoadmapDialog({ open, onOpenChange }: { open: boolean; onO
                 {milestones.map((m, i) => {
                   const due = m.dueDate || spreadDates(milestones.length, draft.deadline || undefined)[i]
                   return (
-                    <div key={m.id} className="rounded-xl border border-neutral-200 p-3 ">
+                    <div key={m.id} className="rounded-[10px] border border-neutral-200 p-3 ">
                       <div className="flex items-center gap-2">
-                        <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-bold text-neutral-500 ">M{i + 1}</span>
+                        <span className="rounded-[10px] bg-neutral-100 px-1.5 py-0.5 text-[10px] font-bold text-neutral-500 ">M{i + 1}</span>
                         <p className="flex-1 truncate text-sm font-semibold text-neutral-800 ">{m.title}</p>
                         {due && <span className="text-[10px] text-neutral-400">{new Date(due).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</span>}
                       </div>
                       {autoTasks ? (
                         <div className="mt-2 flex flex-wrap gap-1">
                           {TEMPLATES[draft.category].steps.map((s) => (
-                            <span key={s} className="rounded-md bg-neutral-50 px-1.5 py-0.5 text-[10px] text-neutral-500 ">{s}</span>
+                            <span key={s} className="rounded-[10px] bg-neutral-50 px-1.5 py-0.5 text-[10px] text-neutral-500 ">{s}</span>
                           ))}
                         </div>
                       ) : (

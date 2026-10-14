@@ -28,7 +28,7 @@ function StatusBadge({ status }: { status: PhaseStatus }) {
   const m = STATUS_META[status]
   const Icon = m.icon
   return (
-    <span className={cn("inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[10px] font-semibold", m.badge)}>
+    <span className={cn("inline-flex items-center gap-1 rounded-[10px] px-1.5 py-0.5 text-[10px] font-semibold", m.badge)}>
       <Icon className="h-3 w-3" />
       {m.label}
     </span>
@@ -50,11 +50,11 @@ function PhaseTasks({ roadmapId, phase }: { roadmapId: string; phase: RoadmapPha
   return (
     <div className="space-y-1.5">
       {phase.tasks.map((t) => (
-        <div key={t.id} className="group flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-neutral-50">
+        <div key={t.id} className="group flex items-center gap-2.5 rounded-[10px] px-2 py-1.5 hover:bg-neutral-50">
           <button
             onClick={() => toggleTask(roadmapId, phase.id, t.id)}
             className={cn(
-              "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-md border transition-all",
+              "flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-[10px] border transition-all",
               t.completed ? "border-neutral-900 bg-neutral-900 " : "border-neutral-300 hover:border-neutral-500 "
             )}
           >
@@ -65,13 +65,13 @@ function PhaseTasks({ roadmapId, phase }: { roadmapId: string; phase: RoadmapPha
             {(t.priority && t.priority !== "medium") || t.dueDate ? (
               <p className="flex items-center gap-1.5 text-[10px] text-neutral-400">
                 {t.priority && t.priority !== "medium" && (
-                  <span className={cn("rounded px-1 py-px font-semibold", PRIORITY_META[t.priority].badge)}>{PRIORITY_META[t.priority].label}</span>
+                  <span className={cn("rounded-[10px] px-1 py-px font-semibold", PRIORITY_META[t.priority].badge)}>{PRIORITY_META[t.priority].label}</span>
                 )}
                 {t.dueDate && <span className="flex items-center gap-0.5"><CalendarDays className="h-3 w-3" />{formatShortDate(t.dueDate)}</span>}
               </p>
             ) : null}
           </div>
-          <button onClick={() => deleteTask(roadmapId, phase.id, t.id)} className="rounded p-1 text-neutral-300 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500 max-sm:opacity-100 ">
+          <button onClick={() => deleteTask(roadmapId, phase.id, t.id)} className="rounded-[10px] p-1 text-neutral-300 opacity-0 transition-all group-hover:opacity-100 hover:text-red-500 max-sm:opacity-100 ">
             <X className="h-3.5 w-3.5" />
           </button>
         </div>
@@ -120,10 +120,10 @@ function PhaseNotes({ roadmapId, phase }: { roadmapId: string; phase: RoadmapPha
           >
             <div className="mt-2 space-y-2">
               {phase.notes.map((n) => (
-                <div key={n.id} className="flex items-start gap-2 rounded-lg bg-neutral-50 px-3 py-2 ">
+                <div key={n.id} className="flex items-start gap-2 rounded-[10px] bg-neutral-50 px-3 py-2 ">
                   <p className="flex-1 whitespace-pre-wrap text-xs text-neutral-600 ">{n.text}</p>
                   <div className="flex shrink-0 flex-col items-end gap-1">
-                    <button onClick={() => deleteNote(roadmapId, phase.id, n.id)} className="rounded p-0.5 text-neutral-300 hover:text-red-500 ">
+                    <button onClick={() => deleteNote(roadmapId, phase.id, n.id)} className="rounded-[10px] p-0.5 text-neutral-300 hover:text-red-500 ">
                       <X className="h-3 w-3" />
                     </button>
                     <span className="text-[9px] text-neutral-400">{format(n.createdAt, "MMM d")}</span>
@@ -175,7 +175,7 @@ function PhaseRow({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.97 }}
-      className="rounded-2xl border border-neutral-200 bg-white "
+      className="rounded-[10px] border border-neutral-200 bg-white "
     >
       <div className="flex items-start gap-3 p-4 pb-2.5">
         <button
@@ -201,17 +201,17 @@ function PhaseRow({
             <span className="text-[10px] font-bold text-neutral-300 ">{String(index + 1).padStart(2, "0")}</span>
             <button onClick={onOpen} className="flex min-w-0 flex-1 items-center gap-1.5 text-left">
               <span className="truncate text-sm font-semibold text-neutral-900 ">{phase.title}</span>
-              {overdue && <span className="shrink-0 rounded bg-red-100 px-1 py-px text-[9px] font-bold text-red-600 ">OVERDUE</span>}
+              {overdue && <span className="shrink-0 rounded-[10px] bg-red-100 px-1 py-px text-[9px] font-bold text-red-600 ">OVERDUE</span>}
             </button>
             <ChevronRight className="h-3.5 w-3.5 shrink-0 text-neutral-300 " />
           </div>
           <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
             <StatusBadge status={phase.status} />
             {phase.priority && phase.priority !== "medium" && (
-              <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[phase.priority].badge)}>{PRIORITY_META[phase.priority].label}</span>
+              <span className={cn("rounded-[10px] px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[phase.priority].badge)}>{PRIORITY_META[phase.priority].label}</span>
             )}
             {(phase.startDate || phase.dueDate) && (
-              <span className="flex items-center gap-1 rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">
+              <span className="flex items-center gap-1 rounded-[10px] bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">
                 <CalendarDays className="h-3 w-3" />
                 {phase.startDate ? formatShortDate(phase.startDate) : "…"} – {phase.dueDate ? formatShortDate(phase.dueDate) : "…"}
               </span>
@@ -220,7 +220,7 @@ function PhaseRow({
         </div>
 
         <div className="flex shrink-0 items-center gap-1">
-          <button onClick={() => setExpanded((v) => !v)} className="rounded-lg p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
+          <button onClick={() => setExpanded((v) => !v)} className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
             {expanded ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
           </button>
         </div>
@@ -350,15 +350,15 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         </div>
       </div>
 
-      <div className="rounded-3xl border border-neutral-200 bg-white p-4 sm:p-6 ">
+      <div className="rounded-[10px] border border-neutral-200 bg-white p-4 sm:p-6 ">
         <div className="flex items-start gap-3 sm:gap-4">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-neutral-100 text-2xl sm:h-16 sm:w-16 sm:text-3xl ">{roadmap.emoji}</div>
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[10px] bg-neutral-100 text-2xl sm:h-16 sm:w-16 sm:text-3xl ">{roadmap.emoji}</div>
           <div className="min-w-0 flex-1">
             <h1 className="text-lg font-bold text-neutral-900 sm:text-xl ">{roadmap.title}</h1>
             <div className="mt-1.5 flex flex-wrap items-center gap-1.5">
-              <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[roadmap.priority].badge)}>{PRIORITY_META[roadmap.priority].label} priority</span>
-              <span className="rounded-md bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">{CATEGORY_META[roadmap.category].label}</span>
-              <span className={cn("rounded-md px-1.5 py-0.5 text-[10px] font-semibold", healthMeta.badge)}>{healthMeta.label}</span>
+              <span className={cn("rounded-[10px] px-1.5 py-0.5 text-[10px] font-semibold", PRIORITY_META[roadmap.priority].badge)}>{PRIORITY_META[roadmap.priority].label} priority</span>
+              <span className="rounded-[10px] bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">{CATEGORY_META[roadmap.category].label}</span>
+              <span className={cn("rounded-[10px] px-1.5 py-0.5 text-[10px] font-semibold", healthMeta.badge)}>{healthMeta.label}</span>
             </div>
             {roadmap.description && <p className="mt-2 text-sm text-neutral-500 ">{roadmap.description}</p>}
             <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-neutral-400">
@@ -447,7 +447,7 @@ export function RoadmapDashboard({ roadmap }: { roadmap: Roadmap }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-4 flex flex-col items-center justify-center rounded-2xl border-2 border-dashed border-neutral-200 py-14 "
+          className="mt-4 flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-14 "
         >
           <p className="text-sm font-medium text-neutral-500 ">
             {roadmap.phases.length === 0 ? "No milestones yet" : "No milestones in this status"}
