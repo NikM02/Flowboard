@@ -189,6 +189,17 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     return <LoginScreen onAuth={handleAuth} />
   }
 
+  if (dataLoading) {
+    return (
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white ">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 " />
+          <p className="text-sm font-medium text-neutral-500 ">Syncing data...</p>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="flex h-screen overflow-hidden bg-neutral-50 ">
       <Sidebar

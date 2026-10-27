@@ -371,6 +371,36 @@
   scrollbar-color: #d9d9de transparent;
 }
 
+/* ── Ultra-subtle borders ───────────────────────────── */
+@layer utilities {
+  .border,
+  .border-t,
+  .border-r,
+  .border-b,
+  .border-l,
+  .border-x,
+  .border-y {
+    border-color: rgba(0, 0, 0, 0.04) !important;
+  }
+  .border-neutral-100,
+  .border-neutral-200,
+  .border-neutral-300,
+  .border-gray-100,
+  .border-gray-200,
+  .border-gray-300,
+  .border-border {
+    border-color: rgba(0, 0, 0, 0.04) !important;
+  }
+  .shadow-sm,
+  .shadow,
+  .shadow-md {
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.01), 0 1px 1px -1px rgba(0, 0, 0, 0.005) !important;
+  }
+  .shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.01), 0 4px 6px -4px rgba(0, 0, 0, 0.005) !important;
+  }
+}
+
 
 
 /* ── Body ───────────────────────────────────────────── */
@@ -378,6 +408,14 @@ html {
   color-scheme: light;
   -webkit-text-size-adjust: 100%;
   overscroll-behavior-y: none;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    border-color: rgba(0, 0, 0, 0.04);
+  }
 }
 
 
@@ -437,6 +475,27 @@ body {
 /* ── Buttons ─────────────────────────────────────────── */
 button, [role="button"], a.inline-flex {
   border-radius: 10px;
+}
+
+/* ── Global rounded corners ─────────────────────────── */
+@layer base {
+  .rounded,
+  .rounded-sm,
+  .rounded-md,
+  .rounded-lg,
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl {
+    border-radius: 10px !important;
+  }
+  input,
+  textarea,
+  select,
+  .card,
+  [class*="card-"],
+  [class*="rounded-["] {
+    border-radius: 10px !important;
+  }
 }
 
 /* ── Animations ─────────────────────────────────────── */

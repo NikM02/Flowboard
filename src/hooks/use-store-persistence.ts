@@ -18,8 +18,6 @@ import { useThemeStore, type ColorTheme } from "@/store/use-theme-store"
 
 const STORAGE_KEY = "flowboard-data-v2"
 const META_KEY = "flowboard-meta-v2"
-// Old un-versioned keys — purged on boot so stale local backups can never
-// resurrect deleted data on this or another device.
 const LEGACY_KEYS = ["flowboard-data", "flowboard-meta"]
 
 type AppData = {
@@ -123,8 +121,6 @@ function applyData(d: AppData) {
   if (d.northStar) {
     const ns = d.northStar
     const cur = useNorthStarStore.getState()
-    // Merge strings preferring non-empty values so a stale/empty write can
-    // never wipe real content (e.g. a hydration re-save writing "").
     const pick = (curVal: string, incVal: string | undefined) =>
       incVal === undefined ? curVal : incVal || curVal
     useNorthStarStore.setState({
@@ -137,12 +133,8 @@ function applyData(d: AppData) {
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
   if (d.roadmaps?.length) useRoadmapStore.setState({ roadmaps: d.roadmaps.map(normalizeRoadmap) as any })
   if (d.advanceTodos?.length) useAdvanceTodoStore.setState({ todos: d.advanceTodos as any })
-
 }
 
-// Applies cloud data EXACTLY — including empty collections. Used when
-// Supabase is the newer source so deletes made on one device propagate
-// to every other device (the merge version above would skip empties).
 function applyDataReplace(d: AppData) {
   useTaskStore.setState({ tasks: (d.tasks ?? []) as any })
   useTaskStore.setState({ projects: (d.projects ?? []) as any })
@@ -180,35 +172,25 @@ export function useSupabasePersistence() {
   const dirtyRef = useRef(false)
   const hydratedRef = useRef(false)
   const userIdRef = useRef<string | null>(null)
-  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const saveToSupabase = useCallback(async (data: AppData) => {
-    const uid = userIdRef.current
-    if (!uid) return
+    if (!userIdRef.current) return
     try {
       const client = createClient()
-      // Read-modify-write so any server-managed keys living alongside our
-      // collections (legacy "integrations", etc.) survive the upload.
-      const { data: row } = await client
-        .from("user_data")
-        .select("data")
-        .eq("user_id", uid)
-        .single()
-      const prev = (row?.data as Record<string, unknown> | undefined) ?? {}
-      const owned = new Set(Object.keys(data))
-      const foreign: Record<string, unknown> = {}
-      for (const k of Object.keys(prev)) {
-        if (!owned.has(k)) foreign[k] = prev[k]
-      }
       await client.from("user_data").upsert(
-        { user_id: uid, data: { ...foreign, ...data } as any, updated_at: new Date().toISOString() },
+        {
+          user_id: userIdRef.current,
+          data,
+          updated_at: new Date().toISOString(),
+        },
         { onConflict: "user_id" }
       )
     } catch {}
   }, [])
 
   const flushSave = useCallback(() => {
-    if (!loadedRef.current || !dirtyRef.current) return
+    if (!loadedRef.current) return
     dirtyRef.current = false
     const data = collectData()
     saveToLocal(data, userIdRef.current)
@@ -222,7 +204,6 @@ export function useSupabasePersistence() {
     saveTimerRef.current = setTimeout(flushSave, 2000)
   }, [flushSave])
 
-  // Flush pending changes immediately when the tab is being hidden or closed
   useEffect(() => {
     const flush = () => {
       if (!loadedRef.current || !dirtyRef.current) return
@@ -249,8 +230,6 @@ export function useSupabasePersistence() {
     client.auth.getSession().then(({ data: { session } }) => {
       if (hydratedRef.current) return
 
-      // Remove old un-versioned local backups so stale data can never
-      // re-enter the stores (or be pushed back up to Supabase).
       try {
         LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
       } catch {}
@@ -276,11 +255,7 @@ export function useSupabasePersistence() {
             const localIsNewer =
               localUsable && localMeta.savedAt > supabaseTs + 5000
 
-            // A device-agnostic erase (Reset) writes clearedAt into the cloud
-            // row. If it's newer than this device's local backup, the local
-            // copy is stale leftover — drop it and start empty so the wipe
-            // propagates instead of being resurrected by a different device.
-            const cloudData = data?.data as AppData & { clearedAt?: number } | undefined
+            const cloudData = data?.data as (AppData & { clearedAt?: number }) | undefined
             const clearedAt = typeof cloudData?.clearedAt === "number" ? cloudData.clearedAt : -1
             const wipeIsNewer =
               clearedAt > 0 && (!localMeta?.savedAt || clearedAt > localMeta.savedAt)
@@ -289,16 +264,10 @@ export function useSupabasePersistence() {
               clearAllLocalStorage()
               applyDataReplace(cloudData as AppData)
             } else if (localUsable && localIsNewer) {
-              // Local backup is the newest copy — restore it. The next
-              // change will push it back up to Supabase.
               loadFromLocal()
             } else if (data?.data) {
-              // Cloud is the source of truth — apply exactly, including
-              // empty collections, so deletions made on any device show
-              // up everywhere.
               applyDataReplace(data.data as AppData)
             } else if (localBelongs) {
-              // No cloud row yet — fall back to this device's backup.
               loadFromLocal()
             }
 
@@ -349,8 +318,6 @@ export function clearLocalData() {
   LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
 }
 
-// All localStorage keys owned by the app across stores/hooks. A full reset
-// must clear these so stale backups/state can never resurrect or re-upload.
 const ALL_STORAGE_KEYS = [
   STORAGE_KEY,
   META_KEY,
@@ -365,8 +332,6 @@ const ALL_STORAGE_KEYS = [
 
 export const RESET_STORAGE_KEYS = ALL_STORAGE_KEYS
 
-// Wipe everything from memory + local storage. Cloud deletion is handled
-// separately by the caller (POST /api/reset) so nothing stale re-uploads.
 export function resetAllStores() {
   const empty: AppData = {
     tasks: [],

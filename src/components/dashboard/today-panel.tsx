@@ -134,18 +134,18 @@ export function TodayPanel() {
   const todayCount = active.filter((t) => t.dueDate === todayKey).length
 
   return (
-    <section className="overflow-hidden rounded-[10px] border border-neutral-200 bg-white ">
+    <section className="overflow-hidden rounded-[10px] border border-neutral-200 bg-white shadow-sm">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 border-b border-neutral-100 px-4 py-4 sm:px-5">
+      <div className="flex items-center justify-between gap-4 border-b border-neutral-100 px-5 py-5 sm:px-6 sm:py-6">
         <div className="min-w-0">
-          <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-blue-600">
-            <CalendarDays className="h-3 w-3" /> Today
+          <p className="flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.25em] text-blue-600">
+            <CalendarDays className="h-3.5 w-3.5" /> Today
           </p>
-          <h2 className="mt-1 truncate text-base font-bold tracking-tight text-neutral-900 sm:text-lg">
+          <h2 className="mt-2 truncate text-lg font-bold tracking-tight text-neutral-900 sm:text-xl lg:text-2xl">
             {dateLabel}
           </h2>
           {todayCount > 0 && (
-            <p className="mt-0.5 text-xs font-medium text-neutral-500">
+            <p className="mt-1 text-sm font-medium text-neutral-500">
               {todayCount} task{todayCount === 1 ? "" : "s"} due today
             </p>
           )}
@@ -153,13 +153,13 @@ export function TodayPanel() {
         <TodayRing pct={stats.progress} />
       </div>
 
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-b border-neutral-100 px-4 pb-3 sm:px-5">
+      <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 border-b border-neutral-100 px-5 py-2.5 sm:px-6">
         {SLOTS.map((s) => {
           const Icon = s.icon
           const used = buckets[s.priority].length
           return (
-            <span key={s.priority} className="flex items-center gap-1.5 text-[11px] font-semibold text-neutral-500">
-              <Icon className={cn("h-3.5 w-3.5", s.accent)} />
+            <span key={s.priority} className="flex items-center gap-2 text-xs font-semibold text-neutral-500">
+              <Icon className={cn("h-4 w-4", s.accent)} />
               <span>{s.label}</span>
               <span className="text-neutral-400 tabular-nums">
                 {Math.min(used, s.capacity)}/{s.capacity}
@@ -170,7 +170,7 @@ export function TodayPanel() {
       </div>
 
       {/* Columns */}
-      <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-3 sm:gap-3">
+      <div className="grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4 lg:gap-5">
         {SLOTS.map((slot) => {
           const Icon = slot.icon
           const rows = buckets[slot.priority]
@@ -179,29 +179,29 @@ export function TodayPanel() {
           return (
             <motion.div
               key={slot.priority}
-              initial={{ opacity: 0, y: 10 }}
+              initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.25 }}
-              className="flex flex-col overflow-hidden rounded-[10px] border border-neutral-200 "
+              className="flex flex-col overflow-hidden rounded-[10px] border border-neutral-200 bg-white"
             >
-              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 px-3 py-2.5">
-                <span className={cn("flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide", slot.accent)}>
-                  <Icon className="h-3.5 w-3.5" />
+              <div className="flex items-center justify-between gap-2 border-b border-neutral-100 px-4 py-3">
+                <span className={cn("flex items-center gap-2 text-xs font-bold uppercase tracking-wide", slot.accent)}>
+                  <Icon className="h-4 w-4" />
                   {slot.label}
                 </span>
-                <span className="text-[10px] font-semibold text-neutral-400 tabular-nums">
+                <span className="text-xs font-semibold text-neutral-400 tabular-nums">
                   {Math.min(shown.length, slot.capacity)}/{slot.capacity}
                 </span>
               </div>
 
-              <div className="flex-1 space-y-0.5 p-2">
+              <div className="flex-1 space-y-1 p-3">
                 {shown.length === 0
                   ? (
                     <button
                       onClick={() => openCreateModal(slot.priority)}
-                      className="flex h-full min-h-[40px] w-full items-center justify-center gap-1.5 rounded-[10px] border border-dashed border-neutral-200 px-2 py-2 text-[11px] font-medium text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
+                      className="flex h-full min-h-[64px] w-full items-center justify-center gap-2 rounded-[10px] border border-dashed border-neutral-200 px-3 py-3 text-sm font-medium text-neutral-400 transition-colors hover:border-neutral-300 hover:bg-neutral-50 "
                     >
-                      <Plus className="h-3.5 w-3.5 shrink-0 opacity-60" /> Nothing here yet
+                      <Plus className="h-4 w-4 shrink-0 opacity-60" /> Nothing here yet
                     </button>
                   )
                   : shown.map((t) => {
@@ -209,7 +209,7 @@ export function TodayPanel() {
                       const overdue = t.dueDate && t.dueDate < todayKey
                       const subsDone = t.subtasks.filter((s) => s.completed).length
                       return (
-                        <div key={t.id} className="group flex items-start gap-2 rounded-[10px] border border-transparent px-2 py-1.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50">
+                        <div key={t.id} className="group flex items-start gap-2.5 rounded-[10px] border border-transparent px-3 py-2.5 transition-colors hover:border-neutral-100 hover:bg-neutral-50">
                           <button onClick={() => toggle(t)} aria-label={`Complete ${t.title}`}>
                             <SlotCheck done={t.completed} check={slot.check} />
                           </button>
@@ -217,25 +217,25 @@ export function TodayPanel() {
                             <button onClick={() => openTask(t)} className="block w-full text-left">
                               <span
                                 className={cn(
-                                  "block truncate text-[13px] font-medium text-neutral-800 ",
+                                  "block text-sm font-medium leading-relaxed text-neutral-800 ",
                                   t.completed && "text-neutral-400 line-through "
                                 )}
                               >
                                 {t.title}
                               </span>
                             </button>
-                            <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[10px] text-neutral-400 ">
+                            <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-0.5 text-xs text-neutral-400 ">
                               {overdue && <span className="font-semibold text-red-500 ">Overdue</span>}
                               {dueToday && <span className="font-semibold text-amber-500 ">Due today</span>}
-                              {t.project && <span className="truncate max-w-[120px]">{t.project}</span>}
+                              {t.project && <span className="truncate max-w-[140px]">{t.project}</span>}
                               {t.subtasks.length > 0 && (
-                                <span className="flex items-center gap-0.5">
-                                  <Check className="h-2.5 w-2.5" /> {subsDone}/{t.subtasks.length}
+                                <span className="flex items-center gap-1">
+                                  <Check className="h-3 w-3" /> {subsDone}/{t.subtasks.length}
                                 </span>
                               )}
                             </div>
                           </div>
-                          <span className={cn("mt-0.5 hidden rounded-[10px] py-0.5 text-[10px] font-semibold sm:inline-flex", slot.chip)}>
+                          <span className={cn("mt-0.5 hidden rounded-[10px] px-2 py-0.5 text-xs font-semibold sm:inline-flex", slot.chip)}>
                             {slot.label}
                           </span>
                         </div>
@@ -243,17 +243,17 @@ export function TodayPanel() {
                     })}
               </div>
 
-              <div className="space-y-1 p-2 pt-0">
+              <div className="space-y-2 p-3 pt-0">
                 {extra > 0 && (
-                  <p className="px-1 text-[10px] font-semibold text-neutral-400">+{extra} more stacked in backlog</p>
+                  <p className="px-1 text-xs font-semibold text-neutral-400">+{extra} more stacked in backlog</p>
                 )}
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => openCreateModal(slot.priority)}
-                  className={cn("h-8 w-full gap-1.5 rounded-[10px] text-xs")}
+                  className={cn("h-9 w-full gap-2 rounded-[10px] text-sm")}
                 >
-                  <Plus className="h-3.5 w-3.5" /> Add {slot.label.toLowerCase()}
+                  <Plus className="h-4 w-4" /> Add {slot.label.toLowerCase()}
                 </Button>
               </div>
             </motion.div>
