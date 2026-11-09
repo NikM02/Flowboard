@@ -20,6 +20,15 @@ const STORAGE_KEY = "flowboard-data-v2"
 const META_KEY = "flowboard-meta-v2"
 const LEGACY_KEYS = ["flowboard-data", "flowboard-meta"]
 
+type NorthStarData = {
+  vision: string
+  mission: string
+  identity: string
+  quarterlyPlans?: unknown[]
+  monthlyPlans?: unknown[]
+  pillars?: unknown[] // legacy
+}
+
 type AppData = {
   tasks: unknown[]
   projects: string[]
@@ -35,7 +44,7 @@ type AppData = {
   stocks: unknown[]
   mutualFunds: unknown[]
   futureGoals: unknown[]
-  northStar: { vision: string; mission: string; identity: string; pillars: unknown[] }
+  northStar: NorthStarData
   bucketListItems: unknown[]
   roadmaps: unknown[]
   advanceTodos: unknown[]
@@ -67,7 +76,8 @@ function collectData(): AppData {
       vision: useNorthStarStore.getState().vision,
       mission: useNorthStarStore.getState().mission,
       identity: useNorthStarStore.getState().identity,
-      pillars: useNorthStarStore.getState().pillars,
+      quarterlyPlans: useNorthStarStore.getState().quarterlyPlans,
+      monthlyPlans: useNorthStarStore.getState().monthlyPlans,
     },
     bucketListItems: useBucketListStore.getState().items,
     roadmaps: useRoadmapStore.getState().roadmaps,
@@ -119,7 +129,7 @@ function applyData(d: AppData) {
   if (d.mutualFunds?.length) useFinanceStore.setState({ mutualFunds: d.mutualFunds as any })
   if (d.futureGoals?.length) useFutureStore.setState({ goals: d.futureGoals as any })
   if (d.northStar) {
-    const ns = d.northStar
+    const ns = d.northStar as NorthStarData
     const cur = useNorthStarStore.getState()
     const pick = (curVal: string, incVal: string | undefined) =>
       incVal === undefined ? curVal : incVal || curVal
@@ -128,7 +138,8 @@ function applyData(d: AppData) {
       mission: pick(cur.mission, ns.mission),
       identity: pick(cur.identity, ns.identity),
     })
-    if (ns.pillars?.length) useNorthStarStore.setState({ pillars: ns.pillars as any })
+    if (ns.quarterlyPlans?.length) useNorthStarStore.setState({ quarterlyPlans: ns.quarterlyPlans as any })
+    if (ns.monthlyPlans?.length) useNorthStarStore.setState({ monthlyPlans: ns.monthlyPlans as any })
   }
   if (d.bucketListItems?.length) useBucketListStore.setState({ items: d.bucketListItems as any })
   if (d.roadmaps?.length) useRoadmapStore.setState({ roadmaps: d.roadmaps.map(normalizeRoadmap) as any })
@@ -152,12 +163,13 @@ function applyDataReplace(d: AppData) {
     mutualFunds: (d.mutualFunds ?? []) as any,
   })
   useFutureStore.setState({ goals: (d.futureGoals ?? []) as any })
-  const ns = d.northStar
+  const ns = d.northStar as NorthStarData | undefined
   useNorthStarStore.setState({
     vision: ns?.vision ?? "",
     mission: ns?.mission ?? "",
     identity: ns?.identity ?? "",
-    pillars: (ns?.pillars ?? []) as any,
+    quarterlyPlans: (ns?.quarterlyPlans ?? []) as any,
+    monthlyPlans: (ns?.monthlyPlans ?? []) as any,
   })
   useBucketListStore.setState({ items: (d.bucketListItems ?? []) as any })
   useRoadmapStore.setState({ roadmaps: ((d.roadmaps ?? []) as any[]).map(normalizeRoadmap) as any })
@@ -166,8 +178,8 @@ function applyDataReplace(d: AppData) {
 }
 
 export function useSupabasePersistence() {
-  const [loading, setLoading] = useState(true)
-  const [hydrated, setHydrated] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [hydrated, setHydrated] = useState(true)
   const loadedRef = useRef(false)
   const dirtyRef = useRef(false)
   const hydratedRef = useRef(false)
@@ -225,64 +237,43 @@ export function useSupabasePersistence() {
   }, [saveToSupabase])
 
   useEffect(() => {
+    try {
+      LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
+    } catch {}
+
+    // Load local data immediately so UI is never blocked
+    loadFromLocal()
+    loadedRef.current = true
+    setLoading(false)
+    setHydrated(true)
+
+    // Try to sync with Supabase in background
     const client = createClient()
-
     client.auth.getSession().then(({ data: { session } }) => {
-      if (hydratedRef.current) return
+      if (!session?.user) return
+      userIdRef.current = session.user.id
+      client
+        .from("user_data")
+        .select("data, updated_at")
+        .eq("user_id", session.user.id)
+        .single()
+        .then(({ data }) => {
+          if (!data?.data) return
+          const localMeta = readLocalMeta()
+          const supabaseTs = data?.updated_at ? new Date(data.updated_at).getTime() : -1
+          const localUsable = !!localMeta && (!localMeta.userId || localMeta.userId === session.user.id)
+          const localIsNewer = localUsable && localMeta.savedAt > supabaseTs + 5000
+          const cloudData = data.data as (AppData & { clearedAt?: number })
+          const clearedAt = typeof cloudData?.clearedAt === "number" ? cloudData.clearedAt : -1
+          const wipeIsNewer = clearedAt > 0 && (!localMeta?.savedAt || clearedAt > localMeta.savedAt)
 
-      try {
-        LEGACY_KEYS.forEach((k) => localStorage.removeItem(k))
-      } catch {}
-
-      if (session?.user) {
-        userIdRef.current = session.user.id
-        client
-          .from("user_data")
-          .select("data, updated_at")
-          .eq("user_id", session.user.id)
-          .single()
-          .then(({ data, error }) => {
-            if (hydratedRef.current) return
-            hydratedRef.current = true
-
-            const localMeta = readLocalMeta()
-            const supabaseTs = data?.updated_at
-              ? new Date(data.updated_at).getTime()
-              : -1
-            const localBelongs =
-              !localMeta?.userId || localMeta.userId === session.user.id
-            const localUsable = !!localMeta && localBelongs
-            const localIsNewer =
-              localUsable && localMeta.savedAt > supabaseTs + 5000
-
-            const cloudData = data?.data as (AppData & { clearedAt?: number }) | undefined
-            const clearedAt = typeof cloudData?.clearedAt === "number" ? cloudData.clearedAt : -1
-            const wipeIsNewer =
-              clearedAt > 0 && (!localMeta?.savedAt || clearedAt > localMeta.savedAt)
-
-            if (data?.data && wipeIsNewer) {
-              clearAllLocalStorage()
-              applyDataReplace(cloudData as AppData)
-            } else if (localUsable && localIsNewer) {
-              loadFromLocal()
-            } else if (data?.data) {
-              applyDataReplace(data.data as AppData)
-            } else if (localBelongs) {
-              loadFromLocal()
-            }
-
-            loadedRef.current = true
-            dirtyRef.current = false
-            setLoading(false)
-            setHydrated(true)
-          })
-      } else {
-        hydratedRef.current = true
-        loadFromLocal()
-        loadedRef.current = true
-        setLoading(false)
-        setHydrated(true)
-      }
+          if (wipeIsNewer) {
+            clearAllLocalStorage()
+            applyDataReplace(cloudData)
+          } else if (!localIsNewer) {
+            applyDataReplace(cloudData)
+          }
+        })
     })
 
     return () => {
@@ -348,7 +339,7 @@ export function resetAllStores() {
     stocks: [],
     mutualFunds: [],
     futureGoals: [],
-    northStar: { vision: "", mission: "", identity: "", pillars: [] },
+    northStar: { vision: "", mission: "", identity: "", quarterlyPlans: [], monthlyPlans: [] },
     bucketListItems: [],
     roadmaps: [],
     advanceTodos: [],

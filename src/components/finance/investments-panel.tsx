@@ -380,7 +380,7 @@ function DashboardTab() {
 
 // ─── SIPs ─────────────────────────────────────────────────
 
-function SipsTab() {
+export function SipsTab() {
   const { sips, addSIP, updateSIP, deleteSIP } = useFinanceStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -564,7 +564,7 @@ function SipForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClose
 
 // ─── Stocks ───────────────────────────────────────────────
 
-function StocksTab() {
+export function StocksTab() {
   const { stocks, addStock, updateStock, deleteStock } = useFinanceStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -770,7 +770,7 @@ function StockForm({ open, editId, form, setForm, planDraft, setPlanDraft, onClo
 
 // ─── Mutual Funds ─────────────────────────────────────────
 
-function FundsTab() {
+export function FundsTab() {
   const { mutualFunds, addMutualFund, updateMutualFund, deleteMutualFund } = useFinanceStore()
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)

@@ -26,11 +26,9 @@ import type { Priority } from "@/types"
 import { generateId } from "@/lib/utils"
 
 export function CreateTaskModal() {
-  const { isCreateModalOpen, setIsCreateModalOpen, addTask, getProjects, createPriority } = useTaskStore()
-  const projects = getProjects()
+  const { isCreateModalOpen, setIsCreateModalOpen, addTask, createPriority } = useTaskStore()
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [project, setProject] = useState("")
   const [priority, setPriority] = useState<Priority>("medium")
   const [storyPoints, setStoryPoints] = useState("")
   const [dueDate, setDueDate] = useState("")
@@ -41,7 +39,6 @@ export function CreateTaskModal() {
     if (!isCreateModalOpen) return
     setTitle("")
     setDescription("")
-    setProject("")
     setPriority(createPriority)
     setStoryPoints("")
     setDueDate(new Date().toISOString().slice(0, 10))
@@ -58,7 +55,7 @@ export function CreateTaskModal() {
     addTask({
       title: title.trim(),
       description: description.trim(),
-      project: project.trim() || "Uncategorized",
+      project: "Uncategorized",
       priority,
       storyPoints: storyPoints.trim() ? Math.max(0, Math.min(100, parseInt(storyPoints.trim(), 10) || 0)) : undefined,
       dueDate: finalDueDate,
@@ -114,22 +111,6 @@ export function CreateTaskModal() {
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
             />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="project">Project</Label>
-            <Input
-              id="project"
-              placeholder="Enter project name..."
-              value={project}
-              onChange={(e) => setProject(e.target.value)}
-              list="project-suggestions"
-            />
-            <datalist id="project-suggestions">
-              {projects.map((p) => (
-                <option key={p} value={p} />
-              ))}
-            </datalist>
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

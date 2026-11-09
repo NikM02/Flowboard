@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { RoadmapPanel } from "@/components/roadmap/roadmap-panel"
+import { NetworthPanel } from "@/components/finance/networth-panel"
 
-export default function RoadmapPage() {
+export default function NetworthPage() {
   return (
     <DashboardShell>
       <motion.div
@@ -12,7 +12,7 @@ export default function RoadmapPage() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <RoadmapPanel />
+        <NetworthPanel />
       </motion.div>
     </DashboardShell>
   )

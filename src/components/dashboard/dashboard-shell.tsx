@@ -22,14 +22,14 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false)
   const [authenticated, setAuthenticated] = useState(false)
   const [authChecked, setAuthChecked] = useState(false)
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
-    if (typeof window === "undefined") return true
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true)
+
+  useEffect(() => {
     try {
       const stored = localStorage.getItem("nexus-sidebar-collapsed")
-      if (stored) return stored === "1"
+      if (stored) setSidebarCollapsed(stored === "1")
     } catch {}
-    return true
-  })
+  }, [])
   const { colorTheme } = useThemeStore()
   const { loading: dataLoading } = useSupabasePersistence()
 
@@ -174,17 +174,6 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
     )
   }
 
-  if (dataLoading) {
-    return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-white ">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-neutral-400 " />
-          <p className="text-sm font-medium text-neutral-500 ">Syncing data...</p>
-        </div>
-      </div>
-    )
-  }
-
   if (!authenticated) {
     return <LoginScreen onAuth={handleAuth} />
   }
@@ -218,7 +207,7 @@ export function DashboardShell({ children }: { children: React.ReactNode }) {
         />
 
         <main className="flex-1 overflow-y-auto overflow-x-hidden pb-[calc(env(safe-area-inset-bottom)+5rem)] md:pb-0">
-          <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+          <div className="mx-3 py-6">
             {children}
           </div>
         </main>

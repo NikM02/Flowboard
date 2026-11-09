@@ -217,7 +217,7 @@ function OverviewTab() {
 
 // ─── Income Tab ───────────────────────────────────────────
 
-function IncomeTab() {
+export function IncomeTab() {
   const { incomes, addIncome, updateIncome, deleteIncome } = useFinanceStore()
   const [createOpen, setCreateOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -353,7 +353,7 @@ function IncomeTab() {
 
 // ─── Expenses Tab ─────────────────────────────────────────
 
-function ExpensesTab() {
+export function ExpensesTab() {
   const { expenses, addExpense, updateExpense, deleteExpense } = useFinanceStore()
   const [createOpen, setCreateOpen] = useState(false)
   const [editId, setEditId] = useState<string | null>(null)
@@ -553,7 +553,7 @@ function ExpensesTab() {
 
 // ─── Budget Tab ───────────────────────────────────────────
 
-function BudgetTab() {
+export function BudgetTab() {
   const { expenses, budgets, setBudget, updateBudget, deleteBudget } = useFinanceStore()
   const [form, setForm] = useState({ category: "food" as ExpenseCategory | "overall", limit: 0, month: format(new Date(), "yyyy-MM") })
   const [editId, setEditId] = useState<string | null>(null)
@@ -749,7 +749,7 @@ function BudgetTab() {
 
 // ─── Archive Tab ──────────────────────────────────────────
 
-function ArchiveTab() {
+export function ArchiveTab() {
   const { incomes, expenses, budgets, sips, stocks, mutualFunds, clearAll } = useFinanceStore()
   const [confirmOpen, setConfirmOpen] = useState(false)
 

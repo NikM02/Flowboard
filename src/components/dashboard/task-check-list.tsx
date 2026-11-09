@@ -4,7 +4,7 @@ import { useState, type FormEvent } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import {
   Check, Plus, ChevronDown, ChevronRight, Calendar,
-  Edit3, Trash2, X, FolderKanban,
+  Edit3, Trash2, X,
 } from "lucide-react"
 import { useTaskStore } from "@/store/use-task-store"
 import { cn } from "@/lib/shadcn-utils"
@@ -85,7 +85,7 @@ function SubtaskRow({ taskId, subtask }: { taskId: string; subtask: { id: string
 function CheckRow({ task, index }: { task: Task; index: number }) {
   const {
     setSelectedTask, setIsEditSheetOpen, setIsDeleteDialogOpen,
-    updateTask, requestComplete, addSubtask, getProjectIcon,
+    updateTask, requestComplete, addSubtask,
   } = useTaskStore()
   const [expanded, setExpanded] = useState(task.subtasks.length > 0)
   const [newSub, setNewSub] = useState("")
@@ -170,13 +170,6 @@ function CheckRow({ task, index }: { task: Task; index: number }) {
         <span className={cn("inline-flex items-center rounded-full px-1.5 py-0.5 text-[10px] font-semibold", TASK_STATUS_STYLES[status.key])}>
           {status.label}
         </span>
-        {task.project && (
-          <span className="inline-flex max-w-[140px] items-center gap-1 truncate rounded-full bg-neutral-100 px-1.5 py-0.5 text-[10px] font-medium text-neutral-500 ">
-            <FolderKanban className="h-3 w-3 shrink-0" />
-            {getProjectIcon(task.project)}
-            <span className="truncate">{task.project}</span>
-          </span>
-        )}
         {task.dueDate && (
           <span className="flex items-center gap-1 text-[10px] font-medium text-neutral-400 ">
             <Calendar className="h-3 w-3" /> {formatDate(task.dueDate, task.dueTime)}

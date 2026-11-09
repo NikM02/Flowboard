@@ -1,39 +1,22 @@
 "use client"
 
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
+import { useState, useMemo } from "react"
+import { motion } from "framer-motion"
 import {
-  Pencil, Plus, Trash2, Check, X,
-  Compass, Target, Gem, Star, Heart, Zap,
-  Mountain, Flame, Eye, Lightbulb, Users, Rocket, Crown, Swords,
+  Pencil, Check, X, Eye, Target, Calendar, ChevronLeft, ChevronRight, Flag,
 } from "lucide-react"
 import { cn } from "@/lib/shadcn-utils"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useNorthStarStore } from "@/store/use-north-star-store"
-import type { Pillar } from "@/store/use-north-star-store"
-
-const iconMap: Record<string, typeof Star> = {
-  Star, Heart, Zap, Mountain, Flame, Eye, Lightbulb,
-  Users, Rocket, Crown, Swords, Gem, Target, Compass,
-}
-const iconOptions = Object.keys(iconMap)
-
-function IconDisplay({ name, className }: { name: string; className?: string }) {
-  const Icon = iconMap[name] || Star
-  return <Icon className={className} />
-}
 
 function InlineEditText({
   value,
   onSave,
-  multiline,
   placeholder,
 }: {
   value: string
   onSave: (v: string) => void
-  multiline?: boolean
   placeholder?: string
 }) {
   const [editing, setEditing] = useState(false)
@@ -51,16 +34,9 @@ function InlineEditText({
         className="group/edit cursor-pointer rounded-[10px] px-3 py-2 transition-colors hover:bg-neutral-50 "
       >
         {value ? (
-          <p className={cn(
-            "whitespace-pre-wrap leading-relaxed text-neutral-800 ",
-            multiline ? "text-sm" : "text-sm"
-          )}>
-            {value}
-          </p>
+          <p className="whitespace-pre-wrap text-sm leading-relaxed text-neutral-800 ">{value}</p>
         ) : (
-          <p className="text-sm italic text-neutral-400 ">
-            {placeholder || "Click to add..."}
-          </p>
+          <p className="text-sm italic text-neutral-400 ">{placeholder || "Click to add..."}</p>
         )}
         <Pencil className="mt-1 h-3 w-3 text-neutral-300 opacity-0 transition-opacity group-hover/edit:opacity-100 " />
       </div>
@@ -69,24 +45,14 @@ function InlineEditText({
 
   return (
     <div className="space-y-2">
-      {multiline ? (
-        <Textarea
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          rows={4}
-          className="text-sm"
-          placeholder={placeholder}
-          autoFocus
-        />
-      ) : (
-        <Input
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          className="text-sm"
-          placeholder={placeholder}
-          autoFocus
-        />
-      )}
+      <Textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        rows={4}
+        className="text-sm"
+        placeholder={placeholder}
+        autoFocus
+      />
       <div className="flex gap-1.5">
         <Button size="sm" className="h-7 gap-1 px-2.5" onClick={save}>
           <Check className="h-3 w-3" /> Save
@@ -99,154 +65,142 @@ function InlineEditText({
   )
 }
 
-function PillarCard({
-  pillar,
-  onEdit,
-  onDelete,
-}: {
-  pillar: Pillar
-  onEdit: () => void
-  onDelete: () => void
-}) {
+const QUARTER_LABELS = ["Q1 (Jan–Mar)", "Q2 (Apr–Jun)", "Q3 (Jul–Sep)", "Q4 (Oct–Dec)"] as const
+const MONTH_NAMES = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+]
+
+function QuarterlyPlansCard() {
+  const { quarterlyPlans, setQuarterlyPlan } = useNorthStarStore()
+  const currentYear = new Date().getFullYear()
+  const [year, setYear] = useState(currentYear)
+
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      className="card-modern card-hover glass group relative rounded-[10px] p-5"
-    >
-      <div className="absolute right-3 top-3 flex gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
-        <button onClick={onEdit} className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-neutral-100 hover:text-neutral-600">
-          <Pencil className="h-3.5 w-3.5" />
-        </button>
-        <button onClick={onDelete} className="rounded-[10px] p-1.5 text-neutral-400 hover:bg-red-50 hover:text-red-500">
-          <Trash2 className="h-3.5 w-3.5" />
-        </button>
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.16 }}>
+      <div className="rounded-[10px] border border-neutral-200/60 bg-white p-6 sm:p-8 ">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 shadow-sm">
+              <Flag className="h-4 w-4 text-neutral-600 " />
+            </div>
+            <div>
+              <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 ">Quarterly Plans</h2>
+              <p className="text-[11px] text-neutral-400/70 ">Set goals for each quarter</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setYear((y) => y - 1)}>
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <span className="min-w-[4rem] text-center text-sm font-semibold text-neutral-700 ">{year}</span>
+            <Button variant="outline" size="sm" className="h-8 w-8 p-0" onClick={() => setYear((y) => y + 1)}>
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+          {([1, 2, 3, 4] as const).map((q) => {
+            const plan = quarterlyPlans.find((p) => p.year === year && p.quarter === q)?.plan ?? ""
+            return (
+              <div key={q} className="rounded-[10px] border border-neutral-200 bg-neutral-50/50 p-4 ">
+                <h3 className="text-sm font-bold text-neutral-800 ">{QUARTER_LABELS[q - 1]}</h3>
+                <div className="mt-2">
+                  <InlineEditText
+                    value={plan}
+                    onSave={(v) => setQuarterlyPlan(year, q, v)}
+                    placeholder={`What do you want to achieve in Q${q}?`}
+                  />
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
-      <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 shadow-inner">
-        <IconDisplay name={pillar.icon} className="h-4 w-4 text-neutral-600 " />
-      </div>
-      <h3 className="mt-3.5 text-[15px] font-bold tracking-tight text-neutral-900 ">{pillar.title}</h3>
-      {pillar.description && (
-        <p className="mt-1.5 text-xs leading-relaxed text-neutral-500 line-clamp-3">{pillar.description}</p>
-      )}
     </motion.div>
   )
 }
 
-function PillarDialog({
-  open,
-  onOpenChange,
-  pillar,
-  onSave,
-}: {
-  open: boolean
-  onOpenChange: (o: boolean) => void
-  pillar?: Pillar
-  onSave: (data: { title: string; description: string; icon: string }) => void
-}) {
-  const [title, setTitle] = useState(pillar?.title ?? "")
-  const [description, setDescription] = useState(pillar?.description ?? "")
-  const [icon, setIcon] = useState(pillar?.icon ?? "Star")
+function MonthlyPlanCard() {
+  const { monthlyPlans, setMonthlyPlan } = useNorthStarStore()
+  const now = new Date()
+  const [cursor, setCursor] = useState(() => ({ year: now.getFullYear(), month: now.getMonth() + 1 }))
 
-  const save = () => {
-    if (!title.trim()) return
-    onSave({ title: title.trim(), description: description.trim(), icon })
-    onOpenChange(false)
+  const plan = useMemo(
+    () => monthlyPlans.find((p) => p.year === cursor.year && p.month === cursor.month)?.plan ?? "",
+    [monthlyPlans, cursor]
+  )
+
+  const goPrev = () => {
+    setCursor((c) => (c.month === 1 ? { year: c.year - 1, month: 12 } : { year: c.year, month: c.month - 1 }))
+  }
+  const goNext = () => {
+    setCursor((c) => (c.month === 12 ? { year: c.year + 1, month: 1 } : { year: c.year, month: c.month + 1 }))
+  }
+  const goToday = () => {
+    const d = new Date()
+    setCursor({ year: d.getFullYear(), month: d.getMonth() + 1 })
   }
 
+  const isCurrentMonth = cursor.year === now.getFullYear() && cursor.month === now.getMonth() + 1
+
   return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/40 p-4 backdrop-blur-sm"
-          onClick={() => onOpenChange(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: 8 }}
-            transition={{ duration: 0.15 }}
-            onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-[10px] border border-neutral-200 bg-white p-6 shadow-xl "
-          >
-            <h3 className="text-lg font-semibold text-neutral-900 ">
-              {pillar ? "Edit Pillar" : "New Pillar"}
-            </h3>
-            <p className="mt-1 text-sm text-neutral-500 ">
-              {pillar ? "Update this core pillar." : "Define a core pillar that guides you."}
+    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.24 }}>
+      <div className="rounded-[10px] border border-neutral-200/60 bg-white p-6 sm:p-8 ">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 shadow-sm">
+              <Calendar className="h-4 w-4 text-neutral-600 " />
+            </div>
+            <div>
+              <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 ">Monthly Plan</h2>
+              <p className="text-[11px] text-neutral-400/70 ">Navigate month by month</p>
+            </div>
+          </div>
+          {!isCurrentMonth && (
+            <Button variant="outline" size="sm" className="h-8 rounded-[10px] text-xs" onClick={goToday}>
+              This month
+            </Button>
+          )}
+        </div>
+
+        {/* Month slider/navigation */}
+        <div className="mt-6 flex items-center justify-between gap-2 rounded-[10px] border border-neutral-200 bg-neutral-50/50 px-2 py-2 ">
+          <Button variant="ghost" size="sm" className="h-9 w-9 shrink-0 p-0" onClick={goPrev} aria-label="Previous month">
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <div className="min-w-0 flex-1 text-center">
+            <p className="text-base font-bold tracking-tight text-neutral-900 sm:text-lg">
+              {MONTH_NAMES[cursor.month - 1]} {cursor.year}
             </p>
-            <div className="mt-5 space-y-4">
-              <div>
-                <label className="mb-2 block text-xs font-medium text-neutral-600 ">Icon</label>
-                <div className="flex flex-wrap gap-1.5">
-                  {iconOptions.map((key) => (
-                    <button
-                      key={key}
-                      onClick={() => setIcon(key)}
-                      className={cn(
-                        "flex h-10 w-10 items-center justify-center rounded-[10px] border transition-all",
-                        icon === key
-                          ? "border-neutral-900 bg-neutral-900 text-white shadow-sm "
-                          : "border-neutral-200 text-neutral-500 hover:border-neutral-300 hover:bg-neutral-50 "
-                      )}
-                    >
-                      <IconDisplay name={key} className="h-4 w-4" />
-                    </button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-medium text-neutral-600 ">Title</label>
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="e.g. Integrity"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label className="mb-2 block text-xs font-medium text-neutral-600 ">Description</label>
-                <Textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  rows={3}
-                  placeholder="What does this mean to you?"
-                />
-              </div>
-            </div>
-            <div className="mt-6 flex justify-end gap-2">
-              <Button variant="outline" size="sm" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button size="sm" disabled={!title.trim()} onClick={save}>
-                {pillar ? "Update" : "Add Pillar"}
-              </Button>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
+            {isCurrentMonth && <p className="text-xs font-medium text-blue-600">Current month</p>}
+          </div>
+          <Button variant="ghost" size="sm" className="h-9 w-9 shrink-0 p-0" onClick={goNext} aria-label="Next month">
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+
+        <div className="mt-4 rounded-[10px] border border-neutral-200 p-4 ">
+          <InlineEditText
+            value={plan}
+            onSave={(v) => setMonthlyPlan(cursor.year, cursor.month, v)}
+            placeholder={`Plan your focus and goals for ${MONTH_NAMES[cursor.month - 1]} ${cursor.year}...`}
+          />
+        </div>
+      </div>
+    </motion.div>
   )
 }
 
 export function NorthStarPanel() {
-  const {
-    vision, mission, pillars,
-    setVision, setMission,
-    addPillar, updatePillar, deletePillar,
-  } = useNorthStarStore()
-
-  const [pillarDialog, setPillarDialog] = useState<{ open: boolean; pillar?: Pillar }>({ open: false })
+  const { vision, mission, setVision, setMission } = useNorthStarStore()
 
   return (
     <div className="space-y-8">
-      {/* Vision — full-width hero */}
+      {/* Vision */}
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35 }}>
         <div className="relative overflow-hidden rounded-[10px] border border-neutral-200/60 bg-white p-6 sm:p-8 ">
-          {/* decorative dot grid */}
           <div className="pointer-events-none absolute inset-0 opacity-[0.035] " style={{ backgroundImage: "radial-gradient(circle, currentColor 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
           <div className="relative">
             <div className="flex items-center gap-3">
@@ -262,7 +216,6 @@ export function NorthStarPanel() {
               <InlineEditText
                 value={vision}
                 onSave={setVision}
-                multiline
                 placeholder="Write your vision — the future you're building toward..."
               />
             </div>
@@ -286,72 +239,14 @@ export function NorthStarPanel() {
             <InlineEditText
               value={mission}
               onSave={setMission}
-              multiline
               placeholder="How you bring your vision to life..."
             />
           </div>
         </div>
       </motion.div>
 
-      {/* Core Pillars */}
-      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.35, delay: 0.2 }}>
-        <div className="rounded-[10px] border border-neutral-200/60 bg-white p-6 sm:p-8 ">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 shadow-sm">
-                <Gem className="h-4 w-4 text-neutral-600 " />
-              </div>
-              <div>
-                <h2 className="text-[11px] font-bold uppercase tracking-widest text-neutral-500 ">Core Pillars</h2>
-                <p className="text-[11px] text-neutral-400/70 ">What guides you</p>
-              </div>
-            </div>
-            <Button size="sm" className="gap-1.5 rounded-[10px]" onClick={() => setPillarDialog({ open: true })}>
-              <Plus className="h-3.5 w-3.5" /> Add
-            </Button>
-          </div>
-
-          {pillars.length === 0 ? (
-            <div className="mt-8 flex flex-col items-center justify-center rounded-[10px] border-2 border-dashed border-neutral-200 py-12 ">
-              <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-[10px] bg-neutral-100 ">
-                <Gem className="h-4 w-4 text-neutral-400 " />
-              </div>
-              <p className="text-sm font-medium text-neutral-500 ">No pillars yet</p>
-              <p className="mt-1 text-xs text-neutral-400 ">Add the core principles that guide everything</p>
-              <Button variant="outline" size="sm" className="mt-4 gap-1.5" onClick={() => setPillarDialog({ open: true })}>
-                <Plus className="h-3.5 w-3.5" /> Add first pillar
-              </Button>
-            </div>
-          ) : (
-            <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <AnimatePresence mode="popLayout">
-                {pillars.map((pillar) => (
-                  <PillarCard
-                    key={pillar.id}
-                    pillar={pillar}
-                    onEdit={() => setPillarDialog({ open: true, pillar })}
-                    onDelete={() => deletePillar(pillar.id)}
-                  />
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-        </div>
-      </motion.div>
-
-      {/* Pillar dialog */}
-      <PillarDialog
-        open={pillarDialog.open}
-        onOpenChange={(o) => setPillarDialog({ open: o })}
-        pillar={pillarDialog.pillar}
-        onSave={(data) => {
-          if (pillarDialog.pillar) {
-            updatePillar(pillarDialog.pillar.id, data)
-          } else {
-            addPillar(data)
-          }
-        }}
-      />
+      <QuarterlyPlansCard />
+      <MonthlyPlanCard />
     </div>
   )
 }

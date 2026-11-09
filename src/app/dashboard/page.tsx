@@ -85,7 +85,7 @@ function WelcomeHero() {
 
   const kpis = [
     { label: "Pending", value: String(pending), href: "/tasks" },
-    { label: "Net flow", value: `₹${net.toLocaleString("en-IN")}`, href: "/finance" },
+    { label: "Net flow", value: `₹${net.toLocaleString("en-IN")}`, href: "/networth" },
     { label: "Best streak", value: `${bestStreak}d`, href: "/habits" },
   ]
 
@@ -715,7 +715,7 @@ function InvestmentsSection({ className }: { className?: string }) {
         <div className="flex flex-col items-center gap-1 py-7 text-neutral-400">
           <TrendingUp className="h-6 w-6" />
           <p className="text-xs">No investments yet.</p>
-          <Link href="/finance" className="mt-1 text-[11px] font-semibold text-violet-500 hover:underline">
+          <Link href="/networth" className="mt-1 text-[11px] font-semibold text-violet-500 hover:underline">
             Add your first holding
           </Link>
         </div>
@@ -859,7 +859,7 @@ export default function DashboardPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="mx-auto w-full max-w-6xl space-y-4 sm:space-y-5"
+        className="w-full space-y-4 sm:space-y-5"
       >
         <WelcomeHero />
 

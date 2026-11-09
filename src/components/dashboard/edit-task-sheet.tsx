@@ -28,12 +28,10 @@ import type { Priority } from "@/types"
 
 function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void }) {
   const task = useTaskStore((s) => s.tasks.find((t) => t.id === taskId))
-  const { updateTask, toggleSubtask, getProjects } = useTaskStore()
-  const projects = getProjects()
+  const { updateTask, toggleSubtask } = useTaskStore()
 
   const [title, setTitle] = useState(task?.title ?? "")
   const [description, setDescription] = useState(task?.description ?? "")
-  const [project, setProject] = useState(task?.project ?? "")
   const [priority, setPriority] = useState<Priority>(task?.priority ?? "medium")
   const [storyPoints, setStoryPoints] = useState(task?.storyPoints != null ? String(task.storyPoints) : "")
   const [dueDate, setDueDate] = useState(task?.dueDate ?? "")
@@ -67,7 +65,6 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
     updateTask(task.id, {
       title: title.trim(),
       description: description.trim(),
-      project: project.trim() || "Uncategorized",
       priority,
       storyPoints: storyPoints.trim() ? Math.max(0, Math.min(100, parseInt(storyPoints.trim(), 10) || 0)) : undefined,
       dueDate,
@@ -104,22 +101,6 @@ function EditTaskForm({ taskId, onClose }: { taskId: string; onClose: () => void
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
         />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="edit-project">Project</Label>
-        <Input
-          id="edit-project"
-          value={project}
-          onChange={(e) => setProject(e.target.value)}
-          placeholder="Enter project name..."
-          list="edit-project-suggestions"
-        />
-        <datalist id="edit-project-suggestions">
-          {projects.map((p) => (
-            <option key={p} value={p} />
-          ))}
-        </datalist>
       </div>
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">

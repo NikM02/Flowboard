@@ -129,7 +129,7 @@ export function GlobalSearch({
     tasks: "/tasks",
     habits: "/habits",
     skills: "/skills",
-    finance: "/finance",
+    finance: "/networth",
     future: "/future",
   }
 
